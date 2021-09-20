@@ -23,12 +23,11 @@ class ProjectRequest extends FormRequest
 	 */
 	public function rules()
 	{
-
 		return [
-			"designation" => ["required", "max:255"],
-			"url" => ["required"],
-			"company_id" => ["required", "exists:companies,id"],
-			"image_id" => ["exists:App\Models\Image,id"]
+			"designation" => ["required", "max:255", "string"],
+			"url" => ["required", "url"],
+			"company_id" => ["required", "integer", "exists:App\Models\Company,id"],
+			"image_id" => ["integer", "exists:App\Models\Image,id"]
 		];
 	}
 }
