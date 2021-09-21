@@ -6,6 +6,7 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use App\Http\Requests\ImageRequest;
 use App\Http\Resources\ImageResource;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -27,7 +28,15 @@ class ImageController extends Controller
 	 */
 	public function store(ImageRequest $request)
 	{
-		$image = Image::create($request->all());
+		$storagePath = "/uploads/images";
+
+		$savedPath = $request->file->store($storagePath);
+
+		$image = Image::create([
+			"designation" => $request->file->getClientOriginalName(),
+			"url" => $savedPath,
+		]);
+
 		return new ImageResource($image);
 	}
 
@@ -51,7 +60,17 @@ class ImageController extends Controller
 	 */
 	public function update(ImageRequest $request, Image $image)
 	{
-		$image->update($request->all());
+		$storagePath = "/uploads/images";
+
+		$savedPath = $request->file->store($storagePath);
+
+		Storage::delete($image->url);
+
+		$image->update([
+			"designation" => $request->file->getClientOriginalName(),
+			"url" => $savedPath,
+		]);
+
 		return new ImageResource($image);
 	}
 
@@ -65,5 +84,16 @@ class ImageController extends Controller
 	{
 		$val = $image->delete();
 		return response($val, 204);
+	}
+
+	/**
+	 * Download the specified resource.
+	 *
+	 * @param  \App\Models\Image  $image
+	 * @return \Illuminate\Http\Response
+	 */
+	public function download(Image $image)
+	{
+		return Storage::download($image->url, $image->designation);
 	}
 }
