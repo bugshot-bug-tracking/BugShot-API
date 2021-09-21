@@ -24,8 +24,7 @@ class ImageRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "max:255"],
-			"url" => ["required"]
+			"file" => ["required", "file", "max:5200"],
 		];
 	}
 }
