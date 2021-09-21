@@ -26,7 +26,7 @@ class CommentRequest extends FormRequest
 		return [
 			"bug_id" => ["required", "integer", "exists:App\Models\Bug,id"],
 			"user_id" => ["required", "integer", "exists:App\Models\User,id"],
-			"content" => ["required", "max:255"],
+			"content" => ["required", "string", "max:255"],
 		];
 	}
 }
