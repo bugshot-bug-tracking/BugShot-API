@@ -24,7 +24,7 @@ class StatusRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "max:255", "regex:/^[\pL\s\-]+$/"],
+			"designation" => ["required", "min:3", "max:255", "regex:/^[\pL\s\-]+$/"],
 			"project_id" => ["required", "integer", "exists:App\Models\Project,id"],
 		];
 	}
