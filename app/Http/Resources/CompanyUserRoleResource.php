@@ -2,9 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Company;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+class CompanyUserRoleResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -14,14 +17,14 @@ class CommentResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$company = $this->company;
+		$user = $this->user;
+		$role = $this->role;
+
 		return [
-			"id" => $this->id,
-			"type" => "Comment",
-			"attributes" => [
-				"bug_id" => $this->bug_id,
-				"user_id" => $this->user_id,
-				"content" => $this->content,
-			]
+			"company" => new CompanyResource($company),
+			"user" => new UserResource($user),
+			"role" => new RoleResource($role),
 		];
 	}
 }

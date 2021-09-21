@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyRequest;
 use App\Http\Resources\CompanyResource;
+use App\Http\Resources\CompanyUserRoleResource;
+use App\Http\Resources\ProjectResource;
 use App\Models\Company;
+use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -22,7 +25,7 @@ class CompanyController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\CompanyRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(CompanyRequest $request)
@@ -45,7 +48,7 @@ class CompanyController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\CompanyRequest  $request
 	 * @param  \App\Models\Company  $company
 	 * @return \Illuminate\Http\Response
 	 */
@@ -65,5 +68,35 @@ class CompanyController extends Controller
 	{
 		$val = $company->delete();
 		return response($val, 204);
+	}
+
+	/**
+	 * Display a list of projects that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
+	public function projects(Company $company)
+	{
+		$projects = ProjectResource::collection($company->projects);
+		return response()->json($projects, 200);
+	}
+
+	/**
+	 * Display a list of users that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
+	public function users(Company $company)
+	{
+		$company_user_roles = CompanyUserRoleResource::collection(
+			CompanyUserRole::where("company_id", $company->id)
+				->with('company')
+				->with('user')
+				->with("role")
+				->get()
+		);
+		return response()->json($company_user_roles, 200);
 	}
 }

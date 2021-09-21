@@ -24,7 +24,7 @@ class RoleRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "max:255"]
+			"designation" => ["required", "max:255", "alpha", "unique:App\Models\Role,designation"]
 		];
 	}
 }

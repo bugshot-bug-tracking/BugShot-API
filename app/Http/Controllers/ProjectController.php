@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectRequest;
+use App\Http\Resources\BugResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectUserRoleResource;
+use App\Http\Resources\StatusResource;
 use App\Models\Project;
+use App\Models\ProjectUserRole;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
@@ -22,7 +26,7 @@ class ProjectController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\ProjectRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(ProjectRequest $request)
@@ -45,7 +49,7 @@ class ProjectController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\ProjectRequest  $request
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
@@ -65,5 +69,49 @@ class ProjectController extends Controller
 	{
 		$val = $project->delete();
 		return response($val, 204);
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function statuses(Project $project)
+	{
+		$statuses = StatusResource::collection($project->statuses);
+
+		return response()->json($statuses, 200);
+	}
+
+	/**
+	 * Display a list of bugs that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function bugs(Project $project)
+	{
+		$bugs = BugResource::collection($project->bugs);
+		return response()->json($bugs, 200);
+	}
+
+	/**
+	 * Display a list of users that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function users(Project $project)
+	{
+		$project_user_roles = ProjectUserRoleResource::collection(
+			ProjectUserRole::where("project_id", $project->id)
+				->with('project')
+				->with('user')
+				->with("role")
+				->get()
+		);
+
+		return response()->json($project_user_roles, 200);
 	}
 }

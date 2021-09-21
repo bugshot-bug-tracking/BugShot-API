@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BugRequest;
+use App\Http\Resources\AttachmentResource;
 use App\Http\Resources\BugResource;
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\ScreenshotResource;
 use App\Models\Bug;
 use Illuminate\Http\Request;
 
@@ -22,7 +25,7 @@ class BugController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\BugRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(BugRequest $request)
@@ -45,7 +48,7 @@ class BugController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\BugRequest  $request
 	 * @param  \App\Models\Bug  $bug
 	 * @return \Illuminate\Http\Response
 	 */
@@ -65,5 +68,41 @@ class BugController extends Controller
 	{
 		$val = $bug->delete();
 		return response($val, 204);
+	}
+
+	/**
+	 * Display a list of screenshots that belongs to the bug.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function screenshots(Bug $bug)
+	{
+		$screenshots = ScreenshotResource::collection($bug->screenshots);
+		return response()->json($screenshots, 200);
+	}
+
+	/**
+	 * Display a list of attachments that belongs to the bug.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function attachments(Bug $bug)
+	{
+		$attachments = AttachmentResource::collection($bug->attachments);
+		return response()->json($attachments, 200);
+	}
+
+	/**
+	 * Display a list of comments that belongs to the bug.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function comments(Bug $bug)
+	{
+		$comments = CommentResource::collection($bug->comments);
+		return response()->json($comments, 200);
 	}
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StatusRequest;
+use App\Http\Resources\BugResource;
 use App\Http\Resources\StatusResource;
 use App\Models\Status;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class StatusController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\StatusRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(StatusRequest $request)
@@ -45,7 +46,7 @@ class StatusController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \Illuminate\Http\StatusRequest  $request
 	 * @param  \App\Models\Status  $status
 	 * @return \Illuminate\Http\Response
 	 */
@@ -65,5 +66,17 @@ class StatusController extends Controller
 	{
 		$val = $status->delete();
 		return response($val, 204);
+	}
+
+	/**
+	 * Display a list of bugs that belongs to the respective status.
+	 *
+	 * @param  \App\Models\Status  $status
+	 * @return \Illuminate\Http\Response
+	 */
+	public function bugs(Status $status)
+	{
+		$bugs = BugResource::collection($status->bugs);
+		return response()->json($bugs, 200);
 	}
 }
