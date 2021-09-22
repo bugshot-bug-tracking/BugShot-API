@@ -34,7 +34,7 @@ class UserController extends Controller
 	}
 
 	/**
-	 * Remove the specified resource from storage.
+	 * Display all projects from a company where the user is a part of
 	 *
 	 * @param  \App\Models\Company  $company
 	 * @return \Illuminate\Http\Response
@@ -43,7 +43,7 @@ class UserController extends Controller
 	{
 		$projects = ProjectUserRoleResource::collection(
 			ProjectUserRole::where([
-				["user_id", Auth::user()->id]
+				["user_id", Auth::id()]
 			])
 				->with(
 					'project',
@@ -59,8 +59,40 @@ class UserController extends Controller
 		return response()->json($projects, 200);
 	}
 
-	// public function checkProject(Request $request)
-	// {
-	// 	//
-	// }
+	public function checkProject(Request $request)
+	{
+		$request->validate([
+			"url" => ["required", "url"]
+		]);
+
+		$projects = Project::where("url", $request->url)->get();
+
+		if ($projects->count() == 0) return response()->json([
+			"errors" => [
+				"status" => 404,
+				"source" => $request->getPathInfo(),
+				"detail" => "Project not found."
+			]
+		], 404);
+
+		$foundProjects = [];
+		foreach ($projects as $project) {
+			$val = 	ProjectUserRole::where([
+				["project_id", $project->id],
+				["user_id", Auth::id()],
+			])->get();
+
+			if ($val->count() > 0) array_push($foundProjects, $val->first());
+		}
+
+		if (count($foundProjects) == 0) return response()->json([
+			"errors" => [
+				"status" => 404,
+				"source" => $request->getPathInfo(),
+				"detail" => "Project not found."
+			]
+		], 404);
+
+		return ProjectUserRoleResource::collection($foundProjects);
+	}
 }
