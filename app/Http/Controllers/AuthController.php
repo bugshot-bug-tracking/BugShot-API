@@ -17,7 +17,9 @@ class AuthController extends Controller
 			"first_name" => ["required", "alpha_dash", "max:255"],
 			"last_name" => ["required", "alpha_dash", "max:255"],
 			"email" => ["required", "email", "unique:users,email"],
-			"password" => ["required", "confirmed", Password::min(8)->letters()->numbers()]
+			"password" => ["required", "confirmed", Password::min(8)->letters()->numbers()],
+			'password_confirmation' => ["required", "same:password"],
+
 		]);
 
 		$user = User::create([
@@ -34,7 +36,8 @@ class AuthController extends Controller
 	{
 		$fields = $request->validate([
 			"email" => ["required", "email"],
-			"password" => ["required"]
+			"password" => ["required"],
+			// "client_id" => ["required", "integer"]
 		]);
 
 		$user = User::where("email", $fields["email"])->first();
