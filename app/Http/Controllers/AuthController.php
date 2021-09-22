@@ -26,7 +26,7 @@ class AuthController extends Controller
 			"first_name" => $fields["first_name"],
 			"last_name" => $fields["last_name"],
 			"email" => $fields["email"],
-			"password" => bcrypt($fields["password"]),
+			"password" => Hash::make($fields["password"]),
 		]);
 
 		return new UserResource($user);
