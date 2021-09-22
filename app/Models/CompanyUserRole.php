@@ -11,6 +11,8 @@ class CompanyUserRole extends Model
 
 	protected $fillable = ["company_id", "user_id", "role_id"];
 
+	public $timestamps = false;
+
 	public function company()
 	{
 		return $this->belongsTo(Company::class);

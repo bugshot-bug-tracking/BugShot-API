@@ -10,6 +10,7 @@ use App\Http\Resources\StatusResource;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -32,7 +33,14 @@ class ProjectController extends Controller
 	public function store(ProjectRequest $request)
 	{
 		$project = Project::create($request->all());
-		return new ProjectResource($project);
+
+		$projectUserRole = ProjectUserRole::create([
+			"project_id" => $project->id,
+			"user_id" => Auth::id(),
+			"role_id" => 1 // Owner
+		]);
+
+		return new ProjectUserRoleResource($projectUserRole);
 	}
 
 	/**
