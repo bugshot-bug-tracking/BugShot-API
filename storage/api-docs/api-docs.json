@@ -1,0 +1,540 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Bugshot API Documentation",
+        "description": "OpenApi documentation using swagger for Bugshot project.",
+        "termsOfService": "https://www.google.ro/",
+        "contact": {
+            "email": "r.memetea@proxima-idea.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api/v1"
+        }
+    ],
+    "paths": {
+        "/company": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "List all companies",
+                "responses": {
+                    "200": {
+                        "description": "An example resource"
+                    },
+                    "404": {
+                        "description": "An example resource"
+                    }
+                }
+            }
+        },
+        "/user/companies": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An example resource"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Attachment": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "bug_id": {
+                        "description": "The id of the bug to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The file name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "url": {
+                        "description": "The lacal path where the file is stored.",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "detleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Bug": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "project_id": {
+                        "description": "The id of the project to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "The id of the user that created the object.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The bug title.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "description": {
+                        "description": "The description of the bug.",
+                        "type": "string"
+                    },
+                    "url": {
+                        "description": "The url where the bug was spoted. (Validated)",
+                        "type": "string"
+                    },
+                    "status_id": {
+                        "description": "The id of the status to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "priority_id": {
+                        "description": "The id of the priority that the bug has.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "operating_system": {
+                        "nullable": true,
+                        "description": "The operating system used to report the bug.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "browser": {
+                        "nullable": true,
+                        "description": "The browser used to report the bug.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "selector": {
+                        "nullable": true,
+                        "description": "The path to the HTML element from root.",
+                        "type": "string"
+                    },
+                    "resolution": {
+                        "nullable": true,
+                        "description": "The resolution of the display.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "deadline": {
+                        "nullable": true,
+                        "description": "The deadline of the bug.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Comment": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "bug_id": {
+                        "description": "The id of the bug to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "The id of the user to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "content": {
+                        "description": "The message.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Company": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The status name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "image_id": {
+                        "nullable": true,
+                        "description": "The id of the image that belongs to the company.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "CompanyUserRole": {
+                "properties": {
+                    "company_id": {
+                        "description": "The id of the company.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "role_id": {
+                        "description": "The id of the role.",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "Image": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The file name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "url": {
+                        "description": "The lacal path where the file is stored.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Priority": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The priority name.",
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
+            },
+            "Project": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "company_id": {
+                        "description": "The id of the company to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "image_id": {
+                        "nullable": true,
+                        "description": "The id of the image that belongs to the project.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The status name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "url": {
+                        "description": "The url of the project. (Validated)",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "ProjectUserRole": {
+                "properties": {
+                    "project_id": {
+                        "description": "The id of the project.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "role_id": {
+                        "description": "The id of the role.",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "Role": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The role name.",
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
+            },
+            "Screenshot": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "bug_id": {
+                        "description": "The id of the but to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The screenshot name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "url": {
+                        "description": "The lacal path where the file is stored. ",
+                        "type": "string"
+                    },
+                    "position_x": {
+                        "nullable": true,
+                        "description": "The x coordinate value for the screenshot marker.",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "position_y": {
+                        "nullable": true,
+                        "description": "The y coordinate value for the screenshot marker.",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "web_position_x": {
+                        "nullable": true,
+                        "description": "The x coordinate value of the marker relative to web page top.",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "web_position_y": {
+                        "nullable": true,
+                        "description": "The y coordinate value of the marker relative to web page top.",
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Status": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "description": "The status name.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "project_id": {
+                        "description": "The id of the project to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "User": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "first_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "last_name": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "email_verified_at": {
+                        "nullable": true,
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password"
+                    },
+                    "remember_token": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Company"
+        },
+        {
+            "name": "User"
+        }
+    ],
+    "security": [
+        []
+    ]
+}
