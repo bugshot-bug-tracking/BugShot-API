@@ -9,8 +9,77 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
+/**
+ * @OA\Tag(
+ *     name="Auth",
+ * )
+ */
 class AuthController extends Controller
 {
+
+	/**
+	 * @OA\Post(
+	 *	path="/auth/register",
+	 *	tags={"Auth"},
+	 *	summary="Register a user.",
+	 *	operationId="authRegister",
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="first_name",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="last_name",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="password",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="password_confirmation",
+	 *                  type="string",
+	 *              ),
+	 *              required={"first_name","last_name","email","password","password_confirmation"}
+	 *          )
+	 *      )
+	 *  ),
+
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	public function register(Request $request)
 	{
 		$fields = $request->validate([
@@ -32,6 +101,57 @@ class AuthController extends Controller
 		return new UserResource($user);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/auth/login",
+	 *	tags={"Auth"},
+	 *	summary="Log in.",
+	 *	operationId="authLogin",
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="password",
+	 *                  type="string",
+	 *              ),
+	 *              required={"email","password"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	public function login(Request $request)
 	{
 		$fields = $request->validate([
@@ -55,12 +175,77 @@ class AuthController extends Controller
 		], 200);
 	}
 
+
+	/**
+	 * @OA\Post(
+	 *	path="/auth/logout",
+	 *	tags={"Auth"},
+	 *	summary="Log out.",
+	 *	operationId="authLogout",
+	 *
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	public function logout(Request $request)
 	{
 		$request->user()->currentAccessToken()->delete();
 		return response()->json("", 204);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/auth/user",
+	 *	tags={"Auth"},
+	 *	summary="Show current user.",
+	 *	operationId="authUser",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	public function user()
 	{
 		return new UserResource(Auth::user());

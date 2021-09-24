@@ -7,8 +7,48 @@ use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Tag(
+ *     name="Comment",
+ * )
+ */
 class CommentController extends Controller
 {
+	/**
+	 * @OA\Get(
+	 *	path="/comment",
+	 *	tags={"Comment"},
+	 *	summary="All comments.",
+	 *	operationId="allComments",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Comment")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -19,6 +59,65 @@ class CommentController extends Controller
 		return CommentResource::collection(Comment::all());
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/comment",
+	 *	tags={"Comment"},
+	 *	summary="Store one comment.",
+	 *	operationId="storeComment",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="bug_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="user_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The message",
+	 *                  property="content",
+	 *                  type="string",
+	 *              ),
+	 *              required={"bug_id","user_id","content"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Comment"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -32,6 +131,48 @@ class CommentController extends Controller
 	}
 
 	/**
+	 * @OA\Get(
+	 *	path="/comment/{id}",
+	 *	tags={"Comment"},
+	 *	summary="Show one comment.",
+	 *	operationId="showComment",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Comment/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Comment"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	/**
 	 * Display the specified resource.
 	 *
 	 * @param  \App\Models\Comment  $comment
@@ -42,6 +183,85 @@ class CommentController extends Controller
 		return new CommentResource($comment);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/comment/{id}",
+	 *	tags={"Comment"},
+	 *	summary="Update a comment.",
+	 *	operationId="updateComment",
+	 *	security={ {"sanctum": {} }},
+
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Comment/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="bug_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="user_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The message",
+	 *                  property="content",
+	 *                  type="string",
+	 *              ),
+	 *              required={"bug_id","user_id","content"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Comment"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -55,6 +275,44 @@ class CommentController extends Controller
 		return new CommentResource($comment);
 	}
 
+	/**
+	 * @OA\Delete(
+	 *	path="/comment/{id}",
+	 *	tags={"Comment"},
+	 *	summary="Delete a comment.",
+	 *	operationId="deleteComment",
+	 *	security={ {"sanctum": {} }},
+
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Comment/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Remove the specified resource from storage.
 	 *

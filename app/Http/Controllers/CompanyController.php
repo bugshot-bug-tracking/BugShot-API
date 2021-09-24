@@ -11,8 +11,49 @@ use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Tag(
+ *     name="Company",
+ * )
+ */
 class CompanyController extends Controller
 {
+
+	/**
+	 * @OA\Get(
+	 *	path="/company",
+	 *	tags={"Company"},
+	 *	summary="All companies.",
+	 *	operationId="allCompanies",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Company")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -23,6 +64,60 @@ class CompanyController extends Controller
 		return CompanyResource::collection(Company::all());
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/company",
+	 *	tags={"Company"},
+	 *	summary="Store one company.",
+	 *	operationId="storeCompany",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The company name",
+	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="image_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              required={"designation"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Company"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Store a newly created resource in storage.
 	 *
@@ -39,9 +134,51 @@ class CompanyController extends Controller
 			"role_id" => 1 // Owner
 		]);
 
-		return new CompanyUserRoleResource($companyUserRole);
+		return new CompanyResource($company);
 	}
 
+	/**
+	 * @OA\Get(
+	 *	path="/company/{id}",
+	 *	tags={"Company"},
+	 *	summary="Show one company.",
+	 *	operationId="showCompany",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Company"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Display the specified resource.
 	 *
@@ -53,6 +190,80 @@ class CompanyController extends Controller
 		return new CompanyResource($company);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/company/{id}",
+	 *	tags={"Company"},
+	 *	summary="Update a company.",
+	 *	operationId="updateCompany",
+	 *	security={ {"sanctum": {} }},
+
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The company name",
+	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="image_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              required={"designation"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Company"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -67,6 +278,44 @@ class CompanyController extends Controller
 	}
 
 	/**
+	 * @OA\Delete(
+	 *	path="/company/{id}",
+	 *	tags={"Company"},
+	 *	summary="Delete a company.",
+	 *	operationId="deleteCompany",
+	 *	security={ {"sanctum": {} }},
+
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	/**
 	 * Remove the specified resource from storage.
 	 *
 	 * @param  \App\Models\Company  $company
@@ -79,6 +328,50 @@ class CompanyController extends Controller
 	}
 
 	/**
+	 * @OA\Get(
+	 *	path="/company/{id}/projects",
+	 *	tags={"Company"},
+	 *	summary="All company projects.",
+	 *	operationId="allCompaniesProjects",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Project")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
 	 * Display a list of projects that belongs to the company.
 	 *
 	 * @param  \App\Models\Company  $company
@@ -90,6 +383,50 @@ class CompanyController extends Controller
 		return response()->json($projects, 200);
 	}
 
+	/**
+	 * @OA\Get(
+	 *	path="/company/{id}/users",
+	 *	tags={"Company"},
+	 *	summary="All company users.",
+	 *	operationId="allCompaniesUsers",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/CompanyUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
 	/**
 	 * Display a list of users that belongs to the company.
 	 *

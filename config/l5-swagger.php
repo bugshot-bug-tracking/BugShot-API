@@ -142,6 +142,12 @@ return [
 				/*
                  * Examples of Security schemes
                 */
+				'sanctum' => [
+					'type' => 'http',
+					'description' => 'Laravel Sanctum token authentication',
+					'scheme' => 'bearer',
+					'bearerFormat' => 'JWT'
+				],
 				/*
                 'api_key_security_example' => [ // Unique name of security
                     'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
@@ -177,7 +183,8 @@ return [
                         ],
                     ],
                 ],
-                */],
+                */
+			],
 			'security' => [
 				/*
                  * Examples of Securities
