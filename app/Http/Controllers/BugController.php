@@ -8,7 +8,9 @@ use App\Http\Resources\BugResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Models\Bug;
+use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Tag(
@@ -78,11 +80,6 @@ class BugController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *  			@OA\Property(
 	 *                  property="project_id",
 	 *                  type="integer",
 	 *                  format="int64",
@@ -101,11 +98,6 @@ class BugController extends Controller
 	 *                  description="The bug url",
 	 *                  property="url",
 	 *                  type="string",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="status_id",
-	 *                  type="integer",
-	 *                  format="int64",
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="priority_id",
@@ -133,7 +125,7 @@ class BugController extends Controller
 	 *                  type="string",
 	 * 					format="date-time",
 	 *              ),
-	 *              required={"user_id","project_id","designation","description","url","status_id","priority_id",}
+	 *              required={"project_id","designation","description","url","status_id","priority_id",}
 	 *          )
 	 *      )
 	 *  ),
@@ -171,7 +163,11 @@ class BugController extends Controller
 	 */
 	public function store(BugRequest $request)
 	{
-		$bug = Bug::create($request->all());
+		$inputs = $request->all();
+		$inputs['user_id'] = Auth::id();
+		// set the bug status as the first one of the project
+		$inputs['status_id'] = Project::find($request->project_id)->statuses()->first()->id;
+		$bug = Bug::create($inputs);
 		return new BugResource($bug);
 	}
 

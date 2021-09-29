@@ -6,6 +6,7 @@ use App\Http\Requests\CommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Tag(
@@ -78,17 +79,12 @@ class CommentController extends Controller
 	 *                  type="integer",
 	 *                  format="int64",
 	 *              ),
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
 	 *                  property="content",
 	 *                  type="string",
 	 *              ),
-	 *              required={"bug_id","user_id","content"}
+	 *              required={"bug_id","content"}
 	 *          )
 	 *      )
 	 *  ),
@@ -126,7 +122,9 @@ class CommentController extends Controller
 	 */
 	public function store(CommentRequest $request)
 	{
-		$comment = Comment::create($request->all());
+		$inputs = $request->all();
+		$inputs['user_id'] = Auth::id();
+		$comment = Comment::create($inputs);
 		return new CommentResource($comment);
 	}
 
