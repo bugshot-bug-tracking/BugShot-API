@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
 
 		$this->call(PrioritySeeder::class);
 		$this->call(RoleSeeder::class);
+		$this->call(InvitationStatusSeeder::class);
 	}
 }
