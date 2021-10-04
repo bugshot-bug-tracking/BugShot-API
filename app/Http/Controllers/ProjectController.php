@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectInviteRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ProjectInviteResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
@@ -531,5 +533,15 @@ class ProjectController extends Controller
 		);
 
 		return response()->json($project_user_roles, 200);
+	}
+
+
+	public function invite(Project $project, ProjectInviteRequest $request)
+	{
+		$inputs = $request->all();
+		$inputs['sender_id'] = Auth::id();
+		$inputs['status_id'] = 1;
+
+		return new ProjectInviteResource($project->invitations()->create($inputs));
 	}
 }
