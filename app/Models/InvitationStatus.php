@@ -10,4 +10,6 @@ class InvitationStatus extends Model
 	use HasFactory;
 
 	protected $fillable = ["designation"];
+
+	public $timestamps = false;
 }
