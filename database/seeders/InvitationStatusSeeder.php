@@ -32,5 +32,9 @@ class InvitationStatusSeeder extends Seeder
 			"id" => 4,
 			"designation" => "expired"
 		]);
+		InvitationStatus::create([
+			"id" => 5,
+			"designation" => "duplicate"
+		]);
 	}
 }
