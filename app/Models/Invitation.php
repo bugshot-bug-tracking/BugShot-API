@@ -9,8 +9,13 @@ class Invitation extends Model
 {
 	use HasFactory;
 
-	protected $fillable = ["sender_id",	"target_id", "comnpany_id",	"project_id", "comnpany_role_id", "project_role_id", "status_id"];
+	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id"];
 
+
+	public function invitable()
+	{
+		return $this->morphTo();
+	}
 
 	public function sender()
 	{
@@ -22,24 +27,9 @@ class Invitation extends Model
 		return $this->belongsTo(User::class, "target_id");
 	}
 
-	public function company()
+	public function role()
 	{
-		return $this->belongsTo(Company::class);
-	}
-
-	public function project()
-	{
-		return $this->belongsTo(Project::class);
-	}
-
-	public function companyRole()
-	{
-		return $this->belongsTo(Role::class, "company_role_id");
-	}
-
-	public function projectRole()
-	{
-		return $this->belongsTo(Role::class, "project_role_id");
+		return $this->belongsTo(Role::class, "role_id");
 	}
 
 	public function status()
