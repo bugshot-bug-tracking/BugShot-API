@@ -3,7 +3,6 @@
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
@@ -12,6 +11,7 @@ use App\Http\Controllers\BugController;
 use App\Http\Controllers\PriorityController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
 
@@ -76,13 +76,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::prefix('company/{company}')->group(function () {
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 		Route::get("/projects", [CompanyController::class, "projects"])->name("company.projects");
+		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 	});
-
 
 	Route::prefix('project/{project}')->group(function () {
 		Route::get("/statuses", [ProjectController::class, "statuses"])->name("project.statuses");
 		Route::get("/bugs", [ProjectController::class, "bugs"])->name("project.bugs");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
+		Route::post("/invite", [ProjectController::class, "invite"])->name("project.invite");
 	});
 
 	Route::prefix('status/{status}')->group(function () {
@@ -99,6 +100,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::get('/attachment/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
 	Route::get('/image/{image}/download', [ImageController::class, "download"])->name("image.download");
 
+	Route::prefix('invitation/{invitation}')->group(function () {
+		Route::post("/accept", [InvitationController::class, "accept"])->name("invitation.accept");
+		Route::post("/decline", [InvitationController::class, "decline"])->name("invitation.decline");
+	});
+
 	Route::apiResources(
 		[
 			'company' => CompanyController::class,
@@ -111,6 +117,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 			'attachment' => AttachmentController::class,
 			'screenshot' => ScreenshotController::class,
 			'comment' => CommentController::class,
+			'invitation' => InvitationController::class,
 		],
 		// ["missing" => (function (Request $request) {
 		// 	return response()->json([
