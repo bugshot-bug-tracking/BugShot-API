@@ -93,4 +93,9 @@ class Project extends Model
 	{
 		return $this->belongsTo(Image::class, "image_id");
 	}
+
+	public function invitations()
+	{
+		return $this->morphMany(Invitation::class, "invitable");
+	}
 }
