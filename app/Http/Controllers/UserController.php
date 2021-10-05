@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\CompanyUserRoleResource;
-use App\Http\Resources\ProjectResource;
+use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
+use App\Models\Invitation;
+use App\Models\InvitationStatus;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
 use Illuminate\Http\Request;
@@ -224,5 +226,24 @@ class UserController extends Controller
 		], 404);
 
 		return ProjectUserRoleResource::collection($foundProjects);
+	}
+
+	public function invitations()
+	{
+		return InvitationResource::collection(
+			Invitation::where([
+				["target_id", Auth::id()],
+			])->get()
+		);
+	}
+
+	public function invitationsByStatus(InvitationStatus $status)
+	{
+		return InvitationResource::collection(
+			Invitation::where([
+				["target_id", Auth::id()],
+				["status_id", $status->id]
+			])->get()
+		);
 	}
 }
