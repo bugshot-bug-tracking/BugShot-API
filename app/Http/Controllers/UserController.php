@@ -228,6 +228,40 @@ class UserController extends Controller
 		return ProjectUserRoleResource::collection($foundProjects);
 	}
 
+	/**
+	 * @OA\Get(
+	 *	path="/user/invitations",
+	 *	tags={"User"},
+	 *	summary="Show all invitations that the user has received.",
+	 *	operationId="showUserInvitations",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	public function invitations()
 	{
 		return InvitationResource::collection(
@@ -237,6 +271,49 @@ class UserController extends Controller
 		);
 	}
 
+	/**
+	 * @OA\Get(
+	 *	path="/user/invitations/{invitation_status_id}",
+	 *	tags={"User"},
+	 *	summary="Show all invitations that the user has received filtered by status id.",
+	 *	operationId="showUserInvitationsByStatus",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="invitation_status_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/InvitationStatus/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	public function invitationsByStatus(InvitationStatus $status)
 	{
 		return InvitationResource::collection(

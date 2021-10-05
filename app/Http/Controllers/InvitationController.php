@@ -15,10 +15,56 @@ use App\Models\ProjectUserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @OA\Tag(
+ *     name="Invitation",
+ * )
+ */
 class InvitationController extends Controller
 {
 	/**
+	 * @OA\Get(
+	 *	path="/invitation/{id}",
+	 *	tags={"Invitation"},
+	 *	summary="Show one invitation.",
+	 *	operationId="showInvitation",
+	 *	security={ {"sanctum": {} }},
 	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Invitation/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Invitation"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	/**
 	 * Display the specified resource.
 	 *
 	 * @param  \App\Models\Invitation  $invitation
@@ -29,6 +75,44 @@ class InvitationController extends Controller
 		return new InvitationResource($invitation);
 	}
 
+	/**
+	 * @OA\Delete(
+	 *	path="/invitation/{id}",
+	 *	tags={"Invitation"},
+	 *	summary="Delete a invitation.",
+	 *	operationId="deleteInvitation",
+	 *	security={ {"sanctum": {} }},
+
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Invitation/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Remove the specified resource from storage.
 	 *
@@ -42,8 +126,38 @@ class InvitationController extends Controller
 	}
 
 	/**
+	 * @OA\Get(
+	 *	path="/invitation/status",
+	 *	tags={"Invitation"},
+	 *	summary="Show all invitation possible statuses.",
+	 *	operationId="showInvitationStatuses",
+	 *	security={ {"sanctum": {} }},
 	 *
-	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/InvitationStatus")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
 	 **/
 	public function statusIndex()
 	{
@@ -51,14 +165,98 @@ class InvitationController extends Controller
 	}
 
 	/**
+	 * @OA\Get(
+	 *	path="/invitation/status/{id}",
+	 *	tags={"Invitation"},
+	 *	summary="Show invitation status.",
+	 *	operationId="showInvitationStatus",
+	 *	security={ {"sanctum": {} }},
 	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/InvitationStatus/properties/id"
+	 *		)
+	 *	),
 	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/InvitationStatus"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
 	 **/
 	public function statusShow(int $invitationStatus_id)
 	{
 		return new InvitationResource(InvitationStatus::find($invitationStatus_id));
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/invitation/{id}/accept",
+	 *	tags={"Invitation"},
+	 *	summary="Accept one invitation.",
+	 *	operationId="acceptInvitation",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Invitation/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Invitation"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=288,
+	 *		description="Request already processed.",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Update the resource to a new status.
 	 *
@@ -99,6 +297,49 @@ class InvitationController extends Controller
 		], 422);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/invitation/{id}/decline",
+	 *	tags={"Invitation"},
+	 *	summary="Decline one invitation.",
+	 *	operationId="declineInvitation",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Invitation/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=288,
+	 *		description="Request already processed.",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
 	/**
 	 * Update the resource to a new status.
 	 *

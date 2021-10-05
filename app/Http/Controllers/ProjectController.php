@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProjectInviteRequest;
 use App\Http\Requests\ProjectRequest;
 use App\Http\Resources\BugResource;
-use App\Http\Resources\ProjectInviteResource;
+use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
@@ -535,13 +535,79 @@ class ProjectController extends Controller
 		return response()->json($project_user_roles, 200);
 	}
 
-
+	/**
+	 * @OA\Post(
+	 *	path="/project/{id}/invite",
+	 *	tags={"Project"},
+	 *	summary="Invite a user to the project and asign it a role",
+	 *	operationId="inviteProject",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The invited user id.",
+	 *                  property="target_id",
+	 *					type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The invited user role.",
+	 *                  property="role_id",
+	 *					type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              required={"target_id","role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Invitation"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	public function invite(Project $project, ProjectInviteRequest $request)
 	{
 		$inputs = $request->all();
 		$inputs['sender_id'] = Auth::id();
 		$inputs['status_id'] = 1;
 
-		return new ProjectInviteResource($project->invitations()->create($inputs));
+		return new InvitationResource($project->invitations()->create($inputs));
 	}
 }
