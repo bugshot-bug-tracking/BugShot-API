@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompanyInviteRequest;
 use App\Http\Requests\CompanyRequest;
-use App\Http\Resources\CompanyInviteResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\InvitationResource;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
@@ -444,16 +444,83 @@ class CompanyController extends Controller
 				->with("role")
 				->get()
 		);
+
 		return response()->json($company_user_roles, 200);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/company/{id}/invite",
+	 *	tags={"Company"},
+	 *	summary="Invite a user to the company and asign it a role",
+	 *	operationId="inviteCompany",
+	 *	security={ {"sanctum": {} }},
 
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The invited user id.",
+	 *                  property="target_id",
+	 *					type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The invited user role.",
+	 *                  property="role_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              required={"target_id","role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Invitation"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
 	public function invite(Company $company, CompanyInviteRequest $request)
 	{
 		$inputs = $request->all();
 		$inputs['sender_id'] = Auth::id();
 		$inputs['status_id'] = 1;
 
-		return new CompanyInviteResource($company->invitations()->create($inputs));
+		return new InvitationResource($company->invitations()->create($inputs));
 	}
 }
