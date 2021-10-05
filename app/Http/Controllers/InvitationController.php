@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\InvitationResource;
+use App\Http\Resources\InvitationStatusResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use App\Models\Invitation;
+use App\Models\InvitationStatus;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
 use Illuminate\Http\Request;
@@ -16,47 +18,15 @@ use Illuminate\Support\Facades\Auth;
 class InvitationController extends Controller
 {
 	/**
-	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index()
-	{
-		return Invitation::all();
-	}
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request)
-	{
-		return response()->json("", 501);
-	}
-
-	/**
 	 * Display the specified resource.
 	 *
 	 * @param  \App\Models\Invitation  $invitation
-	 * @return \Illuminate\Http\Response
+	 * @return \App\Http\Resources\InvitationResource
 	 */
 	public function show(Invitation $invitation)
 	{
 		return new InvitationResource($invitation);
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\Models\Invitation  $invitation
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(Request $request, Invitation $invitation)
-	{
-		return response()->json("", 501);
 	}
 
 	/**
@@ -68,10 +38,33 @@ class InvitationController extends Controller
 	public function destroy(Invitation $invitation)
 	{
 		$val = $invitation->delete();
-		return response($val, 200);
+		return response($val, 204);
 	}
 
+	/**
+	 *
+	 *
+	 **/
+	public function statusIndex()
+	{
+		return InvitationStatusResource::collection(InvitationStatus::all());
+	}
 
+	/**
+	 *
+	 *
+	 **/
+	public function statusShow(int $invitationStatus_id)
+	{
+		return new InvitationResource(InvitationStatus::find($invitationStatus_id));
+	}
+
+	/**
+	 * Update the resource to a new status.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \Illuminate\Http\Response
+	 */
 	public function accept(Invitation $invitation)
 	{
 		if (Auth::id() !== $invitation->target_id)
@@ -106,6 +99,12 @@ class InvitationController extends Controller
 		], 422);
 	}
 
+	/**
+	 * Update the resource to a new status.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \Illuminate\Http\Response
+	 */
 	public function decline(Invitation $invitation)
 	{
 		if (Auth::id() !== $invitation->target_id)
@@ -125,11 +124,22 @@ class InvitationController extends Controller
 		return response()->json("", 204);
 	}
 
+	/**
+	 * Generate the link between user, company and role.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @param  \App\Models\Company  $company
+	 * @return \App\Http\Resources\CompanyUserRoleResource
+	 */
 	private function acceptCompany(Invitation $invitation, Company $company)
 	{
 		// if a previous invitation was accepted
-		$cur = CompanyUserRole::where("company_id", $company->id)->where("user_id", $invitation->target_id)->get();
-		if ($cur->count() === 0) {
+		$cur = CompanyUserRole::where([
+			["company_id", $company->id],
+			["user_id", $invitation->target_id]
+		])->get();
+
+		if ($cur->count() !== 0) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
 				"message" => "A previous invitation was already accepted."
@@ -147,10 +157,21 @@ class InvitationController extends Controller
 		return new CompanyUserRoleResource($companyUserRole);
 	}
 
+	/**
+	 * Generate the link between user, project and role.
+	 * And if needed between user, company and role.
+	 * @param  \App\Models\Invitation  $invitation
+	 * @param  \App\Models\Project  $project
+	 * @return \App\Http\Resources\ProjectUserRoleResource
+	 */
 	private function acceptProject(Invitation $invitation, Project $project)
 	{
 		// if a previous invitation was accepted
-		$pur = ProjectUserRole::where("project_id", $project->id)->where("user_id", $invitation->target_id)->get();
+		$pur = ProjectUserRole::where([
+			["project_id", $project->id],
+			["user_id", $invitation->target_id]
+		])->get();
+
 		if ($pur->count() !== 0) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
@@ -165,7 +186,11 @@ class InvitationController extends Controller
 		]);
 
 		// if user not in company add it to it
-		$cur = CompanyUserRole::where("company_id", $project->company->id)->where("user_id", $invitation->target_id)->get();
+		$cur = CompanyUserRole::where([
+			["company_id", $project->company->id],
+			["user_id", $invitation->target_id]
+		])->get();
+
 		if ($cur->count() === 0)
 			CompanyUserRole::create([
 				"company_id" => $project->company->id,
