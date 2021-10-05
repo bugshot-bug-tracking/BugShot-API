@@ -71,6 +71,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		// 		]
 		// 	], 404);
 		// });
+
+		Route::get("/invitations", [UserController::class, "invitations"])->name("user.invitations");
+		Route::get("/invitations/{status}", [UserController::class, "invitationsByStatus"])->name("user.invitationsByStatus");
 	});
 
 	Route::prefix('company/{company}')->group(function () {
