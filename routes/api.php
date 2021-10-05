@@ -103,9 +103,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::get('/attachment/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
 	Route::get('/image/{image}/download', [ImageController::class, "download"])->name("image.download");
 
-	Route::prefix('invitation/{invitation}')->group(function () {
-		Route::post("/accept", [InvitationController::class, "accept"])->name("invitation.accept");
-		Route::post("/decline", [InvitationController::class, "decline"])->name("invitation.decline");
+	Route::prefix('invitation')->group(function () {
+		Route::get("/status", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
+		Route::get("/status/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
+
+		Route::get("/{invitation}", [InvitationController::class, "show"])->name("invitation.show");
+		Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
+		Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("invitation.accept");
+		Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("invitation.decline");
 	});
 
 	Route::apiResources(
@@ -120,7 +125,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 			'attachment' => AttachmentController::class,
 			'screenshot' => ScreenshotController::class,
 			'comment' => CommentController::class,
-			'invitation' => InvitationController::class,
 		],
 		// ["missing" => (function (Request $request) {
 		// 	return response()->json([
