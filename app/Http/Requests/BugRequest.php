@@ -26,8 +26,8 @@ class BugRequest extends FormRequest
 		return [
 			"user_id" => ["required", "integer", "exists:App\Models\User,id"],
 			"project_id" => ["required", "integer", "exists:App\Models\Project,id"],
-			"designation" => ["required", "max:255", "string"],
-			"description" => ["required", "string"],
+			"designation" => ["required", "string", "min:5", "max:255"],
+			"description" => ["required", "min:5", "string"],
 			"url" => ["required", "url"],
 			"status_id" => ["required", "integer", "exists:App\Models\Status,id"],
 			"priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],

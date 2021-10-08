@@ -9,7 +9,9 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
+use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -32,7 +34,22 @@ class ProjectController extends Controller
 	public function store(ProjectRequest $request)
 	{
 		$project = Project::create($request->all());
-		return new ProjectResource($project);
+
+		$projectUserRole = ProjectUserRole::create([
+			"project_id" => $project->id,
+			"user_id" => Auth::id(),
+			"role_id" => 1 // Owner
+		]);
+
+		$defaultStatuses = ['Backlog', 'To Do', 'Doing', 'Done'];
+		foreach ($defaultStatuses as $status) {
+			Status::create([
+				"designation" => $status,
+				"project_id" => $project->id
+			]);
+		}
+
+		return new ProjectUserRoleResource($projectUserRole);
 	}
 
 	/**

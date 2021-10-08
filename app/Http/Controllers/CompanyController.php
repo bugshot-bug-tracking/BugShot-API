@@ -9,6 +9,7 @@ use App\Http\Resources\ProjectResource;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -31,7 +32,14 @@ class CompanyController extends Controller
 	public function store(CompanyRequest $request)
 	{
 		$company = Company::create($request->all());
-		return new CompanyResource($company);
+
+		$companyUserRole = CompanyUserRole::create([
+			"company_id" => $company->id,
+			"user_id" => Auth::id(),
+			"role_id" => 1 // Owner
+		]);
+
+		return new CompanyUserRoleResource($companyUserRole);
 	}
 
 	/**

@@ -34,7 +34,7 @@ class CreateBugsTable extends Migration
 
 			$table->string('operating_system')->nullable();
 			$table->string('browser')->nullable();
-			$table->string('selector')->nullable();
+			$table->text('selector')->nullable();
 			$table->string('resolution')->nullable();
 			$table->timestamp('deadline')->nullable();
 
