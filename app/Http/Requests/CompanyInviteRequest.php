@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CommentRequest extends FormRequest
+class CompanyInviteRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class CommentRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"bug_id" => ["required", "integer", "exists:App\Models\Bug,id"],
-			"content" => ["required", "string", "max:255"],
+			"target_id" => ["required", "integer", "exists:users,id"],
+			"role_id" => ["required", "integer", "exists:roles,id"]
 		];
 	}
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyInviteRequest;
 use App\Http\Requests\CompanyRequest;
+use App\Http\Resources\CompanyInviteResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\ProjectResource;
@@ -443,5 +445,15 @@ class CompanyController extends Controller
 				->get()
 		);
 		return response()->json($company_user_roles, 200);
+	}
+
+
+	public function invite(Company $company, CompanyInviteRequest $request)
+	{
+		$inputs = $request->all();
+		$inputs['sender_id'] = Auth::id();
+		$inputs['status_id'] = 1;
+
+		return new CompanyInviteResource($company->invitations()->create($inputs));
 	}
 }

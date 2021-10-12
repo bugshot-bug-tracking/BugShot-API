@@ -15,7 +15,13 @@ class DatabaseSeeder extends Seeder
 	{
 		// \App\Models\User::factory(10)->create();
 
+		// for bug priorities
 		$this->call(PrioritySeeder::class);
+
+		// for company/project user roles
 		$this->call(RoleSeeder::class);
+
+		// for invitation statuses like pending or accepted
+		$this->call(InvitationStatusSeeder::class);
 	}
 }

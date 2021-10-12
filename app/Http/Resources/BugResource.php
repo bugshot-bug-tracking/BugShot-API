@@ -14,22 +14,42 @@ class BugResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$user = $this->user;
+		$status = $this->status;
+		$priority = $this->priority;
+		$project = $this->project;
+
 		return [
 			"id" => $this->id,
 			"type" => "Bug",
 			"attributes" => [
-				"project_id" => $this->project_id,
-				"user_id" => $this->user_id,
+				"project" => [
+					"id" => $project->id,
+					"designation" => $project->designation,
+				],
+				"user" => [
+					"id" => $user->id,
+					"first_name" => $user->first_name,
+					"last_name" => $user->last_name,
+				],
 				"designation" => $this->designation,
 				"description" => $this->description,
 				"url" => $this->url,
-				"status_id" => $this->status_id,
-				"priority_id" => $this->priority_id,
+				"status" => [
+					"id" => $status->id,
+					"designation" => $status->designation,
+				],
+				"priority" => [
+					"id" => $priority->id,
+					"designation" => $priority->designation,
+				],
 				"operating_system" => $this->operating_system,
 				"browser" => $this->browser,
 				"selector" => $this->selector,
 				"resolution" => $this->resolution,
 				"deadline" => $this->deadline,
+				"created_at" => $this->created_at,
+				"updated_at" => $this->updated_at,
 			]
 		];
 	}
