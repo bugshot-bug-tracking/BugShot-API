@@ -165,6 +165,7 @@ class AuthController extends Controller
 		if (!$user || !Hash::check($fields["password"], $user->password))
 			return response()->json(["message" => "Bad Credentials!"], 401);
 
+		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
 
 		return response()->json([
