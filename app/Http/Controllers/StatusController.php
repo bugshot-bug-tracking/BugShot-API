@@ -368,7 +368,6 @@ class StatusController extends Controller
 	 */
 	public function bugs(Status $status)
 	{
-		$bugs = BugResource::collection($status->bugs);
-		return response()->json($bugs, 200);
+		return BugResource::collection($status->bugs);
 	}
 }

@@ -411,9 +411,7 @@ class ProjectController extends Controller
 	 */
 	public function statuses(Project $project)
 	{
-		$statuses = StatusResource::collection($project->statuses);
-
-		return response()->json($statuses, 200);
+		return StatusResource::collection($project->statuses);
 	}
 
 	/**
@@ -468,8 +466,7 @@ class ProjectController extends Controller
 	 */
 	public function bugs(Project $project)
 	{
-		$bugs = BugResource::collection($project->bugs);
-		return response()->json($bugs, 200);
+		return BugResource::collection($project->bugs);
 	}
 
 	/**
@@ -524,15 +521,13 @@ class ProjectController extends Controller
 	 */
 	public function users(Project $project)
 	{
-		$project_user_roles = ProjectUserRoleResource::collection(
+		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)
 				->with('project')
 				->with('user')
 				->with("role")
 				->get()
 		);
-
-		return response()->json($project_user_roles, 200);
 	}
 
 	/**

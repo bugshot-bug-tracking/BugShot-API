@@ -460,8 +460,7 @@ class BugController extends Controller
 	 */
 	public function screenshots(Bug $bug)
 	{
-		$screenshots = ScreenshotResource::collection($bug->screenshots);
-		return response()->json($screenshots, 200);
+		return ScreenshotResource::collection($bug->screenshots);
 	}
 
 	/**
@@ -516,8 +515,7 @@ class BugController extends Controller
 	 */
 	public function attachments(Bug $bug)
 	{
-		$attachments = AttachmentResource::collection($bug->attachments);
-		return response()->json($attachments, 200);
+		return AttachmentResource::collection($bug->attachments);
 	}
 
 	/**
@@ -572,7 +570,6 @@ class BugController extends Controller
 	 */
 	public function comments(Bug $bug)
 	{
-		$comments = CommentResource::collection($bug->comments);
-		return response()->json($comments, 200);
+		return CommentResource::collection($bug->comments);
 	}
 }
