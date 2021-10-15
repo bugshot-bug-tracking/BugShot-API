@@ -125,7 +125,7 @@ class BugController extends Controller
 	 *                  type="string",
 	 * 					format="date-time",
 	 *              ),
-	 *              required={"project_id","designation","description","url","status_id","priority_id",}
+	 *              required={"project_id","designation","url","status_id","priority_id",}
 	 *          )
 	 *      )
 	 *  ),
@@ -311,7 +311,7 @@ class BugController extends Controller
 	 *                  type="string",
 	 * 					format="date-time",
 	 *              ),
-	 *              required={"user_id","project_id","designation","description","url","status_id","priority_id",}
+	 *              required={"user_id","project_id","designation","url","status_id","priority_id",}
 	 *          )
 	 *      )
 	 *  ),

@@ -29,7 +29,7 @@ class CreateBugsTable extends Migration
 			$table->foreign('priority_id')->references('id')->on('priorities')->onDelete('restrict');
 
 			$table->string('designation');
-			$table->text('description');
+			$table->text('description')->nullable();
 			$table->text('url');
 
 			$table->string('operating_system')->nullable();
