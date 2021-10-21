@@ -20,7 +20,10 @@ class ProjectResource extends JsonResource
 			"attributes" => [
 				"designation" => $this->designation,
 				"url" => $this->url,
-				"company_id" => $this->company_id,
+				"company" => [
+					"id" => $this->company_id,
+					"designation" => $this->company->designation,
+				],
 				"image_id" => $this->image_id
 			]
 		];

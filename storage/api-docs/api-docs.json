@@ -15,7 +15,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000/api/v1"
+            "url": "http://localhost:80/api/v1"
         }
     ],
     "paths": {
@@ -573,7 +573,6 @@
                                 "required": [
                                     "project_id",
                                     "designation",
-                                    "description",
                                     "url",
                                     "status_id",
                                     "priority_id"
@@ -733,7 +732,6 @@
                                     "user_id",
                                     "project_id",
                                     "designation",
-                                    "description",
                                     "url",
                                     "status_id",
                                     "priority_id"
