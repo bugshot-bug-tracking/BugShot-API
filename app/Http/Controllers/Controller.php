@@ -9,5 +9,21 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
+
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Bugshot API Documentation",
+ *      description="OpenApi documentation using swagger for Bugshot project.",
+ * 		termsOfService="https://www.google.ro/",
+ *      @OA\Contact(
+ *          email="r.memetea@proxima-idea.com"
+ *      ),
+ *      @OA\License(
+ *          name="Apache 2.0",
+ *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *      )
+ * )
+ */

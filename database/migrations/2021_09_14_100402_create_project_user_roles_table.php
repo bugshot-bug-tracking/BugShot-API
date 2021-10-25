@@ -18,7 +18,7 @@ class CreateProjectUserRolesTable extends Migration
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('role_id');
 
-			$table->primary(['project_id', 'user_id', 'role_id']);
+			$table->primary(['project_id', 'user_id']);
 
 			$table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

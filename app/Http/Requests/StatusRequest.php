@@ -23,10 +23,21 @@ class StatusRequest extends FormRequest
 	 */
 	public function rules()
 	{
-
 		return [
-			"designation" => ["required", "max:255"],
-			"project_id" => ["required", "exists:App\Models\Project,id"],
+			"designation" => ["required", "min:3", "max:255", "regex:/^[\pL\s\-]+$/"],
+			"project_id" => ["required", "integer", "exists:App\Models\Project,id"],
+		];
+	}
+
+	/**
+	 * Get the validation error message.
+	 *
+	 * @return string
+	 */
+	public function messages()
+	{
+		return [
+			"designation.regex" => "The designation must only contain letters and spaces."
 		];
 	}
 }
