@@ -57,7 +57,7 @@ Route::middleware(['auth:sanctum'])->group(
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-	Route::post('/check-project', [UserController::class, "checkProject"]);
+	Route::post('/check-project', [UserController::class, "checkProject"])->name("check-project");
 
 	Route::prefix('user')->group(function () {
 		Route::get("/companies", [UserController::class, "companies"])->name("user.companies");
