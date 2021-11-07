@@ -15,8 +15,8 @@ class Status extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -47,9 +47,16 @@ class Status extends Model
 	 * 	description="The last date when the resource was changed."
 	 * )
 	 *
+	 * @OA\Property(
+	 * 	property="deleted_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The deletion date."
+	 * )
+	 *
 	 */
 
-	protected $fillable = ["designation", "project_id"];
+	protected $fillable = ["designation", "project_id", "deleted_at"];
 
 	protected $touches = ['project'];
 

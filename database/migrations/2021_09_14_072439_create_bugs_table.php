@@ -14,15 +14,15 @@ class CreateBugsTable extends Migration
 	public function up()
 	{
 		Schema::create('bugs', function (Blueprint $table) {
-			$table->id()->unique();
+			$table->uuid('id')->primary();
 
-			$table->unsignedBigInteger('project_id');
+			$table->string('project_id');
 			$table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
 
 			$table->unsignedBigInteger('user_id')->nullable();
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
 
-			$table->unsignedBigInteger('status_id');
+			$table->string('status_id');
 			$table->foreign('status_id')->references('id')->on('statuses')->onDelete('restrict');
 
 			$table->unsignedBigInteger('priority_id');

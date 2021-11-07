@@ -15,21 +15,21 @@ class Project extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="company_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the company to which the object belongs."
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="image_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	nullable=true,
 	 * 	description="The id of the image that belongs to the project."
 	 * )
@@ -70,7 +70,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "url", "company_id", "image_id"];
+	protected $fillable = ["designation", "url", "company_id", "image_id", "deleted_at"];
 
 	protected $touches = ['company'];
 

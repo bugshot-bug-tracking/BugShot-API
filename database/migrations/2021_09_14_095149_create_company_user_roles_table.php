@@ -14,7 +14,7 @@ class CreateCompanyUserRolesTable extends Migration
 	public function up()
 	{
 		Schema::create('company_user_roles', function (Blueprint $table) {
-			$table->unsignedBigInteger('company_id');
+			$table->string('company_id');
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('role_id');
 

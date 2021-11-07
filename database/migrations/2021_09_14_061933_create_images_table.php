@@ -14,10 +14,13 @@ class CreateImagesTable extends Migration
 	public function up()
 	{
 		Schema::create('images', function (Blueprint $table) {
-			$table->id()->unique();
+			$table->uuid('id')->primary();
+			
 			$table->string("designation"); // VARCHAR(255)
 			$table->text("url");
+
 			$table->timestamps();
+			$table->timestamp('deleted_at')->nullable();
 		});
 	}
 

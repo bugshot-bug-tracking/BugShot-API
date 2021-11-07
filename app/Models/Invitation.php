@@ -15,8 +15,8 @@ class Invitation extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -56,8 +56,8 @@ class Invitation extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="status_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the status of the invitation."
 	 * )
 	 *
@@ -74,9 +74,16 @@ class Invitation extends Model
 	 *  format="date-time",
 	 * 	description="The last date when the resource was changed."
 	 * )
-	 *
+	 * 
+	 * @OA\Property(
+	 * 	property="deleted_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The deletion date."
+	 * )
+	 * 
 	 */
-	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id"];
+	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id", "deleted_at"];
 
 
 	public function invitable()

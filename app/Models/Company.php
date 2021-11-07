@@ -15,8 +15,8 @@ class Company extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -57,7 +57,7 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "image_id"];
+	protected $fillable = ["designation", "image_id", "deleted_at"];
 
 	public function projects()
 	{

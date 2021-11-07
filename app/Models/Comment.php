@@ -15,8 +15,8 @@ class Comment extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -61,7 +61,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["bug_id", "user_id", "content"];
+	protected $fillable = ["bug_id", "user_id", "content", "deleted_at"];
 
 	protected $touches = ['bug'];
 
