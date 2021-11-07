@@ -15,7 +15,7 @@
     },
     "servers": [
         {
-            "url": "http://localhost:80/api/v1"
+            "url": "http://dev.bugshot.de/api/v1"
         }
     ],
     "paths": {
