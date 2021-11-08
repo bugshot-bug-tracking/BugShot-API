@@ -24,8 +24,10 @@ class CompanyRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "string", "min:5", "max:255", "unique:App\Models\Company,designation"],
-			"image_id" => ["integer", "exists:App\Models\Image,id"]
+			"id" => ["string", "max:36"],
+			"designation" => ["required", "string", "min:5", "max:255"],
+			"base64" => ["string", "nullable"],
+			"color_hex" => ["string", "max:7", "nullable"]
 		];
 	}
 }

@@ -14,11 +14,13 @@ class CreateCompaniesTable extends Migration
 	public function up()
 	{
 		Schema::create('companies', function (Blueprint $table) {
-			$table->id()->unique();
+			$table->uuid('id')->primary();
 			$table->string('designation');
 
-			$table->unsignedBigInteger('image_id')->nullable();
-			$table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
+			$table->string('color_hex')->nullable();
+			$table->string('image_path')->nullable();
+			// $table->string('image_id')->nullable();
+			// $table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
 
 			$table->timestamps();
 			$table->timestamp('deleted_at')->nullable();

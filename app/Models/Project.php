@@ -13,23 +13,37 @@ class Project extends Model
 	use HasFactory;
 
 	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="company_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the company to which the object belongs."
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="image_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	nullable=true,
 	 * 	description="The id of the image that belongs to the project."
 	 * )
@@ -70,7 +84,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "url", "company_id", "image_id"];
+	protected $fillable = ["id", "designation", "url", "company_id", "image_path", "color_hex", "deleted_at"];
 
 	protected $touches = ['company'];
 

@@ -77,8 +77,8 @@ class AttachmentController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="Binary content of file",
@@ -229,8 +229,8 @@ class AttachmentController extends Controller
 	 *  			@OA\Property(
 	 *                  description="Binary content of file",
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="Binary content of file",

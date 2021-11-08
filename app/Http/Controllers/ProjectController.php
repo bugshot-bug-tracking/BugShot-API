@@ -9,10 +9,12 @@ use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
+use App\Services\ImageService;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -94,13 +96,18 @@ class ProjectController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="company_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the project (optional)",
+	 *                  property="base64",
+	 *                  type="string",
 	 *              ),
 	 *              required={"designation","url","company_id"}
 	 *          )
@@ -138,19 +145,42 @@ class ProjectController extends Controller
 	 * @param  \Illuminate\Http\ProjectRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(ProjectRequest $request)
+	public function store(ProjectRequest $request, ImageService $imageService)
 	{
-		$project = Project::create($request->all());
+		// Check if the project comes with an image (or a color)
+		$image_path = NULL;
+		if($request->base64 != NULL) {
+			$image_path = $imageService->store($request->base64);
+		}
 
+		// Check if the the request already contains a UUID for the project
+        if($request->id == NULL) {
+            $id = (string) Str::uuid();
+        } else {
+            $id = $request->id;
+        }
+
+		// Store the new project in the database
+		$project = Project::create([
+			"id" => $id,
+			"company_id" => $request->company_id,
+			"designation" => $request->designation,
+			"image_path" => $image_path,
+			"color_hex" => $request->color_hex,
+			"url" => $request->url
+		]);
+
+		// Store the respective role
 		$projectUserRole = ProjectUserRole::create([
 			"project_id" => $project->id,
 			"user_id" => Auth::id(),
 			"role_id" => 1 // Owner
 		]);
 
-		$defaultStatuses = ['Backlog', 'To Do', 'Doing', 'Done'];
+		$defaultStatuses = ['Backlog', 'ToDo', 'Doing', 'Done'];
 		foreach ($defaultStatuses as $status) {
 			Status::create([
+				"id" => (string) Str::uuid(),
 				"designation" => $status,
 				"project_id" => $project->id
 			]);
@@ -213,7 +243,7 @@ class ProjectController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/project/{id}",
 	 *	tags={"Project"},
 	 *	summary="Update a project.",
@@ -254,13 +284,18 @@ class ProjectController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="company_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the company (optional)",
+	 *                  property="base64",
+	 *                  type="string",
 	 *              ),
 	 *              required={"designation","url","company_id"}
 	 *          )
@@ -303,9 +338,27 @@ class ProjectController extends Controller
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(ProjectRequest $request, Project $project)
+	public function update(ProjectRequest $request, Project $project, ImageService $imageService)
 	{
-		$project->update($request->all());
+		// Check if the project comes with an image (or a color)
+		$image_path = NULL;
+		if($request->base64 != NULL) {
+			$image_path = $imageService->store($request->base64);
+			$color_hex = NULL;
+		} else {
+			$color_hex = $request->color_hex;
+			$image_path = NULL;
+		}
+
+		// Store the new project in the database
+		$project->update([
+			"company_id" => $request->company_id,
+			"designation" => $request->designation,
+			"image_path" => $image_path,
+			"color_hex" => $request->color_hex,
+			"url" => $request->url
+		]);
+
 		return new ProjectResource($project);
 	}
 

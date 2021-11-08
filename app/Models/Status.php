@@ -13,10 +13,24 @@ class Status extends Model
 	use HasFactory;
 
 	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -28,8 +42,8 @@ class Status extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="project_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
 	 *
@@ -47,9 +61,16 @@ class Status extends Model
 	 * 	description="The last date when the resource was changed."
 	 * )
 	 *
+	 * @OA\Property(
+	 * 	property="deleted_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The deletion date."
+	 * )
+	 *
 	 */
 
-	protected $fillable = ["designation", "project_id"];
+	protected $fillable = ["id", "designation", "project_id", "deleted_at"];
 
 	protected $touches = ['project'];
 

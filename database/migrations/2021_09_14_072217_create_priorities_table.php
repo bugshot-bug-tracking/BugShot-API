@@ -15,6 +15,7 @@ class CreatePrioritiesTable extends Migration
 	{
 		Schema::create('priorities', function (Blueprint $table) {
 			$table->id()->unique();
+			
 			$table->string('designation');
 		});
 	}

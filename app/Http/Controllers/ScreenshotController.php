@@ -76,8 +76,8 @@ class ScreenshotController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="position_x",
@@ -251,8 +251,8 @@ class ScreenshotController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="position_x",

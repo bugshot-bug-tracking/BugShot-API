@@ -12,11 +12,26 @@ class Company extends Model
 {
 	use HasFactory;
 
+    /**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -28,8 +43,8 @@ class Company extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="image_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	nullable=true,
 	 * 	description="The id of the image that belongs to the company."
 	 * )
@@ -57,16 +72,11 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "image_id"];
+	protected $fillable = ["id", "designation", "image_path", "color_hex", "deleted_at"];
 
 	public function projects()
 	{
 		return $this->hasMany(Project::class);
-	}
-
-	public function images()
-	{
-		return $this->belongsTo(Image::class, "image_id");
 	}
 
 	public function invitations()

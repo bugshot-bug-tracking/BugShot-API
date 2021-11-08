@@ -14,7 +14,7 @@ class CreateProjectUserRolesTable extends Migration
 	public function up()
 	{
 		Schema::create('project_user_roles', function (Blueprint $table) {
-			$table->unsignedBigInteger('project_id');
+			$table->string('project_id');
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('role_id');
 

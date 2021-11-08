@@ -14,13 +14,15 @@ class CreateProjectsTable extends Migration
 	public function up()
 	{
 		Schema::create('projects', function (Blueprint $table) {
-			$table->id()->unique();
+			$table->uuid('id')->primary();
 
-			$table->unsignedBigInteger('company_id');
+			$table->string('company_id');
 			$table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
-			$table->unsignedBigInteger('image_id')->nullable();
-			$table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
+			$table->string('color_hex')->nullable();
+			$table->string('image_path')->nullable();
+			// $table->string('image_id')->nullable();
+			// $table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
 
 			$table->string('designation');
 			$table->text('url');

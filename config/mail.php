@@ -92,8 +92,24 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'tech@bugshot.de'),
+        'name' => env('MAIL_FROM_NAME', 'BugShot'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Global "Reply To" Address
+    |--------------------------------------------------------------------------
+    |
+    | You may wish for all your sent e-mails that the answer is send to a 
+    | specific address. Here, you may specify a name and address that is
+    | used globally for all e-mails that are sent by your application.
+    |
+    */
+
+    'reply_to' => [
+        'address' => env('MAIL_REPLYTO_ADDRESS', 'tech@bugshot.de'),
+        'name' => env('MAIL_REPLYTO_NAME', 'BugShot'),
     ],
 
     /*

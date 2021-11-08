@@ -8,9 +8,11 @@ use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\InvitationResource;
+use App\Services\ImageService;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -86,9 +88,14 @@ class CompanyController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the company (optional)",
+	 *                  property="base64",
+	 *                  type="string",
 	 *              ),
 	 *              required={"designation"}
 	 *          )
@@ -126,10 +133,30 @@ class CompanyController extends Controller
 	 * @param  \Illuminate\Http\CompanyRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(CompanyRequest $request)
-	{
-		$company = Company::create($request->all());
+	public function store(CompanyRequest $request, ImageService $imageService)
+	{	
+		// Check if the company comes with an image (or a color)
+		$image_path = NULL;
+		if($request->base64 != NULL) {
+			$image_path = $imageService->store($request->base64);
+		}
 
+		// Check if the the request already contains a UUID for the company
+        if($request->id == NULL) {
+            $id = (string) Str::uuid();
+        } else {
+            $id = $request->id;
+        }
+
+		// Store the new company in the database
+		$company = Company::create([
+			"id" => $id,
+			"designation" => $request->designation,
+			"image_path" => $image_path,
+			"color_hex" => $request->color_hex,
+		]);
+		
+		// Store the respective role
 		$companyUserRole = CompanyUserRole::create([
 			"company_id" => $company->id,
 			"user_id" => Auth::id(),
@@ -193,7 +220,7 @@ class CompanyController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/company/{id}",
 	 *	tags={"Company"},
 	 *	summary="Update a company.",
@@ -228,9 +255,14 @@ class CompanyController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the company (optional)",
+	 *                  property="base64",
+	 *                  type="string",
 	 *              ),
 	 *              required={"designation"}
 	 *          )
@@ -273,9 +305,25 @@ class CompanyController extends Controller
 	 * @param  \App\Models\Company  $company
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(CompanyRequest $request, Company $company)
+	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
 	{
-		$company->update($request->all());
+		// Check if the company comes with an image (or a color)
+		$image_path = NULL;
+		if($request->base64 != NULL) {
+			$image_path = $imageService->store($request->base64);
+			$color_hex = NULL;
+		} else {
+			$color_hex = $request->color_hex;
+			$image_path = NULL;
+		}
+
+		// Update the company
+		$company->update([
+            'designation' => $request->designation,
+            'image_path' => $image_path,
+			'color_hex' => $color_hex
+        ]);
+		
 		return new CompanyResource($company);
 	}
 

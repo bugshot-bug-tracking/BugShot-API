@@ -15,8 +15,8 @@ class CompanyUserRole extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="company_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the company."
 	 * )
 	 *

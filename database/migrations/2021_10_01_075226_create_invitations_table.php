@@ -14,7 +14,7 @@ class CreateInvitationsTable extends Migration
 	public function up()
 	{
 		Schema::create('invitations', function (Blueprint $table) {
-			$table->id();
+			$table->uuid('id')->primary();
 
 			$table->unsignedBigInteger('sender_id');
 			$table->unsignedBigInteger('target_id');
@@ -29,6 +29,7 @@ class CreateInvitationsTable extends Migration
 			$table->foreign('status_id')->references('id')->on('invitation_statuses')->onDelete('cascade');
 
 			$table->timestamps();
+			$table->timestamp('deleted_at')->nullable();
 		});
 	}
 

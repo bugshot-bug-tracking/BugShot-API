@@ -19,7 +19,8 @@ class CompanyResource extends JsonResource
 			"type" => "Company",
 			"attributes" => [
 				"designation" => $this->designation,
-				"image_id" => $this->image_id
+				"image_path" => $this->image_path,
+				"color_hex" => $this->color_hex
 			]
 		];
 	}

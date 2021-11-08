@@ -14,9 +14,9 @@ class CreateAttachmentsTable extends Migration
 	public function up()
 	{
 		Schema::create('attachments', function (Blueprint $table) {
-			$table->id();
+			$table->uuid('id')->primary();
 
-			$table->unsignedBigInteger('bug_id');
+			$table->string('bug_id');
 			$table->foreign('bug_id')->references('id')->on('bugs')->onDelete('cascade');
 
 			$table->string('designation');
