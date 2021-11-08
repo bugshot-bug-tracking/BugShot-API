@@ -2584,6 +2584,25 @@
                 ],
                 "summary": "All projects.",
                 "operationId": "allProjects",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "company_id"
+                                ],
+                                "properties": {
+                                    "company_id": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success",

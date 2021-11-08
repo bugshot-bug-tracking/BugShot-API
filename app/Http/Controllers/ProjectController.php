@@ -33,6 +33,22 @@ class ProjectController extends Controller
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 
+	 * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="company_id",
+	 * 					type="string",
+	 *  				maxLength=255,
+	 *              ),
+	 *              required={"company_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
