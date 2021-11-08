@@ -23,8 +23,11 @@ class ProjectResource extends JsonResource
 				"company" => [
 					"id" => $this->company_id,
 					"designation" => $this->company->designation,
+					"image_path" => $this->image_path,
+					"color_hex" => $this->color_hex
 				],
-				"image_id" => $this->image_id
+				"image_path" => $this->image_path,
+				"color_hex" => $this->color_hex
 			]
 		];
 	}
