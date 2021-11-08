@@ -14,12 +14,20 @@ class CompanyResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		// Get and transform the stored company image back to a base64 if it exists
+		$base64 = NULL;
+		if($this->image_path != NULL) {
+			$path = "storage" . $this->image_path;
+			$data = file_get_contents($path);
+			$base64 = base64_encode($data);
+		}
+
 		return [
 			"id" => $this->id,
 			"type" => "Company",
 			"attributes" => [
 				"designation" => $this->designation,
-				"image_path" => $this->image_path,
+				"base64" => $base64,
 				"color_hex" => $this->color_hex
 			]
 		];

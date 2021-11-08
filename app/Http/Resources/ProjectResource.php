@@ -14,6 +14,22 @@ class ProjectResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		// Get and transform the stored project image back to a base64 if it exists
+		$base64 = NULL;
+		if($this->image_path != NULL) {
+			$path = "storage" . $this->image_path;
+			$data = file_get_contents($path);
+			$base64 = base64_encode($data);
+		}
+
+		// Get and transform the stored company image back to a base64 if it exists
+		$companyBase64 = NULL;
+		if($this->company->image_path != NULL) {
+			$companyPath = "storage" . $this->company->image_path;
+			$companyData = file_get_contents($companyPath);
+			$companyBase64 = base64_encode($companyData);
+		}
+
 		return [
 			"id" => $this->id,
 			"type" => "Project",
@@ -23,8 +39,11 @@ class ProjectResource extends JsonResource
 				"company" => [
 					"id" => $this->company_id,
 					"designation" => $this->company->designation,
+					"base64" => $base64,
+					"color_hex" => $this->company->color_hex
 				],
-				"image_id" => $this->image_id
+				"base64" => $companyBase64,
+				"color_hex" => $this->color_hex
 			]
 		];
 	}
