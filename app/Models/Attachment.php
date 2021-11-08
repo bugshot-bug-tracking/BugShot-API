@@ -21,8 +21,8 @@ class Attachment extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="bug_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the bug to which the object belongs."
 	 * )
 	 *

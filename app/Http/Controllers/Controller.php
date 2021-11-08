@@ -15,8 +15,8 @@ class Controller extends BaseController
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Bugshot API Documentation",
- *      description="OpenApi documentation using swagger for Bugshot project.",
+ *      title="BugShot API Documentation",
+ *      description="OpenApi documentation using swagger for BugShot project.",
  * 		termsOfService="https://www.google.ro/",
  *      @OA\Contact(
  *          email="r.memetea@proxima-idea.com"

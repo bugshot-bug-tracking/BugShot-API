@@ -19,8 +19,10 @@ class CreateProjectsTable extends Migration
 			$table->string('company_id');
 			$table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 
-			$table->string('image_id')->nullable();
-			$table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
+			$table->string('color_hex')->nullable();
+			$table->string('image_path')->nullable();
+			// $table->string('image_id')->nullable();
+			// $table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
 
 			$table->string('designation');
 			$table->text('url');

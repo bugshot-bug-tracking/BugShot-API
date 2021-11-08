@@ -76,8 +76,8 @@ class StatusController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="project_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
@@ -211,8 +211,8 @@ class StatusController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="project_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",

@@ -76,8 +76,8 @@ class CommentController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
@@ -213,8 +213,8 @@ class CommentController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="user_id",

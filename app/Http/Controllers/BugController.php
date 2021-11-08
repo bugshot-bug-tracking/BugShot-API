@@ -81,8 +81,8 @@ class BugController extends Controller
 	 *          @OA\Schema(
 	 *  			@OA\Property(
 	 *                  property="project_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",
@@ -262,8 +262,8 @@ class BugController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="project_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 * 					type="string",
+	 *  				maxLength=255,
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",

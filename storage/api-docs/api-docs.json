@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Bugshot API Documentation",
-        "description": "OpenApi documentation using swagger for Bugshot project.",
+        "title": "BugShot API Documentation",
+        "description": "OpenApi documentation using swagger for BugShot project.",
         "termsOfService": "https://www.google.ro/",
         "contact": {
             "email": "r.memetea@proxima-idea.com"
@@ -15,7 +15,7 @@
     },
     "servers": [
         {
-            "url": "http://dev.bugshot.de/api/v1"
+            "url": "http://api.test/api/v1"
         }
     ],
     "paths": {
@@ -76,8 +76,8 @@
                                 ],
                                 "properties": {
                                     "bug_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "file": {
                                         "description": "Binary content of file",
@@ -205,8 +205,8 @@
                                 "properties": {
                                     "bug_id": {
                                         "description": "Binary content of file",
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "file": {
                                         "description": "Binary content of file",
@@ -579,8 +579,8 @@
                                 ],
                                 "properties": {
                                     "project_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "designation": {
                                         "description": "The bug name",
@@ -742,8 +742,8 @@
                                         "format": "int64"
                                     },
                                     "project_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "designation": {
                                         "description": "The bug name",
@@ -1070,8 +1070,8 @@
                                 ],
                                 "properties": {
                                     "bug_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "content": {
                                         "description": "The message",
@@ -1198,8 +1198,8 @@
                                 ],
                                 "properties": {
                                     "bug_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "user_id": {
                                         "type": "integer",
@@ -1347,9 +1347,13 @@
                                         "description": "The company name",
                                         "type": "string"
                                     },
-                                    "image_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "color_hex": {
+                                        "description": "The hexcode of the color (optional)",
+                                        "type": "string"
+                                    },
+                                    "base64": {
+                                        "description": "The base64 string of the image belonging to the company (optional)",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -1435,7 +1439,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Company"
                 ],
@@ -1473,9 +1477,13 @@
                                         "description": "The company name",
                                         "type": "string"
                                     },
-                                    "image_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "color_hex": {
+                                        "description": "The hexcode of the color (optional)",
+                                        "type": "string"
+                                    },
+                                    "base64": {
+                                        "description": "The base64 string of the image belonging to the company (optional)",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -2635,12 +2643,16 @@
                                         "type": "string"
                                     },
                                     "company_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
-                                    "image_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "color_hex": {
+                                        "description": "The hexcode of the color (optional)",
+                                        "type": "string"
+                                    },
+                                    "base64": {
+                                        "description": "The base64 string of the image belonging to the project (optional)",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -2771,12 +2783,16 @@
                                         "type": "string"
                                     },
                                     "company_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
-                                    "image_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "color_hex": {
+                                        "description": "The hexcode of the color (optional)",
+                                        "type": "string"
+                                    },
+                                    "base64": {
+                                        "description": "The base64 string of the image belonging to the company (optional)",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -3406,8 +3422,8 @@
                                 ],
                                 "properties": {
                                     "bug_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "position_x": {
                                         "type": "integer",
@@ -3552,8 +3568,8 @@
                                 ],
                                 "properties": {
                                     "bug_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "position_x": {
                                         "type": "integer",
@@ -3753,8 +3769,8 @@
                                 ],
                                 "properties": {
                                     "project_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "designation": {
                                         "description": "The message",
@@ -3880,8 +3896,8 @@
                                 ],
                                 "properties": {
                                     "project_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string",
+                                        "maxLength": 255
                                     },
                                     "designation": {
                                         "description": "The message",
@@ -4263,13 +4279,13 @@
             "Attachment": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "bug_id": {
                         "description": "The id of the bug to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The file name.",
@@ -4290,7 +4306,7 @@
                         "type": "string",
                         "format": "date-time"
                     },
-                    "detleted_at": {
+                    "deleted_at": {
                         "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
@@ -4301,13 +4317,13 @@
             "Bug": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "project_id": {
                         "description": "The id of the project to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "user_id": {
                         "description": "The id of the user that created the object.",
@@ -4329,8 +4345,8 @@
                     },
                     "status_id": {
                         "description": "The id of the status to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "priority_id": {
                         "description": "The id of the priority that the bug has.",
@@ -4387,13 +4403,13 @@
             "Comment": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "bug_id": {
                         "description": "The id of the bug to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "user_id": {
                         "description": "The id of the user to which the object belongs.",
@@ -4426,8 +4442,8 @@
             "Company": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The status name.",
@@ -4437,8 +4453,8 @@
                     "image_id": {
                         "nullable": true,
                         "description": "The id of the image that belongs to the company.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -4462,8 +4478,8 @@
                 "properties": {
                     "company_id": {
                         "description": "The id of the company.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "user_id": {
                         "description": "The id of the user.",
@@ -4481,8 +4497,8 @@
             "Image": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The file name.",
@@ -4503,6 +4519,11 @@
                         "description": "The last date when the resource was changed.",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"
@@ -4510,8 +4531,8 @@
             "Invitation": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "sender_id": {
                         "description": "The id of the user who initiated the invitation.",
@@ -4540,8 +4561,8 @@
                     },
                     "status_id": {
                         "description": "The id of the status of the invitation.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -4550,6 +4571,11 @@
                     },
                     "updated_at": {
                         "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
                     }
@@ -4587,19 +4613,19 @@
             "Project": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "company_id": {
                         "description": "The id of the company to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "image_id": {
                         "nullable": true,
                         "description": "The id of the image that belongs to the project.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The status name.",
@@ -4632,8 +4658,8 @@
                 "properties": {
                     "project_id": {
                         "description": "The id of the project.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "user_id": {
                         "description": "The id of the user.",
@@ -4665,13 +4691,13 @@
             "Screenshot": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "bug_id": {
                         "description": "The id of the but to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The screenshot name.",
@@ -4727,8 +4753,8 @@
             "Status": {
                 "properties": {
                     "id": {
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The status name.",
@@ -4737,8 +4763,8 @@
                     },
                     "project_id": {
                         "description": "The id of the project to which the object belongs.",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -4747,6 +4773,11 @@
                     },
                     "updated_at": {
                         "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
                     }
@@ -4791,6 +4822,11 @@
                     },
                     "updated_at": {
                         "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
                     }

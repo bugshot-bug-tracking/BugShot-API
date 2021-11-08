@@ -26,8 +26,9 @@ class ProjectRequest extends FormRequest
 		return [
 			"designation" => ["required", "string", "min:5", "max:255"],
 			"url" => ["required", "url"],
-			"company_id" => ["required", "integer", "exists:App\Models\Company,id"],
-			"image_id" => ["integer", "exists:App\Models\Image,id"]
+			"company_id" => ["required", "string", "exists:App\Models\Company,id"],
+			"base64" => ["string", "nullable"],
+			"color_hex" => ["string", "max:7", "nullable"]
 		];
 	}
 }

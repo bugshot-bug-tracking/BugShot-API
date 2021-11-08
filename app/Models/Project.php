@@ -13,6 +13,20 @@ class Project extends Model
 	use HasFactory;
 
 	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+	/**
 	 * @OA\Property(
 	 * 	property="id",
 	 * 	type="string",
@@ -70,7 +84,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "url", "company_id", "image_id", "deleted_at"];
+	protected $fillable = ["id", "designation", "url", "company_id", "image_path", "color_hex", "deleted_at"];
 
 	protected $touches = ['company'];
 

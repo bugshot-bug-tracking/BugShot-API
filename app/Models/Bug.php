@@ -21,8 +21,8 @@ class Bug extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="project_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
 	 *
@@ -54,8 +54,8 @@ class Bug extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="status_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the status to which the object belongs."
 	 * )
 	 *

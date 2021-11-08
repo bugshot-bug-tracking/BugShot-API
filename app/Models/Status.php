@@ -13,6 +13,20 @@ class Status extends Model
 	use HasFactory;
 
 	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+	/**
 	 * @OA\Property(
 	 * 	property="id",
 	 * 	type="string",
@@ -28,8 +42,8 @@ class Status extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="project_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
 	 *
@@ -56,7 +70,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "project_id", "deleted_at"];
+	protected $fillable = ["id", "designation", "project_id", "deleted_at"];
 
 	protected $touches = ['project'];
 
