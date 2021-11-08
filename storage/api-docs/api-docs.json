@@ -2738,7 +2738,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Project"
                 ],
