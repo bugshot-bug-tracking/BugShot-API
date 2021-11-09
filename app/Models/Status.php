@@ -39,6 +39,13 @@ class Status extends Model
 	 *  maxLength=255,
 	 * 	description="The status name."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="order",
+	 * 	type="integer",
+	 *  format="int32",
+	 * 	description="The status name."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="project_id",
@@ -70,7 +77,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "project_id", "deleted_at"];
+	protected $fillable = ["id", "designation", "order", "project_id", "deleted_at"];
 
 	protected $touches = ['project'];
 
