@@ -201,10 +201,11 @@ class ProjectController extends Controller
 		]);
 
 		$defaultStatuses = ['Backlog', 'ToDo', 'Doing', 'Done'];
-		foreach ($defaultStatuses as $status) {
+		foreach ($defaultStatuses as $key=>$status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
+				"order" => $key++,
 				"project_id" => $project->id
 			]);
 		}
