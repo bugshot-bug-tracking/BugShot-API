@@ -57,83 +57,57 @@ Route::middleware(['auth:sanctum'])->group(
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+	// Route for the chrome extention to check if the visited website has a respective project
 	Route::post('/check-project', [UserController::class, "checkProject"])->name("check-project");
 
-	Route::prefix('user')->group(function () {
-		Route::get("/companies", [UserController::class, "companies"])->name("user.companies");
-		Route::get("/company/{company}/projects", [UserController::class, "companyProjects"])->name("user.company.projects");
-		// ->missing(function (Request $request) { //! need a better solution for the other routes
-		// 	return response()->json([
-		// 		"errors" => [
-		// 			"status" => 404,
-		// 			"source" => $request->getPathInfo(),
-		// 			"detail" => "Company not found."
-		// 		]
-		// 	], 404);
-		// });
+	// Company routes
+	Route::apiResource('/companies', ProjectController::class);
 
-		Route::get("/invitations", [UserController::class, "invitations"])->name("user.invitations");
-		Route::get("/invitations/{status}", [UserController::class, "invitationsByStatus"])->name("user.invitationsByStatus");
-	});
-
+	// Company prefixed routes
 	Route::prefix('company/{company}')->group(function () {
-		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
-		Route::get("/projects", [CompanyController::class, "projects"])->name("company.projects");
+		Route::apiResource('/projects', ProjectController::class);
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 	});
 
+	// Project prefixed routes
 	Route::prefix('project/{project}')->group(function () {
-		Route::get("/statuses", [ProjectController::class, "statuses"])->name("project.statuses");
-		Route::get("/bugs", [ProjectController::class, "bugs"])->name("project.bugs");
-		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
+		Route::apiResource('/statuses', StatusController::class);
 		Route::post("/invite", [ProjectController::class, "invite"])->name("project.invite");
 	});
 
+	// Status prefixed routes
 	Route::prefix('status/{status}')->group(function () {
-		Route::get("/bugs", [StatusController::class, "bugs"])->name("status.bugs");
+		Route::apiResource('/bugs', BugController::class);
 	});
 
+	// Bug prefixed routes
 	Route::prefix('bug/{bug}')->group(function () {
-		Route::get("/attachments", [BugController::class, "attachments"])->name("bug.attachments");
-		Route::get("/screenshots", [BugController::class, "screenshots"])->name("bug.screenshots");
-		Route::get("/comments", [BugController::class, "comments"])->name("bug.comments");
+		Route::apiResource('/comments', CommentController::class);
+		Route::apiResource('/screenshots', ScreenshotController::class);
+		Route::apiResource('/attachments', AttachmentController::class);
 	});
 
+	// Download routes
 	Route::get('/screenshot/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
 	Route::get('/attachment/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
 	Route::get('/image/{image}/download', [ImageController::class, "download"])->name("image.download");
 
+	// Invitation routes
 	Route::prefix('invitation')->group(function () {
 		Route::get("/status", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
 		Route::get("/status/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
-
 		Route::get("/{invitation}", [InvitationController::class, "show"])->name("invitation.show");
 		Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
 		Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("invitation.accept");
 		Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("invitation.decline");
 	});
 
+	// Miscellaneous resource routes
 	Route::apiResources(
 		[
-			'company' => CompanyController::class,
-			'project' => ProjectController::class,
-			'status' => StatusController::class,
-			'bug' => BugController::class,
 			'image' => ImageController::class,
 			'role' => RoleController::class,
 			'priority' => PriorityController::class,
-			'attachment' => AttachmentController::class,
-			'screenshot' => ScreenshotController::class,
-			'comment' => CommentController::class,
-		],
-		// ["missing" => (function (Request $request) {
-		// 	return response()->json([
-		// 		"errors" => [
-		// 			"status" => 404,
-		// 			"source" => $request->getPathInfo(),
-		// 			"detail" => "Resource with specified id not found."
-		// 		]
-		// 	], 404);
-		// })]
+		]
 	);
 });

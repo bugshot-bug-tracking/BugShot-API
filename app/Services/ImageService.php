@@ -30,8 +30,7 @@ class ImageService
                 
             case 'image/png':
                 $filePath .= ".png";
-                break;
-                    
+                break;       
         }
 
         // Store the image in the public storage

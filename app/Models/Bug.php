@@ -13,6 +13,20 @@ class Bug extends Model
 	use HasFactory;
 
 	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
+	/**
 	 * @OA\Property(
 	 * 	property="id",
 	 * 	type="string",
@@ -128,7 +142,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
 
 	protected $touches = ["project", "status"];
 

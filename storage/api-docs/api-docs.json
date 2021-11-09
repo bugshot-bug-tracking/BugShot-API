@@ -698,7 +698,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Bug"
                 ],
@@ -2584,16 +2584,6 @@
                 ],
                 "summary": "All projects.",
                 "operationId": "allProjects",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Company/properties/id"
-                        }
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -4571,8 +4561,8 @@
                     },
                     "status_id": {
                         "description": "The id of the status of the invitation.",
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -4770,6 +4760,11 @@
                         "description": "The status name.",
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "order": {
+                        "description": "The status name.",
+                        "type": "integer",
+                        "format": "int32"
                     },
                     "project_id": {
                         "description": "The id of the project to which the object belongs.",

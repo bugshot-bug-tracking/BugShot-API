@@ -29,6 +29,7 @@ class ProjectResource extends JsonResource
 			$companyData = file_get_contents($companyPath);
 			$companyBase64 = base64_encode($companyData);
 		}
+		$company = $this->company;
 
 		return [
 			"id" => $this->id,
@@ -36,12 +37,18 @@ class ProjectResource extends JsonResource
 			"attributes" => [
 				"designation" => $this->designation,
 				"url" => $this->url,
-				"base64" => $companyBase64,
+				"base64" => $base64,
 				"color_hex" => $this->color_hex,
 				"company_id" => $this->company_id,
 				"bugsTotal" => $this->bugsTotal,
 				"bugsDone" => $this->bugsDone,
 				"statuses" => $this->statuses,
+				"company" => [
+					"id" => $company->id,
+					"designation" => $company->designation,
+					"base64" => $companyBase64,
+					"color_hex" => $company->color_hex
+				],
 				"bugs" => $this->bugs
 			]
 		];
