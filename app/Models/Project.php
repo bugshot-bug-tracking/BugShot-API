@@ -109,7 +109,7 @@ class Project extends Model
      */
 	public function statuses()
 	{
-		return $this->hasMany(Status::class)->where('deleted_at', NULL);
+		return $this->hasMany(Status::class)->where('deleted_at', NULL)->orderBy("order");
 	}
 
 	/**

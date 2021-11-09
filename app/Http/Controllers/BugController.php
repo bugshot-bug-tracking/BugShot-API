@@ -9,6 +9,7 @@ use App\Http\Resources\CommentResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Models\Bug;
 use App\Models\Project;
+use App\Services\ScreenshotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -161,13 +162,31 @@ class BugController extends Controller
 	 * @param  \Illuminate\Http\BugRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(BugRequest $request)
+	public function store(BugRequest $request, ScreenshotService $screenshotService)
 	{
+		dd($request);
 		$inputs = $request->all();
 		$inputs['user_id'] = Auth::id();
 		// set the bug status as the first one of the project
 		$inputs['status_id'] = Project::find($request->project_id)->statuses()->first()->id;
 		$bug = Bug::create($inputs);
+
+
+		// Store the new bug in the database
+		$bug = Bug::create($request->all());
+		
+		// Store the respective role
+		$projectUserRole = ProjectUserRole::create([
+			"project_id" => $project->id,
+			"user_id" => Auth::id(),
+			"role_id" => 1 // Owner
+		]);
+
+		// Stores the attached screenshots of the newly created bug
+		foreach($request->screenshots as $screenshot) {
+			$screenshotService->store($bug->id, $screenshot);
+		}
+
 		return new BugResource($bug);
 	}
 
@@ -225,7 +244,7 @@ class BugController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/bug/{id}",
 	 *	tags={"Bug"},
 	 *	summary="Update a bug.",

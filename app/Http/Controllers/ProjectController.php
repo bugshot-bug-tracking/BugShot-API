@@ -33,15 +33,6 @@ class ProjectController extends Controller
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
-	 *
-	 * 	@OA\Parameter(
-	 *		name="id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
-	 *		)
-	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
