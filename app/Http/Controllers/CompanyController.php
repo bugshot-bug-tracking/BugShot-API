@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Auth;
  */
 class CompanyController extends Controller
 {
-
 	/**
 	 * @OA\Get(
 	 *	path="/company",
@@ -63,9 +62,18 @@ class CompanyController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Request $request)
 	{
-		return CompanyResource::collection(Company::all());
+		// Check if the request includes a timestamp and query the companies accordingly
+        if($request->timestamp == NULL) {
+            $companies =  Auth::user()->companies->where('deleted_at', NULL);
+        } else {
+            $companies = Auth::user()->companies->where([
+                ['companies.updated_at', '>', date('Y-m-d H:i:s', $request->timestamp)]
+            ])->get();
+        }
+
+		return CompanyResource::collection($companies);
 	}
 
 	/**
@@ -127,6 +135,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
+
 	/**
 	 * Store a newly created resource in storage.
 	 *

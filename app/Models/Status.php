@@ -74,11 +74,17 @@ class Status extends Model
 
 	protected $touches = ['project'];
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function project()
 	{
 		return $this->belongsTo(Project::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function bugs()
 	{
 		return $this->hasMany(Bug::class);

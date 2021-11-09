@@ -11,6 +11,7 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
 use App\Services\ImageService;
 use App\Models\Project;
+use App\Models\Company;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
 use Illuminate\Http\Request;
@@ -33,21 +34,14 @@ class ProjectController extends Controller
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 * 
-	 * 	@OA\RequestBody(
-	 *      required=true,
-	 *      @OA\MediaType(
-	 *          mediaType="application/json",
-	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="company_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
-	 *              required={"company_id"}
-	 *          )
-	 *      )
-	 *  ),
+	 * 	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -81,9 +75,22 @@ class ProjectController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Request $request, Company $company)
 	{
-		return ProjectResource::collection(Project::all());
+		if($request->timestamp == NULL) {
+            $projects =  Auth::user()->companies->find($company->id)->projects;
+        } else {
+            $projects =  Auth::user()->companies->find($company->id)->projects->where([
+                ['projects.updated_at', '>', date('Y-m-d H:i:s', $request->timestamp)]
+			]);
+        }
+
+        foreach($projects as $project) {
+			$project->bugsTotal = $project->bugs->count();
+			$project->bugsDone = $project->statuses->last()->bugs->count();
+        }
+
+		return ProjectResource::collection($projects);
 	}
 
 	/**
@@ -255,6 +262,9 @@ class ProjectController extends Controller
 	 */
 	public function show(Project $project)
 	{
+		$project->bugsTotal = $project->bugs->count();
+		$project->bugsDone = $project->statuses->last()->bugs->count();
+
 		return new ProjectResource($project);
 	}
 

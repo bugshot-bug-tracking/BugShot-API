@@ -22,6 +22,7 @@ class CreateStatusesTable extends Migration
 			$table->string('designation');
 
 			$table->timestamps();
+			$table->timestamp('deleted_at')->nullable();
 		});
 	}
 

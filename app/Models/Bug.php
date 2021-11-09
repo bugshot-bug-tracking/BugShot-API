@@ -132,36 +132,57 @@ class Bug extends Model
 
 	protected $touches = ["project", "status"];
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function project()
 	{
 		return $this->belongsTo(Project::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function user()
 	{
 		return $this->belongsTo(User::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function status()
 	{
 		return $this->belongsTo(Status::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function priority()
 	{
 		return $this->belongsTo(Priority::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function screenshots()
 	{
 		return $this->hasMany(Screenshot::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function attachments()
 	{
 		return $this->hasMany(Attachment::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function comments()
 	{
 		return $this->hasMany(Comment::class);

@@ -65,11 +65,17 @@ class Comment extends Model
 
 	protected $touches = ['bug'];
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function user()
 	{
 		return $this->belongsTo(User::class);
