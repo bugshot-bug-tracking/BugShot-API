@@ -88,26 +88,49 @@ class Project extends Model
 
 	protected $touches = ['company'];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'project_user_roles');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function company()
 	{
 		return $this->belongsTo(Company::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function statuses()
 	{
-		return $this->hasMany(Status::class);
+		return $this->hasMany(Status::class)->where('deleted_at', NULL);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function bugs()
 	{
 		return $this->hasMany(Bug::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function images()
 	{
 		return $this->belongsTo(Image::class, "image_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
 	public function invitations()
 	{
 		return $this->morphMany(Invitation::class, "invitable");

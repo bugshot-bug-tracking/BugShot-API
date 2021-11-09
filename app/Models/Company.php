@@ -74,11 +74,25 @@ class Company extends Model
 
 	protected $fillable = ["id", "designation", "image_path", "color_hex", "deleted_at"];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'company_user_roles');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function projects()
 	{
-		return $this->hasMany(Project::class);
+		return $this->hasMany(Project::class)->orderBy('updated_at', 'desc');
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
 	public function invitations()
 	{
 		return $this->morphMany(Invitation::class, "invitable");

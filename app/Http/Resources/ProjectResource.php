@@ -36,14 +36,13 @@ class ProjectResource extends JsonResource
 			"attributes" => [
 				"designation" => $this->designation,
 				"url" => $this->url,
-				"company" => [
-					"id" => $this->company_id,
-					"designation" => $this->company->designation,
-					"base64" => $base64,
-					"color_hex" => $this->company->color_hex
-				],
 				"base64" => $companyBase64,
-				"color_hex" => $this->color_hex
+				"color_hex" => $this->color_hex,
+				"company_id" => $this->company_id,
+				"bugsTotal" => $this->bugsTotal,
+				"bugsDone" => $this->bugsDone,
+				"statuses" => $this->statuses,
+				"bugs" => $this->bugs
 			]
 		];
 	}

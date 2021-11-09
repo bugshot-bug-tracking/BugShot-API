@@ -56,8 +56,8 @@ class Invitation extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="status_id",
-	 * 	type="string",
-	 *  maxLength=255,
+	 * 	type="integer",
+	 *  format="int64",
 	 * 	description="The id of the status of the invitation."
 	 * )
 	 *
@@ -85,27 +85,41 @@ class Invitation extends Model
 	 */
 	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id", "deleted_at"];
 
-
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
 	public function invitable()
 	{
 		return $this->morphTo();
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function sender()
 	{
 		return $this->belongsTo(User::class, "sender_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function target()
 	{
 		return $this->belongsTo(User::class, "target_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function role()
 	{
 		return $this->belongsTo(Role::class, "role_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function status()
 	{
 		return $this->belongsTo(InvitationStatus::class, "status_id");

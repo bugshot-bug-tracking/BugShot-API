@@ -98,6 +98,9 @@ class Screenshot extends Model
 
 	protected $touches = ["bug"];
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);
