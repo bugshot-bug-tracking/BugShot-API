@@ -64,38 +64,39 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::apiResource('/companies', ProjectController::class);
 
 	// Company prefixed routes
-	Route::prefix('company/{company}')->group(function () {
+	Route::prefix('companies/{company}')->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 	});
 
 	// Project prefixed routes
-	Route::prefix('project/{project}')->group(function () {
+	Route::prefix('projects/{project}')->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
+		Route::apiResource('/bugs', BugController::class);
 		Route::post("/invite", [ProjectController::class, "invite"])->name("project.invite");
 	});
 
 	// Status prefixed routes
-	Route::prefix('status/{status}')->group(function () {
-		Route::apiResource('/bugs', BugController::class);
+	Route::prefix('statuses/{status}')->group(function () {
+		// Route::apiResource('/bugs', BugController::class);
 	});
 
 	// Bug prefixed routes
-	Route::prefix('bug/{bug}')->group(function () {
+	Route::prefix('bugs/{bug}')->group(function () {
 		Route::apiResource('/comments', CommentController::class);
 		Route::apiResource('/screenshots', ScreenshotController::class);
 		Route::apiResource('/attachments', AttachmentController::class);
 	});
 
 	// Download routes
-	Route::get('/screenshot/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
-	Route::get('/attachment/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
-	Route::get('/image/{image}/download', [ImageController::class, "download"])->name("image.download");
+	Route::get('/screenshots/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
+	Route::get('/attachments/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
+	Route::get('/images/{image}/download', [ImageController::class, "download"])->name("image.download");
 
 	// Invitation routes
-	Route::prefix('invitation')->group(function () {
-		Route::get("/status", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
-		Route::get("/status/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
+	Route::prefix('invitations')->group(function () {
+		Route::get("/statuses", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
+		Route::get("/statuses/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
 		Route::get("/{invitation}", [InvitationController::class, "show"])->name("invitation.show");
 		Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
 		Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("invitation.accept");
@@ -105,9 +106,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	// Miscellaneous resource routes
 	Route::apiResources(
 		[
-			'image' => ImageController::class,
-			'role' => RoleController::class,
-			'priority' => PriorityController::class,
+			'images' => ImageController::class,
+			'roles' => RoleController::class,
+			'priorities' => PriorityController::class,
 		]
 	);
 });
