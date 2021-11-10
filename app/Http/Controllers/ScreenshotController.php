@@ -17,7 +17,7 @@ class ScreenshotController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/screenshot",
+	 *	path="/screenshots",
 	 *	tags={"Screenshot"},
 	 *	summary="All screenshots.",
 	 *	operationId="allScreenshots",
@@ -168,7 +168,7 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/screenshot/{id}",
+	 *	path="/screenshots/{id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Show one screenshots.",
 	 *	operationId="showScreenshot",
@@ -221,7 +221,7 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/screenshot/{id}",
+	 *	path="/screenshots/{id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Update one screenshots.",
 	 *	operationId="updateScreenshot",
@@ -350,7 +350,7 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/screenshot/{id}",
+	 *	path="/screenshots/{id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Delete one screenshots.",
 	 *	operationId="deleteScreenshot",
@@ -401,7 +401,7 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/screenshot/{id}/download",
+	 *	path="/screenshots/{id}/download",
 	 *	tags={"Screenshot"},
 	 *	summary="Download one screenshots. (Not Working In Swagger.)",
 	 *	operationId="downloadScreenshot",

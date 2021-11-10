@@ -19,13 +19,23 @@
         }
     ],
     "paths": {
-        "/attachment": {
+        "/bugs/{bug_id}/attachments ": {
             "get": {
                 "tags": [
                     "Attachment"
                 ],
                 "summary": "All attachments.",
                 "operationId": "allAttachments",
+                "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -65,6 +75,16 @@
                 ],
                 "summary": "Store one attachment.",
                 "operationId": "storeAttachment",
+                "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -121,7 +141,7 @@
                 ]
             }
         },
-        "/attachment/{id}": {
+        "/bugs/{bug_id}/attachments/{attachment_id}": {
             "get": {
                 "tags": [
                     "Attachment"
@@ -130,7 +150,15 @@
                 "operationId": "showAttachment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "attachment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -176,7 +204,15 @@
                 "operationId": "updateAttachment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "attachment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -260,7 +296,15 @@
                 "operationId": "deleteAttachment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "attachment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -292,7 +336,7 @@
                 ]
             }
         },
-        "/attachment/{id}/download": {
+        "/attachments/{attachment_id}/download": {
             "get": {
                 "tags": [
                     "Attachment"
@@ -301,7 +345,7 @@
                 "operationId": "downloadAttachment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "attachment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -519,7 +563,7 @@
                 ]
             }
         },
-        "/bug": {
+        "/projects/{project_id}/bugs": {
             "get": {
                 "tags": [
                     "Bug"
@@ -565,6 +609,16 @@
                 ],
                 "summary": "Store one bug.",
                 "operationId": "storeBug",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -651,7 +705,7 @@
                 ]
             }
         },
-        "/bug/{id}": {
+        "/projects/{project_id}/bugs/{bug_id}": {
             "get": {
                 "tags": [
                     "Bug"
@@ -660,7 +714,15 @@
                 "operationId": "showBug",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -706,7 +768,15 @@
                 "operationId": "updateBug",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -828,7 +898,15 @@
                 "operationId": "deleteBug",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -860,7 +938,7 @@
                 ]
             }
         },
-        "/bug/{id}/screenshots": {
+        "/bugs/{bug_id}/screenshots": {
             "get": {
                 "tags": [
                     "Bug"
@@ -869,7 +947,7 @@
                 "operationId": "allBugsScreenshots",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -911,7 +989,7 @@
                 ]
             }
         },
-        "/bug/{id}/attachments": {
+        "/bugs/{bug_id}/attachments": {
             "get": {
                 "tags": [
                     "Bug"
@@ -920,7 +998,7 @@
                 "operationId": "allBugsAttachments",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -962,7 +1040,7 @@
                 ]
             }
         },
-        "/bug/{id}/comments": {
+        "/bugs/{bug_id}/comments": {
             "get": {
                 "tags": [
                     "Bug"
@@ -971,7 +1049,7 @@
                 "operationId": "allBugsComments",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1011,47 +1089,6 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/comment": {
-            "get": {
-                "tags": [
-                    "Comment"
-                ],
-                "summary": "All comments.",
-                "operationId": "allComments",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Comment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
             },
             "post": {
                 "tags": [
@@ -1059,6 +1096,16 @@
                 ],
                 "summary": "Store one comment.",
                 "operationId": "storeComment",
+                "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1114,7 +1161,7 @@
                 ]
             }
         },
-        "/comment/{id}": {
+        "/bugs/{bug_id}/comments/{comment_id}": {
             "get": {
                 "tags": [
                     "Comment"
@@ -1123,7 +1170,15 @@
                 "operationId": "showComment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "comment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1169,7 +1224,15 @@
                 "operationId": "updateComment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "comment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1256,7 +1319,15 @@
                 "operationId": "deleteComment",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "comment_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1288,7 +1359,7 @@
                 ]
             }
         },
-        "/company": {
+        "/companies": {
             "get": {
                 "tags": [
                     "Company"
@@ -1392,7 +1463,7 @@
                 ]
             }
         },
-        "/company/{id}": {
+        "/companies/{company_id}": {
             "get": {
                 "tags": [
                     "Company"
@@ -1401,7 +1472,7 @@
                 "operationId": "showCompany",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1447,7 +1518,7 @@
                 "operationId": "updateCompany",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1532,7 +1603,7 @@
                 "operationId": "deleteCompany",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1564,58 +1635,7 @@
                 ]
             }
         },
-        "/company/{id}/projects": {
-            "get": {
-                "tags": [
-                    "Company"
-                ],
-                "summary": "All company projects.",
-                "operationId": "allCompaniesProjects",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Company/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Project"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/company/{id}/users": {
+        "/companies/{company_id}/users": {
             "get": {
                 "tags": [
                     "Company"
@@ -1624,7 +1644,7 @@
                 "operationId": "allCompaniesUsers",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1666,7 +1686,7 @@
                 ]
             }
         },
-        "/company/{id}/invite": {
+        "/companies/{company_id}/invite": {
             "post": {
                 "tags": [
                     "Company"
@@ -1675,7 +1695,7 @@
                 "operationId": "inviteCompany",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -1743,7 +1763,7 @@
                 ]
             }
         },
-        "/image": {
+        "/images": {
             "get": {
                 "tags": [
                     "Image"
@@ -1782,7 +1802,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/image": {
             "post": {
                 "tags": [
                     "Image"
@@ -1840,7 +1862,7 @@
                 ]
             }
         },
-        "/image/{id}": {
+        "/images/{id}": {
             "get": {
                 "tags": [
                     "Image"
@@ -2005,7 +2027,7 @@
                 ]
             }
         },
-        "/image/{id}/download": {
+        "/images/{id}/download": {
             "get": {
                 "tags": [
                     "Image"
@@ -2046,7 +2068,7 @@
                 ]
             }
         },
-        "/invitation/{id}": {
+        "/invitations/{id}": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2133,7 +2155,7 @@
                 ]
             }
         },
-        "/invitation/status": {
+        "/invitations/statuses": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2174,7 +2196,7 @@
                 ]
             }
         },
-        "/invitation/status/{id}": {
+        "/invitations/statuses/{id}": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2222,7 +2244,7 @@
                 ]
             }
         },
-        "/invitation/{id}/accept": {
+        "/invitations/{id}/accept": {
             "post": {
                 "tags": [
                     "Invitation"
@@ -2273,7 +2295,7 @@
                 ]
             }
         },
-        "/invitation/{id}/decline": {
+        "/invitations/{id}/decline": {
             "post": {
                 "tags": [
                     "Invitation"
@@ -2413,7 +2435,7 @@
                 ]
             }
         },
-        "/priority/{id}": {
+        "/priorities/{id}": {
             "get": {
                 "tags": [
                     "Priority"
@@ -2577,13 +2599,23 @@
                 ]
             }
         },
-        "/project": {
+        "/companies/{company_id}/projects": {
             "get": {
                 "tags": [
                     "Project"
                 ],
                 "summary": "All projects.",
                 "operationId": "allProjects",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -2623,6 +2655,16 @@
                 ],
                 "summary": "Store one project.",
                 "operationId": "storeProject",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2641,10 +2683,6 @@
                                     "url": {
                                         "description": "The project url",
                                         "type": "string"
-                                    },
-                                    "company_id": {
-                                        "type": "string",
-                                        "maxLength": 255
                                     },
                                     "color_hex": {
                                         "description": "The hexcode of the color (optional)",
@@ -2691,7 +2729,7 @@
                 ]
             }
         },
-        "/project/{id}": {
+        "/companies/{company_id}/projects/{project_id}": {
             "get": {
                 "tags": [
                     "Project"
@@ -2700,7 +2738,15 @@
                 "operationId": "showProject",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    },
+                    {
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2746,7 +2792,15 @@
                 "operationId": "updateProject",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    },
+                    {
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2841,7 +2895,15 @@
                 "operationId": "deleteProject",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    },
+                    {
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2873,7 +2935,7 @@
                 ]
             }
         },
-        "/project/{id}/statuses": {
+        "/projects/{project_id}/statuses": {
             "get": {
                 "tags": [
                     "Project"
@@ -2882,7 +2944,7 @@
                 "operationId": "allProjectsStatuses",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2924,58 +2986,7 @@
                 ]
             }
         },
-        "/project/{id}/bugs": {
-            "get": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "All project bugs.",
-                "operationId": "allProjectsBugs",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Bug"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/project/{id}/users": {
+        "/projects/{project_id}/users": {
             "get": {
                 "tags": [
                     "Project"
@@ -2984,7 +2995,7 @@
                 "operationId": "allProjectsUsers",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3026,7 +3037,7 @@
                 ]
             }
         },
-        "/project/{id}/invite": {
+        "/projects/{project_id}/invite": {
             "post": {
                 "tags": [
                     "Project"
@@ -3035,7 +3046,7 @@
                 "operationId": "inviteProject",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3103,7 +3114,7 @@
                 ]
             }
         },
-        "/role": {
+        "/roles": {
             "get": {
                 "tags": [
                     "Role"
@@ -3142,7 +3153,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/role": {
             "post": {
                 "tags": [
                     "Role"
@@ -3199,7 +3212,7 @@
                 ]
             }
         },
-        "/role/{id}": {
+        "/roles/{id}": {
             "get": {
                 "tags": [
                     "Role"
@@ -3363,7 +3376,7 @@
                 ]
             }
         },
-        "/screenshot": {
+        "/screenshots": {
             "get": {
                 "tags": [
                     "Screenshot"
@@ -3402,7 +3415,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/screenshot": {
             "post": {
                 "tags": [
                     "Screenshot"
@@ -3483,7 +3498,7 @@
                 ]
             }
         },
-        "/screenshot/{id}": {
+        "/screenshots/{id}": {
             "get": {
                 "tags": [
                     "Screenshot"
@@ -3671,7 +3686,7 @@
                 ]
             }
         },
-        "/screenshot/{id}/download": {
+        "/screenshots/{id}/download": {
             "get": {
                 "tags": [
                     "Screenshot"
@@ -3712,7 +3727,7 @@
                 ]
             }
         },
-        "/status": {
+        "/statuses": {
             "get": {
                 "tags": [
                     "Status"
@@ -3751,7 +3766,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/status": {
             "post": {
                 "tags": [
                     "Status"
@@ -4837,6 +4854,43 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Success",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/Comment"
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad Request"
+            },
+            "401": {
+                "description": "Unauthenticated"
+            },
+            "403": {
+                "description": "Forbidden"
+            },
+            "404": {
+                "description": "Not Found"
+            }
+        },
+        "parameters": {
+            "bug_id": {
+                "name": "bug_id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "$ref": "#/components/schemas/Bug/properties/id"
+                }
             }
         },
         "securitySchemes": {

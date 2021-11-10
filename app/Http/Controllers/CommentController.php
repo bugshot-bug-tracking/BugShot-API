@@ -16,13 +16,22 @@ use Illuminate\Support\Facades\Auth;
 class CommentController extends Controller
 {
 	/**
-	 * @OA\Get(
-	 *	path="/comment",
+	 * @OA\gett(
+	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="All comments.",
 	 *	operationId="allComments",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -62,13 +71,20 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/comment",
+	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="Store one comment.",
 	 *	operationId="storeComment",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -130,14 +146,21 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/comment/{id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Show one comment.",
 	 *	operationId="showComment",
 	 *	security={ {"sanctum": {} }},
-	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -183,14 +206,21 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/comment/{id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Update a comment.",
 	 *	operationId="updateComment",
 	 *	security={ {"sanctum": {} }},
-
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -275,14 +305,21 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/comment/{id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Delete a comment.",
 	 *	operationId="deleteComment",
 	 *	security={ {"sanctum": {} }},
-
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

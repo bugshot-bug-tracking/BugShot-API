@@ -121,12 +121,12 @@ class Project extends Model
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
      */
-	public function images()
-	{
-		return $this->belongsTo(Image::class, "image_id");
-	}
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphMany

@@ -23,7 +23,7 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/bug",
+	 *	path="/projects/{project_id}/bugs",
 	 *	tags={"Bug"},
 	 *	summary="All bugs.",
 	 *	operationId="allBugs",
@@ -56,6 +56,7 @@ class BugController extends Controller
 	 *)
 	 *
 	 **/
+	
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -68,13 +69,21 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/bug",
+	 *	path="/projects/{project_id}/bugs",
 	 *	tags={"Bug"},
 	 *	summary="Store one bug.",
 	 *	operationId="storeBug",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -192,14 +201,23 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/bug/{id}",
+	 *	path="/projects/{project_id}/bugs/{bug_id}",
 	 *	tags={"Bug"},
 	 *	summary="Show one bug.",
 	 *	operationId="showBug",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -245,14 +263,21 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Put(
-	 *	path="/bug/{id}",
+	 *	path="/projects/{project_id}/bugs/{bug_id}",
 	 *	tags={"Bug"},
 	 *	summary="Update a bug.",
 	 *	operationId="updateBug",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -379,14 +404,21 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/bug/{id}",
+	 *	path="/projects/{project_id}/bugs/{bug_id}",
 	 *	tags={"Bug"},
 	 *	summary="Delete a bug.",
 	 *	operationId="deleteBug",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -429,14 +461,14 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/bug/{id}/screenshots",
+	 *	path="/bugs/{bug_id}/screenshots",
 	 *	tags={"Bug"},
 	 *	summary="All bug screenshots.",
 	 *	operationId="allBugsScreenshots",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -484,14 +516,14 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/bug/{id}/attachments",
+	 *	path="/bugs/{bug_id}/attachments",
 	 *	tags={"Bug"},
 	 *	summary="All bug attachments.",
 	 *	operationId="allBugsAttachments",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -539,14 +571,14 @@ class BugController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/bug/{id}/comments",
+	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Bug"},
 	 *	summary="All bug comments.",
 	 *	operationId="allBugsComments",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

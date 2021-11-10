@@ -42,7 +42,13 @@ class ProjectResource extends JsonResource
 				"company_id" => $this->company_id,
 				"bugsTotal" => $this->bugsTotal,
 				"bugsDone" => $this->bugsDone,
-				"statuses" => $this->statuses,
+				"statuses" => $this->statuses->map(function ($status, $key) {
+					return [
+						"id" => $status->id,
+						"designation" => $status->designation,
+						"order" => $status->order
+					];
+				}),
 				"company" => [
 					"id" => $company->id,
 					"designation" => $company->designation,

@@ -1,9 +1,12 @@
 <?php
 
+// Miscellaneous, Helpers, ...
+use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
@@ -14,6 +17,12 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
+
+// Resources
+use App\Http\Resources\UserResource;
+
+// Models
+use App\Models\Company;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,12 +70,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::post('/check-project', [UserController::class, "checkProject"])->name("check-project");
 
 	// Company routes
-	Route::apiResource('/companies', ProjectController::class);
+	Route::apiResource('/companies', CompanyController::class);
 
 	// Company prefixed routes
 	Route::prefix('companies/{company}')->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
+		Route::get('/users', function (Company $company) {
+			return UserResource::collection($company->users);
+		});
 	});
 
 	// Project prefixed routes

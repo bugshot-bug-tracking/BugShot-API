@@ -24,7 +24,7 @@ class InvitationController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/invitation/{id}",
+	 *	path="/invitations/{id}",
 	 *	tags={"Invitation"},
 	 *	summary="Show one invitation.",
 	 *	operationId="showInvitation",
@@ -77,7 +77,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/invitation/{id}",
+	 *	path="/invitations/{id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
@@ -127,7 +127,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/invitation/status",
+	 *	path="/invitations/statuses",
 	 *	tags={"Invitation"},
 	 *	summary="Show all invitation possible statuses.",
 	 *	operationId="showInvitationStatuses",
@@ -166,7 +166,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/invitation/status/{id}",
+	 *	path="/invitations/statuses/{id}",
 	 *	tags={"Invitation"},
 	 *	summary="Show invitation status.",
 	 *	operationId="showInvitationStatus",
@@ -213,7 +213,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/invitation/{id}/accept",
+	 *	path="/invitations/{id}/accept",
 	 *	tags={"Invitation"},
 	 *	summary="Accept one invitation.",
 	 *	operationId="acceptInvitation",
@@ -299,7 +299,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/invitation/{id}/decline",
+	 *	path="/invitations/{id}/decline",
 	 *	tags={"Invitation"},
 	 *	summary="Decline one invitation.",
 	 *	operationId="declineInvitation",

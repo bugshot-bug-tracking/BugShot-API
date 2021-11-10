@@ -56,5 +56,13 @@ class Image extends Model
 	 * 
 	 */
 
-	protected $fillable = ["designation", "url", "deleted_at"];
+	protected $fillable = ["id", "url", "deleted_at"];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+	public function imageable()
+	{
+		return $this->morphTo();
+	}
 }

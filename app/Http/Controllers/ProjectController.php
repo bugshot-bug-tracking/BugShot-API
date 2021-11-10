@@ -28,11 +28,20 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/project",
+	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
+	 * 
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -86,13 +95,20 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/project",
+	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
 	 *	summary="Store one project.",
 	 *	operationId="storeProject",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *
+	 *	 @OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -107,11 +123,6 @@ class ProjectController extends Controller
 	 *                  description="The project url",
 	 *                  property="url",
 	 *                  type="string",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="company_id",
-	 * 					type="string",
-	 *  				maxLength=255,
 	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
@@ -159,14 +170,8 @@ class ProjectController extends Controller
 	 * @param  \Illuminate\Http\ProjectRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(ProjectRequest $request, ImageService $imageService)
+	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
 	{
-		// Check if the project comes with an image (or a color)
-		$image_path = NULL;
-		if($request->base64 != NULL) {
-			$image_path = $imageService->store($request->base64);
-		}
-
 		// Check if the the request already contains a UUID for the project
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -177,15 +182,20 @@ class ProjectController extends Controller
 		// Store the new project in the database
 		$project = Project::create([
 			"id" => $id,
-			"company_id" => $request->company_id,
+			"company_id" => $company->id,
 			"designation" => $request->designation,
-			"image_path" => $image_path,
 			"color_hex" => $request->color_hex,
 			"url" => $request->url
 		]);
 
+		// Check if the project comes with an image (or a color)
+		if($request->base64 != NULL) {
+			$image = $imageService->store($id, $request->base64);
+			$project->image()->save($image);
+		}
+
 		// Store the respective role
-		$projectUserRole = ProjectUserRole::create([
+		ProjectUserRole::create([
 			"project_id" => $project->id,
 			"user_id" => Auth::id(),
 			"role_id" => 1 // Owner
@@ -206,14 +216,23 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/project/{id}",
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Show one project.",
 	 *	operationId="showProject",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -262,14 +281,22 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Put(
-	 *	path="/project/{id}",
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Update a project.",
 	 *	operationId="updateProject",
 	 *	security={ {"sanctum": {} }},
-
+	 *
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -363,6 +390,9 @@ class ProjectController extends Controller
 		if($request->base64 != NULL) {
 			$image_path = $imageService->store($request->base64);
 			$color_hex = NULL;
+			Image::create([
+
+			]);
 		} else {
 			$color_hex = $request->color_hex;
 			$image_path = NULL;
@@ -382,14 +412,21 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/project/{id}",
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Delete a project.",
 	 *	operationId="deleteProject",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -432,14 +469,14 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/project/{id}/statuses",
+	 *	path="/projects/{project_id}/statuses",
 	 *	tags={"Project"},
 	 *	summary="All project statuses.",
 	 *	operationId="allProjectsStatuses",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -487,69 +524,14 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/project/{id}/bugs",
-	 *	tags={"Project"},
-	 *	summary="All project bugs.",
-	 *	operationId="allProjectsBugs",
-	 *	security={ {"sanctum": {} }},
-	 *
-	 *	@OA\Parameter(
-	 *		name="id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Project/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Bug")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 *)
-	 *
-	 **/
-	/**
-	 * Display a list of bugs that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function bugs(Project $project)
-	{
-		return BugResource::collection($project->bugs);
-	}
-
-	/**
-	 * @OA\Get(
-	 *	path="/project/{id}/users",
+	 *	path="/projects/{project_id}/users",
 	 *	tags={"Project"},
 	 *	summary="All project users.",
 	 *	operationId="allProjectsUsers",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -603,14 +585,14 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/project/{id}/invite",
+	 *	path="/projects/{project_id}/invite",
 	 *	tags={"Project"},
 	 *	summary="Invite a user to the project and asign it a role",
 	 *	operationId="inviteProject",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
