@@ -18,12 +18,21 @@ class AttachmentController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/attachment",
+	 *	path="/bugs/{bug_id}/attachments ",
 	 *	tags={"Attachment"},
 	 *	summary="All attachments.",
 	 *	operationId="allAttachments",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -63,13 +72,21 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/attachment",
+	 *	path="/bugs/{bug_id}/attachments ",
 	 *	tags={"Attachment"},
 	 *	summary="Store one attachment.",
 	 *	operationId="storeAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -145,14 +162,22 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/attachment/{id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Show one attachment.",
 	 *	operationId="showAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -198,14 +223,22 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/attachment/{id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Update one attachment.",
 	 *	operationId="updateAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -304,14 +337,22 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/attachment/{id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Delete one attachment.",
 	 *	operationId="deleteAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -355,14 +396,14 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/attachment/{id}/download",
+	 *	path="/attachments/{attachment_id}/download",
 	 *	tags={"Attachment"},
 	 *	summary="Download one attachment. (Not Working In Swagger.)",
 	 *	operationId="downloadAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

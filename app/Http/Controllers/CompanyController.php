@@ -10,6 +10,7 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\InvitationResource;
 use App\Services\ImageService;
 use App\Models\Company;
+use App\Models\Image;
 use App\Models\CompanyUserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -24,7 +25,7 @@ class CompanyController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/company",
+	 *	path="/companies",
 	 *	tags={"Company"},
 	 *	summary="All companies.",
 	 *	operationId="allCompanies",
@@ -66,7 +67,7 @@ class CompanyController extends Controller
 	{
 		// Check if the request includes a timestamp and query the companies accordingly
         if($request->timestamp == NULL) {
-            $companies =  Auth::user()->companies->where('deleted_at', NULL);
+            $companies = Auth::user()->companies->where('deleted_at', NULL);
         } else {
             $companies = Auth::user()->companies->where([
                 ['companies.updated_at', '>', date('Y-m-d H:i:s', $request->timestamp)]
@@ -78,7 +79,7 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/company",
+	 *	path="/companies",
 	 *	tags={"Company"},
 	 *	summary="Store one company.",
 	 *	operationId="storeCompany",
@@ -144,12 +145,6 @@ class CompanyController extends Controller
 	 */
 	public function store(CompanyRequest $request, ImageService $imageService)
 	{	
-		// Check if the company comes with an image (or a color)
-		$image_path = NULL;
-		if($request->base64 != NULL) {
-			$image_path = $imageService->store($request->base64);
-		}
-
 		// Check if the the request already contains a UUID for the company
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -161,12 +156,17 @@ class CompanyController extends Controller
 		$company = Company::create([
 			"id" => $id,
 			"designation" => $request->designation,
-			"image_path" => $image_path,
 			"color_hex" => $request->color_hex,
 		]);
 		
+		// Check if the company comes with an image (or a color)
+		if($request->base64 != NULL) {
+			$image = $imageService->store($id, $request->base64);
+			$company->image()->save($image);
+		}
+
 		// Store the respective role
-		$companyUserRole = CompanyUserRole::create([
+		CompanyUserRole::create([
 			"company_id" => $company->id,
 			"user_id" => Auth::id(),
 			"role_id" => 1 // Owner
@@ -177,14 +177,14 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/company/{id}",
+	 *	path="/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Show one company.",
 	 *	operationId="showCompany",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -230,14 +230,14 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Put(
-	 *	path="/company/{id}",
+	 *	path="/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Update a company.",
 	 *	operationId="updateCompany",
 	 *	security={ {"sanctum": {} }},
 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -338,14 +338,14 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/company/{id}",
+	 *	path="/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Delete a company.",
 	 *	operationId="deleteCompany",
 	 *	security={ {"sanctum": {} }},
 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -388,70 +388,14 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/company/{id}/projects",
-	 *	tags={"Company"},
-	 *	summary="All company projects.",
-	 *	operationId="allCompaniesProjects",
-	 *	security={ {"sanctum": {} }},
-	 *
-	 *	@OA\Parameter(
-	 *		name="id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Project")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 *)
-	 *
-	 **/
-	/**
-	 * Display a list of projects that belongs to the company.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
-	public function projects(Company $company)
-	{
-		$projects = ProjectResource::collection($company->projects);
-		return response()->json($projects, 200);
-	}
-
-	/**
-	 * @OA\Get(
-	 *	path="/company/{id}/users",
+	 *	path="/companies/{company_id}/users",
 	 *	tags={"Company"},
 	 *	summary="All company users.",
 	 *	operationId="allCompaniesUsers",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -507,14 +451,14 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/company/{id}/invite",
+	 *	path="/companies/{company_id}/invite",
 	 *	tags={"Company"},
 	 *	summary="Invite a user to the company and asign it a role",
 	 *	operationId="inviteCompany",
 	 *	security={ {"sanctum": {} }},
 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

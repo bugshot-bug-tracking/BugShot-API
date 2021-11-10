@@ -97,4 +97,12 @@ class Company extends Model
 	{
 		return $this->morphMany(Invitation::class, "invitable");
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 }

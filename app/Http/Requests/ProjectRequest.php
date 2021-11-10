@@ -24,9 +24,9 @@ class ProjectRequest extends FormRequest
 	public function rules()
 	{
 		return [
+			"id" => ["string", "max:36"],
 			"designation" => ["required", "string", "min:5", "max:255"],
 			"url" => ["required", "string", "max:255"],
-			"company_id" => ["required", "string", "exists:App\Models\Company,id"],
 			"base64" => ["string", "nullable"],
 			"color_hex" => ["string", "max:7", "nullable"]
 		];

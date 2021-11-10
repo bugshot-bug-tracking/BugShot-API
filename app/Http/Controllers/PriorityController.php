@@ -122,7 +122,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/priority/{id}",
+	 *	path="/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Show one priority.",
 	 *	operationId="showPriority",
@@ -175,7 +175,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/priority/{id}",
+	 *	path="/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Update a priority.",
 	 *	operationId="updatePriority",
@@ -257,7 +257,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/priority/{id}",
+	 *	path="/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Delete a priority.",
 	 *	operationId="deletePriority",

@@ -17,7 +17,7 @@ class ImageController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/image",
+	 *	path="/images",
 	 *	tags={"Image"},
 	 *	summary="All images.",
 	 *	operationId="allImages",
@@ -132,7 +132,7 @@ class ImageController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/image/{id}",
+	 *	path="/images/{id}",
 	 *	tags={"Image"},
 	 *	summary="Show one images.",
 	 *	operationId="showImage",
@@ -185,7 +185,7 @@ class ImageController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/image/{id}",
+	 *	path="/images/{id}",
 	 *	tags={"Image"},
 	 *	summary="Update one images.",
 	 *	operationId="updateImage",
@@ -279,7 +279,7 @@ class ImageController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/image/{id}",
+	 *	path="/images/{id}",
 	 *	tags={"Image"},
 	 *	summary="Delete one images.",
 	 *	operationId="deleteImage",
@@ -330,7 +330,7 @@ class ImageController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/image/{id}/download",
+	 *	path="/images/{id}/download",
 	 *	tags={"Image"},
 	 *	summary="Download one images. (Not Working In Swagger.)",
 	 *	operationId="downloadImage",

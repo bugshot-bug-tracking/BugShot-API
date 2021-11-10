@@ -17,7 +17,7 @@ class StatusController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/status",
+	 *	path="/statuses",
 	 *	tags={"Status"},
 	 *	summary="All statuses.",
 	 *	operationId="allStatuses",

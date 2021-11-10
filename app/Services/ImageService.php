@@ -3,11 +3,12 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
+use App\Models\Image;
 
 class ImageService
 {
     // Store a newly created image on the server.
-    public function store($base64)
+    public function store($id, $base64)
     {
         // Build the path where the image will be stored
         $storagePath = "/uploads/images/";
@@ -36,6 +37,11 @@ class ImageService
         // Store the image in the public storage
         Storage::disk('public')->put($filePath, base64_decode($base64));
 
-        return $filePath;
+        $image = new Image([
+            "id" => $id,
+            "url" => $filePath
+        ]);
+
+        return $image;
     }
 }
