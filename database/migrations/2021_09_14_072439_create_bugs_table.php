@@ -31,12 +31,12 @@ class CreateBugsTable extends Migration
 			$table->string('designation');
 			$table->text('description')->nullable();
 			$table->text('url');
-
 			$table->string('operating_system')->nullable();
 			$table->string('browser')->nullable();
 			$table->text('selector')->nullable();
 			$table->string('resolution')->nullable();
 			$table->timestamp('deadline')->nullable();
+			$table->smallInteger('order_number')->default(0);
 
 			$table->timestamps();
 			$table->timestamp('deleted_at')->nullable();

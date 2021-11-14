@@ -121,7 +121,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function companies()
     {
-        return $this->belongsToMany(Company::class, 'company_user_roles');
+        return $this->belongsToMany(Company::class, 'company_user_roles')->where("deleted_at", NULL);
     }
 
 	/**
@@ -129,7 +129,16 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_user_roles');
+        return $this->belongsToMany(Project::class, 'project_user_roles')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
     }
+
+		/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function bugs()
+    {
+        return $this->belongsToMany(Bug::class, 'bug_user_roles')->where("deleted_at", NULL)->orderBy('order_number');
+    }
+
 }
 

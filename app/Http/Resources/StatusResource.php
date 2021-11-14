@@ -19,8 +19,9 @@ class StatusResource extends JsonResource
 			"type" => "Status",
 			"attributes" => [
 				"designation" => $this->designation,
-				"order" => $this->order,
-				"project_id" => $this->project_id,
+				"order_number" => $this->order_number,
+				"project_id" => $this->project_id
+				// "bugs" => $this->bugs
 			]
 		];
 	}

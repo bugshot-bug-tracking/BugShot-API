@@ -78,10 +78,11 @@ class ProjectController extends Controller
 	public function index(Request $request, Company $company)
 	{
 		if($request->timestamp == NULL) {
-            $projects =  Auth::user()->companies->find($company->id)->projects;
+            $projects = Auth::user()->projects->where("company_id", $company->id);
         } else {
-            $projects =  Auth::user()->companies->find($company->id)->projects->where([
-                ['projects.updated_at', '>', date('Y-m-d H:i:s', $request->timestamp)]
+            $projects = Auth::user()->projects->where([
+				["company_id", "=", $company->id],
+                ["projects.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
 			]);
         }
 
@@ -189,8 +190,9 @@ class ProjectController extends Controller
 		]);
 
 		// Check if the project comes with an image (or a color)
+		$image = NULL;
 		if($request->base64 != NULL) {
-			$image = $imageService->store($id, $request->base64);
+			$image = $imageService->store($request->base64, $image);
 			$project->image()->save($image);
 		}
 
@@ -206,7 +208,7 @@ class ProjectController extends Controller
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
-				"order" => $key++,
+				"order_number" => $key++,
 				"project_id" => $project->id
 			]);
 		}
@@ -328,11 +330,6 @@ class ProjectController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="company_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
-	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
 	 * 					type="string",
@@ -383,27 +380,24 @@ class ProjectController extends Controller
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(ProjectRequest $request, Project $project, ImageService $imageService)
+	public function update(ProjectRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
 		// Check if the project comes with an image (or a color)
-		$image_path = NULL;
+		$image = $project->image;
 		if($request->base64 != NULL) {
-			$image_path = $imageService->store($request->base64);
+			$image = $imageService->store($request->base64, $image);
+			$image != false ? $project->image()->save($image) : true;
 			$color_hex = NULL;
-			Image::create([
-
-			]);
 		} else {
+			$imageService->destroy($image);
 			$color_hex = $request->color_hex;
-			$image_path = NULL;
 		}
 
 		// Store the new project in the database
 		$project->update([
-			"company_id" => $request->company_id,
+			"company_id" => $company->id,
 			"designation" => $request->designation,
-			"image_path" => $image_path,
-			"color_hex" => $request->color_hex,
+			"color_hex" => $color_hex,
 			"url" => $request->url
 		]);
 
@@ -463,63 +457,11 @@ class ProjectController extends Controller
 	 */
 	public function destroy(Project $project)
 	{
-		$val = $project->delete();
-		return response($val, 204);
-	}
+		$val = $project->update([
+			"deleted_at" => new \DateTime()
+		]);
 
-	/**
-	 * @OA\Get(
-	 *	path="/projects/{project_id}/statuses",
-	 *	tags={"Project"},
-	 *	summary="All project statuses.",
-	 *	operationId="allProjectsStatuses",
-	 *	security={ {"sanctum": {} }},
-	 *
-	 *	@OA\Parameter(
-	 *		name="project_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Project/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Status")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 *)
-	 *
-	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function statuses(Project $project)
-	{
-		return StatusResource::collection($project->statuses);
+		return response($val, 204);
 	}
 
 	/**

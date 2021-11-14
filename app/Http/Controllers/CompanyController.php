@@ -67,11 +67,11 @@ class CompanyController extends Controller
 	{
 		// Check if the request includes a timestamp and query the companies accordingly
         if($request->timestamp == NULL) {
-            $companies = Auth::user()->companies->where('deleted_at', NULL);
+            $companies = Auth::user()->companies;
         } else {
             $companies = Auth::user()->companies->where([
-                ['companies.updated_at', '>', date('Y-m-d H:i:s', $request->timestamp)]
-            ])->get();
+                ["companies.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
+            ]);
         }
 
 		return CompanyResource::collection($companies);
@@ -160,8 +160,9 @@ class CompanyController extends Controller
 		]);
 		
 		// Check if the company comes with an image (or a color)
+		$image = NULL;
 		if($request->base64 != NULL) {
-			$image = $imageService->store($id, $request->base64);
+			$image = $imageService->store($request->base64, $image);
 			$company->image()->save($image);
 		}
 
@@ -317,19 +318,19 @@ class CompanyController extends Controller
 	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the company comes with an image (or a color)
-		$image_path = NULL;
+		$image = $company->image;
 		if($request->base64 != NULL) {
-			$image_path = $imageService->store($request->base64);
+			$image = $imageService->store($request->base64, $image);
+			$image != false ? $company->image()->save($image) : true;
 			$color_hex = NULL;
 		} else {
+			$imageService->destroy($image);
 			$color_hex = $request->color_hex;
-			$image_path = NULL;
 		}
 
 		// Update the company
 		$company->update([
             'designation' => $request->designation,
-            'image_path' => $image_path,
 			'color_hex' => $color_hex
         ]);
 		
@@ -382,7 +383,10 @@ class CompanyController extends Controller
 	 */
 	public function destroy(Company $company)
 	{
-		$val = $company->delete();
+		$val = $company->update([
+			"deleted_at" => new \DateTime()
+		]);
+		
 		return response($val, 204);
 	}
 

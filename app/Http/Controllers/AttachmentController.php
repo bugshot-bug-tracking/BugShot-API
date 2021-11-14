@@ -390,7 +390,10 @@ class AttachmentController extends Controller
 	 */
 	public function destroy(Attachment $attachment)
 	{
-		$val = $attachment->delete();
+		$val = $attachment->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 

@@ -14,11 +14,11 @@ class BugResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$user = $this->user;
+		$users = $this->users;
 		$status = $this->status;
 		$priority = $this->priority;
 		$project = $this->project;
-
+		
 		return [
 			"id" => $this->id,
 			"type" => "Bug",

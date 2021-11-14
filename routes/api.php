@@ -84,13 +84,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
-		Route::apiResource('/bugs', BugController::class);
+		// Route::apiResource('/bugs', BugController::class);
 		Route::post("/invite", [ProjectController::class, "invite"])->name("project.invite");
 	});
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
-		// Route::apiResource('/bugs', BugController::class);
+		Route::apiResource('/bugs', BugController::class);
 	});
 
 	// Bug prefixed routes

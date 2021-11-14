@@ -19,7 +19,6 @@ class CreateScreenshotsTable extends Migration
 			$table->string('bug_id');
 			$table->foreign('bug_id')->references('id')->on('bugs')->onDelete('cascade');
 
-			$table->string('designation');
 			$table->text('url');
 
 			$table->integer('position_x')->nullable();

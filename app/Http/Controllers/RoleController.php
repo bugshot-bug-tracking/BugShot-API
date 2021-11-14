@@ -301,7 +301,10 @@ class RoleController extends Controller
 	 */
 	public function destroy(Role $role)
 	{
-		$val = $role->delete();
+		$val = $role->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 }

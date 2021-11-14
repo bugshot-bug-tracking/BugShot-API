@@ -20,7 +20,7 @@ class CompanyResource extends JsonResource
 			"attributes" => [
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
-				"users" => $this->users
+				// "users" => $this->users
 			]
 		];
 	}
