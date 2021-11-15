@@ -684,27 +684,24 @@
                                     "screenshots": {
                                         "type": "array",
                                         "items": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "position_x": {
-                                                        "type": "string"
-                                                    },
-                                                    "position_y": {
-                                                        "type": "string"
-                                                    },
-                                                    "web_position_x": {
-                                                        "type": "string"
-                                                    },
-                                                    "web_position_y": {
-                                                        "type": "string"
-                                                    },
-                                                    "base64": {
-                                                        "type": "string"
-                                                    }
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
                                                 },
-                                                "type": "object"
-                                            }
+                                                "position_x": {
+                                                    "type": "string"
+                                                },
+                                                "position_y": {
+                                                    "type": "string"
+                                                },
+                                                "web_position_x": {
+                                                    "type": "string"
+                                                },
+                                                "web_position_y": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
                                         }
                                     }
                                 },

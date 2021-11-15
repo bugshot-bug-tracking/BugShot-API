@@ -163,29 +163,26 @@ class BugController extends Controller
 	 *                  property="screenshots",
 	 *                  type="array",
 	 * 					@OA\Items(
-	 * 						type="array",
-	 * 						@OA\Items(
-	 * 							@OA\Property(
-	 *                  			property="position_x",
-	 *                  			type="string"
-	 * 							),
-	 * 							@OA\Property(
-	 *                  			property="position_y",
-	 *                  			type="string"
-	 * 							),
-	 * 							@OA\Property(
-	 *                  			property="web_position_x",
-	 *                  			type="string"
-	 * 							),
-	 * 							@OA\Property(
-	 *                  			property="web_position_y",
-	 *                  			type="string"
-	 * 							),
-	 * 							@OA\Property(
-	 *                  			property="base64",
-	 *                  			type="string"
-	 * 							)
-	 * 						)
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 * 	   					@OA\Property(
+	 *              		    property="position_x",
+	 *              		    type="string"
+	 *              		),
+	 *  	   				@OA\Property(
+	 *              		    property="position_y",
+	 *              		    type="string"
+	 *              		),
+	 * 	   					@OA\Property(
+	 *              		    property="web_position_x",
+	 *              		    type="string"
+	 *              		),
+	 *  	   				@OA\Property(
+	 *              		    property="web_position_y",
+	 *              		    type="string"
+	 *              		)
 	 * 					)
 	 *              ),
 	 *              required={"designation","url","status_id","priority_id",}
@@ -225,7 +222,7 @@ class BugController extends Controller
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService)
-	{dd($request->priority_id);
+	{
 		// Check if the the request already contains a UUID for the bug
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -252,12 +249,12 @@ class BugController extends Controller
 		]);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
-		$screenshots = $request->screenshots;
-		if($screenshots != NULL) {
-			foreach($screenshots as $screenshot) {
-				$screenshotService->store($bug->id, $screenshot);
-			}
-		}
+		// $screenshots = $request->screenshots;
+		// if($screenshots != NULL) {
+		// 	foreach($screenshots as $screenshot) {
+		// 		$screenshotService->store($bug->id, $screenshot);
+		// 	}
+		// }
 		
 		// Store the respective role
 		$bugUserRole = BugUserRole::create([

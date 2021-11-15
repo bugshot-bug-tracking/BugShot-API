@@ -142,7 +142,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
 
 	protected $touches = ["project", "status"];
 
