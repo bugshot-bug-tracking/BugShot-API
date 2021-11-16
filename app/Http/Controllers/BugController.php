@@ -249,12 +249,13 @@ class BugController extends Controller
 		]);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
-		// $screenshots = $request->screenshots;
-		// if($screenshots != NULL) {
-		// 	foreach($screenshots as $screenshot) {
-		// 		$screenshotService->store($bug->id, $screenshot);
-		// 	}
-		// }
+		$screenshots = $request->screenshots;
+		if($screenshots != NULL) {
+			foreach($screenshots as $screenshot) {
+				$screenshot = (object) $screenshot;
+				$screenshotService->store($bug->id, $screenshot);
+			}
+		}
 		
 		// Store the respective role
 		$bugUserRole = BugUserRole::create([
@@ -323,7 +324,7 @@ class BugController extends Controller
 	 * @param  \App\Models\Bug  $bug
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Bug $bug)
+	public function show(Status $status, Bug $bug)
 	{
 		return new BugResource($bug);
 	}
@@ -468,9 +469,24 @@ class BugController extends Controller
 	 * @param  \App\Models\Bug  $bug
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(BugRequest $request, Bug $bug)
+	public function update(BugRequest $request, Status $status, Bug $bug)
 	{
-		$bug->update($request->all());
+		// Update the bug
+		$bug->update([
+			"project_id" => $status->project_id,
+			"status_id" => $status->id,
+			"priority_id" => $request->priority_id,
+			"designation" => $request->designation,
+			"description" => $request->description,
+			"url" => $request->url,
+			"operating_system" => $request->operating_system,
+			"browser" => $request->browser,
+			"selector" => $request->selector,
+			"resolution" => $request->resolution,
+			"deadline" => $request->deadline,
+			"order_number" => $request->order_number
+		]);
+
 		return new BugResource($bug);
 	}
 
@@ -525,7 +541,7 @@ class BugController extends Controller
 	 * @param  \App\Models\Bug  $bug
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug)
+	public function destroy(Status $status, Bug $bug)
 	{
 		$val = $bug->update([
 			"deleted_at" => new \DateTime()

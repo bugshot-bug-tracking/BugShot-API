@@ -144,7 +144,7 @@ class CompanyController extends Controller
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(CompanyRequest $request, ImageService $imageService)
-	{	dd($request);
+	{	
 		// Check if the the request already contains a UUID for the company
         if($request->id == NULL) {
             $id = (string) Str::uuid();

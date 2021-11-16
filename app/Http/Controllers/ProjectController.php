@@ -273,7 +273,7 @@ class ProjectController extends Controller
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Project $project)
+	public function show(Company $company, Project $project)
 	{
 		$project->bugsTotal = $project->bugs->count();
 		$project->bugsDone = $project->statuses->last()->bugs->count();
@@ -393,7 +393,7 @@ class ProjectController extends Controller
 			$color_hex = $request->color_hex;
 		}
 
-		// Store the new project in the database
+		// Update the project
 		$project->update([
 			"company_id" => $company->id,
 			"designation" => $request->designation,
@@ -455,7 +455,7 @@ class ProjectController extends Controller
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Project $project)
+	public function destroy(Company $company, Project $project)
 	{
 		$val = $project->update([
 			"deleted_at" => new \DateTime()
