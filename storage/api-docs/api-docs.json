@@ -563,13 +563,23 @@
                 ]
             }
         },
-        "/projects/{project_id}/bugs": {
+        "/statuses/{status_id}/bugs": {
             "get": {
                 "tags": [
                     "Bug"
                 ],
                 "summary": "All bugs.",
                 "operationId": "allBugs",
+                "parameters": [
+                    {
+                        "name": "status_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Status/properties/id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -611,11 +621,11 @@
                 "operationId": "storeBug",
                 "parameters": [
                     {
-                        "name": "project_id",
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
+                            "$ref": "#/components/schemas/Status/properties/id"
                         }
                     }
                 ],
@@ -625,7 +635,6 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "project_id",
                                     "designation",
                                     "url",
                                     "status_id",
@@ -648,6 +657,10 @@
                                         "description": "The bug url",
                                         "type": "string"
                                     },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
                                     "priority_id": {
                                         "type": "integer",
                                         "format": "int64"
@@ -667,6 +680,29 @@
                                     "deadline": {
                                         "type": "string",
                                         "format": "date-time"
+                                    },
+                                    "screenshots": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
+                                                },
+                                                "position_x": {
+                                                    "type": "string"
+                                                },
+                                                "position_y": {
+                                                    "type": "string"
+                                                },
+                                                "web_position_x": {
+                                                    "type": "string"
+                                                },
+                                                "web_position_y": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -705,7 +741,7 @@
                 ]
             }
         },
-        "/projects/{project_id}/bugs/{bug_id}": {
+        "/statuses/{status_id}/bugs/{bug_id}": {
             "get": {
                 "tags": [
                     "Bug"
@@ -714,11 +750,11 @@
                 "operationId": "showBug",
                 "parameters": [
                     {
-                        "name": "project_id",
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
+                            "$ref": "#/components/schemas/Status/properties/id"
                         }
                     },
                     {
@@ -768,11 +804,11 @@
                 "operationId": "updateBug",
                 "parameters": [
                     {
-                        "name": "project_id",
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
+                            "$ref": "#/components/schemas/Status/properties/id"
                         }
                     },
                     {
@@ -828,6 +864,10 @@
                                         "type": "string"
                                     },
                                     "status_id": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "order_number": {
                                         "type": "integer",
                                         "format": "int64"
                                     },
@@ -898,11 +938,11 @@
                 "operationId": "deleteBug",
                 "parameters": [
                     {
-                        "name": "project_id",
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
+                            "$ref": "#/components/schemas/Status/properties/id"
                         }
                     },
                     {
@@ -938,158 +978,7 @@
                 ]
             }
         },
-        "/bugs/{bug_id}/screenshots": {
-            "get": {
-                "tags": [
-                    "Bug"
-                ],
-                "summary": "All bug screenshots.",
-                "operationId": "allBugsScreenshots",
-                "parameters": [
-                    {
-                        "name": "bug_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Bug/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Screenshot"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/bugs/{bug_id}/attachments": {
-            "get": {
-                "tags": [
-                    "Bug"
-                ],
-                "summary": "All bug attachments.",
-                "operationId": "allBugsAttachments",
-                "parameters": [
-                    {
-                        "name": "bug_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Bug/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Attachment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
         "/bugs/{bug_id}/comments": {
-            "get": {
-                "tags": [
-                    "Bug"
-                ],
-                "summary": "All bug comments.",
-                "operationId": "allBugsComments",
-                "parameters": [
-                    {
-                        "name": "bug_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Bug/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Comment"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
             "post": {
                 "tags": [
                     "Comment"
@@ -2836,10 +2725,6 @@
                                         "description": "The project url",
                                         "type": "string"
                                     },
-                                    "company_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "color_hex": {
                                         "description": "The hexcode of the color (optional)",
                                         "type": "string"
@@ -2914,57 +2799,6 @@
                 "responses": {
                     "204": {
                         "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/projects/{project_id}/statuses": {
-            "get": {
-                "tags": [
-                    "Project"
-                ],
-                "summary": "All project statuses.",
-                "operationId": "allProjectsStatuses",
-                "parameters": [
-                    {
-                        "name": "project_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Status"
-                                    }
-                                }
-                            }
-                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -3727,13 +3561,23 @@
                 ]
             }
         },
-        "/statuses": {
+        "/projects/{project_id}/statuses": {
             "get": {
                 "tags": [
                     "Status"
                 ],
                 "summary": "All statuses.",
                 "operationId": "allStatuses",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -3766,32 +3610,40 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/status": {
+            },
             "post": {
                 "tags": [
                     "Status"
                 ],
                 "summary": "Store one status.",
                 "operationId": "storeStatus",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "project_id",
-                                    "designation"
+                                    "designation",
+                                    "order_number"
                                 ],
                                 "properties": {
-                                    "project_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "designation": {
                                         "description": "The message",
                                         "type": "string"
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "format": "int64"
                                     }
                                 },
                                 "type": "object"
@@ -3830,7 +3682,7 @@
                 ]
             }
         },
-        "/status/{id}": {
+        "/projects/{project_id}/statuses/{status_id}": {
             "get": {
                 "tags": [
                     "Status"
@@ -3839,7 +3691,15 @@
                 "operationId": "showStatus",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3877,7 +3737,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Status"
                 ],
@@ -3885,7 +3745,15 @@
                 "operationId": "updateStatus",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3908,17 +3776,17 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "project_id",
-                                    "designation"
+                                    "designation",
+                                    "order_number"
                                 ],
                                 "properties": {
-                                    "project_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "designation": {
                                         "description": "The message",
                                         "type": "string"
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "format": "int64"
                                     }
                                 },
                                 "type": "object"
@@ -3967,7 +3835,15 @@
                 "operationId": "deleteStatus",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "status_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3978,57 +3854,6 @@
                 "responses": {
                     "204": {
                         "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/status/{id}/bugs": {
-            "get": {
-                "tags": [
-                    "Status"
-                ],
-                "summary": "All status bugs.",
-                "operationId": "allStatusesBugs",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Status/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Bug"
-                                    }
-                                }
-                            }
-                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -4417,6 +4242,26 @@
                 },
                 "type": "object"
             },
+            "BugUserRole": {
+                "properties": {
+                    "bug_id": {
+                        "description": "The id of the bug.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "role_id": {
+                        "description": "The id of the role.",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
             "Comment": {
                 "properties": {
                     "id": {
@@ -4778,7 +4623,7 @@
                         "type": "string",
                         "maxLength": 255
                     },
-                    "order": {
+                    "order_number": {
                         "description": "The status name.",
                         "type": "integer",
                         "format": "int32"

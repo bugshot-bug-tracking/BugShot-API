@@ -121,7 +121,10 @@ class InvitationController extends Controller
 	 */
 	public function destroy(Invitation $invitation)
 	{
-		$val = $invitation->delete();
+		$val = $invitation->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 

@@ -14,12 +14,11 @@ class CreateScreenshotsTable extends Migration
 	public function up()
 	{
 		Schema::create('screenshots', function (Blueprint $table) {
-			$table->uuid('id')->primary();
+			$table->id()->unique();
 
 			$table->string('bug_id');
 			$table->foreign('bug_id')->references('id')->on('bugs')->onDelete('cascade');
 
-			$table->string('designation');
 			$table->text('url');
 
 			$table->integer('position_x')->nullable();

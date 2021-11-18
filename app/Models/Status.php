@@ -41,7 +41,7 @@ class Status extends Model
 	 * )
 	 * 
 	 * @OA\Property(
-	 * 	property="order",
+	 * 	property="order_number",
 	 * 	type="integer",
 	 *  format="int32",
 	 * 	description="The status name."
@@ -77,7 +77,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "order", "project_id", "deleted_at"];
+	protected $fillable = ["id", "designation", "order_number", "project_id", "deleted_at"];
 
 	protected $touches = ['project'];
 
@@ -94,6 +94,6 @@ class Status extends Model
      */
 	public function bugs()
 	{
-		return $this->hasMany(Bug::class);
+		return $this->hasMany(Bug::class)->orderBy("order_number");
 	}
 }

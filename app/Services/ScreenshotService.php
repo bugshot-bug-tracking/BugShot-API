@@ -39,7 +39,6 @@ class ScreenshotService
 
 		Screenshot::create([
 			"bug_id" => $bug_id,
-			"designation" => $screenshot->designation,
 			"url" => $filePath,
 			"position_x" => $screenshot->position_x,
 			"position_y" => $screenshot->position_y,

@@ -301,7 +301,10 @@ class PriorityController extends Controller
 	 */
 	public function destroy(Priority $priority)
 	{
-		$val = $priority->delete();
+		$val = $priority->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 }

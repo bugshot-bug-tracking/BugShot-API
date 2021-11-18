@@ -15,8 +15,8 @@ class Image extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="string",
-	 *  maxLength=255,
+	 * 	type="integer",
+	 *  format="int64",
 	 * )
 	 *
 	 * @OA\Property(
@@ -56,7 +56,7 @@ class Image extends Model
 	 * 
 	 */
 
-	protected $fillable = ["id", "url", "deleted_at"];
+	protected $fillable = ["url", "deleted_at"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

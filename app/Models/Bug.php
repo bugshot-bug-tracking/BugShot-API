@@ -142,7 +142,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
 
 	protected $touches = ["project", "status"];
 
@@ -157,10 +157,10 @@ class Bug extends Model
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function user()
-	{
-		return $this->belongsTo(User::class);
-	}
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'bug_user_roles');
+    }
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

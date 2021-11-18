@@ -14,35 +14,39 @@ class BugResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$user = $this->user;
-		$status = $this->status;
-		$priority = $this->priority;
-		$project = $this->project;
-
+		// $users = $this->users;
+		// $status = $this->status;
+		// $priority = $this->priority;
+		// $project = $this->project;
+		
 		return [
 			"id" => $this->id,
 			"type" => "Bug",
 			"attributes" => [
-				"project" => [
-					"id" => $project->id,
-					"designation" => $project->designation,
-				],
-				"user" => [
-					"id" => $user->id,
-					"first_name" => $user->first_name,
-					"last_name" => $user->last_name,
-				],
+				// "project" => [
+				// 	"id" => $project->id,
+				// 	"designation" => $project->designation,
+				// ],
+				// "user" => [
+				// 	"id" => $user->id,
+				// 	"first_name" => $user->first_name,
+				// 	"last_name" => $user->last_name,
+				// ],
+				"project_id" => $this->project_id,
+				"user_id" => $this->user_id,
 				"designation" => $this->designation,
 				"description" => $this->description,
 				"url" => $this->url,
-				"status" => [
-					"id" => $status->id,
-					"designation" => $status->designation,
-				],
-				"priority" => [
-					"id" => $priority->id,
-					"designation" => $priority->designation,
-				],
+				"status_id" => $this->status_id,
+				// "status" => [
+				// 	"id" => $status->id,
+				// 	"designation" => $status->designation,
+				// ],
+				"priority_id" => $this->priority_id,
+				// "priority" => [
+				// 	"id" => $priority->id,
+				// 	"designation" => $priority->designation,
+				// ],
 				"operating_system" => $this->operating_system,
 				"browser" => $this->browser,
 				"selector" => $this->selector,

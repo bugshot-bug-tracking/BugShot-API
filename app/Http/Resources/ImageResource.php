@@ -14,8 +14,14 @@ class ImageResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$base64 = NULL;
+		if($this->image_path != NULL) {
+			$path = "storage" . $this->image_path;
+			$data = file_get_contents($path);
+			$base64 = base64_encode($data);
+		}
+
 		return [
-			"id" => $this->id,
 			"type" => "Image",
 			"attributes" => [
 				"designation" => $this->designation,

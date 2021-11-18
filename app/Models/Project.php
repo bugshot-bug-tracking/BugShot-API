@@ -109,7 +109,7 @@ class Project extends Model
      */
 	public function statuses()
 	{
-		return $this->hasMany(Status::class)->where('deleted_at', NULL)->orderBy("order");
+		return $this->hasMany(Status::class)->where('deleted_at', NULL)->orderBy("order_number");
 	}
 
 	/**
@@ -125,7 +125,7 @@ class Project extends Model
      */
     public function image()
     {
-        return $this->morphOne(Image::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable')->where('deleted_at', NULL);
     }
 
 	/**

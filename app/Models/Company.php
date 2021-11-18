@@ -103,6 +103,6 @@ class Company extends Model
      */
 	public function image()
     {
-        return $this->morphOne(Image::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable')->where('deleted_at', NULL);
     }
 }

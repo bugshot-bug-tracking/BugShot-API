@@ -15,8 +15,8 @@ class Screenshot extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="string",
-	 *  maxLength=255,
+	 * 	type="integer",
+	 *  format="int64",
 	 * )
 	 *
 	 * @OA\Property(

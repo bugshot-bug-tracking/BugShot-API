@@ -356,7 +356,10 @@ class CommentController extends Controller
 	 */
 	public function destroy(Comment $comment)
 	{
-		$val = $comment->delete();
+		$val = $comment->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 }
