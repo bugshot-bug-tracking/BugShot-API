@@ -64,6 +64,7 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
+// Route::middleware(['auth:sanctum', 'check_version'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Route for the chrome extention to check if the visited website has a respective project
