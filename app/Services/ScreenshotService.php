@@ -7,38 +7,28 @@ use App\Models\Screenshot;
 
 class ScreenshotService
 {
-    // Store a newly created screenshot on the server.
-    public function store($bug_id, $screenshot)
-    {
-        // Build the path where the screenshot will be stored
-        $storagePath = "/uploads/screenshots/";
-        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99));
-        $filePath = $storagePath . $fileName;
+    private $storagePath = "/uploads/screenshots";
 
-        // Get the mime_type of the screenshot and complete building the files path of storage
+    // Store a newly created screenshot on the server.
+    public function store($bug, $screenshot)
+    {
+        // Get the mime_type of the screenshot to build the filename with file extension
         $decodedBase64 = base64_decode($screenshot->base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
+        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
 
-        switch ($mime_type) {
-            case 'image/jpeg':
-                $filePath .= ".jpeg";
-                break;
-            
-            case 'image/gif':
-                $filePath .= ".gif";
-                break;
-                
-            case 'image/png':
-                $filePath .= ".png";
-                break;
-        }
+        // Complete building the path where the screenshot will be stored
+        $project = $bug->project;
+		$company = $project->company;
+        $filePath = $this->storagePath . "/$company->id/$project->id/$bug->id/" . $fileName;
 
         // Store the screenshot in the public storage
-        Storage::disk('public')->put($filePath, base64_decode($screenshot->base64));
+        Storage::disk('public')->put($filePath, $decodedBase64);
 
-		Screenshot::create([
-			"bug_id" => $bug_id,
+        // Create a new screenshot
+		$screenshot = Screenshot::create([
+			"bug_id" => $bug->id,
 			"url" => $filePath,
 			"position_x" => $screenshot->position_x,
 			"position_y" => $screenshot->position_y,
@@ -46,6 +36,6 @@ class ScreenshotService
 			"web_position_y" =>  $screenshot->web_position_y,
 		]);
 
-        return true;
+        return $screenshot;
     }
 }

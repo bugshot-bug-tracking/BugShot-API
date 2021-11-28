@@ -391,7 +391,7 @@ class CompanyController extends Controller
 		return response($val, 204);
 	}
 
-		/**
+	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/image",
 	 *	tags={"Company"},
