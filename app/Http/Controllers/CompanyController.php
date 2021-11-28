@@ -7,6 +7,7 @@ use App\Http\Requests\CompanyRequest;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
 use App\Services\ImageService;
 use App\Models\Company;
@@ -388,6 +389,61 @@ class CompanyController extends Controller
 		]);
 		
 		return response($val, 204);
+	}
+
+		/**
+	 * @OA\Get(
+	 *	path="/companies/{company_id}/image",
+	 *	tags={"Company"},
+	 *	summary="Company image.",
+	 *	operationId="showCompanyImage",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Image")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display the image that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
+	public function image(Company $company, ImageService $imageService)
+	{
+		return new ImageResource($company->image);
 	}
 
 	/**

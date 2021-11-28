@@ -1524,6 +1524,57 @@
                 ]
             }
         },
+        "/companies/{company_id}/image": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Company image.",
+                "operationId": "showCompanyImage",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Image"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/companies/{company_id}/users": {
             "get": {
                 "tags": [
@@ -2799,6 +2850,57 @@
                 "responses": {
                     "204": {
                         "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/projects/{project_id}/image": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Project image.",
+                "operationId": "showProjectImage",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Image"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -4359,8 +4461,8 @@
             "Image": {
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "designation": {
                         "description": "The file name.",
@@ -4553,8 +4655,8 @@
             "Screenshot": {
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "bug_id": {
                         "description": "The id of the but to which the object belongs.",

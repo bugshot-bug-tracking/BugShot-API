@@ -15,21 +15,21 @@ class ProjectResource extends JsonResource
 	public function toArray($request)
 	{
 		// Get and transform the stored project image back to a base64 if it exists
-		$base64 = NULL;
-		if($this->image_path != NULL) {
-			$path = "storage" . $this->image_path;
-			$data = file_get_contents($path);
-			$base64 = base64_encode($data);
-		}
+		// $base64 = NULL;
+		// if($this->image != NULL) {
+		// 	$path = "storage" . $this->image->url;
+		// 	$data = file_get_contents($path);
+		// 	$base64 = base64_encode($data);
+		// }
 
 		// Get and transform the stored company image back to a base64 if it exists
-		$companyBase64 = NULL;
-		if($this->company->image_path != NULL) {
-			$companyPath = "storage" . $this->company->image_path;
-			$companyData = file_get_contents($companyPath);
-			$companyBase64 = base64_encode($companyData);
-		}
-		$company = $this->company;
+		// $companyBase64 = NULL;
+		// if($this->company->image_path != NULL) {
+		// 	$companyPath = "storage" . $this->company->image_path;
+		// 	$companyData = file_get_contents($companyPath);
+		// 	$companyBase64 = base64_encode($companyData);
+		// }
+		// $company = $this->company;
 
 		return [
 			"id" => $this->id,
@@ -37,7 +37,7 @@ class ProjectResource extends JsonResource
 			"attributes" => [
 				"designation" => $this->designation,
 				"url" => $this->url,
-				"base64" => $base64,
+				// "base64" => $base64,
 				"color_hex" => $this->color_hex,
 				"company_id" => $this->company_id,
 				"bugsTotal" => $this->bugsTotal,
