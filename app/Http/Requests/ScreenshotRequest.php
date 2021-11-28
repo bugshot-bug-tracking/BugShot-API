@@ -24,12 +24,10 @@ class ScreenshotRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"bug_id" => ["required", "integer", "exists:App\Models\Bug,id"],
-			"position_x" => ["required", "integer"],
-			"position_y" => ["required", "integer"],
+			"position_x" => ["integer"],
+			"position_y" => ["integer"],
 			"web_position_x" => ["integer"],
-			"web_position_y" => ["integer"],
-			"file" => ["required", "file", "max:5200"],
+			"web_position_y" => ["integer"]
 		];
 	}
 }

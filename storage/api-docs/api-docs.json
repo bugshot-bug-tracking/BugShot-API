@@ -689,16 +689,20 @@
                                                     "type": "string"
                                                 },
                                                 "position_x": {
-                                                    "type": "string"
+                                                    "type": "integer",
+                                                    "format": "int32"
                                                 },
                                                 "position_y": {
-                                                    "type": "string"
+                                                    "type": "integer",
+                                                    "format": "int32"
                                                 },
                                                 "web_position_x": {
-                                                    "type": "string"
+                                                    "type": "integer",
+                                                    "format": "int32"
                                                 },
                                                 "web_position_y": {
-                                                    "type": "string"
+                                                    "type": "integer",
+                                                    "format": "int32"
                                                 }
                                             },
                                             "type": "object"
@@ -1503,6 +1507,57 @@
                 "responses": {
                     "204": {
                         "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/companies/{company_id}/image": {
+            "get": {
+                "tags": [
+                    "Company"
+                ],
+                "summary": "Company image.",
+                "operationId": "showCompanyImage",
+                "parameters": [
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Image"
+                                    }
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "description": "Bad Request"
@@ -2820,6 +2875,57 @@
                 ]
             }
         },
+        "/projects/{project_id}/image": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Project image.",
+                "operationId": "showProjectImage",
+                "parameters": [
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Image"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/projects/{project_id}/users": {
             "get": {
                 "tags": [
@@ -3210,13 +3316,23 @@
                 ]
             }
         },
-        "/screenshots": {
+        "/bugs/{bug_id}/screenshots": {
             "get": {
                 "tags": [
                     "Screenshot"
                 ],
-                "summary": "All screenshots.",
+                "summary": "All screenshots of the bug.",
                 "operationId": "allScreenshots",
+                "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -3249,31 +3365,34 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/screenshot": {
+            },
             "post": {
                 "tags": [
                     "Screenshot"
                 ],
                 "summary": "Store one screenshots.",
                 "operationId": "storeScreenshot",
+                "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
                                     "position_x",
                                     "position_y",
-                                    "file"
+                                    "base64"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "position_x": {
                                         "type": "integer",
                                         "format": "int32"
@@ -3290,10 +3409,8 @@
                                         "type": "integer",
                                         "format": "int32"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -3332,7 +3449,7 @@
                 ]
             }
         },
-        "/screenshots/{id}": {
+        "/bugs/{bug_id}/screenshots/{screenshot_id}": {
             "get": {
                 "tags": [
                     "Screenshot"
@@ -3341,7 +3458,15 @@
                 "operationId": "showScreenshot",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "screenshot_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3387,7 +3512,15 @@
                 "operationId": "updateScreenshot",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "screenshot_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -3407,19 +3540,14 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
                                     "position_x",
                                     "position_y",
-                                    "file"
+                                    "base64"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "position_x": {
                                         "type": "integer",
                                         "format": "int32"
@@ -3436,10 +3564,8 @@
                                         "type": "integer",
                                         "format": "int32"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -3488,7 +3614,15 @@
                 "operationId": "deleteScreenshot",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "screenshot_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -4359,8 +4493,8 @@
             "Image": {
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "designation": {
                         "description": "The file name.",
@@ -4553,8 +4687,8 @@
             "Screenshot": {
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "bug_id": {
                         "description": "The id of the but to which the object belongs.",

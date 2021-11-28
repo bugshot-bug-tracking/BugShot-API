@@ -9,6 +9,7 @@ use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
+use App\Http\Resources\ImageResource;
 use App\Services\ImageService;
 use App\Models\Project;
 use App\Models\Company;
@@ -462,6 +463,61 @@ class ProjectController extends Controller
 		]);
 
 		return response($val, 204);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/image",
+	 *	tags={"Project"},
+	 *	summary="Project image.",
+	 *	operationId="showProjectImage",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Image")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display the image that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function image(Project $project, ImageService $imageService)
+	{
+		return new ImageResource($project->image);
 	}
 
 	/**

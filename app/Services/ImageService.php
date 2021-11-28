@@ -7,6 +7,8 @@ use App\Models\Image;
 
 class ImageService
 {
+    private $storagePath = "/uploads/images";
+
     // Store a newly created image on the server.
     public function store($base64, $image)
     {
@@ -21,32 +23,17 @@ class ImageService
             }
         }
 
-        // Build the path where the image will be stored
-        $storagePath = "/uploads/images/";
-        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99));
-        $filePath = $storagePath . $fileName;
-
-        // Get the mime_type of the image and complete building the files path of storage
+        // Get the mime_type of the image to build the filename with file extension
         $decodedBase64 = base64_decode($base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
+        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
 
-        switch ($mime_type) {
-            case 'image/jpeg':
-                $filePath .= ".jpeg";
-                break;
-            
-            case 'image/gif':
-                $filePath .= ".gif";
-                break;
-                
-            case 'image/png':
-                $filePath .= ".png";
-                break;       
-        }
+        // Complete building the path where the image will be stored
+        $filePath = $this->storagePath . $fileName;
 
         // Store the image in the public storage
-        Storage::disk('public')->put($filePath, base64_decode($base64));
+        Storage::disk('public')->put($filePath, $decodedBase64);
 
         // Create a new image model
         $image = new Image([

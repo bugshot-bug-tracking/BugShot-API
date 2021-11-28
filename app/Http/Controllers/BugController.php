@@ -167,21 +167,25 @@ class BugController extends Controller
 	 *              		    property="base64",
 	 *              		    type="string"
 	 *              		),
-	 * 	   					@OA\Property(
+	 *  					@OA\Property(
 	 *              		    property="position_x",
-	 *              		    type="string"
+	 *              		    type="integer",
+	 *              		    format="int32",
 	 *              		),
-	 *  	   				@OA\Property(
+	 *  					@OA\Property(
 	 *              		    property="position_y",
-	 *              		    type="string"
+	 *              		    type="integer",
+	 *              		    format="int32",
 	 *              		),
-	 * 	   					@OA\Property(
+	 *  					@OA\Property(
 	 *              		    property="web_position_x",
-	 *              		    type="string"
+	 *              		    type="integer",
+	 *              		    format="int32",
 	 *              		),
-	 *  	   				@OA\Property(
+	 *  					@OA\Property(
 	 *              		    property="web_position_y",
-	 *              		    type="string"
+	 *              		    type="integer",
+	 *              		    format="int32",
 	 *              		)
 	 * 					)
 	 *              ),
@@ -253,7 +257,7 @@ class BugController extends Controller
 		if($screenshots != NULL) {
 			foreach($screenshots as $screenshot) {
 				$screenshot = (object) $screenshot;
-				$screenshotService->store($bug->id, $screenshot);
+				$screenshotService->store($bug, $screenshot);
 			}
 		}
 		

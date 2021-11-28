@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ScreenshotRequest;
 use App\Http\Resources\ScreenshotResource;
+use App\Services\ScreenshotService;
 use App\Models\Bug;
 use App\Models\Screenshot;
 use Illuminate\Support\Facades\Storage;
@@ -17,12 +18,21 @@ class ScreenshotController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/screenshots",
+	 *	path="/bugs/{bug_id}/screenshots",
 	 *	tags={"Screenshot"},
-	 *	summary="All screenshots.",
+	 *	summary="All screenshots of the bug.",
 	 *	operationId="allScreenshots",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -55,30 +65,33 @@ class ScreenshotController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Bug $bug)
 	{
-		return ScreenshotResource::collection(Screenshot::all());
+		return ScreenshotResource::collection($bug->screenshots);
 	}
 
 	/**
 	 * @OA\Post(
-	 *	path="/screenshot",
+	 *	path="/bugs/{bug_id}/screenshots",
 	 *	tags={"Screenshot"},
 	 *	summary="Store one screenshots.",
 	 *	operationId="storeScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *  			@OA\Property(
 	 *                  property="position_x",
 	 *                  type="integer",
@@ -99,13 +112,11 @@ class ScreenshotController extends Controller
 	 *                  type="integer",
 	 *                  format="int32",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","position_x","position_y","file"}
+	 *              required={"base64"}
 	 *          )
 	 *      )
 	 *  ),
@@ -141,41 +152,31 @@ class ScreenshotController extends Controller
 	 * @param  \Illuminate\Http\ScreenshotRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(ScreenshotRequest $request)
+	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
 	{
-		$storagePath = "/uploads/screenshots";
-
-		$bug = Bug::where("id", $request->bug_id)->with("project")->get()->first();
-		$project = $bug->project;
-		$company = $project->company;
-
-		$filePath = $storagePath . "/$company->id/$project->id/$bug->id";
-
-		$savedPath = $request->file->store($filePath);
-
-		$screenshot = Screenshot::create([
-			"bug_id" => $request->bug_id,
-			"designation" => $request->file->getClientOriginalName(),
-			"url" => $savedPath,
-			"position_x" => $request->position_x,
-			"position_y" => $request->position_y,
-			"web_position_x" =>  $request->web_position_x,
-			"web_position_y" =>  $request->web_position_y,
-		]);
+		$screenshot = $screenshotService->store($bug, $request);
 
 		return new ScreenshotResource($screenshot);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	path="/screenshots/{id}",
+	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Show one screenshots.",
 	 *	operationId="showScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+ 	 * 	@OA\Parameter(
+	 *		name="screenshot_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -214,21 +215,29 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Screenshot $screenshot)
+	public function show(Bug $bug, Screenshot $screenshot)
 	{
 		return new ScreenshotResource($screenshot);
 	}
 
 	/**
 	 * @OA\Post(
-	 *	path="/screenshots/{id}",
+	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Update one screenshots.",
 	 *	operationId="updateScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="screenshot_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -247,13 +256,8 @@ class ScreenshotController extends Controller
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *  			@OA\Property(
 	 *                  property="position_x",
 	 *                  type="integer",
@@ -274,13 +278,11 @@ class ScreenshotController extends Controller
 	 *                  type="integer",
 	 *                  format="int32",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","position_x","position_y","file"}
+	 *              required={"position_x","position_y","base64"}
 	 *          )
 	 *      )
 	 *  ),
@@ -322,7 +324,7 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(ScreenshotRequest $request, Screenshot $screenshot)
+	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
 	{
 		$storagePath = "/uploads/screenshots";
 
@@ -350,14 +352,22 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/screenshots/{id}",
+	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Delete one screenshots.",
 	 *	operationId="deleteScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="screenshot_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -393,7 +403,7 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Screenshot $screenshot)
+	public function destroy(Bug $bug, Screenshot $screenshot)
 	{
 		$val = $screenshot->delete();
 		return response($val, 204);
