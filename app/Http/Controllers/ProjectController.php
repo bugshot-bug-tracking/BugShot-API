@@ -78,6 +78,7 @@ class ProjectController extends Controller
 	 */
 	public function index(Request $request, Company $company)
 	{
+		// Check if the request includes a timestamp and query the projects accordingly
 		if($request->timestamp == NULL) {
             $projects = Auth::user()->projects->where("company_id", $company->id);
         } else {
@@ -518,6 +519,71 @@ class ProjectController extends Controller
 	public function image(Project $project, ImageService $imageService)
 	{
 		return new ImageResource($project->image);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/bugs",
+	 *	tags={"Project"},
+	 *	summary="All project bugs.",
+	 *	operationId="allProjectsBugs",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Bug")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display a list of users that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function bugs(Request $request, Project $project)
+	{
+		// Check if the request includes a timestamp and query the bugs accordingly
+		if($request->timestamp == NULL) {
+            $bugs = Auth::user()->bugs->where("project_id", $project->id);
+        } else {
+            $bugs = Auth::user()->bugs->where([
+				["project_id", "=", $project->id],
+                ["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
+			]);
+        }
+		
+		return BugResource::collection($bugs);
 	}
 
 	/**

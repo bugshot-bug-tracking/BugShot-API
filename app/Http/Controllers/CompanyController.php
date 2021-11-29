@@ -31,7 +31,7 @@ class CompanyController extends Controller
 	 *	summary="All companies.",
 	 *	operationId="allCompanies",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
