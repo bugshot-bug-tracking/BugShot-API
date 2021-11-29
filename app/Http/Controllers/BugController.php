@@ -74,6 +74,7 @@ class BugController extends Controller
 	 */
 	public function index(Request $request, Status $status)
 	{
+		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
             $bugs = Auth::user()->bugs->where("status_id", $status->id);
         } else {
