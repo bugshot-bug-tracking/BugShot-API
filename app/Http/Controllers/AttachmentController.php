@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AttachmentRequest;
-use App\Http\Resources\AttachmentResource;
-use App\Models\Attachment;
-use App\Models\Bug;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
+// Resources
+use App\Http\Resources\AttachmentResource;
+
+// Models
+use App\Models\Attachment;
+use App\Models\Bug;
+
+// Requests
+use App\Http\Requests\AttachmentRequest;
 
 /**
  * @OA\Tag(

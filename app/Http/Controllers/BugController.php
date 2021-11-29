@@ -2,18 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\BugRequest;
+// Miscellaneous, Helpers, ...
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+// Resources
 use App\Http\Resources\AttachmentResource;
 use App\Http\Resources\BugResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ScreenshotResource;
+
+// Services
+use App\Services\ScreenshotService;
+use App\Services\AttachmentService;
+
+// Models
 use App\Models\Bug;
 use App\Models\BugUserRole;
 use App\Models\Status;
-use App\Services\ScreenshotService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+
+// Requests
+use App\Http\Requests\BugRequest;
+
 
 /**
  * @OA\Tag(
@@ -190,6 +201,20 @@ class BugController extends Controller
 	 *              		)
 	 * 					)
 	 *              ),
+	 *   			@OA\Property(
+	 *                  property="attachments",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="designation",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
+	 *              ),
 	 *              required={"designation","url","status_id","priority_id",}
 	 *          )
 	 *      )
@@ -226,7 +251,7 @@ class BugController extends Controller
 	 * @param  \Illuminate\Http\BugRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService)
+	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
 		// Check if the the request already contains a UUID for the bug
         if($request->id == NULL) {
@@ -259,6 +284,15 @@ class BugController extends Controller
 			foreach($screenshots as $screenshot) {
 				$screenshot = (object) $screenshot;
 				$screenshotService->store($bug, $screenshot);
+			}
+		}
+
+		// Check if the bug comes with a attachment (or multiple) and if so, store it/them
+		$attachments = $request->attachments;
+		if($attachments != NULL) {
+			foreach($attachments as $attachment) {
+				$attachment = (object) $attachment;
+				$attachmentService->store($bug, $attachment);
 			}
 		}
 		

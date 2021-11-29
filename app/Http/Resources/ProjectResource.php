@@ -31,6 +31,9 @@ class ProjectResource extends JsonResource
 		// }
 		// $company = $this->company;
 
+		$bugsTotal = $this->bugs->count();
+		$bugsDone = $this->statuses->last()->bugs->count();
+
 		return [
 			"id" => $this->id,
 			"type" => "Project",
@@ -40,8 +43,8 @@ class ProjectResource extends JsonResource
 				// "base64" => $base64,
 				"color_hex" => $this->color_hex,
 				"company_id" => $this->company_id,
-				"bugsTotal" => $this->bugsTotal,
-				"bugsDone" => $this->bugsDone,
+				"bugsTotal" => $bugsTotal,
+				"bugsDone" => $bugsDone,
 				"company_id" => $this->company_id
 				// "bugs" => $this->bugs
 			]

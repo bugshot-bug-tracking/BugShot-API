@@ -2543,7 +2543,7 @@
                 ]
             }
         },
-        "/companies/{company_id}/projects": {
+        "/companies/{company_id}/projects/{with_bugs}": {
             "get": {
                 "tags": [
                     "Project"
@@ -2558,6 +2558,11 @@
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
                         }
+                    },
+                    {
+                        "name": "with_bugs",
+                        "in": "path",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -2592,7 +2597,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/companies/{company_id}/projects": {
             "post": {
                 "tags": [
                     "Project"
