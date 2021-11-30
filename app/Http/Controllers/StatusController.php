@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StatusRequest;
-use App\Http\Resources\BugResource;
-use App\Http\Resources\StatusResource;
-use App\Models\Status;
-use App\Models\Project;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+
+// Resources
+use App\Http\Resources\BugResource;
+use App\Http\Resources\StatusResource;
+
+// Models
+use App\Models\Status;
+use App\Models\Project;
+
+// Requests
+use App\Http\Requests\StatusRequest;
 
 /**
  * @OA\Tag(

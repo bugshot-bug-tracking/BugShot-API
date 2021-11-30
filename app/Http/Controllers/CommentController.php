@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CommentRequest;
-use App\Http\Resources\CommentResource;
-use App\Models\Comment;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+// Resources
+use App\Http\Resources\CommentResource;
+
+// Models
+use App\Models\Comment;
+
+// Requests
+use App\Http\Requests\CommentRequest;
 
 /**
  * @OA\Tag(

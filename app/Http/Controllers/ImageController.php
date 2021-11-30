@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Image;
-use Illuminate\Http\Request;
-use App\Http\Requests\ImageRequest;
-use App\Http\Resources\ImageResource;
+// Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+
+// Resources
+use App\Http\Resources\ImageResource;
+
+// Models
+use App\Models\Image;
+
+// Requests
+use App\Http\Requests\ImageRequest;
 
 /**
  * @OA\Tag(

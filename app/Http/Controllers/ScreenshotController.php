@@ -2,12 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ScreenshotRequest;
+// Miscellaneous, Helpers, ...
+use Illuminate\Support\Facades\Storage;
+
+// Resources
 use App\Http\Resources\ScreenshotResource;
+
+// Services
 use App\Services\ScreenshotService;
+
+// Models
 use App\Models\Bug;
 use App\Models\Screenshot;
-use Illuminate\Support\Facades\Storage;
+
+// Requests
+use App\Http\Requests\ScreenshotRequest;
 
 /**
  * @OA\Tag(

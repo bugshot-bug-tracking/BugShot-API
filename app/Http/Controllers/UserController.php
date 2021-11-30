@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+// Resources
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectUserRoleResource;
+
+// Models
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use App\Models\Invitation;
 use App\Models\InvitationStatus;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
 
 /**
  * @OA\Tag(

@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PriorityRequest;
-use App\Http\Resources\PriorityResource;
-use App\Models\Priority;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
+
+// Resources
+use App\Http\Resources\PriorityResource;
+
+// Models
+use App\Models\Priority;
+
+// Requests
+use App\Http\Requests\PriorityRequest;
 
 /**
  * @OA\Tag(

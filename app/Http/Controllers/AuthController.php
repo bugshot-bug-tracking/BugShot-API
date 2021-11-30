@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+
+// Resources
+use App\Http\Resources\UserResource;
+
+// Models
+use App\Models\User;
 
 /**
  * @OA\Tag(

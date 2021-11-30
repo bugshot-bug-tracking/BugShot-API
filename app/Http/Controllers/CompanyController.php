@@ -2,20 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CompanyInviteRequest;
-use App\Http\Requests\CompanyRequest;
+// Miscellaneous, Helpers, ...
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+// Resources
 use App\Http\Resources\CompanyResource;
-use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
+use App\Http\Resources\CompanyUserRoleResource;
+
+// Services
 use App\Services\ImageService;
+
+// Models
 use App\Models\Company;
 use App\Models\Image;
 use App\Models\CompanyUserRole;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+
+// Requests
+use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\CompanyInviteRequest;
 
 /**
  * @OA\Tag(

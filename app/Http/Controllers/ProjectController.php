@@ -2,22 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProjectInviteRequest;
-use App\Http\Requests\ProjectRequest;
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
+// Resources
 use App\Http\Resources\BugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\StatusResource;
 use App\Http\Resources\ImageResource;
+
+// Services
 use App\Services\ImageService;
+
+// Models
 use App\Models\Project;
 use App\Models\Company;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
+
+// Requests
+use App\Http\Requests\ProjectInviteRequest;
+use App\Http\Requests\ProjectRequest;
 
 /**
  * @OA\Tag(
@@ -29,7 +38,7 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}/projects",
+	 *	path="/companies/{company_id}/projects/{with_bugs}",
 	 *	tags={"Project"},
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
@@ -76,7 +85,7 @@ class ProjectController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Request $request, Company $company)
+	public function index(Request $request, Company $company, $withBugs = false)
 	{
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($request->timestamp == NULL) {
@@ -86,11 +95,6 @@ class ProjectController extends Controller
 				["company_id", "=", $company->id],
                 ["projects.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
 			]);
-        }
-
-        foreach($projects as $project) {
-			$project->bugsTotal = $project->bugs->count();
-			$project->bugsDone = $project->statuses->last()->bugs->count();
         }
 
 		return ProjectResource::collection($projects);
@@ -277,9 +281,6 @@ class ProjectController extends Controller
 	 */
 	public function show(Company $company, Project $project)
 	{
-		$project->bugsTotal = $project->bugs->count();
-		$project->bugsDone = $project->statuses->last()->bugs->count();
-
 		return new ProjectResource($project);
 	}
 

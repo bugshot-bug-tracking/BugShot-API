@@ -2,10 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RoleRequest;
-use App\Http\Resources\RoleResource;
-use App\Models\Role;
+// Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
+
+// Resources
+use App\Http\Resources\RoleResource;
+
+// Models
+use App\Models\Role;
+
+// Requests
+use App\Http\Requests\RoleRequest;
 
 /**
  * @OA\Tag(
