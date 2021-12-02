@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Storage;
 // Resources
 use App\Http\Resources\AttachmentResource;
 
+// Services
+use App\Services\AttachmentService;
+
 // Models
 use App\Models\Attachment;
 use App\Models\Bug;
@@ -146,25 +149,29 @@ class AttachmentController extends Controller
 	 * @param  \Illuminate\Http\AttachmentRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(AttachmentRequest $request)
+	public function store(AttachmentRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
-		$storagePath = "/uploads/attachments";
-
-		$bug = Bug::where("id", $request->bug_id)->with("project")->get()->first();
-		$project = $bug->project;
-		$company = $project->company;
-
-		$filePath = $storagePath . "/$company->id/$project->id/$bug->id";
-
-		$savedPath = $request->file->store($filePath);
-
-		$attachment = Attachment::create([
-			"bug_id" => $request->bug_id,
-			"designation" => $request->file->getClientOriginalName(),
-			"url" => $savedPath,
-		]);
+		$attachment = $attachmentService->store($bug, $request);
 
 		return new AttachmentResource($attachment);
+
+		// $storagePath = "/uploads/attachments";
+
+		// $bug = Bug::where("id", $request->bug_id)->with("project")->get()->first();
+		// $project = $bug->project;
+		// $company = $project->company;
+
+		// $filePath = $storagePath . "/$company->id/$project->id/$bug->id";
+
+		// $savedPath = $request->file->store($filePath);
+
+		// $attachment = Attachment::create([
+		// 	"bug_id" => $request->bug_id,
+		// 	"designation" => $request->file->getClientOriginalName(),
+		// 	"url" => $savedPath,
+		// ]);
+
+		// return new AttachmentResource($attachment);
 	}
 
 	/**

@@ -38,7 +38,7 @@ class ProjectController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}/projects/{with_bugs}",
+	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
@@ -51,6 +51,31 @@ class ProjectController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 * 
 	 *	@OA\Response(
@@ -246,6 +271,31 @@ class ProjectController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *
 	 *	@OA\Response(

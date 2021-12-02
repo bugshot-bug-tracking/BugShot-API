@@ -40,6 +40,26 @@ class StatusController extends Controller
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -196,6 +216,26 @@ class StatusController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Status/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *
 	 *	@OA\Response(

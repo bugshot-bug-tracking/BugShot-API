@@ -15,7 +15,7 @@ class ScreenshotResource extends JsonResource
 	public function toArray($request)
 	{
 		if($this->url != NULL) {
-			$path = "storage" . $this->image_path;
+			$path = "storage" . $this->url;
 			$data = file_get_contents($path);
 			$base64 = base64_encode($data);
 		}
@@ -25,7 +25,6 @@ class ScreenshotResource extends JsonResource
 			"type" => "Screenshot",
 			"attributes" => [
 				"bug_id" => $this->bug_id,
-				// "designation" => $this->designation,
 				"url" => $this->url,
 				"position_x" => $this->position_x,
 				"position_y" => $this->position_y,
