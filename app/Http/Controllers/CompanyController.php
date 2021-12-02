@@ -41,6 +41,37 @@ class CompanyController extends Controller
 	 *	operationId="allCompanies",
 	 *	security={ {"sanctum": {} }},
 	 * 
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -201,6 +232,36 @@ class CompanyController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *
 	 *	@OA\Response(

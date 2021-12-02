@@ -578,6 +578,21 @@
                         "schema": {
                             "$ref": "#/components/schemas/Status/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -707,6 +722,20 @@
                                             },
                                             "type": "object"
                                         }
+                                    },
+                                    "attachments": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
+                                                },
+                                                "designation": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -768,6 +797,21 @@
                         "schema": {
                             "$ref": "#/components/schemas/Bug/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -1259,6 +1303,38 @@
                 ],
                 "summary": "All companies.",
                 "operationId": "allCompanies",
+                "parameters": [
+                    {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1371,6 +1447,36 @@
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -2543,7 +2649,7 @@
                 ]
             }
         },
-        "/companies/{company_id}/projects/{with_bugs}": {
+        "/companies/{company_id}/projects": {
             "get": {
                 "tags": [
                     "Project"
@@ -2560,8 +2666,28 @@
                         }
                     },
                     {
-                        "name": "with_bugs",
-                        "in": "path",
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
                         "required": false
                     }
                 ],
@@ -2597,9 +2723,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/companies/{company_id}/projects": {
+            },
             "post": {
                 "tags": [
                     "Project"
@@ -2703,6 +2827,31 @@
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -3766,6 +3915,26 @@
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -3895,6 +4064,26 @@
                         "schema": {
                             "$ref": "#/components/schemas/Status/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {

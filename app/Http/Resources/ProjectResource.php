@@ -31,6 +31,11 @@ class ProjectResource extends JsonResource
 		// }
 		// $company = $this->company;
 
+		// Check if the response should contain the respective statuses
+		$header = $request->header();
+		$statuses = array_key_exists('include-statuses', $header) && $header['include-statuses'][0] == "true" ? $this->statuses : [];
+
+		// Count the total and done bugs within this project
 		$bugsTotal = $this->bugs->count();
 		$bugsDone = $this->statuses->last()->bugs->count();
 
@@ -45,7 +50,8 @@ class ProjectResource extends JsonResource
 				"company_id" => $this->company_id,
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone,
-				"company_id" => $this->company_id
+				"company_id" => $this->company_id,
+				"statuses" => StatusResource::collection($statuses)
 				// "bugs" => $this->bugs
 			]
 		];

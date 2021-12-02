@@ -18,6 +18,12 @@ class BugResource extends JsonResource
 		// $status = $this->status;
 		// $priority = $this->priority;
 		// $project = $this->project;
+
+		// Check if the response should contain attachments, screenshots and/or comments
+		$header = $request->header();
+		$attachments = array_key_exists('include-attachments', $header) && $header['include-attachments'][0] == "true" ? $this->attachments : [];
+		$screenshots = array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true" ? $this->screenshots : [];
+		$comments = array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true" ? $this->comments : [];
 		
 		return [
 			"id" => $this->id,
@@ -54,6 +60,9 @@ class BugResource extends JsonResource
 				"deadline" => $this->deadline,
 				"created_at" => $this->created_at,
 				"updated_at" => $this->updated_at,
+				"attachments" => AttachmentResource::collection($attachments),
+				"screenshots" => ScreenshotResource::collection($screenshots),
+				"comments" => CommentResource::collection($comments)
 			]
 		];
 	}

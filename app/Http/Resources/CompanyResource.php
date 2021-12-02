@@ -21,13 +21,17 @@ class CompanyResource extends JsonResource
 		// 	$base64 = base64_encode($data);
 		// }
 
+		// Check if the response should contain the respective projects
+		$header = $request->header();
+		$projects = array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true" ? $this->projects : [];
+
 		return [
 			"id" => $this->id,
 			"type" => "Company",
 			"attributes" => [
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
-				// "base64" => $base64
+				"projects" => ProjectResource::collection($projects)
 				// "users" => $this->users
 			]
 		];
