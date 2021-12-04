@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 // Resources
@@ -11,6 +12,7 @@ use App\Http\Resources\CommentResource;
 
 // Models
 use App\Models\Comment;
+use App\Models\Bug;
 
 // Requests
 use App\Http\Requests\CommentRequest;
@@ -23,7 +25,7 @@ use App\Http\Requests\CommentRequest;
 class CommentController extends Controller
 {
 	/**
-	 * @OA\gett(
+	 * @OA\get(
 	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="All comments.",
@@ -71,9 +73,9 @@ class CommentController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Bug $bug)
 	{
-		return CommentResource::collection(Comment::all());
+		return CommentResource::collection($bug->comments);
 	}
 
 	/**
@@ -84,7 +86,7 @@ class CommentController extends Controller
 	 *	operationId="storeComment",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *	@OA\Parameter(
+	 *	 @OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
@@ -97,11 +99,6 @@ class CommentController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
 	 *                  property="content",
@@ -143,11 +140,22 @@ class CommentController extends Controller
 	 * @param  \Illuminate\Http\CommentRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(CommentRequest $request)
+	public function store(CommentRequest $request, Bug $bug)
 	{
-		$inputs = $request->all();
-		$inputs['user_id'] = Auth::id();
-		$comment = Comment::create($inputs);
+		// Check if the the request already contains a UUID for the comment
+        if($request->id == NULL) {
+            $id = (string) Str::uuid();
+        } else {
+            $id = $request->id;
+        }
+
+		// Store the new comment in the database
+		$comment = $bug->comments()->create([
+			'id' => $id,
+			'content' => $request->content,
+			'user_id' => Auth::id()
+		]);
+
 		return new CommentResource($comment);
 	}
 
@@ -206,7 +214,7 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Comment $comment)
+	public function show(Bug $bug, Comment $comment)
 	{
 		return new CommentResource($comment);
 	}
@@ -304,9 +312,10 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(CommentRequest $request, Comment $comment)
+	public function update(CommentRequest $request, Bug $bug, Comment $comment)
 	{
 		$comment->update($request->all());
+
 		return new CommentResource($comment);
 	}
 
@@ -361,7 +370,7 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Comment $comment)
+	public function destroy(Bug $bug, Comment $comment)
 	{
 		$val = $comment->update([
 			"deleted_at" => new \DateTime()

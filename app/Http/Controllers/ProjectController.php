@@ -212,9 +212,8 @@ class ProjectController extends Controller
         }
 
 		// Store the new project in the database
-		$project = Project::create([
+		$project = $company->projects()->create([
 			"id" => $id,
-			"company_id" => $company->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 			"url" => $request->url

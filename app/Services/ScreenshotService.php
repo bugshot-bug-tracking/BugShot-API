@@ -27,8 +27,7 @@ class ScreenshotService
         Storage::disk('public')->put($filePath, $decodedBase64);
 
         // Create a new screenshot
-		$screenshot = Screenshot::create([
-			"bug_id" => $bug->id,
+		$screenshot = $bug->screenshots()->create([
 			"url" => $filePath,
 			"position_x" => $screenshot->position_x,
 			"position_y" => $screenshot->position_y,

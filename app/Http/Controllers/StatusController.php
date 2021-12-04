@@ -183,10 +183,9 @@ class StatusController extends Controller
         }
 
 		// Store the new status in the database
-		$status = Status::create([
+		$status = $project->statuses()->create([
 			"id" => $id,
 			"designation" => $request->designation,
-			"project_id" => $project->id,
 			"order_number" => $request->order_number 
 		]);
 
