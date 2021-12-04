@@ -61,7 +61,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["bug_id", "user_id", "content", "deleted_at"];
+	protected $fillable = ["id", "bug_id", "user_id", "content", "deleted_at"];
 
 	protected $touches = ['bug'];
 

@@ -75,9 +75,9 @@ class AttachmentController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index()
+	public function index(Bug $bug)
 	{
-		return AttachmentResource::collection(Attachment::all());
+		return AttachmentResource::collection($bug->attachments);
 	}
 
 	/**
@@ -154,24 +154,6 @@ class AttachmentController extends Controller
 		$attachment = $attachmentService->store($bug, $request);
 
 		return new AttachmentResource($attachment);
-
-		// $storagePath = "/uploads/attachments";
-
-		// $bug = Bug::where("id", $request->bug_id)->with("project")->get()->first();
-		// $project = $bug->project;
-		// $company = $project->company;
-
-		// $filePath = $storagePath . "/$company->id/$project->id/$bug->id";
-
-		// $savedPath = $request->file->store($filePath);
-
-		// $attachment = Attachment::create([
-		// 	"bug_id" => $request->bug_id,
-		// 	"designation" => $request->file->getClientOriginalName(),
-		// 	"url" => $savedPath,
-		// ]);
-
-		// return new AttachmentResource($attachment);
 	}
 
 	/**
@@ -230,7 +212,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Attachment $attachment)
+	public function show(Bug $bug, Attachment $attachment)
 	{
 		return new AttachmentResource($attachment);
 	}
@@ -327,7 +309,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(AttachmentRequest $request, Attachment $attachment)
+	public function update(AttachmentRequest $request, Bug $bug, Attachment $attachment)
 	{
 		$storagePath = "/uploads/attachments";
 
@@ -402,7 +384,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Attachment $attachment)
+	public function destroy(Bug $bug, Attachment $attachment)
 	{
 		$val = $attachment->update([
 			"deleted_at" => new \DateTime()
@@ -460,7 +442,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function download(Attachment $attachment)
+	public function download(Bug $bug, Attachment $attachment)
 	{
 		return Storage::download($attachment->url, $attachment->designation);
 	}

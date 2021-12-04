@@ -275,11 +275,10 @@ class BugController extends Controller
         }
 		
 		// Store the new bug in the database
-		$bug = Bug::create([
+		$bug = $status->bugs()->create([
 			"id" => $id,
 			"project_id" => $status->project_id,
 			"user_id" => Auth::user()->id,
-			"status_id" => $status->id,
 			"priority_id" => $request->priority_id,
 			"designation" => $request->designation,
 			"description" => $request->description,

@@ -27,8 +27,7 @@ class AttachmentService
         Storage::disk('public')->put($filePath, $decodedBase64);
 
         // Create a new attachment
-		$attachment = Attachment::create([
-			"bug_id" => $bug->id,
+		$attachment = $bug->attachments()->create([
 			"url" => $filePath,
 			"designation" => $attachment->designation
 		]);

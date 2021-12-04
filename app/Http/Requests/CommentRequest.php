@@ -24,8 +24,7 @@ class CommentRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"bug_id" => ["required", "integer", "exists:App\Models\Bug,id"],
-			"content" => ["required", "string", "max:255"],
+			"content" => ["required", "string", "max:255"]
 		];
 	}
 }
