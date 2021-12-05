@@ -45,8 +45,10 @@ class ImageService
 
     public function destroy($image)
     {
-        $image->update([
-            "deleted_at" => new \DateTime()
-        ]);
+        if($image != NULL) {
+            $image->update([
+                "deleted_at" => new \DateTime()
+            ]);
+        }
     }
 }
