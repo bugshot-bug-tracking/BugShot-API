@@ -13,7 +13,7 @@ class CompanyRequest extends FormRequest
 	 */
 	public function authorize()
 	{
-		return $this->user()->can('update', $this->company) ? true : abort(403);
+		return true;
 	}
 
 	/**

@@ -208,11 +208,7 @@ class CompanyController extends Controller
 		}
 
 		// Store the respective role
-		CompanyUserRole::create([
-			"company_id" => $company->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
-		]);
+		Auth::user()->companies()->attach($company->id, ['role_id' => 1]);
 
 		return new CompanyResource($company);
 	}
@@ -297,6 +293,9 @@ class CompanyController extends Controller
 	 */
 	public function show(Company $company)
 	{
+		// Check if the user is authorized to view the company
+		$this->authorize('view', $company);
+
 		return new CompanyResource($company);
 	}
 
@@ -388,6 +387,9 @@ class CompanyController extends Controller
 	 */
 	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
 	{
+		// Check if the user is authorized to update the company
+		$this->authorize('update', $company);
+
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
 		if($request->base64 != NULL) {
@@ -454,6 +456,9 @@ class CompanyController extends Controller
 	 */
 	public function destroy(Company $company)
 	{
+		// Check if the user is authorized to delete the company
+		$this->authorize('delete', $company);
+
 		$val = $company->update([
 			"deleted_at" => new \DateTime()
 		]);

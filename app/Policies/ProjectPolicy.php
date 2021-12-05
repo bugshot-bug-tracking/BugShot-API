@@ -2,9 +2,13 @@
 
 namespace App\Policies;
 
-use App\Models\Project;
-use App\Models\User;
+// Miscellaneous, Helpers, ...
 use Illuminate\Auth\Access\HandlesAuthorization;
+
+// Models
+use App\Models\Project;
+use App\Models\Company;
+use App\Models\User;
 
 class ProjectPolicy
 {
@@ -16,9 +20,9 @@ class ProjectPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, Company $company)
     {
-        //
+        return $user->companies()->find($company) != NULL;
     }
 
     /**
@@ -30,7 +34,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -39,9 +43,9 @@ class ProjectPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create(User $user, Company $company)
     {
-        //
+        return $user->companies()->find($company) != NULL;
     }
 
     /**
@@ -53,7 +57,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -65,7 +69,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**

@@ -110,8 +110,11 @@ class ProjectController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Request $request, Company $company, $withBugs = false)
+	public function index(Request $request, Company $company)
 	{
+		// Check if the user is authorized to list the projects of the company
+		$this->authorize('viewAny', [Project::class, $company]);
+
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($request->timestamp == NULL) {
             $projects = Auth::user()->projects->where("company_id", $company->id);
@@ -204,6 +207,9 @@ class ProjectController extends Controller
 	 */
 	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
 	{
+		// Check if the user is authorized to list the projects of the company
+		$this->authorize('create', [Project::class, $company]);
+
 		// Check if the the request already contains a UUID for the project
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -227,11 +233,7 @@ class ProjectController extends Controller
 		}
 
 		// Store the respective role
-		ProjectUserRole::create([
-			"project_id" => $project->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
-		]);
+		Auth::user()->projects()->attach($project->id, ['role_id' => 1]);
 
 		$defaultStatuses = ['Backlog', 'ToDo', 'Doing', 'Done'];
 		foreach ($defaultStatuses as $key=>$status) {
@@ -330,6 +332,9 @@ class ProjectController extends Controller
 	 */
 	public function show(Company $company, Project $project)
 	{
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
+
 		return new ProjectResource($project);
 	}
 
@@ -434,6 +439,9 @@ class ProjectController extends Controller
 	 */
 	public function update(ProjectRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
+		// Check if the user is authorized to update the project
+		$this->authorize('update', $project);
+
 		// Check if the project comes with an image (or a color)
 		$image = $project->image;
 		if($request->base64 != NULL) {
@@ -509,6 +517,9 @@ class ProjectController extends Controller
 	 */
 	public function destroy(Company $company, Project $project)
 	{
+		// Check if the user is authorized to delete the project
+		$this->authorize('delete', $project);
+
 		$val = $project->update([
 			"deleted_at" => new \DateTime()
 		]);

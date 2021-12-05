@@ -33,7 +33,7 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
-        //
+        return $user->companies()->find($company) != NULL;
     }
 
     /**
@@ -56,7 +56,7 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
-        return $company->users()->find($user) != NULL;
+        return $user->companies()->find($company) != NULL;
     }
 
     /**
@@ -68,7 +68,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        //
+        return $user->companies()->find($company) != NULL;
     }
 
     /**

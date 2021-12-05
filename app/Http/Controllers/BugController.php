@@ -310,11 +310,7 @@ class BugController extends Controller
 		}
 		
 		// Store the respective role
-		$bugUserRole = BugUserRole::create([
-			"bug_id" => $bug->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
-		]);
+		Auth::user()->bugs()->attach($bug->id, ['role_id' => 1]);
 
 		return new BugResource($bug);
 	}

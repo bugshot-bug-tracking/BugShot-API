@@ -94,6 +94,9 @@ class StatusController extends Controller
 	 */
 	public function index(Request $request, Project $project)
 	{
+		// Check if the user is authorized to list the statuses of the project
+		$this->authorize('viewAny', [Status::class, $project]);
+
 		if($request->timestamp == NULL) {
             $statuses = $project->statuses->where("project_id", $project->id);
         } else {
@@ -175,6 +178,9 @@ class StatusController extends Controller
 	 */
 	public function store(StatusRequest $request, Project $project)
 	{
+		// Check if the user is authorized to list the statuses of the project
+		$this->authorize('create', [Status::class, $project]);
+
 		// Check if the the request already contains a UUID for the status
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -270,6 +276,9 @@ class StatusController extends Controller
 	 */
 	public function show(Project $project, Status $status)
 	{
+		// Check if the user is authorized to view the status
+		$this->authorize('view', [Status::class, $project]);
+
 		return new StatusResource($status);
 	}
 
@@ -363,6 +372,10 @@ class StatusController extends Controller
 	 */
 	public function update(StatusRequest $request, Project $project, Status $status)
 	{
+		// Check if the user is authorized to update the status
+		$this->authorize('update', [Status::class, $project]);
+
+		// Update the status
 		$status->update([
 			"designation" => $request->designation,
 			"project_id" => $project->id,
@@ -423,8 +436,11 @@ class StatusController extends Controller
 	 * @param  \App\Models\Status  $status
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Status $status)
+	public function destroy(Project $project, Status $status)
 	{
+		// Check if the user is authorized to delete the status
+		$this->authorize('delete', [Status::class, $project]);
+
 		$val = $status->update([
 			"deleted_at" => new \DateTime()
 		]);
