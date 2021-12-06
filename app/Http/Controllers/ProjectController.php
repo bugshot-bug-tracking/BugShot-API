@@ -12,11 +12,11 @@ use App\Http\Resources\BugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
-use App\Http\Resources\StatusResource;
 use App\Http\Resources\ImageResource;
 
 // Services
 use App\Services\ImageService;
+use App\Services\InvitationService;
 
 // Models
 use App\Models\Project;
@@ -25,7 +25,7 @@ use App\Models\ProjectUserRole;
 use App\Models\Status;
 
 // Requests
-use App\Http\Requests\ProjectInviteRequest;
+use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ProjectRequest;
 
 /**
@@ -207,16 +207,12 @@ class ProjectController extends Controller
 	 */
 	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
 	{
-		// Check if the user is authorized to list the projects of the company
+		// Check if the user is authorized to create the project
 		$this->authorize('create', [Project::class, $company]);
 
 		// Check if the the request already contains a UUID for the project
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
-
+		$id = $this->setId($request);
+		
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
@@ -524,6 +520,11 @@ class ProjectController extends Controller
 			"deleted_at" => new \DateTime()
 		]);
 
+		// Delete the respective image
+		$project->image->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 
@@ -730,10 +731,9 @@ class ProjectController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The invited user id.",
-	 *                  property="target_id",
-	 *					type="integer",
-	 *                  format="int64",
+	 *                  description="The invited user email.",
+	 *                  property="target_email",
+	 *					type="string"
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The invited user role.",
@@ -775,12 +775,12 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function invite(Project $project, ProjectInviteRequest $request)
+	public function invite(InvitationRequest $request, Project $project, InvitationService $invitationService)
 	{
-		$inputs = $request->all();
-		$inputs['sender_id'] = Auth::id();
-		$inputs['status_id'] = 1;
+		$id = $this->setId($request);
 
-		return new InvitationResource($project->invitations()->create($inputs));
+		$invitation = $invitationService->send($request, $project, $id);
+
+		return new InvitationResource($invitation);
 	}
 }

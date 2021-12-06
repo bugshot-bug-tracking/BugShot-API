@@ -3,23 +3,19 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 // Resources
-use App\Http\Resources\AttachmentResource;
 use App\Http\Resources\BugResource;
-use App\Http\Resources\CommentResource;
-use App\Http\Resources\ScreenshotResource;
 
 // Services
 use App\Services\ScreenshotService;
 use App\Services\AttachmentService;
+use App\Services\CommentService;
 
 // Models
 use App\Models\Bug;
-use App\Models\BugUserRole;
 use App\Models\Status;
 
 // Requests
@@ -99,6 +95,9 @@ class BugController extends Controller
 	 */
 	public function index(Request $request, Status $status)
 	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $status->project]);
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
             $bugs = Auth::user()->bugs->where("status_id", $status->id);
@@ -267,12 +266,11 @@ class BugController extends Controller
 	 */
 	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
+		// Check if the user is authorized to create the bug 
+		$this->authorize('create', [Bug::class, $status->project]);
+
 		// Check if the the request already contains a UUID for the bug
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
+		$id = $this->setId($request);
 		
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
@@ -389,6 +387,9 @@ class BugController extends Controller
 	 */
 	public function show(Status $status, Bug $bug)
 	{
+		// Check if the user is authorized to view the bug
+		$this->authorize('view', [Bug::class, $status->project]);
+
 		return new BugResource($bug);
 	}
 
@@ -534,6 +535,9 @@ class BugController extends Controller
 	 */
 	public function update(BugRequest $request, Status $status, Bug $bug)
 	{
+		// Check if the user is authorized to update the bug
+		$this->authorize('update', [Bug::class, $status->project]);
+
 		// Update the bug
 		$bug->update([
 			"project_id" => $status->project_id,
@@ -604,11 +608,29 @@ class BugController extends Controller
 	 * @param  \App\Models\Bug  $bug
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Status $status, Bug $bug)
+	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
 	{
+		// Check if the user is authorized to delete the bug
+		$this->authorize('delete', [Bug::class, $status->project]);
+
 		$val = $bug->update([
 			"deleted_at" => new \DateTime()
 		]);
+
+		// Delete the respective screenshots
+		foreach($bug->screenshots as $screenshot) {
+			$screenshotService->delete($screenshot);
+		}
+
+		// Delete the respective comments
+		foreach($bug->comments as $comment) {
+			$commentService->delete($comment);
+		}
+
+		// Delete the respective attachments
+		foreach($bug->attachments as $attachment) {
+			$attachmentService->delete($attachment);
+		}
 
 		return response($val, 204);
 	}

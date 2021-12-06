@@ -1808,10 +1808,9 @@
                                     "role_id"
                                 ],
                                 "properties": {
-                                    "target_id": {
-                                        "description": "The invited user id.",
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "target_email": {
+                                        "description": "The invited user email.",
+                                        "type": "string"
                                     },
                                     "role_id": {
                                         "description": "The invited user role.",
@@ -3256,10 +3255,9 @@
                                     "role_id"
                                 ],
                                 "properties": {
-                                    "target_id": {
-                                        "description": "The invited user id.",
-                                        "type": "integer",
-                                        "format": "int64"
+                                    "target_email": {
+                                        "description": "The invited user email.",
+                                        "type": "string"
                                     },
                                     "role_id": {
                                         "description": "The invited user role.",
@@ -3904,7 +3902,7 @@
                 ]
             }
         },
-        "/screenshots/{id}/download": {
+        "/screenshots/{screenshot_id}/download": {
             "get": {
                 "tags": [
                     "Screenshot"
@@ -3913,7 +3911,7 @@
                 "operationId": "downloadScreenshot",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "screenshot_id",
                         "in": "path",
                         "required": true,
                         "schema": {

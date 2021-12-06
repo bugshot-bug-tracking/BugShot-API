@@ -34,4 +34,14 @@ class AttachmentService
 
         return $attachment;
     }
+
+    // Delete the attachment
+    public function delete($attachment) 
+    {
+        $val = $attachment->update([
+            "deleted_at" => new \DateTime()
+        ]);
+
+        return $val;
+    }
 }

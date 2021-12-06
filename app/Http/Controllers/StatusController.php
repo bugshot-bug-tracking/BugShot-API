@@ -178,7 +178,7 @@ class StatusController extends Controller
 	 */
 	public function store(StatusRequest $request, Project $project)
 	{
-		// Check if the user is authorized to list the statuses of the project
+		// Check if the user is authorized to create the status
 		$this->authorize('create', [Status::class, $project]);
 
 		// Check if the the request already contains a UUID for the status

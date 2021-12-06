@@ -2,9 +2,13 @@
 
 namespace App\Policies;
 
+// Miscellaneous, Helpers, ...
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+// Models
+use App\Models\Project;
 use App\Models\Bug;
 use App\Models\User;
-use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BugPolicy
 {
@@ -16,9 +20,9 @@ class BugPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -28,9 +32,9 @@ class BugPolicy
      * @param  \App\Models\Bug  $bug
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Bug $bug)
+    public function view(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -39,9 +43,9 @@ class BugPolicy
      * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(User $user)
+    public function create(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -51,9 +55,9 @@ class BugPolicy
      * @param  \App\Models\Bug  $bug
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Bug $bug)
+    public function update(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -63,9 +67,9 @@ class BugPolicy
      * @param  \App\Models\Bug  $bug
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Bug $bug)
+    public function delete(User $user, Project $project)
     {
-        //
+        return $user->projects()->find($project) != NULL;
     }
 
     /**
@@ -75,7 +79,7 @@ class BugPolicy
      * @param  \App\Models\Bug  $bug
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Bug $bug)
+    public function restore(User $user, Project $project)
     {
         //
     }
@@ -87,7 +91,7 @@ class BugPolicy
      * @param  \App\Models\Bug  $bug
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Bug $bug)
+    public function forceDelete(User $user, Project $project)
     {
         //
     }

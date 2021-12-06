@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 // Resources
 use App\Http\Resources\CommentResource;
 
+// Services
+use App\Services\CommentService;
+
 // Models
 use App\Models\Comment;
 use App\Models\Bug;
@@ -75,6 +78,9 @@ class CommentController extends Controller
 	 */
 	public function index(Bug $bug)
 	{
+		// Check if the user is authorized to list the comments of the bug
+		$this->authorize('viewAny', [Comment::class, $bug]);
+
 		return CommentResource::collection($bug->comments);
 	}
 
@@ -142,6 +148,9 @@ class CommentController extends Controller
 	 */
 	public function store(CommentRequest $request, Bug $bug)
 	{
+		// Check if the user is authorized to create the comment
+		$this->authorize('create', [Comment::class, $bug]);
+
 		// Check if the the request already contains a UUID for the comment
         if($request->id == NULL) {
             $id = (string) Str::uuid();
@@ -216,6 +225,9 @@ class CommentController extends Controller
 	 */
 	public function show(Bug $bug, Comment $comment)
 	{
+		// Check if the user is authorized to view the comment
+		$this->authorize('view', [Comment::class, $bug]);
+
 		return new CommentResource($comment);
 	}
 
@@ -314,6 +326,9 @@ class CommentController extends Controller
 	 */
 	public function update(CommentRequest $request, Bug $bug, Comment $comment)
 	{
+		// Check if the user is authorized to update the comment
+		$this->authorize('update', [Comment::class, $bug]);
+
 		$comment->update($request->all());
 
 		return new CommentResource($comment);
@@ -370,11 +385,12 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Comment $comment)
+	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
 	{
-		$val = $comment->update([
-			"deleted_at" => new \DateTime()
-		]);
+		// Check if the user is authorized to delete the comment
+		$this->authorize('update', [Comment::class, $bug]);
+
+		$val = $commentService->delete($comment);
 
 		return response($val, 204);
 	}
