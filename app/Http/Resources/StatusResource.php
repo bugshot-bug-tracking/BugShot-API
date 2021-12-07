@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StatusResource extends JsonResource
@@ -16,7 +17,7 @@ class StatusResource extends JsonResource
 	{
 		// Check if the response should contain the respective bugs
 		$header = $request->header();
-		$bugs = array_key_exists('include-bugs', $header) && $header['include-bugs'][0] == "true" ? $this->bugs : [];
+		$bugs = array_key_exists('include-bugs', $header) && $header['include-bugs'][0] == "true" ? Auth::user()->bugs->where('status_id', $this->id) : [];
 
 		return [
 			"id" => $this->id,

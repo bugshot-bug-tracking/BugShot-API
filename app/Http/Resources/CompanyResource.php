@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CompanyResource extends JsonResource
@@ -16,8 +17,8 @@ class CompanyResource extends JsonResource
 	{
 		// Check if the response should contain the respective projects
 		$header = $request->header();
-		$projects = array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true" ? $this->projects : [];
-
+		$projects = array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true" ? Auth::user()->projects->where('company_id', $this->id) : [];
+		
 		return [
 			"id" => $this->id,
 			"type" => "Company",
