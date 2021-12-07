@@ -76,6 +76,9 @@ class ScreenshotController extends Controller
 	 */
 	public function index(Bug $bug)
 	{
+		// Check if the user is authorized to list the screenshots of the bug
+		$this->authorize('viewAny', [Screenshot::class, $bug]);
+
 		return ScreenshotResource::collection($bug->screenshots);
 	}
 
@@ -163,6 +166,9 @@ class ScreenshotController extends Controller
 	 */
 	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
 	{
+		// Check if the user is authorized to create the screenshot
+		$this->authorize('create', [Screenshot::class, $bug]);
+
 		$screenshot = $screenshotService->store($bug, $request);
 
 		return new ScreenshotResource($screenshot);
@@ -226,6 +232,9 @@ class ScreenshotController extends Controller
 	 */
 	public function show(Bug $bug, Screenshot $screenshot)
 	{
+		// Check if the user is authorized to view the screenshot
+		$this->authorize('view', [Screenshot::class, $bug]);
+
 		return new ScreenshotResource($screenshot);
 	}
 
@@ -335,6 +344,9 @@ class ScreenshotController extends Controller
 	 */
 	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
 	{
+		// Check if the user is authorized to update the screenshot
+		$this->authorize('update', [Screenshot::class, $bug]);
+
 		$storagePath = "/uploads/screenshots";
 
 		$bug = Bug::where("id", $screenshot->bug_id)->with("project")->get()->first();
@@ -412,22 +424,26 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Screenshot $screenshot)
+	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
 	{
-		$val = $screenshot->delete();
+		// Check if the user is authorized to delete the screenshot
+		$this->authorize('update', [Screenshot::class, $bug]);
+
+		$val = $screenshotService->delete($screenshot);
+
 		return response($val, 204);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	path="/screenshots/{id}/download",
+	 *	path="/screenshots/{screenshot_id}/download",
 	 *	tags={"Screenshot"},
 	 *	summary="Download one screenshots. (Not Working In Swagger.)",
 	 *	operationId="downloadScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="screenshot_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

@@ -3,28 +3,26 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 // Resources
 use App\Http\Resources\CompanyResource;
-use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\CompanyUserRoleResource;
 
 // Services
 use App\Services\ImageService;
+use App\Services\InvitationService;
 
 // Models
 use App\Models\Company;
-use App\Models\Image;
 use App\Models\CompanyUserRole;
 
 // Requests
 use App\Http\Requests\CompanyRequest;
-use App\Http\Requests\CompanyInviteRequest;
+use App\Http\Requests\InvitationRequest;
 
 /**
  * @OA\Tag(
@@ -114,7 +112,7 @@ class CompanyController extends Controller
                 ["companies.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
             ]);
         }
-
+		
 		return CompanyResource::collection($companies);
 	}
 
@@ -187,11 +185,7 @@ class CompanyController extends Controller
 	public function store(CompanyRequest $request, ImageService $imageService)
 	{	
 		// Check if the the request already contains a UUID for the company
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
+		$id = $this->setId($request);
 
 		// Store the new company in the database
 		$company = Company::create([
@@ -208,11 +202,7 @@ class CompanyController extends Controller
 		}
 
 		// Store the respective role
-		CompanyUserRole::create([
-			"company_id" => $company->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
-		]);
+		Auth::user()->companies()->attach($company->id, ['role_id' => 1]);
 
 		return new CompanyResource($company);
 	}
@@ -297,6 +287,9 @@ class CompanyController extends Controller
 	 */
 	public function show(Company $company)
 	{
+		// Check if the user is authorized to view the company
+		$this->authorize('view', $company);
+
 		return new CompanyResource($company);
 	}
 
@@ -388,6 +381,9 @@ class CompanyController extends Controller
 	 */
 	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
 	{
+		// Check if the user is authorized to update the company
+		$this->authorize('update', $company);
+
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
 		if($request->base64 != NULL) {
@@ -454,10 +450,18 @@ class CompanyController extends Controller
 	 */
 	public function destroy(Company $company)
 	{
+		// Check if the user is authorized to delete the company
+		$this->authorize('delete', $company);
+
 		$val = $company->update([
 			"deleted_at" => new \DateTime()
 		]);
 		
+		// Delete the respective image
+		$company->image->update([
+			"deleted_at" => new \DateTime()
+		]);
+
 		return response($val, 204);
 	}
 
@@ -601,10 +605,9 @@ class CompanyController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The invited user id.",
-	 *                  property="target_id",
-	 *					type="integer",
-	 *                  format="int64",
+	 *                  description="The invited user email.",
+	 *                  property="target_email",
+	 *					type="string"
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The invited user role.",
@@ -646,12 +649,12 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function invite(Company $company, CompanyInviteRequest $request)
+	public function invite(InvitationRequest $request, Company $company, InvitationService $invitationService)
 	{
-		$inputs = $request->all();
-		$inputs['sender_id'] = Auth::id();
-		$inputs['status_id'] = 1;
+		$id = $this->setId($request);
 
-		return new InvitationResource($company->invitations()->create($inputs));
+		$invitation = $invitationService->send($request, $company, $id);
+
+		return new InvitationResource($invitation);
 	}
 }

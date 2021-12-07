@@ -83,7 +83,7 @@ class Invitation extends Model
 	 * )
 	 * 
 	 */
-	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id", "deleted_at"];
+	protected $fillable = ["id", "sender_id", "target_email", "role_id", "status_id", "deleted_at"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

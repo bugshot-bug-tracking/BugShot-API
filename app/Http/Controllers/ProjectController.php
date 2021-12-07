@@ -12,11 +12,11 @@ use App\Http\Resources\BugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
-use App\Http\Resources\StatusResource;
 use App\Http\Resources\ImageResource;
 
 // Services
 use App\Services\ImageService;
+use App\Services\InvitationService;
 
 // Models
 use App\Models\Project;
@@ -25,7 +25,7 @@ use App\Models\ProjectUserRole;
 use App\Models\Status;
 
 // Requests
-use App\Http\Requests\ProjectInviteRequest;
+use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ProjectRequest;
 
 /**
@@ -110,8 +110,11 @@ class ProjectController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Request $request, Company $company, $withBugs = false)
+	public function index(Request $request, Company $company)
 	{
+		// Check if the user is authorized to list the projects of the company
+		$this->authorize('viewAny', [Project::class, $company]);
+
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($request->timestamp == NULL) {
             $projects = Auth::user()->projects->where("company_id", $company->id);
@@ -204,13 +207,12 @@ class ProjectController extends Controller
 	 */
 	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
 	{
-		// Check if the the request already contains a UUID for the project
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
+		// Check if the user is authorized to create the project
+		$this->authorize('create', [Project::class, $company]);
 
+		// Check if the the request already contains a UUID for the project
+		$id = $this->setId($request);
+		
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
@@ -227,11 +229,7 @@ class ProjectController extends Controller
 		}
 
 		// Store the respective role
-		ProjectUserRole::create([
-			"project_id" => $project->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
-		]);
+		Auth::user()->projects()->attach($project->id, ['role_id' => 1]);
 
 		$defaultStatuses = ['Backlog', 'ToDo', 'Doing', 'Done'];
 		foreach ($defaultStatuses as $key=>$status) {
@@ -330,6 +328,9 @@ class ProjectController extends Controller
 	 */
 	public function show(Company $company, Project $project)
 	{
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
+
 		return new ProjectResource($project);
 	}
 
@@ -434,6 +435,9 @@ class ProjectController extends Controller
 	 */
 	public function update(ProjectRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
+		// Check if the user is authorized to update the project
+		$this->authorize('update', $project);
+
 		// Check if the project comes with an image (or a color)
 		$image = $project->image;
 		if($request->base64 != NULL) {
@@ -509,7 +513,15 @@ class ProjectController extends Controller
 	 */
 	public function destroy(Company $company, Project $project)
 	{
+		// Check if the user is authorized to delete the project
+		$this->authorize('delete', $project);
+
 		$val = $project->update([
+			"deleted_at" => new \DateTime()
+		]);
+
+		// Delete the respective image
+		$project->image->update([
 			"deleted_at" => new \DateTime()
 		]);
 
@@ -719,10 +731,9 @@ class ProjectController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The invited user id.",
-	 *                  property="target_id",
-	 *					type="integer",
-	 *                  format="int64",
+	 *                  description="The invited user email.",
+	 *                  property="target_email",
+	 *					type="string"
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The invited user role.",
@@ -764,12 +775,12 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function invite(Project $project, ProjectInviteRequest $request)
+	public function invite(InvitationRequest $request, Project $project, InvitationService $invitationService)
 	{
-		$inputs = $request->all();
-		$inputs['sender_id'] = Auth::id();
-		$inputs['status_id'] = 1;
+		$id = $this->setId($request);
 
-		return new InvitationResource($project->invitations()->create($inputs));
+		$invitation = $invitationService->send($request, $project, $id);
+
+		return new InvitationResource($invitation);
 	}
 }

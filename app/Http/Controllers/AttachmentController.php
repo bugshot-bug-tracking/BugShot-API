@@ -77,6 +77,9 @@ class AttachmentController extends Controller
 	 */
 	public function index(Bug $bug)
 	{
+		// Check if the user is authorized to list the attachments of the bug
+		$this->authorize('viewAny', [Attachment::class, $bug]);
+
 		return AttachmentResource::collection($bug->attachments);
 	}
 
@@ -151,6 +154,9 @@ class AttachmentController extends Controller
 	 */
 	public function store(AttachmentRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
+		// Check if the user is authorized to create the attachment
+		$this->authorize('create', [Attachment::class, $bug]);
+
 		$attachment = $attachmentService->store($bug, $request);
 
 		return new AttachmentResource($attachment);
@@ -214,6 +220,9 @@ class AttachmentController extends Controller
 	 */
 	public function show(Bug $bug, Attachment $attachment)
 	{
+		// Check if the user is authorized to view the attachment
+		$this->authorize('view', [Attachment::class, $bug]);
+
 		return new AttachmentResource($attachment);
 	}
 
@@ -311,6 +320,9 @@ class AttachmentController extends Controller
 	 */
 	public function update(AttachmentRequest $request, Bug $bug, Attachment $attachment)
 	{
+		// Check if the user is authorized to update the attachment
+		$this->authorize('update', [Attachment::class, $bug]);
+
 		$storagePath = "/uploads/attachments";
 
 		$bug = Bug::where("id", $attachment->bug_id)->with("project")->get()->first();
@@ -384,11 +396,12 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Attachment $attachment)
+	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
 	{
-		$val = $attachment->update([
-			"deleted_at" => new \DateTime()
-		]);
+		// Check if the user is authorized to delete the attachment
+		$this->authorize('delete', [Attachment::class, $bug]);
+
+		$val = $attachmentService->delete($attachment);
 
 		return response($val, 204);
 	}
