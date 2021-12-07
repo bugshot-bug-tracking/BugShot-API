@@ -26,7 +26,6 @@ class AttachmentResource extends JsonResource
 			"attributes" => [
 				"bug_id" => $this->bug_id,
 				"designation" => $this->designation,
-				"url" => $this->url,
 				"base64" => $base64
 			]
 		];

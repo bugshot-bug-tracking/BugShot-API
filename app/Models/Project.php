@@ -84,7 +84,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "url", "company_id", "image_path", "color_hex", "deleted_at"];
+	protected $fillable = ["id", "designation", "url", "company_id", "color_hex", "deleted_at"];
 
 	protected $touches = ['company'];
 

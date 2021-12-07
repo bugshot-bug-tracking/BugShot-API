@@ -17,7 +17,7 @@ class CreateCompaniesTable extends Migration
 			$table->uuid('id')->primary();
 			$table->string('designation');
 
-			$table->string('color_hex')->nullable();
+			$table->string('color_hex')->default('#7A2EE6');
 			// $table->string('image_id')->nullable();
 			// $table->foreign('image_id')->references('id')->on('images')->onDelete('set null');
 

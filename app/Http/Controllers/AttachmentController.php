@@ -455,7 +455,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function download(Bug $bug, Attachment $attachment)
+	public function download(Attachment $attachment)
 	{
 		return Storage::download($attachment->url, $attachment->designation);
 	}

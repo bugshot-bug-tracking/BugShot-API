@@ -29,10 +29,6 @@ class BugResource extends JsonResource
 			"id" => $this->id,
 			"type" => "Bug",
 			"attributes" => [
-				// "project" => [
-				// 	"id" => $project->id,
-				// 	"designation" => $project->designation,
-				// ],
 				// "user" => [
 				// 	"id" => $user->id,
 				// 	"first_name" => $user->first_name,
@@ -49,10 +45,10 @@ class BugResource extends JsonResource
 				// 	"designation" => $status->designation,
 				// ],
 				"priority_id" => $this->priority_id,
-				// "priority" => [
-				// 	"id" => $priority->id,
-				// 	"designation" => $priority->designation,
-				// ],
+				"priority" => [
+					"id" => $priority->id,
+					"designation" => $priority->designation,
+				],
 				"operating_system" => $this->operating_system,
 				"browser" => $this->browser,
 				"selector" => $this->selector,

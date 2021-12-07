@@ -72,7 +72,7 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "image_path", "color_hex", "deleted_at"];
+	protected $fillable = ["id", "designation", "color_hex", "deleted_at"];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
