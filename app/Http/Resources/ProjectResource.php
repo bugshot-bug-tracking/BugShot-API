@@ -32,7 +32,6 @@ class ProjectResource extends JsonResource
 				"company_id" => $this->company_id,
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone,
-				"company_id" => $this->company_id,
 				"statuses" => StatusResource::collection($statuses)
 			]
 		];

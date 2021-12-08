@@ -100,9 +100,9 @@ class BugController extends Controller
 
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
-            $bugs = Auth::user()->bugs->where("status_id", $status->id);
+            $bugs = $status->project->bugs->where("status_id", $status->id);
         } else {
-            $bugs = Auth::user()->bugs->where([
+            $bugs = $status->project->bugs->where([
 				["status_id", "=", $status->id],
                 ["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
 			]);

@@ -14,9 +14,9 @@ class BugResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		// $users = $this->users;
-		// $status = $this->status;
-		// $priority = $this->priority;
+		$users = $this->users;
+		$status = $this->status;
+		$priority = $this->priority;
 		// $project = $this->project;
 
 		// Check if the response should contain attachments, screenshots and/or comments
