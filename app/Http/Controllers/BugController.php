@@ -60,6 +60,12 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -350,6 +356,11 @@ class BugController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),

@@ -14,37 +14,29 @@ class BugResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$users = $this->users;
 		$status = $this->status;
 		$priority = $this->priority;
-		// $project = $this->project;
 
 		// Check if the response should contain attachments, screenshots and/or comments
 		$header = $request->header();
 		$attachments = array_key_exists('include-attachments', $header) && $header['include-attachments'][0] == "true" ? $this->attachments : [];
 		$screenshots = array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true" ? $this->screenshots : [];
 		$comments = array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true" ? $this->comments : [];
+		$users = array_key_exists('include-users', $header) && $header['include-users'][0] == "true" ? $this->users : [];
 		
 		return [
 			"id" => $this->id,
 			"type" => "Bug",
 			"attributes" => [
-				// "user" => [
-				// 	"id" => $user->id,
-				// 	"first_name" => $user->first_name,
-				// 	"last_name" => $user->last_name,
-				// ],
 				"project_id" => $this->project_id,
 				"user_id" => $this->user_id,
 				"designation" => $this->designation,
 				"description" => $this->description,
 				"url" => $this->url,
-				"status_id" => $this->status_id,
-				// "status" => [
-				// 	"id" => $status->id,
-				// 	"designation" => $status->designation,
-				// ],
-				"priority_id" => $this->priority_id,
+				"status" => [
+					"id" => $status->id,
+					"designation" => $status->designation,
+				],
 				"priority" => [
 					"id" => $priority->id,
 					"designation" => $priority->designation,
@@ -58,7 +50,8 @@ class BugResource extends JsonResource
 				"updated_at" => $this->updated_at,
 				"attachments" => AttachmentResource::collection($attachments),
 				"screenshots" => ScreenshotResource::collection($screenshots),
-				"comments" => CommentResource::collection($comments)
+				"comments" => CommentResource::collection($comments),
+				"users" => UserResource::collection($users)
 			]
 		];
 	}

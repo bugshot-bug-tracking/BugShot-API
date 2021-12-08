@@ -593,6 +593,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -810,6 +815,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users",
                         "in": "header",
                         "required": false
                     }
@@ -1378,6 +1388,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -1520,6 +1535,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users",
                         "in": "header",
                         "required": false
                     }
@@ -2733,6 +2753,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -2894,6 +2919,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users",
                         "in": "header",
                         "required": false
                     }
@@ -3978,6 +4008,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -4125,6 +4160,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users",
                         "in": "header",
                         "required": false
                     }
