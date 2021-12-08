@@ -121,7 +121,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function companies()
     {
-        return $this->belongsToMany(Company::class, 'company_user_roles')->where("deleted_at", NULL);
+        return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id')->where("deleted_at", NULL);
     }
 
 	/**

@@ -21,12 +21,12 @@ class RoleSeeder extends Seeder
 
 		Role::create([
 			"id" => 2,
-			"designation" => "Manager"
+			"designation" => "Company Manager"
 		]);
 
 		Role::create([
 			"id" => 3,
-			"designation" => "Team Lead"
+			"designation" => "Project Manager"
 		]);
 
 		Role::create([
@@ -36,17 +36,17 @@ class RoleSeeder extends Seeder
 
 		Role::create([
 			"id" => 5,
-			"designation" => "Tester"
-		]);
-
-		Role::create([
-			"id" => 6,
 			"designation" => "Client"
 		]);
 
-		Role::create([
-			"id" => 7,
-			"designation" => "Visitor"
-		]);
+		// Role::create([
+		// 	"id" => 6,
+		// 	"designation" => "Client"
+		// ]);
+
+		// Role::create([
+		// 	"id" => 7,
+		// 	"designation" => "Visitor"
+		// ]);
 	}
 }

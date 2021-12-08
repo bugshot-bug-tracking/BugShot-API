@@ -56,7 +56,21 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -68,7 +82,18 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**

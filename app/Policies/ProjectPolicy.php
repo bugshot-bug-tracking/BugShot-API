@@ -35,7 +35,24 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -47,7 +64,24 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -59,7 +93,24 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -71,7 +122,24 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
