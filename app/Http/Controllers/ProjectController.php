@@ -77,8 +77,13 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -299,8 +304,13 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),

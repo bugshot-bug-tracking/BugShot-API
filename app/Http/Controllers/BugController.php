@@ -60,8 +60,8 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -359,8 +359,8 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),

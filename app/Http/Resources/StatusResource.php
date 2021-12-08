@@ -15,19 +15,24 @@ class StatusResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		// Check if the response should contain the respective bugs
-		$header = $request->header();
-		$bugs = array_key_exists('include-bugs', $header) && $header['include-bugs'][0] == "true" ? Auth::user()->bugs->where('status_id', $this->id) : [];
-
-		return [
+		$status = array(
 			"id" => $this->id,
 			"type" => "Status",
 			"attributes" => [
 				"designation" => $this->designation,
 				"order_number" => $this->order_number,
-				"project_id" => $this->project_id,
-				"bugs" => BugResource::collection($bugs)
+				"project_id" => $this->project_id
 			]
-		];
+		);	
+
+		$header = $request->header();
+
+		// Check if the response should contain the respective bugs
+		if(array_key_exists('include-bugs', $header) && $header['include-bugs'][0] == "true") {
+			$bugs = Auth::user()->bugs->where('status_id', $this->id);
+			$status['attributes']['users'] = BugResource::collection($bugs);
+		}
+
+		return $status;
 	}
 }

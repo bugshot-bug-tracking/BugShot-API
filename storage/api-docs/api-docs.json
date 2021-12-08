@@ -595,7 +595,7 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -819,7 +819,7 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -1390,7 +1390,17 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -1539,7 +1549,17 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -2755,7 +2775,12 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -2923,7 +2948,12 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -4010,7 +4040,7 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -4164,7 +4194,7 @@
                         "required": false
                     },
                     {
-                        "name": "include-users",
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }

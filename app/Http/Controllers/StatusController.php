@@ -60,8 +60,8 @@ class StatusController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -248,8 +248,8 @@ class StatusController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-users",
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
