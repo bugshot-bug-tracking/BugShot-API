@@ -655,6 +655,9 @@ class ProjectController extends Controller
 	 */
 	public function bugs(Request $request, Project $project)
 	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
             $bugs = $project->bugs;

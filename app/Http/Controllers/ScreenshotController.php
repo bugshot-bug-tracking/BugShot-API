@@ -77,7 +77,7 @@ class ScreenshotController extends Controller
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the screenshots of the bug
-		$this->authorize('viewAny', [Screenshot::class, $bug]);
+		$this->authorize('viewAny', [Screenshot::class, $bug->project]);
 
 		return ScreenshotResource::collection($bug->screenshots);
 	}
@@ -167,7 +167,7 @@ class ScreenshotController extends Controller
 	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to create the screenshot
-		$this->authorize('create', [Screenshot::class, $bug]);
+		$this->authorize('create', [Screenshot::class, $bug->project]);
 
 		$screenshot = $screenshotService->store($bug, $request);
 
@@ -233,13 +233,13 @@ class ScreenshotController extends Controller
 	public function show(Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to view the screenshot
-		$this->authorize('view', [Screenshot::class, $bug]);
+		$this->authorize('view', [Screenshot::class, $bug->project]);
 
 		return new ScreenshotResource($screenshot);
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Update one screenshots.",
@@ -345,7 +345,7 @@ class ScreenshotController extends Controller
 	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to update the screenshot
-		$this->authorize('update', [Screenshot::class, $bug]);
+		$this->authorize('update', [Screenshot::class, $bug->project]);
 
 		$storagePath = "/uploads/screenshots";
 
@@ -427,7 +427,7 @@ class ScreenshotController extends Controller
 	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to delete the screenshot
-		$this->authorize('update', [Screenshot::class, $bug]);
+		$this->authorize('update', [Screenshot::class, $bug->project]);
 
 		$val = $screenshotService->delete($screenshot);
 

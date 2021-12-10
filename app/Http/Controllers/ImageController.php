@@ -191,7 +191,7 @@ class ImageController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/images/{id}",
 	 *	tags={"Image"},
 	 *	summary="Update one images.",

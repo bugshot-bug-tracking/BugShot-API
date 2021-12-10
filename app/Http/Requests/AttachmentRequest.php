@@ -24,8 +24,8 @@ class AttachmentRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"bug_id" => ["required", "integer", "exists:App\Models\Bug,id"],
-			"file" => ["required", "file", "max:5200"],
+			"designation" => ["required", "string", "min:5", "max:255"],
+			"base64" => ["string"]
 		];
 	}
 }

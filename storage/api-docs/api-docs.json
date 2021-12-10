@@ -88,21 +88,18 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
-                                    "file"
+                                    "base64",
+                                    "designation"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
+                                    "designation": {
+                                        "type": "string"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -196,7 +193,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Attachment"
                 ],
@@ -232,22 +229,18 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
-                                    "file"
+                                    "base64",
+                                    "designation"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "maxLength": 255
+                                    "designation": {
+                                        "type": "string"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -1208,7 +1201,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Comment"
                 ],
@@ -1252,14 +1245,6 @@
                                     "content"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
-                                    "user_id": {
-                                        "type": "integer",
-                                        "format": "int64"
-                                    },
                                     "content": {
                                         "description": "The message",
                                         "type": "string"
@@ -2043,7 +2028,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Image"
                 ],
@@ -3812,7 +3797,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Screenshot"
                 ],
