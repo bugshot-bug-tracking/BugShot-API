@@ -129,7 +129,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_user_roles')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
+        return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
     }
 
 		/**

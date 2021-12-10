@@ -159,11 +159,6 @@ class BugController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
-	 * 	 	  		@OA\Property(
-	 *                  property="order_number",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
 	 *  			@OA\Property(
 	 *                  property="priority_id",
 	 *                  type="integer",
@@ -278,6 +273,9 @@ class BugController extends Controller
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
 		
+		// Get the max order number in this status and increase it by one
+		$order_number = $status->bugs->max('order_number') + 1;
+
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
 			"id" => $id,
@@ -292,7 +290,7 @@ class BugController extends Controller
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
 			"deadline" => $request->deadline,
-			"order_number" => $request->order_number
+			"order_number" => $order_number
 		]);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
@@ -469,8 +467,7 @@ class BugController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="status_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  type="string",
 	 *              ),
 	 * 	 	  		@OA\Property(
 	 *                  property="order_number",
@@ -549,10 +546,15 @@ class BugController extends Controller
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
+		// Check if the order of the bugs has to be synchronized
+		if($request->order_number != $bug->getOriginal('order_number')) {
+			$this->synchronizeBugOrder($request, $bug);
+		}
+
 		// Update the bug
 		$bug->update([
 			"project_id" => $status->project_id,
-			"status_id" => $status->id,
+			"status_id" => $request->status_id,
 			"priority_id" => $request->priority_id,
 			"designation" => $request->designation,
 			"description" => $request->description,
@@ -645,4 +647,33 @@ class BugController extends Controller
 
 		return response($val, 204);
 	}
+
+	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
+	private function synchronizeBugOrder($request, $bug)
+	{
+		// Check if the bug also changed it's status
+		if($request->status_id != $bug->getOriginal('status_id')) {
+			$originalStatus = Status::find($bug->getOriginal('status_id'));
+			$originalStatusBugs = $originalStatus->bugs->where('order_number', '>', $bug->getOriginal('order_number'));
+
+			// Descrease all the order numbers that war greater than the original bug order number
+			foreach($originalStatusBugs as $originalStatusBug) {
+				$originalStatusBug->update([
+					"order_number" => $originalStatusBug->order_number - 1
+				]);
+			}
+		}
+
+		$newStatus = Status::find($request->status_id);
+		$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $request->order_number);
+
+		// Increase all the order numbers that war greater than the original bug order number
+		foreach($newStatusBugs as $newStatusBug) {
+			$newStatusBug->update([
+				"order_number" => $newStatusBug->order_number + 1
+			]);
+		}
+	}
+
+
 }

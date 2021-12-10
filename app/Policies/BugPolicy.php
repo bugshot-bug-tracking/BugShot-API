@@ -57,6 +57,7 @@ class BugPolicy
      */
     public function update(User $user, Project $project)
     {
+        
         $project = $user->projects()->find($project);
         $role = $project->pivot->role_id;
 

@@ -26,7 +26,7 @@ class ProjectRequest extends FormRequest
 		return [
 			"id" => ["string", "max:36"],
 			"designation" => ["required", "string", "min:5", "max:255"],
-			"url" => ["required", "string", "max:65535", "nullable"],
+			"url" => ["string", "max:65535", "nullable"],
 			"base64" => ["string", "nullable"],
 			"color_hex" => ["string", "max:7", "nullable"],
 			"timestamp" => ["date"]
