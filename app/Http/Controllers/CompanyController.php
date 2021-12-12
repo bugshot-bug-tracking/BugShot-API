@@ -617,10 +617,9 @@ class CompanyController extends Controller
 	 * @OA\Post(
 	 *	path="/companies/{company_id}/invite",
 	 *	tags={"Company"},
-	 *	summary="Invite a user to the company and asign it a role",
+	 *	summary="Invite a user to the company and asign a role to him",
 	 *	operationId="inviteCompany",
 	 *	security={ {"sanctum": {} }},
-
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,

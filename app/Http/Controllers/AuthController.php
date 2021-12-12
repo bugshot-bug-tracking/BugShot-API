@@ -10,6 +10,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Password as PasswordFacade;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
+use Illuminate\Auth\Events\Registered;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -102,6 +103,8 @@ class AuthController extends Controller
 			"email" => $request->email,
 			"password" => Hash::make($request->password),
 		]);
+
+		event(new Registered($user));
 
 		return new UserResource($user);
 	}
@@ -253,7 +256,7 @@ class AuthController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/forgot-password",
+	 *	path="/auth/forgot-password",
 	 *	tags={"Auth"},
 	 *	summary="Handle the forgot password functionality.",
 	 *	operationId="forgotPassword",
@@ -302,7 +305,7 @@ class AuthController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/reset-password",
+	 *	path="/auth/reset-password",
 	 *	tags={"Auth"},
 	 *	summary="Handle the reset password functionality.",
 	 *	operationId="resetPassword",
