@@ -602,15 +602,13 @@ class CompanyController extends Controller
 	 */
 	public function users(Company $company)
 	{
-		$company_user_roles = CompanyUserRoleResource::collection(
+		return CompanyUserRoleResource::collection(
 			CompanyUserRole::where("company_id", $company->id)
 				->with('company')
 				->with('user')
 				->with("role")
 				->get()
 		);
-
-		return response()->json($company_user_roles, 200);
 	}
 
 	/**

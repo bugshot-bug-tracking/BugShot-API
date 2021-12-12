@@ -89,9 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
-		Route::get('/users', function (Company $company) {
-			return UserResource::collection($company->users);
-		});
+		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 	});
 
 	// Project prefixed routes
@@ -100,6 +98,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
+		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 	});
 
 	// Status prefixed routes

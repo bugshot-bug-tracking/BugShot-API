@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Role;
 
 class UserResource extends JsonResource
 {
@@ -22,7 +23,7 @@ class UserResource extends JsonResource
 				'last_name' => $this->last_name,
 				"email" => $this->email,
 				"email_verified_at" => $this->email_verified_at,
-				"created_at" => $this->created_at
+				"created_at" => $this->created_at,
 			]
 		];
 	}
