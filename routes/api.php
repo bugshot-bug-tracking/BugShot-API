@@ -43,7 +43,7 @@ use App\Models\Company;
 */
 
 // Route::prefix('auth')->middleware(['check_version'])->group(function () {
-Route::prefix('auth'->middleware(['check_version'])->group(function () {
+Route::prefix('auth')->group(function () {
 	Route::post('register', [AuthController::class, "register"])->name("register");
 	Route::post('login', [AuthController::class, "login"])->name("login");
 });
