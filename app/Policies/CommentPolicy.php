@@ -15,6 +15,17 @@ class CommentPolicy
     use HandlesAuthorization;
 
     /**
+     * Roles:
+     * | id | designation
+     * |----|----------------------
+     * | 1  | Owner
+     * | 2  | Company Manager
+     * | 3  | Project Manager
+     * | 4  | Developer
+     * | 5  | Client (e.g. Customer)
+     */
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user

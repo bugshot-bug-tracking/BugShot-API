@@ -7,12 +7,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Password as PasswordFacade;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 // Resources
 use App\Http\Resources\UserResource;
 
 // Models
 use App\Models\User;
+
+// Requests
+use App\Http\Requests\ForgotPasswordRequest;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
 
 /**
  * @OA\Tag(
@@ -85,22 +94,13 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function register(Request $request)
+	public function register(RegisterRequest $request)
 	{
-		$fields = $request->validate([
-			"first_name" => ["required", "alpha_dash", "max:255"],
-			"last_name" => ["required", "alpha_dash", "max:255"],
-			"email" => ["required", "email", "unique:users,email"],
-			"password" => ["required", "confirmed", Password::min(8)->letters()->numbers()],
-			'password_confirmation' => ["required", "same:password"],
-
-		]);
-
 		$user = User::create([
-			"first_name" => $fields["first_name"],
-			"last_name" => $fields["last_name"],
-			"email" => $fields["email"],
-			"password" => Hash::make($fields["password"]),
+			"first_name" => $request->first_name,
+			"last_name" => $request->last_name,
+			"email" => $request->email,
+			"password" => Hash::make($request->password),
 		]);
 
 		return new UserResource($user);
@@ -157,17 +157,11 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function login(Request $request)
+	public function login(LoginRequest $request)
 	{
-		$fields = $request->validate([
-			"email" => ["required", "email"],
-			"password" => ["required"],
-			// "client_id" => ["required", "integer"]
-		]);
+		$user = User::where("email", $request->email)->first();
 
-		$user = User::where("email", $fields["email"])->first();
-
-		if (!$user || !Hash::check($fields["password"], $user->password))
+		if (!$user || !Hash::check($request->password, $user->password))
 			return response()->json(["message" => "Bad Credentials!"], 401);
 
 		// ? Set the token name to either device name or device type in the future
@@ -255,5 +249,137 @@ class AuthController extends Controller
 	public function user()
 	{
 		return new UserResource(Auth::user());
+	}
+
+	/**
+	 * @OA\Post(
+	 *	path="/forgot-password",
+	 *	tags={"Auth"},
+	 *	summary="Handle the forgot password functionality.",
+	 *	operationId="forgotPassword",
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 *              required={"email"}
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=250,
+	 *		description="Requested mail action okay, completed"
+	 *	),
+	 *	@OA\Response(
+	 *		response=451,
+	 *		description="Requested action aborted: local error in processing"
+	 *	),
+	 *)
+	 *
+	**/
+	public function forgotPassword(ForgotPasswordRequest $request) {
+		$status = PasswordFacade::sendResetLink(
+			$request->only('email')
+		);
+
+		if($status === PasswordFacade::RESET_LINK_SENT) {
+			return response(__($status), 250);
+		} else {
+			return response()->json([
+				"errors" => [
+					"status" => 451,
+					"detail" => __('passwords.send_reset_link_error')
+				]
+			], 451);
+		}
+	}
+
+	/**
+	 * @OA\Post(
+	 *	path="/reset-password",
+	 *	tags={"Auth"},
+	 *	summary="Handle the reset password functionality.",
+	 *	operationId="resetPassword",
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 * 				@OA\Property(
+	 *                  property="password",
+	 *                  type="string",
+	 *              ),
+	 * 	 			@OA\Property(
+	 *                  property="password_confirmation",
+	 *                  type="string",
+	 *              ),
+	 * 	 			@OA\Property(
+	 *                  property="token",
+	 *                  type="string",
+	 *              ),
+	 *              required={"email"}
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function resetPassword(ResetPasswordRequest $request) {
+	
+		$status = PasswordFacade::reset(
+			$request->only('email', 'password', 'password_confirmation', 'token'),
+			function ($user, $password) {
+				$user->forceFill([
+					'password' => Hash::make($password)
+				])->setRememberToken(Str::random(60));
+	
+				$user->save();
+	
+				event(new PasswordReset($user));
+			}
+		);
+
+		if($status === PasswordFacade::PASSWORD_RESET) {
+			return response(__($status), 200);
+		} else {
+			return response()->json([
+				"errors" => [
+					"status" => 400,
+					"detail" => __('passwords.password_reset_error')
+				]
+			], 400);
+		}
 	}
 }

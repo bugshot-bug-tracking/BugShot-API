@@ -2,6 +2,7 @@
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -35,19 +36,21 @@ use App\Models\Company;
 |
 */
 
-
 /*
 |--------------------------------------------------------------------------
 | Public API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('auth')->group(function () {
+// Route::prefix('auth')->middleware(['check_version'])->group(function () {
+Route::prefix('auth'->middleware(['check_version'])->group(function () {
 	Route::post('register', [AuthController::class, "register"])->name("register");
 	Route::post('login', [AuthController::class, "login"])->name("login");
 });
 
-
+// Password Reset Routes
+Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware('guest')->name('password.email');
+Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware('guest')->name('password.update');
 
 
 /*
@@ -55,6 +58,7 @@ Route::prefix('auth')->group(function () {
 | Private API Routes
 |--------------------------------------------------------------------------
 */
+// Route::middleware(['auth:sanctum', 'check_version'])->group(
 Route::middleware(['auth:sanctum'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
@@ -64,7 +68,7 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
-// Route::middleware(['auth:sanctum', 'check_version'])->group(function () {
+// Route::middleware(['auth:sanctum', 'check_version'])->group(function () { 
 Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Route for the chrome extention to check if the visited website has a respective project

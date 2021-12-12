@@ -6,7 +6,9 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\ResetPasswordNotification;
 
 /**
  * @OA\Schema()
@@ -139,6 +141,20 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Bug::class, 'bug_user_roles')->where("deleted_at", NULL)->orderBy('order_number');
     }
+
+	/**
+	 * Send a password reset notification to the user.
+	 *
+	 * @param  string  $token
+	 * @return void
+	 */
+	public function sendPasswordResetNotification($token)
+	{
+		$baseUrl = config('app.url');
+	    $url = $baseUrl . '/reset-password?token=' . $token;
+
+	    $this->notify(new ResetPasswordNotification($url));
+	}
 
 }
 
