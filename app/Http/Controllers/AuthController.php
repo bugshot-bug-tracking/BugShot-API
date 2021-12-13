@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Password as PasswordFacade;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -384,5 +385,102 @@ class AuthController extends Controller
 				]
 			], 400);
 		}
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/auth/email/verify/{id}/{hash}",
+	 *	tags={"Auth"},
+	 *	summary="Handle the process of verifying a users email. (Doesn't seem to be working on swagger)",
+	 *	operationId="verifyEmail",
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path",
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="hash",
+	 *		required=true,
+	 *		in="path",
+	 *	),
+	 * 
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function verifyEmail(EmailVerificationRequest $request) {
+		$request->fulfill();
+	
+		return response()->json("", 204);
+	}
+
+	/**
+	 * @OA\Post(
+	 *	path="/auth/email/verification-notification",
+	 *	tags={"Auth"},
+	 *	summary="Resends the verification mail to the user",
+	 *	operationId="resendVerificationMail",
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="user_id",
+	 * 					type="integer",
+	 *  				format="int64",
+	 *              ),
+	 *              required={"user_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function resendVerificationMail(Request $request) {
+		$user = User::find($request->user_id);
+		$user->sendEmailVerificationNotification();
+	
+		return response('Verification link sent!', 200);
 	}
 }

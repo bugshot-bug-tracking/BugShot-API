@@ -43,19 +43,17 @@ use App\Models\Company;
 
 // Route::prefix('auth')->middleware(['check_version'])->group(function () {
 Route::prefix('auth')->group(function () {
-	Route::post('register', [AuthController::class, "register"])->name("register");
-	Route::post('login', [AuthController::class, "login"])->name("login");
+	// Register Routes
+	Route::post('/register', [AuthController::class, "register"])->name("register");
+	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
+	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
+
+	// Login Routes
+	Route::post('/login', [AuthController::class, "login"])->name("login");
 
 	// Password Reset Routes
 	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware('guest')->name('password.email');
 	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware('guest')->name('password.update');
-
-	// TODO
-	// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-	// 	$request->fulfill();
-	
-	// 	return redirect('/home');
-	// })->middleware(['auth', 'signed'])->name('verification.verify');
 });
 
 

@@ -16,15 +16,15 @@ class InvitationResource extends JsonResource
     {
         // Check the model type of the invitation
         switch ($this->invitable_type) {
-            case 'App\Models\Company':
+            case Company::class:
                 $resource = new CompanyResource($this->invitable);
                 break;
 
-            case 'App\Models\Project':
+            case Project::class:
                 $resource = new ProjectResource($this->invitable);
                 break;
 
-            case 'App\Models\Bug':
+            case Bug::class:
                 $resource = new BugResource($this->invitable);
                 break;
         }
