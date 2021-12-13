@@ -176,4 +176,106 @@ class ProjectPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the user can view the image of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewImage(User $user, Project $project)
+    {
+        return $user->projects()->find($project) != NULL;
+    }
+
+    /**
+     * Determine whether the user can view the users of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUsers(User $user, Project $project)
+    {
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the invitations of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewInvitations(User $user, Project $project)
+    {
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the invitations of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function invite(User $user, Project $project)
+    {
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
 }

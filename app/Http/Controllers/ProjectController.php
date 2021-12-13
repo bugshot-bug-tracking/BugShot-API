@@ -463,7 +463,6 @@ class ProjectController extends Controller
 		if($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $project->image()->save($image) : true;
-			$color_hex = NULL;
 		} else {
 			$imageService->destroy($image);
 			$color_hex = $request->color_hex;
@@ -600,6 +599,9 @@ class ProjectController extends Controller
 	 */
 	public function image(Project $project, ImageService $imageService)
 	{
+		// Check if the user is authorized to view the image of the project
+		$this->authorize('viewImage', $project);
+
 		return new ImageResource($project->image);
 	}
 
@@ -722,6 +724,9 @@ class ProjectController extends Controller
 	 */
 	public function users(Project $project)
 	{
+		// Check if the user is authorized to view the users of the project
+		$this->authorize('viewUsers', $project);
+
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)
 				->with('project')
@@ -729,6 +734,64 @@ class ProjectController extends Controller
 				->with("role")
 				->get()
 		);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/invitations",
+	 *	tags={"Project"},
+	 *	summary="All project invitations.",
+	 *	operationId="allProjectInvitations",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display a list of invitations that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	public function invitations(Project $project)
+	{
+		// Check if the user is authorized to view the invitations of the project
+		$this->authorize('viewInvitations', $project);
+		
+		return InvitationResource::collection($project->invitations);
 	}
 
 	/**
@@ -799,6 +862,9 @@ class ProjectController extends Controller
 	 **/
 	public function invite(InvitationRequest $request, Project $project, InvitationService $invitationService)
 	{
+		// Check if the user is authorized to invite users to the project
+		$this->authorize('invite', $project);
+
 		$id = $this->setId($request);
 
 		$invitation = $invitationService->send($request, $project, $id);

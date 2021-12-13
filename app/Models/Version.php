@@ -27,7 +27,7 @@ class Version extends Model
     /**
      * @var array
      */
-    protected $fillable = ['client_id', 'version_type_id', 'designation', 'description', ' ', 'updated_at'];
+    protected $fillable = ['client_id', 'version_type_id', 'designation', 'description', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

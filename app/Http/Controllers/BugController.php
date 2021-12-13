@@ -16,6 +16,7 @@ use App\Services\CommentService;
 
 // Models
 use App\Models\Bug;
+use App\Models\User;
 use App\Models\Status;
 
 // Requests
@@ -547,7 +548,7 @@ class BugController extends Controller
 		$this->authorize('update', [Bug::class, $status->project]);
 
 		// Check if the order of the bugs has to be synchronized
-		if($request->order_number != $bug->getOriginal('order_number')) {
+		if($request->order_number != $bug->getOriginal('order_number') || $request->status_id != $bug->getOriginal('status_id') ) {
 			$this->synchronizeBugOrder($request, $bug);
 		}
 
@@ -648,6 +649,75 @@ class BugController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * @OA\Post(
+	 *	path="/bugs/{bug_id}/assign-user",
+	 *	tags={"Bug"},
+	 *	summary="Assign user to bug.",
+	 *	operationId="assignUser",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the user",
+	 *                  property="user_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *              required={"user_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	/**
+	 * Assign a user to the bug
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function assignUser(Request $request, Bug $bug)
+	{ 
+		// Check if the user is authorized to assign a user to the bug
+		$this->authorize('assignUser', $bug);
+
+		$targetUser = User::find($request->user_id);
+		$targetUser->bugs()->attach($bug->id, ['role_id' => 4]);
+
+		return response()->json("", 204);
+	}
+
 	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
 	private function synchronizeBugOrder($request, $bug)
 	{
@@ -665,15 +735,13 @@ class BugController extends Controller
 		}
 
 		$newStatus = Status::find($request->status_id);
-		$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $request->order_number);
+		$newStatusBugs = $newStatus->bugs->whereBetween('order_number', [$request->order_number, $bug->getOriginal('order_number')]);
 
-		// Increase all the order numbers that war greater than the original bug order number
+		// Increase all the order numbers that are greater than the original bug order number
 		foreach($newStatusBugs as $newStatusBug) {
 			$newStatusBug->update([
 				"order_number" => $newStatusBug->order_number + 1
 			]);
 		}
 	}
-
-
 }

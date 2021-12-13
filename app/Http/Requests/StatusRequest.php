@@ -25,7 +25,7 @@ class StatusRequest extends FormRequest
 	{
 		return [
 			"designation" => ["required", "min:3", "max:255", "regex:/^[\pL\s\-]+$/"],
-			"order_number" => ["required", "integer", "min:1"],
+			"order_number" => ["required", "integer", "min:0"],
 			"timestamp" => ["date"]
 		];
 	}

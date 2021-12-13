@@ -159,7 +159,7 @@ class Bug extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'bug_user_roles');
+        return $this->belongsToMany(User::class, 'bug_user_roles')->withPivot('role_id');
     }
 
 	/**

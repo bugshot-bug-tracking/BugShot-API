@@ -94,7 +94,7 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "designation", "url", "position_x", "position_y", "web_position_x", "web_position_y", "deleted_at"];
+	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y", "deleted_at"];
 
 	protected $touches = ["bug"];
 

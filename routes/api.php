@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BugController;
@@ -88,6 +87,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::prefix('companies/{company}')->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
+		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 	});
@@ -97,6 +97,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 	});
@@ -111,14 +112,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::apiResource('/comments', CommentController::class);
 		Route::apiResource('/screenshots', ScreenshotController::class);
 		Route::apiResource('/attachments', AttachmentController::class);
+		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
 	});
 
 	// Download routes
 	Route::get('/screenshots/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
 	Route::get('/attachments/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
-	Route::get('/images/{image}/download', [ImageController::class, "download"])->name("image.download");
 
-	// Invitation routes
+	// Invitation prefixed routes
 	Route::prefix('invitations')->group(function () {
 		Route::get("/statuses", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
 		Route::get("/statuses/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
@@ -131,7 +132,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	// Miscellaneous resource routes
 	Route::apiResources(
 		[
-			'images' => ImageController::class,
 			'roles' => RoleController::class,
 			'priorities' => PriorityController::class,
 		]

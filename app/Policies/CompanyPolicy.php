@@ -130,4 +130,106 @@ class CompanyPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the user can view the image of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewImage(User $user, Company $company)
+    {
+        return $user->companies()->find($company) != NULL;
+    }
+
+    /**
+     * Determine whether the user can view the users of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUsers(User $user, Company $company)
+    {
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the invitations of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewInvitations(User $user, Company $company)
+    {
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the invitations of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function invite(User $user, Company $company)
+    {
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
 }
