@@ -88,21 +88,18 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
-                                    "file"
+                                    "base64",
+                                    "designation"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
+                                    "designation": {
+                                        "type": "string"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -196,7 +193,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Attachment"
                 ],
@@ -232,22 +229,18 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "multipart/form-data": {
+                        "application/json": {
                             "schema": {
                                 "required": [
-                                    "bug_id",
-                                    "file"
+                                    "base64",
+                                    "designation"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "maxLength": 255
+                                    "designation": {
+                                        "type": "string"
                                     },
-                                    "file": {
-                                        "description": "Binary content of file",
-                                        "type": "string",
-                                        "format": "binary"
+                                    "base64": {
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -563,6 +556,94 @@
                 ]
             }
         },
+        "/forgot-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Handle the forgot password functionality.",
+                "operationId": "forgotPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "250": {
+                        "description": "Requested mail action okay, completed"
+                    },
+                    "451": {
+                        "description": "Requested action aborted: local error in processing"
+                    }
+                }
+            }
+        },
+        "/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Handle the reset password functionality.",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/statuses/{status_id}/bugs": {
             "get": {
                 "tags": [
@@ -591,6 +672,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -671,10 +757,6 @@
                                     "url": {
                                         "description": "The bug url",
                                         "type": "string"
-                                    },
-                                    "order_number": {
-                                        "type": "integer",
-                                        "format": "int64"
                                     },
                                     "priority_id": {
                                         "type": "integer",
@@ -812,6 +894,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -912,8 +999,7 @@
                                         "type": "string"
                                     },
                                     "status_id": {
-                                        "type": "integer",
-                                        "format": "int64"
+                                        "type": "string"
                                     },
                                     "order_number": {
                                         "type": "integer",
@@ -1198,7 +1284,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Comment"
                 ],
@@ -1242,14 +1328,6 @@
                                     "content"
                                 ],
                                 "properties": {
-                                    "bug_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
-                                    "user_id": {
-                                        "type": "integer",
-                                        "format": "int64"
-                                    },
                                     "content": {
                                         "description": "The message",
                                         "type": "string"
@@ -1376,6 +1454,21 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -1520,6 +1613,21 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -2003,7 +2111,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Image"
                 ],
@@ -2733,6 +2841,16 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -2894,6 +3012,16 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -3752,7 +3880,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Screenshot"
                 ],
@@ -3978,6 +4106,11 @@
                         "name": "include-comments",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -4125,6 +4258,11 @@
                     },
                     {
                         "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
                         "in": "header",
                         "required": false
                     }
@@ -4730,13 +4868,13 @@
                         "maxLength": 255
                     },
                     "designation": {
-                        "description": "The status name.",
+                        "description": "The company name.",
                         "type": "string",
                         "maxLength": 255
                     },
-                    "image_id": {
+                    "color_hex": {
                         "nullable": true,
-                        "description": "The id of the image that belongs to the company.",
+                        "description": "The colorcode for the company.",
                         "type": "string",
                         "maxLength": 255
                     },
@@ -4905,14 +5043,14 @@
                         "type": "string",
                         "maxLength": 255
                     },
-                    "image_id": {
+                    "color_hex": {
                         "nullable": true,
-                        "description": "The id of the image that belongs to the project.",
+                        "description": "The colorcode for the project.",
                         "type": "string",
                         "maxLength": 255
                     },
                     "designation": {
-                        "description": "The status name.",
+                        "description": "The project name.",
                         "type": "string",
                         "maxLength": 255
                     },

@@ -14,15 +14,12 @@ class ProjectResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		// Check if the response should contain the respective statuses
-		$header = $request->header();
-		$statuses = array_key_exists('include-statuses', $header) && $header['include-statuses'][0] == "true" ? $this->statuses : [];
-	
 		// Count the total and done bugs within this project
+		$statuses = $this->statuses;
+		$bugsDone = $statuses->last()->bugs->count();
 		$bugsTotal = $this->bugs->count();
-		$bugsDone = $this->statuses->last()->bugs->count();
-	
-		return [
+
+		$project = array(
 			"id" => $this->id,
 			"type" => "Project",
 			"attributes" => [
@@ -31,10 +28,23 @@ class ProjectResource extends JsonResource
 				"color_hex" => $this->color_hex,
 				"company_id" => $this->company_id,
 				"bugsTotal" => $bugsTotal,
-				"bugsDone" => $bugsDone,
-				"company_id" => $this->company_id,
-				"statuses" => StatusResource::collection($statuses)
+				"bugsDone" => $bugsDone
 			]
-		];
+		);
+
+		$header = $request->header();
+
+		// Check if the response should contain the respective statuses
+		if(array_key_exists('include-statuses', $header) && $header['include-statuses'][0] == "true") {
+			$project['attributes']['statuses'] = StatusResource::collection($statuses);
+		}
+
+		// Check if the response should contain the respective project users
+		if(array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
+			$users = $this->users;
+			$project['attributes']['users'] = UserResource::collection($users);
+		}
+	
+		return $project;
 	}
 }

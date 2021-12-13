@@ -15,6 +15,17 @@ class StatusPolicy
     use HandlesAuthorization;
 
     /**
+     * Roles:
+     * | id | designation
+     * |----|----------------------
+     * | 1  | Owner
+     * | 2  | Company Manager
+     * | 3  | Project Manager
+     * | 4  | Developer
+     * | 5  | Client (e.g. Customer)
+     */
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
@@ -47,8 +58,27 @@ class StatusPolicy
      */
     public function create(User $user, Project $project)
     {
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
 
-        return $user->projects()->find($project) != NULL;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -60,7 +90,27 @@ class StatusPolicy
      */
     public function update(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -72,7 +122,27 @@ class StatusPolicy
      */
     public function delete(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**

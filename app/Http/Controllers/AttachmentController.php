@@ -78,7 +78,7 @@ class AttachmentController extends Controller
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the attachments of the bug
-		$this->authorize('viewAny', [Attachment::class, $bug]);
+		$this->authorize('viewAny', [Attachment::class, $bug->project]);
 
 		return AttachmentResource::collection($bug->attachments);
 	}
@@ -103,20 +103,17 @@ class AttachmentController extends Controller
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
+	 *  	   		@OA\Property(
+	 *                  property="designation",
+	 *                  type="string"
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","file"}
+	 *              required={"base64", "designation"}
 	 *          )
 	 *      )
 	 *  ),
@@ -155,7 +152,7 @@ class AttachmentController extends Controller
 	public function store(AttachmentRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the attachment
-		$this->authorize('create', [Attachment::class, $bug]);
+		$this->authorize('create', [Attachment::class, $bug->project]);
 
 		$attachment = $attachmentService->store($bug, $request);
 
@@ -221,13 +218,13 @@ class AttachmentController extends Controller
 	public function show(Bug $bug, Attachment $attachment)
 	{
 		// Check if the user is authorized to view the attachment
-		$this->authorize('view', [Attachment::class, $bug]);
+		$this->authorize('view', [Attachment::class, $bug->project]);
 
 		return new AttachmentResource($attachment);
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Update one attachment.",
@@ -262,21 +259,17 @@ class AttachmentController extends Controller
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
+	 *  	   		@OA\Property(
+	 *                  property="designation",
+	 *                  type="string"
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","file"}
+	 *              required={"base64", "designation"}
 	 *          )
 	 *      )
 	 *  ),
@@ -321,7 +314,7 @@ class AttachmentController extends Controller
 	public function update(AttachmentRequest $request, Bug $bug, Attachment $attachment)
 	{
 		// Check if the user is authorized to update the attachment
-		$this->authorize('update', [Attachment::class, $bug]);
+		$this->authorize('update', [Attachment::class, $bug->project]);
 
 		$storagePath = "/uploads/attachments";
 
@@ -399,7 +392,7 @@ class AttachmentController extends Controller
 	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to delete the attachment
-		$this->authorize('delete', [Attachment::class, $bug]);
+		$this->authorize('delete', [Attachment::class, $bug->project]);
 
 		$val = $attachmentService->delete($attachment);
 
@@ -455,7 +448,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function download(Bug $bug, Attachment $attachment)
+	public function download(Attachment $attachment)
 	{
 		return Storage::download($attachment->url, $attachment->designation);
 	}

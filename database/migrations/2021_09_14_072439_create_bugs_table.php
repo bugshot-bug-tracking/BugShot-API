@@ -30,7 +30,7 @@ class CreateBugsTable extends Migration
 
 			$table->string('designation');
 			$table->text('description')->nullable();
-			$table->text('url');
+			$table->text('url')->nullable();
 			$table->string('operating_system')->nullable();
 			$table->string('browser')->nullable();
 			$table->text('selector')->nullable();

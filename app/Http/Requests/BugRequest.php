@@ -24,15 +24,15 @@ class BugRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			// "project_id" => ["required", "string", "exists:App\Models\Project,id"],
-			// "designation" => ["required", "string", "min:5", "max:255"],
-			// "description" => ["min:5", "string"],
-			// "url" => ["required", "string", "max:255"],
-			// "priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],
-			// "operating_system" => ["max:255", "string"],
-			// "browser" => ["max:255", "string"],
-			// "selector" => ["max:65535", "string"],
-			// "resolution" => ["max:255", "string"],
+			"project_id" => ["required", "string", "exists:App\Models\Project,id"],
+			"designation" => ["required", "string", "min:5", "max:255"],
+			"description" => ["min:5", "string"],
+			"url" => ["string", "max:65535", "nullable"],
+			"priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],
+			"operating_system" => ["max:255", "string"],
+			"browser" => ["max:255", "string"],
+			"selector" => ["max:65535", "string"],
+			"resolution" => ["max:255", "string"],
 			"deadline" => ["date"],
 		];
 	}

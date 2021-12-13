@@ -27,7 +27,8 @@ class ScreenshotRequest extends FormRequest
 			"position_x" => ["integer"],
 			"position_y" => ["integer"],
 			"web_position_x" => ["integer"],
-			"web_position_y" => ["integer"]
+			"web_position_y" => ["integer"],
+			"base64" => ["string"]
 		];
 	}
 }

@@ -15,19 +15,30 @@ class CompanyResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		// Check if the response should contain the respective projects
-		$header = $request->header();
-		$projects = array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true" ? Auth::user()->projects->where('company_id', $this->id) : [];
-		
-		return [
+		$company = array(
 			"id" => $this->id,
 			"type" => "Company",
 			"attributes" => [
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
-				"projects" => ProjectResource::collection($projects)
-				// "users" => $this->users
 			]
-		];
+		);
+
+		
+		$header = $request->header();
+
+		// Check if the response should contain the respective projects
+		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
+			$projects = Auth::user()->projects->where('company_id', $this->id);
+			$company['attributes']['projects'] = ProjectResource::collection($projects);
+		}
+
+		// Check if the response should contain the respective company users
+		if(array_key_exists('include-company-users', $header) && $header['include-company-users'][0] == "true") {
+			$users = $this->users;
+			$company['attributes']['users'] = UserResource::collection($users);
+		}
+
+		return $company;
 	}
 }

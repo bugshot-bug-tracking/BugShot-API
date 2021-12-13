@@ -77,6 +77,16 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -291,6 +301,16 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -635,12 +655,14 @@ class ProjectController extends Controller
 	 */
 	public function bugs(Request $request, Project $project)
 	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
-            $bugs = Auth::user()->bugs->where("project_id", $project->id);
+            $bugs = $project->bugs;
         } else {
-            $bugs = Auth::user()->bugs->where([
-				["project_id", "=", $project->id],
+            $bugs = $project->bugs->where([
                 ["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
 			]);
         }

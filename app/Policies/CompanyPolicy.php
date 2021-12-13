@@ -14,6 +14,17 @@ class CompanyPolicy
     use HandlesAuthorization;
 
     /**
+     * Roles:
+     * | id | designation
+     * |----|----------------------
+     * | 1  | Owner
+     * | 2  | Company Manager
+     * | 3  | Project Manager
+     * | 4  | Developer
+     * | 5  | Client (e.g. Customer)
+     */
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
@@ -56,7 +67,21 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -68,7 +93,18 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**

@@ -60,6 +60,12 @@ class StatusController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -239,6 +245,11 @@ class StatusController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),

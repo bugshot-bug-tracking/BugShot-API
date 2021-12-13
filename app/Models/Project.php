@@ -41,18 +41,18 @@ class Project extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="image_id",
+	 * 	property="color_hex",
 	 * 	type="string",
 	 *  maxLength=255,
 	 * 	nullable=true,
-	 * 	description="The id of the image that belongs to the project."
+	 * 	description="The colorcode for the project."
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
 	 *  maxLength=255,
-	 * 	description="The status name."
+	 * 	description="The project name."
 	 * )
 	 *
 	 * @OA\Property(
@@ -84,7 +84,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "url", "company_id", "image_path", "color_hex", "deleted_at"];
+	protected $fillable = ["id", "designation", "url", "company_id", "color_hex", "deleted_at"];
 
 	protected $touches = ['company'];
 
@@ -93,7 +93,7 @@ class Project extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'project_user_roles');
+        return $this->belongsToMany(User::class, 'project_user_roles')->withPivot('role_id');
     }
 
 	/**

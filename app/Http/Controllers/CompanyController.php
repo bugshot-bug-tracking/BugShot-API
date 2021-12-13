@@ -69,6 +69,21 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -253,7 +268,22 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-company-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -572,25 +602,22 @@ class CompanyController extends Controller
 	 */
 	public function users(Company $company)
 	{
-		$company_user_roles = CompanyUserRoleResource::collection(
+		return CompanyUserRoleResource::collection(
 			CompanyUserRole::where("company_id", $company->id)
 				->with('company')
 				->with('user')
 				->with("role")
 				->get()
 		);
-
-		return response()->json($company_user_roles, 200);
 	}
 
 	/**
 	 * @OA\Post(
 	 *	path="/companies/{company_id}/invite",
 	 *	tags={"Company"},
-	 *	summary="Invite a user to the company and asign it a role",
+	 *	summary="Invite a user to the company and asign a role to him",
 	 *	operationId="inviteCompany",
 	 *	security={ {"sanctum": {} }},
-
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,

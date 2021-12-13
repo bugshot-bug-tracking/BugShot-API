@@ -2,6 +2,7 @@
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -35,19 +36,28 @@ use App\Models\Company;
 |
 */
 
-
 /*
 |--------------------------------------------------------------------------
 | Public API Routes
 |--------------------------------------------------------------------------
 */
 
+// Route::prefix('auth')->middleware(['check_version'])->group(function () {
 Route::prefix('auth')->group(function () {
 	Route::post('register', [AuthController::class, "register"])->name("register");
 	Route::post('login', [AuthController::class, "login"])->name("login");
+
+	// Password Reset Routes
+	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware('guest')->name('password.email');
+	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware('guest')->name('password.update');
+
+	// TODO
+	// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+	// 	$request->fulfill();
+	
+	// 	return redirect('/home');
+	// })->middleware(['auth', 'signed'])->name('verification.verify');
 });
-
-
 
 
 /*
@@ -55,6 +65,7 @@ Route::prefix('auth')->group(function () {
 | Private API Routes
 |--------------------------------------------------------------------------
 */
+// Route::middleware(['auth:sanctum', 'check_version'])->group(
 Route::middleware(['auth:sanctum'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
@@ -64,7 +75,7 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
-// Route::middleware(['auth:sanctum', 'check_version'])->group(function () {
+// Route::middleware(['auth:sanctum', 'check_version'])->group(function () { 
 Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Route for the chrome extention to check if the visited website has a respective project
@@ -78,9 +89,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
-		Route::get('/users', function (Company $company) {
-			return UserResource::collection($company->users);
-		});
+		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 	});
 
 	// Project prefixed routes
@@ -89,6 +98,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
+		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 	});
 
 	// Status prefixed routes

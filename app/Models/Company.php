@@ -38,15 +38,15 @@ class Company extends Model
 	 * 	property="designation",
 	 * 	type="string",
 	 *  maxLength=255,
-	 * 	description="The status name."
+	 * 	description="The company name."
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="image_id",
+	 * 	property="color_hex",
 	 * 	type="string",
 	 *  maxLength=255,
 	 * 	nullable=true,
-	 * 	description="The id of the image that belongs to the company."
+	 * 	description="The colorcode for the company."
 	 * )
 	 *
 	 * @OA\Property(
@@ -72,14 +72,14 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "image_path", "color_hex", "deleted_at"];
+	protected $fillable = ["id", "designation", "color_hex", "deleted_at"];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'company_user_roles');
+        return $this->belongsToMany(User::class, 'company_user_roles')->withPivot('role_id');
     }
 
 	/**

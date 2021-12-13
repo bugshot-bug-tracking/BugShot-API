@@ -79,7 +79,7 @@ class CommentController extends Controller
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the comments of the bug
-		$this->authorize('viewAny', [Comment::class, $bug]);
+		$this->authorize('viewAny', [Comment::class, $bug->project]);
 
 		return CommentResource::collection($bug->comments);
 	}
@@ -149,7 +149,7 @@ class CommentController extends Controller
 	public function store(CommentRequest $request, Bug $bug)
 	{
 		// Check if the user is authorized to create the comment
-		$this->authorize('create', [Comment::class, $bug]);
+		$this->authorize('create', [Comment::class, $bug->project]);
 
 		// Check if the the request already contains a UUID for the comment
         if($request->id == NULL) {
@@ -226,13 +226,13 @@ class CommentController extends Controller
 	public function show(Bug $bug, Comment $comment)
 	{
 		// Check if the user is authorized to view the comment
-		$this->authorize('view', [Comment::class, $bug]);
+		$this->authorize('view', [Comment::class, $bug->project]);
 
 		return new CommentResource($comment);
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Update a comment.",
@@ -268,16 +268,6 @@ class CommentController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
 	 *                  property="content",
@@ -327,7 +317,7 @@ class CommentController extends Controller
 	public function update(CommentRequest $request, Bug $bug, Comment $comment)
 	{
 		// Check if the user is authorized to update the comment
-		$this->authorize('update', [Comment::class, $bug]);
+		$this->authorize('update', [$comment, $bug->project]);
 
 		$comment->update($request->all());
 
@@ -388,7 +378,7 @@ class CommentController extends Controller
 	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
 	{
 		// Check if the user is authorized to delete the comment
-		$this->authorize('update', [Comment::class, $bug]);
+		$this->authorize('update', [$comment, $bug->project]);
 
 		$val = $commentService->delete($comment);
 

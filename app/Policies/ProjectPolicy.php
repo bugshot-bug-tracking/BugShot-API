@@ -15,6 +15,17 @@ class ProjectPolicy
     use HandlesAuthorization;
 
     /**
+     * Roles:
+     * | id | designation
+     * |----|----------------------
+     * | 1  | Owner
+     * | 2  | Company Manager
+     * | 3  | Project Manager
+     * | 4  | Developer
+     * | 5  | Client (e.g. Customer)
+     */
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
@@ -35,7 +46,24 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -47,7 +75,24 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        $company = $user->companies()->find($company);
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -59,7 +104,24 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -71,7 +133,24 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        $project = $user->projects()->find($project);
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
