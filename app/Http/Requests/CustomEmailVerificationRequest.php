@@ -1,9 +1,10 @@
 <?php
 
-namespace Illuminate\Foundation\Auth;
+namespace App\Http\Requests;
 
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\User;
 
 class CustomEmailVerificationRequest extends FormRequest
 {
