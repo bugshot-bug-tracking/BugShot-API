@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Password as PasswordFacade;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -20,6 +19,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 
 // Requests
+use App\Http\Requests\CustomEmailVerificationRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\RegisterRequest;
@@ -427,7 +427,7 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(EmailVerificationRequest $request) {
+	public function verifyEmail(CustomEmailVerificationRequest $request) {
 		$request->fulfill();
 	
 		return response()->json("", 204);
