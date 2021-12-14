@@ -34,6 +34,7 @@ class BugRequest extends FormRequest
 			"selector" => ["max:65535", "string"],
 			"resolution" => ["max:255", "string"],
 			"deadline" => ["date"],
+			"order_number" => ["required", "integer", "min:0"]
 		];
 	}
 }

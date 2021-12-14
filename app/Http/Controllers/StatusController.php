@@ -188,17 +188,16 @@ class StatusController extends Controller
 		$this->authorize('create', [Status::class, $project]);
 
 		// Check if the the request already contains a UUID for the status
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
+		$id = $this->setId($request);
+
+		// Get the max order number in this project and increase it by one
+		$order_number = $project->statuses->max('order_number') + 1;
 
 		// Store the new status in the database
 		$status = $project->statuses()->create([
 			"id" => $id,
 			"designation" => $request->designation,
-			"order_number" => $request->order_number 
+			"order_number" => $order_number
 		]);
 
 		return new StatusResource($status);
@@ -386,6 +385,11 @@ class StatusController extends Controller
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
+		// Check if the order of the status has to be synchronized
+		if($request->order_number != $status->getOriginal('order_number')) {
+			$this->synchronizeStatusOrder($request, $status, $project);
+		}
+
 		// Update the status
 		$status->update([
 			"designation" => $request->designation,
@@ -457,5 +461,18 @@ class StatusController extends Controller
 		]);
 
 		return response($val, 204);
+	}
+
+	// Synchronize the order numbers of all the statuses, that are affected by the updated status
+	private function synchronizeStatusOrder($request, $status, $project)
+	{
+		$statuses = $project->statuses->whereBetween('order_number', [$request->order_number, $status->getOriginal('order_number')]);
+
+		// Increase all the order numbers that are greater than the original status order number
+		foreach($statuses as $status) {
+			$status->update([
+				"order_number" => $status->order_number + 1
+			]);
+		}
 	}
 }

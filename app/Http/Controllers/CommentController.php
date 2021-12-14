@@ -152,11 +152,7 @@ class CommentController extends Controller
 		$this->authorize('create', [Comment::class, $bug->project]);
 
 		// Check if the the request already contains a UUID for the comment
-        if($request->id == NULL) {
-            $id = (string) Str::uuid();
-        } else {
-            $id = $request->id;
-        }
+		$id = $this->setId($request);
 
 		// Store the new comment in the database
 		$comment = $bug->comments()->create([

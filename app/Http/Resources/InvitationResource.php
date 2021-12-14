@@ -14,6 +14,35 @@ class InvitationResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        // Check the model type of the invitation
+        switch ($this->invitable_type) {
+            case Company::class:
+                $resource = new CompanyResource($this->invitable);
+                break;
+
+            case Project::class:
+                $resource = new ProjectResource($this->invitable);
+                break;
+
+            case Bug::class:
+                $resource = new BugResource($this->invitable);
+                break;
+        }
+
+        $invitation = array(
+			"id" => $this->id,
+			"type" => "Invitation",
+			"attributes" => [
+				"sender" => new UserResource($this->sender),
+				"target_email" => $this->target_email,
+                "invitable" => $resource,
+                "role" => new RoleResource($this->role),
+                "status" => new StatusResource($this->status),
+                "created_at" => $this->created_at,
+                "updated_at" => $this->updated_at
+			]
+		);
+
+        return $invitation;
     }
 }

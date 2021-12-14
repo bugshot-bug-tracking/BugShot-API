@@ -147,4 +147,33 @@ class BugPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the user can assign a user to the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Bug  $bug
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function assignUser(User $user, Bug $bug)
+    {
+        $bug = $user->bugs()->find($bug);
+        $role = $bug->pivot->role_id;
+    
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
 }

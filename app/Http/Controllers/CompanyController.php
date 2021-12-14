@@ -419,7 +419,6 @@ class CompanyController extends Controller
 		if($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $company->image()->save($image) : true;
-			$color_hex = NULL;
 		} else {
 			$imageService->destroy($image);
 			$color_hex = $request->color_hex;
@@ -547,6 +546,9 @@ class CompanyController extends Controller
 	 */
 	public function image(Company $company, ImageService $imageService)
 	{
+		// Check if the user is authorized to view the image of the company
+		$this->authorize('viewImage', $company);
+
 		return new ImageResource($company->image);
 	}
 
@@ -602,6 +604,9 @@ class CompanyController extends Controller
 	 */
 	public function users(Company $company)
 	{
+		// Check if the user is authorized to view the users of the company
+		$this->authorize('viewUsers', $company);
+
 		return CompanyUserRoleResource::collection(
 			CompanyUserRole::where("company_id", $company->id)
 				->with('company')
@@ -609,6 +614,64 @@ class CompanyController extends Controller
 				->with("role")
 				->get()
 		);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/companies/{company_id}/invitations",
+	 *	tags={"Company"},
+	 *	summary="All company invitations.",
+	 *	operationId="allCompaniesInvitations",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display a list of invitations that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
+	public function invitations(Company $company)
+	{
+		// Check if the user is authorized to view the invitations of the company
+		$this->authorize('viewInvitations', $company);
+		
+		return InvitationResource::collection($company->invitations);
 	}
 
 	/**
@@ -678,6 +741,9 @@ class CompanyController extends Controller
 	 **/
 	public function invite(InvitationRequest $request, Company $company, InvitationService $invitationService)
 	{
+		// Check if the user is authorized to invite users to the company
+		$this->authorize('invite', $company);
+
 		$id = $this->setId($request);
 
 		$invitation = $invitationService->send($request, $company, $id);

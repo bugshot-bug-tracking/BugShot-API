@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
-use App\Models\Screenshot;
 
 class ScreenshotService
 {
