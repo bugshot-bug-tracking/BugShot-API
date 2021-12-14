@@ -732,10 +732,13 @@ class BugController extends Controller
 					"order_number" => $originalStatusBug->order_number - 1
 				]);
 			}
-		}
 
-		$newStatus = Status::find($request->status_id);
-		$newStatusBugs = $newStatus->bugs->whereBetween('order_number', [$request->order_number, $bug->getOriginal('order_number')]);
+			$newStatus = Status::find($request->status_id);
+			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $request->order_number);
+		} else {
+			$newStatus = Status::find($request->status_id);
+			$newStatusBugs = $newStatus->bugs->whereBetween('order_number', [$request->order_number, $bug->getOriginal('order_number')]);
+		}
 
 		// Increase all the order numbers that are greater than the original bug order number
 		foreach($newStatusBugs as $newStatusBug) {

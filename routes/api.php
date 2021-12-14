@@ -107,11 +107,22 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Bug prefixed routes
 	Route::prefix('bugs/{bug}')->group(function () {
-		Route::apiResource('/comments', CommentController::class);
-		Route::apiResource('/screenshots', ScreenshotController::class);
-		Route::apiResource('/attachments', AttachmentController::class);
+		Route::apiResource('/comments', CommentController::class)->except([
+			'destroy'
+		]);;
+		Route::apiResource('/screenshots', ScreenshotController::class)->except([
+			'destroy'
+		]);;
+		Route::apiResource('/attachments', AttachmentController::class)->except([
+			'destroy'
+		]);;
 		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
 	});
+
+	// Delete routes for screenshots, comments and attachments
+	Route::delete('/screenshots/{screenshot}', [ScreenshotController::class, "destroy"])->name("screenshot.destroy");
+	Route::delete('/comments/{comment}', [CommentController::class, "destroy"])->name("comment.destroy");
+	Route::delete('/attachments/{attachment}', [AttachmentController::class, "destroy"])->name("attachment.destroy");
 
 	// Download routes
 	Route::get('/screenshots/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");

@@ -338,20 +338,12 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
+	 *	path="/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Delete one attachment.",
 	 *	operationId="deleteAttachment",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *	@OA\Parameter(
-	 *		name="bug_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Bug/properties/id"
-	 *		)
-	 *	),
 	 *	@OA\Parameter(
 	 *		name="attachment_id",
 	 *		required=true,
@@ -389,10 +381,10 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
+	public function destroy(Attachment $attachment, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to delete the attachment
-		$this->authorize('delete', [Attachment::class, $bug->project]);
+		$this->authorize('delete', [Attachment::class, $attachment->bug->project]);
 
 		$val = $attachmentService->delete($attachment);
 
