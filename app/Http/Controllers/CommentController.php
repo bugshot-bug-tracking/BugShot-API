@@ -322,19 +322,11 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/bugs/{bug_id}/comments/{comment_id}",
+	 *	path="/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Delete a comment.",
 	 *	operationId="deleteComment",
 	 *	security={ {"sanctum": {} }},
-	 *	@OA\Parameter(
-	 *		name="bug_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Bug/properties/id"
-	 *		)
-	 *	),
 	 *	@OA\Parameter(
 	 *		name="comment_id",
 	 *		required=true,
@@ -371,10 +363,10 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
+	public function destroy(Comment $comment, CommentService $commentService)
 	{
 		// Check if the user is authorized to delete the comment
-		$this->authorize('update', [$comment, $bug->project]);
+		$this->authorize('update', [$comment, $comment->bug->project]);
 
 		$val = $commentService->delete($comment);
 

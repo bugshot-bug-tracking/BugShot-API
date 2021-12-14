@@ -23,6 +23,7 @@ class BugResource extends JsonResource
 				"description" => $this->description,
 				"url" => $this->url,
 				"status_id" => $this->status_id,
+				"order_number" => $this->order_number,
 				"priority" => new PriorityResource($this->priority),
 				"operating_system" => $this->operating_system,
 				"browser" => $this->browser,

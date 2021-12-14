@@ -150,7 +150,8 @@ class UserController extends Controller
 	{
 		return InvitationResource::collection(
 			Invitation::where([
-				["target_id", Auth::id()],
+				["target_email", Auth::id()],
+				["status_id", 1]
 			])->get()
 		);
 	}

@@ -460,9 +460,10 @@ class ProjectController extends Controller
 
 		// Check if the project comes with an image (or a color)
 		$image = $project->image;
-		if($request->base64 != NULL) {
+		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $project->image()->save($image) : true;
+			$color_hex = $company->color_hex;
 		} else {
 			$imageService->destroy($image);
 			$color_hex = $request->color_hex;

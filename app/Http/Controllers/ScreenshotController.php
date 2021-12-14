@@ -373,20 +373,12 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
+	 *	path="/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Delete one screenshots.",
 	 *	operationId="deleteScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
-	 *	@OA\Parameter(
-	 *		name="bug_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Bug/properties/id"
-	 *		)
-	 *	),
 	 *	@OA\Parameter(
 	 *		name="screenshot_id",
 	 *		required=true,
@@ -424,10 +416,10 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
+	public function destroy(Screenshot $screenshot, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to delete the screenshot
-		$this->authorize('update', [Screenshot::class, $bug->project]);
+		$this->authorize('update', [Screenshot::class, $screenshot->bug->project]);
 
 		$val = $screenshotService->delete($screenshot);
 
