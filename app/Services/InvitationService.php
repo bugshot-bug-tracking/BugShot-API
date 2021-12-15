@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use App\Models\Invitation;
+use App\Models\User;
+use App\Notifications\InvitationNotification;
 
 class InvitationService
 {
@@ -17,6 +18,9 @@ class InvitationService
 			"sender_id" => Auth::id(),
 			"status_id" => 1, // Pending
         ]);
+
+        $user = User::first('email', $request->target_email);
+        $user->notify(new InvitationNotification($user, $invitation));
 
         return $invitation;
     }
