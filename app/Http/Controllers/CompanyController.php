@@ -84,6 +84,21 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -121,11 +136,11 @@ class CompanyController extends Controller
 	{
 		// Check if the request includes a timestamp and query the companies accordingly
         if($request->timestamp == NULL) {
-            $companies = Auth::user()->companies;
+            $companies = Auth::user()->companies->sortBy('designation');
         } else {
             $companies = Auth::user()->companies->where([
                 ["companies.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-            ]);
+            ])->sortBy('designation');
         }
 		
 		return CompanyResource::collection($companies);
@@ -283,7 +298,21 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 * 	@OA\Parameter(
+	 *		name="include-company-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -706,7 +735,7 @@ class CompanyController extends Controller
 	 *                  type="integer",
 	 *                  format="int64",
 	 *              ),
-	 *              required={"target_id","role_id"}
+	 *              required={"target_email","role_id"}
 	 *          )
 	 *      )
 	 *  ),

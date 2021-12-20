@@ -23,7 +23,7 @@ class PriorityController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/priority",
+	 *	path="/administration/priority",
 	 *	tags={"Priority"},
 	 *	summary="All prioritys.",
 	 *	operationId="allPrioritys",
@@ -68,7 +68,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/priority",
+	 *	path="/administration/priority",
 	 *	tags={"Priority"},
 	 *	summary="Store one priority.",
 	 *	operationId="storePriority",
@@ -129,7 +129,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/priorities/{id}",
+	 *	path="/administration/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Show one priority.",
 	 *	operationId="showPriority",
@@ -181,8 +181,8 @@ class PriorityController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
-	 *	path="/priorities/{id}",
+	 * @OA\Put(
+	 *	path="/administration/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Update a priority.",
 	 *	operationId="updatePriority",
@@ -264,7 +264,7 @@ class PriorityController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/priorities/{id}",
+	 *	path="/administration/priorities/{id}",
 	 *	tags={"Priority"},
 	 *	summary="Delete a priority.",
 	 *	operationId="deletePriority",

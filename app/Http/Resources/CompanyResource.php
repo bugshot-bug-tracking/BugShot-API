@@ -23,7 +23,6 @@ class CompanyResource extends JsonResource
 				"color_hex" => $this->color_hex,
 			]
 		);
-
 		
 		$header = $request->header();
 
@@ -37,6 +36,12 @@ class CompanyResource extends JsonResource
 		if(array_key_exists('include-company-users', $header) && $header['include-company-users'][0] == "true") {
 			$users = $this->users;
 			$company['attributes']['users'] = UserResource::collection($users);
+		}
+
+		// Check if the response should contain the respective company image
+		if(array_key_exists('include-company-image', $header) && $header['include-company-image'][0] == "true") {
+			$image = $this->image;
+			$company['attributes']['image'] = new ImageResource($image);
 		}
 
 		return $company;

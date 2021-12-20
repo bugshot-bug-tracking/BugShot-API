@@ -94,6 +94,6 @@ class Status extends Model
      */
 	public function bugs()
 	{
-		return $this->hasMany(Bug::class)->orderBy("order_number");
+		return $this->hasMany(Bug::class)->where("deleted_at", NULL)->orderBy("order_number");
 	}
 }

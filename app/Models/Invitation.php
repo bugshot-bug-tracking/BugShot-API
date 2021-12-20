@@ -41,7 +41,7 @@ class Invitation extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="target_id",
+	 * 	property="target_email",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The id of the user whom the invitation is for."
@@ -120,7 +120,7 @@ class Invitation extends Model
      */
 	public function target()
 	{
-		return $this->belongsTo(User::class, "target_id");
+		return $this->belongsTo(User::class, "target_email");
 	}
 
 	/**

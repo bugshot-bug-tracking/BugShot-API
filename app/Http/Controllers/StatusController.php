@@ -65,7 +65,11 @@ class StatusController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -104,12 +108,9 @@ class StatusController extends Controller
 		$this->authorize('viewAny', [Status::class, $project]);
 
 		if($request->timestamp == NULL) {
-            $statuses = $project->statuses->where("project_id", $project->id);
+            $statuses = $project->statuses;
         } else {
-            $statuses = $project->statuses->where([
-				["project_id", "=", $project->id],
-                ["statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-			]);
+            $statuses = $project->statuses->where(["statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]);
         }
 
 		return StatusResource::collection($statuses);
@@ -252,7 +253,11 @@ class StatusController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",

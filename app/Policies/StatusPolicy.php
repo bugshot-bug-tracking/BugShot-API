@@ -59,6 +59,10 @@ class StatusPolicy
     public function create(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+        
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -91,6 +95,10 @@ class StatusPolicy
     public function update(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+        
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -123,6 +131,10 @@ class StatusPolicy
     public function delete(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+        
         $role = $project->pivot->role_id;
 
         switch ($role) {

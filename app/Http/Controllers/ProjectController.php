@@ -82,6 +82,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-bug-users",
 	 *		required=false,
@@ -314,7 +319,16 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -622,7 +636,36 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -827,7 +870,7 @@ class ProjectController extends Controller
 	 *					type="integer",
 	 *                  format="int64",
 	 *              ),
-	 *              required={"target_id","role_id"}
+	 *              required={"target_email","role_id"}
 	 *          )
 	 *      )
 	 *  ),
@@ -865,7 +908,7 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to invite users to the project
 		$this->authorize('invite', $project);
-
+		
 		$id = $this->setId($request);
 
 		$invitation = $invitationService->send($request, $project, $id);

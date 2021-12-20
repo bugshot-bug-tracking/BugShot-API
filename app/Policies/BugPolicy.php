@@ -68,8 +68,11 @@ class BugPolicy
      */
     public function update(User $user, Project $project)
     {
-        
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -102,6 +105,10 @@ class BugPolicy
     public function delete(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -158,6 +165,10 @@ class BugPolicy
     public function assignUser(User $user, Bug $bug)
     {
         $bug = $user->bugs()->find($bug);
+        if ($bug == NULL) {
+            return false;
+        }
+        
         $role = $bug->pivot->role_id;
     
         switch ($role) {

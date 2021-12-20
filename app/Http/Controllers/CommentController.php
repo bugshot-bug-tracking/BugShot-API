@@ -322,11 +322,19 @@ class CommentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/comments/{comment_id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Delete a comment.",
 	 *	operationId="deleteComment",
 	 *	security={ {"sanctum": {} }},
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="comment_id",
 	 *		required=true,

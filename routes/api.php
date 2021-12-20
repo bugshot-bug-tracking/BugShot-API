@@ -75,9 +75,6 @@ Route::middleware(['auth:sanctum'])->group(
 // Route::middleware(['auth:sanctum', 'check_version'])->group(function () { 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-	// Route for the chrome extention to check if the visited website has a respective project
-	Route::post('/check-project', [UserController::class, "checkProject"])->name("check-project");
-
 	// Company routes
 	Route::apiResource('/companies', CompanyController::class);
 
@@ -128,21 +125,31 @@ Route::middleware(['auth:sanctum'])->group(function () {
 	Route::get('/screenshots/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
 	Route::get('/attachments/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
 
-	// Invitation prefixed routes
-	Route::prefix('invitations')->group(function () {
-		Route::get("/statuses", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
-		Route::get("/statuses/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
-		Route::get("/{invitation}", [InvitationController::class, "show"])->name("invitation.show");
-		Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
-		Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("invitation.accept");
-		Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("invitation.decline");
+	Route::prefix('/user')->group(function () {
+		// Route for the chrome extention to check if the visited website has a respective project
+		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
+
+		// Invitation prefixed routes
+		Route::prefix('invitations')->group(function () {
+			Route::get("/", [InvitationController::class, "index"])->name("user.invitation.index");
+			Route::get("/{invitation}", [InvitationController::class, "show"])->name("user.invitation.show");
+			Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("user.invitation.destroy");
+			Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
+			Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
+		});
 	});
 
-	// Miscellaneous resource routes
-	Route::apiResources(
-		[
-			'roles' => RoleController::class,
-			'priorities' => PriorityController::class,
-		]
-	);
+	/*
+	|--------------------------------------------------------------------------
+	| Administrative API Routes
+	|--------------------------------------------------------------------------
+	*/
+	Route::prefix('/administration')->group(function () {
+		Route::apiResources(
+			[
+				'roles' => RoleController::class,
+				'priorities' => PriorityController::class,
+			]
+		);
+	});
 });

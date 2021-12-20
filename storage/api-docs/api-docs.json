@@ -34,6 +34,11 @@
                         "schema": {
                             "$ref": "#/components/schemas/Bug/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -209,6 +214,11 @@
                         }
                     },
                     {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "attachment_id",
                         "in": "path",
                         "required": true,
@@ -280,9 +290,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/attachments/{attachment_id}": {
+            },
             "delete": {
                 "tags": [
                     "Attachment"
@@ -290,6 +298,14 @@
                 "summary": "Delete one attachment.",
                 "operationId": "deleteAttachment",
                 "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
                     {
                         "name": "attachment_id",
                         "in": "path",
@@ -756,6 +772,11 @@
                         "name": "include-bug-users",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -974,6 +995,11 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -1508,9 +1534,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/comments/{comment_id}": {
+            },
             "delete": {
                 "tags": [
                     "Comment"
@@ -1518,6 +1542,14 @@
                 "summary": "Delete a comment.",
                 "operationId": "deleteComment",
                 "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
                     {
                         "name": "comment_id",
                         "in": "path",
@@ -1601,6 +1633,21 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -1760,6 +1807,21 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -2095,7 +2157,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "target_id",
+                                    "target_email",
                                     "role_id"
                                 ],
                                 "properties": {
@@ -2148,7 +2210,48 @@
                 ]
             }
         },
-        "/invitations/{id}": {
+        "/user/invitations": {
+            "get": {
+                "tags": [
+                    "Invitation"
+                ],
+                "summary": "Show all invitations that the user has received.",
+                "operationId": "showInvitations",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Invitation"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/user/invitations/{id}": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2235,7 +2338,7 @@
                 ]
             }
         },
-        "/invitations/{id}/accept": {
+        "/user/invitations/{id}/accept": {
             "post": {
                 "tags": [
                     "Invitation"
@@ -2286,7 +2389,7 @@
                 ]
             }
         },
-        "/invitations/{id}/decline": {
+        "/user/invitations/{id}/decline": {
             "post": {
                 "tags": [
                     "Invitation"
@@ -2330,7 +2433,7 @@
                 ]
             }
         },
-        "/priority": {
+        "/administration/priority": {
             "get": {
                 "tags": [
                     "Priority"
@@ -2426,7 +2529,7 @@
                 ]
             }
         },
-        "/priorities/{id}": {
+        "/administration/priorities/{id}": {
             "get": {
                 "tags": [
                     "Priority"
@@ -2473,7 +2576,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Priority"
                 ],
@@ -2633,6 +2736,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
                         "in": "header",
                         "required": false
                     },
@@ -2811,6 +2919,16 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -3058,6 +3176,36 @@
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -3219,7 +3367,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "target_id",
+                                    "target_email",
                                     "role_id"
                                 ],
                                 "properties": {
@@ -3272,7 +3420,7 @@
                 ]
             }
         },
-        "/roles": {
+        "/administration/roles": {
             "get": {
                 "tags": [
                     "Role"
@@ -3313,7 +3461,7 @@
                 ]
             }
         },
-        "/role": {
+        "/administration/role": {
             "post": {
                 "tags": [
                     "Role"
@@ -3370,7 +3518,7 @@
                 ]
             }
         },
-        "/roles/{id}": {
+        "/administration/roles/{id}": {
             "get": {
                 "tags": [
                     "Role"
@@ -3417,7 +3565,7 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Role"
                 ],
@@ -3821,9 +3969,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/screenshots/{screenshot_id}": {
+            },
             "delete": {
                 "tags": [
                     "Screenshot"
@@ -3831,6 +3977,14 @@
                 "summary": "Delete one screenshots.",
                 "operationId": "deleteScreenshot",
                 "parameters": [
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
                     {
                         "name": "screenshot_id",
                         "in": "path",
@@ -3902,6 +4056,11 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -4056,6 +4215,11 @@
                     },
                     {
                         "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -4262,47 +4426,6 @@
                                     "type": "array",
                                     "items": {
                                         "$ref": "#/components/schemas/ProjectUserRole"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/user/invitations": {
-            "get": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Show all invitations that the user has received.",
-                "operationId": "showUserInvitations",
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Invitation"
                                     }
                                 }
                             }
@@ -4614,7 +4737,7 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "target_id": {
+                    "target_email": {
                         "description": "The id of the user whom the invitation is for.",
                         "type": "integer",
                         "format": "int64"

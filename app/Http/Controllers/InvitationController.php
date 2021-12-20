@@ -27,9 +27,57 @@ use App\Models\ProjectUserRole;
  */
 class InvitationController extends Controller
 {
+
 	/**
 	 * @OA\Get(
-	 *	path="/invitations/{id}",
+	 *	path="/user/invitations",
+	 *	tags={"Invitation"},
+	 *	summary="Show all invitations that the user has received.",
+	 *	operationId="showInvitations",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function index()
+	{
+		// Check if the user is authorized to list the invitations
+		$this->authorize('viewAny', Invitation::class);
+
+		$invitations = Invitation::where([
+			["target_email", Auth::user()->email],
+			["status_id", 1]
+		])->get();
+
+		return InvitationResource::collection($invitations);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/user/invitations/{id}",
 	 *	tags={"Invitation"},
 	 *	summary="Show one invitation.",
 	 *	operationId="showInvitation",
@@ -77,12 +125,15 @@ class InvitationController extends Controller
 	 */
 	public function show(Invitation $invitation)
 	{
+		// Check if the user is authorized to view the invitation
+		$this->authorize('view', $invitation);
+
 		return new InvitationResource($invitation);
 	}
 
 	/**
 	 * @OA\Delete(
-	 *	path="/invitations/{id}",
+	 *	path="/user/invitations/{id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
@@ -126,6 +177,9 @@ class InvitationController extends Controller
 	 */
 	public function destroy(Invitation $invitation)
 	{
+		// Check if the user is authorized to delete the invitation
+		$this->authorize('delete', $invitation);
+
 		$val = $invitation->update([
 			"deleted_at" => new \DateTime()
 		]);
@@ -135,7 +189,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/invitations/{id}/accept",
+	 *	path="/user/invitations/{id}/accept",
 	 *	tags={"Invitation"},
 	 *	summary="Accept one invitation.",
 	 *	operationId="acceptInvitation",
@@ -187,7 +241,10 @@ class InvitationController extends Controller
 	 */
 	public function accept(Invitation $invitation)
 	{
-		if (Auth::id() !== $invitation->target_id)
+		// Check if the user is authorized to accept the invitation
+		$this->authorize('accept', $invitation);
+
+		if (Auth::user()->email !== $invitation->target_email)
 			return response()->json([
 				"errors" => [
 					"status" => 403,
@@ -221,7 +278,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/invitations/{id}/decline",
+	 *	path="/user/invitations/{id}/decline",
 	 *	tags={"Invitation"},
 	 *	summary="Decline one invitation.",
 	 *	operationId="declineInvitation",
@@ -270,7 +327,10 @@ class InvitationController extends Controller
 	 */
 	public function decline(Invitation $invitation)
 	{
-		if (Auth::id() !== $invitation->target_id)
+		// Check if the user is authorized to decline the invitation
+		$this->authorize('decline', $invitation);
+
+		if (Auth::id() !== $invitation->target_email)
 			return response()->json([
 				"errors" => [
 					"status" => 403,
@@ -296,28 +356,20 @@ class InvitationController extends Controller
 	 */
 	private function acceptCompany(Invitation $invitation, Company $company)
 	{
-		// if a previous invitation was accepted
-		$cur = CompanyUserRole::where([
-			["company_id", $company->id],
-			["user_id", $invitation->target_id]
-		])->get();
+		$user = Auth::user();
 
-		if ($cur->count() !== 0) {
+		// Check if the user is already part of this company
+		if ($user->companies->find($company) !== NULL) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
-				"message" => "A previous invitation was already accepted."
+				"message" => "You are already part of the company."
 			]], 288);
 		}
 
-		$companyUserRole = CompanyUserRole::create([
-			"company_id" => $company->id,
-			"user_id" => $invitation->target_id,
-			"role_id" => $invitation->role_id
-		]);
-
+		$user->companies()->attach($company->id, ['role_id' => $invitation->role_id]);
 		$invitation->update(["status_id" => 2]);
 
-		return new CompanyUserRoleResource($companyUserRole);
+		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->first());
 	}
 
 	/**
@@ -329,40 +381,25 @@ class InvitationController extends Controller
 	 */
 	private function acceptProject(Invitation $invitation, Project $project)
 	{
-		// if a previous invitation was accepted
-		$pur = ProjectUserRole::where([
-			["project_id", $project->id],
-			["user_id", $invitation->target_id]
-		])->get();
+		$user = Auth::user();
 
-		if ($pur->count() !== 0) {
+		// Check if the user is already part of this project
+		if ($user->projects->find($project) !== NULL) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
-				"message" => "A previous invitation was already accepted."
+				"message" => "You are already part of the project."
 			]], 288);
 		}
 
-		$projectUserRole = ProjectUserRole::create([
-			"project_id" => $project->id,
-			"user_id" => $invitation->target_id,
-			"role_id" => $invitation->role_id
-		]);
+		$user->projects()->attach($project->id, ['role_id' => $invitation->role_id]);
 
-		// if user not in company add it to it
-		$cur = CompanyUserRole::where([
-			["company_id", $project->company->id],
-			["user_id", $invitation->target_id]
-		])->get();
-
-		if ($cur->count() === 0)
-			CompanyUserRole::create([
-				"company_id" => $project->company->id,
-				"user_id" => $invitation->target_id,
-				"role_id" => 7
-			]);
+		// Check if the user is already part of this company
+		if ($user->companies->find($project->company) == NULL) {
+			$user->companies()->attach($project->company->id, ['role_id' => $invitation->role_id]);
+		}
 
 		$invitation->update(["status_id" => 2]);
 
-		return new ProjectUserRoleResource($projectUserRole);
+		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->first());
 	}
 }

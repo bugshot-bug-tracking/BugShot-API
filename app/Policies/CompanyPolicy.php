@@ -68,6 +68,10 @@ class CompanyPolicy
     public function update(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+
         $role = $company->pivot->role_id;
 
         switch ($role) {
@@ -94,6 +98,10 @@ class CompanyPolicy
     public function delete(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
         $role = $company->pivot->role_id;
 
         switch ($role) {
@@ -153,6 +161,10 @@ class CompanyPolicy
     public function viewUsers(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
         $role = $company->pivot->role_id;
 
         switch ($role) {
@@ -185,6 +197,10 @@ class CompanyPolicy
     public function viewInvitations(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
         $role = $company->pivot->role_id;
 
         switch ($role) {
@@ -217,6 +233,10 @@ class CompanyPolicy
     public function invite(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
         $role = $company->pivot->role_id;
 
         switch ($role) {

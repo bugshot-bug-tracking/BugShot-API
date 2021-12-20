@@ -42,7 +42,11 @@ class AttachmentController extends Controller
 	 *			ref="#/components/schemas/Bug/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -239,6 +243,11 @@ class AttachmentController extends Controller
 	 *			ref="#/components/schemas/Bug/properties/id"
 	 *		)
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="attachment_id",
 	 *		required=true,
@@ -338,12 +347,19 @@ class AttachmentController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/attachments/{attachment_id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Delete one attachment.",
 	 *	operationId="deleteAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="attachment_id",
 	 *		required=true,

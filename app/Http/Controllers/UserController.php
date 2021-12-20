@@ -111,48 +111,4 @@ class UserController extends Controller
 
 		return ProjectUserRoleResource::collection($foundProjects);
 	}
-
-	/**
-	 * @OA\Get(
-	 *	path="/user/invitations",
-	 *	tags={"User"},
-	 *	summary="Show all invitations that the user has received.",
-	 *	operationId="showUserInvitations",
-	 *	security={ {"sanctum": {} }},
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Invitation")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 * )
-	 **/
-	public function invitations()
-	{
-		return InvitationResource::collection(
-			Invitation::where([
-				["target_email", Auth::id()],
-				["status_id", 1]
-			])->get()
-		);
-	}
 }
