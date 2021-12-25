@@ -764,6 +764,10 @@ class CompanyController extends Controller
 	 *		description="Not Found"
 	 *	),
 	 *	@OA\Response(
+	 *		response=409,
+	 *		description="The request could not be completed due to a conflict with the current state of the resource."
+	 *	),
+	 *	@OA\Response(
 	 *		response=422,
 	 *		description="Unprocessable Entity"
 	 *	),
@@ -773,6 +777,13 @@ class CompanyController extends Controller
 	{
 		// Check if the user is authorized to invite users to the company
 		$this->authorize('invite', $company);
+
+		// Check if the user has already been invited to the company
+		if($company->invitations->where('target_email', $request->target_email)->isNotEmpty()) {
+			return response()->json(["data" => [
+				"message" => "User has already been invited to the company."
+			]], 409);
+		}
 
 		$id = $this->setId($request);
 

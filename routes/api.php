@@ -134,8 +134,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 			Route::get("/", [InvitationController::class, "index"])->name("user.invitation.index");
 			Route::get("/{invitation}", [InvitationController::class, "show"])->name("user.invitation.show");
 			Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("user.invitation.destroy");
-			Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
-			Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
+			Route::get("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
+			Route::get("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
 		});
 	});
 

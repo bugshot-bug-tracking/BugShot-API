@@ -2199,6 +2199,9 @@
                     "404": {
                         "description": "Not Found"
                     },
+                    "409": {
+                        "description": "The request could not be completed due to a conflict with the current state of the resource."
+                    },
                     "422": {
                         "description": "Unprocessable Entity"
                     }
@@ -2339,7 +2342,7 @@
             }
         },
         "/user/invitations/{id}/accept": {
-            "post": {
+            "get": {
                 "tags": [
                     "Invitation"
                 ],
@@ -2390,7 +2393,7 @@
             }
         },
         "/user/invitations/{id}/decline": {
-            "post": {
+            "get": {
                 "tags": [
                     "Invitation"
                 ],

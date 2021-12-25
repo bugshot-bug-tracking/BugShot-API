@@ -188,7 +188,7 @@ class InvitationController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Get(
 	 *	path="/user/invitations/{id}/accept",
 	 *	tags={"Invitation"},
 	 *	summary="Accept one invitation.",
@@ -277,7 +277,7 @@ class InvitationController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Get(
 	 *	path="/user/invitations/{id}/decline",
 	 *	tags={"Invitation"},
 	 *	summary="Decline one invitation.",
