@@ -778,10 +778,10 @@ class CompanyController extends Controller
 		// Check if the user is authorized to invite users to the company
 		$this->authorize('invite', $company);
 
-		// Check if the user has already been invited to the company
-		if($company->invitations->where('target_email', $request->target_email)->isNotEmpty()) {
+		// Check if the user has already been invited to the company or is already part of it
+		if($company->invitations->contains('target_email', $request->target_email) || $company->users->contains(Auth::user())) {
 			return response()->json(["data" => [
-				"message" => "User has already been invited to the company."
+				"message" => "User has already been invited to the company or is already part of it."
 			]], 409);
 		}
 
