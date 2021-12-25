@@ -29,7 +29,7 @@ class InvitationPolicy
      */
     public function viewAny(User $user)
     {
-        //
+       return true;
     }
 
     /**
@@ -41,7 +41,18 @@ class InvitationPolicy
      */
     public function view(User $user, Invitation $invitation)
     {
-        //
+        switch (true) {
+            case $user->id == $invitation->sender_id:
+                return true;
+                break;
+            case $user->email == $invitation->target_email:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -76,7 +87,18 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation)
     {
-        //
+        switch (true) {
+            case $user->id == $invitation->sender_id:
+                return true;
+                break;
+            case $user->email == $invitation->target_email:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
     }
 
     /**
@@ -101,5 +123,37 @@ class InvitationPolicy
     public function forceDelete(User $user, Invitation $invitation)
     {
         //
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Invitation  $invitation
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function accept(User $user, Invitation $invitation)
+    {
+        if($user->email == $invitation->target_email) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Invitation  $invitation
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function decline(User $user, Invitation $invitation)
+    {
+        if($user->email == $invitation->target_email) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

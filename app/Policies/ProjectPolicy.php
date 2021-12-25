@@ -47,6 +47,10 @@ class ProjectPolicy
     public function view(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -76,6 +80,10 @@ class ProjectPolicy
     public function create(User $user, Company $company)
     {
         $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+
         $role = $company->pivot->role_id;
 
         switch ($role) {
@@ -105,6 +113,10 @@ class ProjectPolicy
     public function update(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -134,6 +146,10 @@ class ProjectPolicy
     public function delete(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -199,6 +215,10 @@ class ProjectPolicy
     public function viewUsers(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -231,6 +251,10 @@ class ProjectPolicy
     public function viewInvitations(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {
@@ -263,6 +287,10 @@ class ProjectPolicy
     public function invite(User $user, Project $project)
     {
         $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
         $role = $project->pivot->role_id;
 
         switch ($role) {

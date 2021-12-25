@@ -373,12 +373,20 @@ class ScreenshotController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/screenshots/{screenshot_id}",
+	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
 	 *	tags={"Screenshot"},
 	 *	summary="Delete one screenshots.",
 	 *	operationId="deleteScreenshot",
 	 *	security={ {"sanctum": {} }},
 	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="screenshot_id",
 	 *		required=true,

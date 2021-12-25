@@ -66,7 +66,11 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -107,12 +111,9 @@ class BugController extends Controller
 
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if($request->timestamp == NULL) {
-            $bugs = $status->project->bugs->where("status_id", $status->id);
+            $bugs = $status->bugs;
         } else {
-            $bugs = $status->project->bugs->where([
-				["status_id", "=", $status->id],
-                ["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-			]);
+            $bugs = $status->bugs->where(["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]);
         }
 		
 		return BugResource::collection($bugs);
@@ -363,7 +364,11 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",

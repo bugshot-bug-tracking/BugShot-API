@@ -183,7 +183,7 @@ class Bug extends Model
      */
 	public function screenshots()
 	{
-		return $this->hasMany(Screenshot::class);
+		return $this->hasMany(Screenshot::class)->where("deleted_at", NULL);
 	}
 
 	/**
@@ -191,7 +191,7 @@ class Bug extends Model
      */
 	public function attachments()
 	{
-		return $this->hasMany(Attachment::class);
+		return $this->hasMany(Attachment::class)->where("deleted_at", NULL);
 	}
 
 	/**
@@ -199,6 +199,6 @@ class Bug extends Model
      */
 	public function comments()
 	{
-		return $this->hasMany(Comment::class);
+		return $this->hasMany(Comment::class)->where("deleted_at", NULL)->orderBy('created_at');
 	}
 }

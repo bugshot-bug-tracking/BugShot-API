@@ -87,7 +87,7 @@ class Company extends Model
      */
 	public function projects()
 	{
-		return $this->hasMany(Project::class)->orderBy('updated_at', 'desc');
+		return $this->hasMany(Project::class)->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
 	}
 
 	/**
@@ -95,7 +95,7 @@ class Company extends Model
      */
 	public function invitations()
 	{
-		return $this->morphMany(Invitation::class, "invitable");
+		return $this->morphMany(Invitation::class, "invitable")->where("deleted_at", NULL);
 	}
 
 	/**

@@ -44,6 +44,12 @@ class ProjectResource extends JsonResource
 			$users = $this->users;
 			$project['attributes']['users'] = UserResource::collection($users);
 		}
+
+		// Check if the response should contain the respective project image
+		if(array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
+			$image = $this->image;
+			$project['attributes']['image'] = new ImageResource($image);
+		}
 	
 		return $project;
 	}

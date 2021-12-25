@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Company;
+use App\Models\Project;
 
 class InvitationResource extends JsonResource
 {

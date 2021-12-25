@@ -117,7 +117,7 @@ class Project extends Model
      */
 	public function bugs()
 	{
-		return $this->hasMany(Bug::class);
+		return $this->hasMany(Bug::class)->where("deleted_at", NULL);
 	}
 
 	/**
