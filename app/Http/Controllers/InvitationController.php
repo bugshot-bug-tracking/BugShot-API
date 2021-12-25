@@ -77,14 +77,14 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{id}",
+	 *	path="/user/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Show one invitation.",
 	 *	operationId="showInvitation",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="invitation_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -133,14 +133,14 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/user/invitations/{id}",
+	 *	path="/user/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
 	 *	security={ {"sanctum": {} }},
 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="invitation_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -189,14 +189,14 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{id}/accept",
+	 *	path="/user/invitations/{invitation_id}/accept",
 	 *	tags={"Invitation"},
 	 *	summary="Accept one invitation.",
 	 *	operationId="acceptInvitation",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="invitation_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -278,14 +278,14 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{id}/decline",
+	 *	path="/user/invitations/{invitation_id}/decline",
 	 *	tags={"Invitation"},
 	 *	summary="Decline one invitation.",
 	 *	operationId="declineInvitation",
 	 *	security={ {"sanctum": {} }},
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="invitation_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
