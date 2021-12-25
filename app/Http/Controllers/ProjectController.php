@@ -19,6 +19,7 @@ use App\Services\ImageService;
 use App\Services\InvitationService;
 
 // Models
+use App\Models\User;
 use App\Models\Project;
 use App\Models\Company;
 use App\Models\ProjectUserRole;
@@ -910,7 +911,8 @@ class ProjectController extends Controller
 		$this->authorize('invite', $project);
 		
 		// Check if the user has already been invited to the project or is already part of it
-		if($project->invitations->contains('target_email', $request->target_email) || $project->users->contains(Auth::user())) {
+		$targetUser = User::where('email', $request->target_email)->first();
+		if($project->invitations->contains('target_email', $request->target_email) || $project->users->contains($targetUser)) {
 			return response()->json(["data" => [
 				"message" => "User has already been invited to the project or is already part of it."
 			]], 409);

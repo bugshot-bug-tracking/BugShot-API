@@ -18,6 +18,7 @@ use App\Services\InvitationService;
 
 // Models
 use App\Models\Company;
+use App\Models\User;
 use App\Models\CompanyUserRole;
 
 // Requests
@@ -779,7 +780,8 @@ class CompanyController extends Controller
 		$this->authorize('invite', $company);
 
 		// Check if the user has already been invited to the company or is already part of it
-		if($company->invitations->contains('target_email', $request->target_email) || $company->users->contains(Auth::user())) {
+		$targetUser = User::where('email', $request->target_email)->first();
+		if($company->invitations->contains('target_email', $request->target_email) || $company->users->contains($targetUser)) {
 			return response()->json(["data" => [
 				"message" => "User has already been invited to the company or is already part of it."
 			]], 409);
