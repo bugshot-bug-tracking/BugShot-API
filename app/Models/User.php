@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\ResetPasswordNotification;
+use App\Notifications\ResetPasswordLinkNotification;
 
 /**
  * @OA\Schema()
@@ -150,10 +150,9 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-		$baseUrl = config('app.url');
-	    $url = $baseUrl . '/auth/reset-password?token=' . $token;
+	    $url = route('password.update') . '?token=' . $token;
 
-	    $this->notify(new ResetPasswordNotification($url));
+	    $this->notify(new ResetPasswordLinkNotification($url));
 	}
 
 }

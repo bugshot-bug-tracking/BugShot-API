@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use App\Notifications\InvitationNotification;
+use App\Notifications\InvitationReceivedNotification;
 
 class InvitationService
 {
@@ -19,8 +19,8 @@ class InvitationService
 			"status_id" => 1, // Pending
         ]);
 
-        $user = User::first('email', $request->target_email);
-        $user->notify(new InvitationNotification($user, $invitation));
+        $user = User::where('email', $request->target_email)->first();
+        $user->notify(new InvitationReceivedNotification($invitation));
 
         return $invitation;
     }
