@@ -1599,11 +1599,6 @@
                 "operationId": "allCompanies",
                 "parameters": [
                     {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
                         "name": "include-projects",
                         "in": "header",
                         "required": false
