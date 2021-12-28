@@ -41,6 +41,11 @@ class CompanyController extends Controller
 	 *	security={ {"sanctum": {} }},
 	 * 
 	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-projects",
 	 *		required=false,
 	 *		in="header"

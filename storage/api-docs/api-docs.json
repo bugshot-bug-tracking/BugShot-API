@@ -454,6 +454,13 @@
                 ],
                 "summary": "Log in.",
                 "operationId": "authLogin",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1591,6 +1598,11 @@
                 "summary": "All companies.",
                 "operationId": "allCompanies",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": false
+                    },
                     {
                         "name": "include-projects",
                         "in": "header",
@@ -4597,6 +4609,35 @@
                         "description": "The id of the role.",
                         "type": "integer",
                         "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientUser": {
+                "properties": {
+                    "client_id": {
+                        "description": "The id of the client.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "last_active_at": {
+                        "description": "The last time the user was active.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "login_counter": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

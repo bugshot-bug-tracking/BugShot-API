@@ -41,7 +41,6 @@ use App\Models\Company;
 |--------------------------------------------------------------------------
 */
 
-// Route::prefix('auth')->middleware(['check_version'])->group(function () {
 Route::prefix('auth')->group(function () {
 	// Register Routes
 	Route::post('/register', [AuthController::class, "register"])->name("register");
@@ -62,7 +61,6 @@ Route::prefix('auth')->group(function () {
 | Private API Routes
 |--------------------------------------------------------------------------
 */
-// Route::middleware(['auth:sanctum', 'check_version'])->group(
 Route::middleware(['auth:sanctum'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
@@ -72,7 +70,6 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
-// Route::middleware(['auth:sanctum', 'check_version'])->group(function () { 
 Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Company routes

@@ -25,7 +25,7 @@ class CompanyResource extends JsonResource
 		);
 		
 		$header = $request->header();
-
+		
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
 			$projects = Auth::user()->projects->where('company_id', $this->id);

@@ -134,12 +134,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
     }
 
-		/**
+	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function bugs()
     {
         return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('order_number');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter'])->where("deleted_at", NULL);
     }
 
 	/**

@@ -116,7 +116,11 @@ class AuthController extends Controller
 	 *	tags={"Auth"},
 	 *	summary="Log in.",
 	 *	operationId="authLogin",
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -164,12 +168,27 @@ class AuthController extends Controller
 	public function login(LoginRequest $request)
 	{
 		$user = User::where("email", $request->email)->first();
+		$clientId = $request->header('clientId');
+		$userClient = $user->clients()->where('client_id', $clientId);
 
 		if (!$user || !Hash::check($request->password, $user->password))
 			return response()->json(["message" => "Bad Credentials!"], 401);
 
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
+		
+        // Check if the intermediate entry already exists and create/update it
+        if($userClient->exists()) {
+            $user->clients()->updateExistingPivot($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => $userClient->first()->pivot->login_counter + 1
+			]);
+        } else {
+            $user->clients()->attach($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => 1
+			]);  
+        }
 
 		return response()->json([
 			"data" => [
