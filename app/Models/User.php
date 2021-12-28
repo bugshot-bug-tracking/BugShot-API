@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\ResetPasswordNotification;
+use App\Notifications\ResetPasswordLinkNotification;
 
 /**
  * @OA\Schema()
@@ -134,12 +134,20 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
     }
 
-		/**
+	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function bugs()
     {
         return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('order_number');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter'])->where("deleted_at", NULL);
     }
 
 	/**
@@ -150,10 +158,9 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-		$baseUrl = config('app.url');
-	    $url = $baseUrl . '/auth/reset-password?token=' . $token;
+	    $url = route('password.update') . '?token=' . $token;
 
-	    $this->notify(new ResetPasswordNotification($url));
+	    $this->notify(new ResetPasswordLinkNotification($url));
 	}
 
 }

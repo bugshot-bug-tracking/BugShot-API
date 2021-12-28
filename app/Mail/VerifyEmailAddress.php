@@ -8,28 +8,23 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 use App\Models\User;
-use App\Models\Invitation;
 
-class InvitationReceived extends Mailable
+class VerifyEmailAddress extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $invitation;
-    public $resource;
-    public $entryMessage;
+    public $url;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable, Invitation $invitation, $resource, $message)
+    public function __construct(User $notifiable, $url)
     {
         $this->user = $notifiable;
-        $this->invitation = $invitation;
-        $this->resource = $resource;
-        $this->entryMessage = $message;
+        $this->url = $url;
     }
 
     /**
@@ -39,6 +34,6 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.invitation-mail');
+        return $this->view('emails.verify-email-address-mail');
     }
 }

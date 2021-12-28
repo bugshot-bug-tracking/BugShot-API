@@ -6,8 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Mail\ResetPasswordLink;
 
-class ConfirmRegistration extends Notification
+class ResetPasswordLinkNotification extends Notification
 {
     use Queueable;
 
@@ -16,9 +17,9 @@ class ConfirmRegistration extends Notification
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($url)
     {
-        //
+        $this->url = $url;
     }
 
     /**
@@ -40,10 +41,8 @@ class ConfirmRegistration extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+        return (new ResetPasswordLink($notifiable, $this->url))
+        ->to($notifiable->email);
     }
 
     /**

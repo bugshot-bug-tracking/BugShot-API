@@ -454,6 +454,13 @@
                 ],
                 "summary": "Log in.",
                 "operationId": "authLogin",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1592,6 +1599,11 @@
                 "operationId": "allCompanies",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-projects",
                         "in": "header",
                         "required": false
@@ -2254,7 +2266,7 @@
                 ]
             }
         },
-        "/user/invitations/{id}": {
+        "/user/invitations/{invitation_id}": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2263,7 +2275,7 @@
                 "operationId": "showInvitation",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "invitation_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2309,7 +2321,7 @@
                 "operationId": "deleteInvitation",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "invitation_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2341,7 +2353,7 @@
                 ]
             }
         },
-        "/user/invitations/{id}/accept": {
+        "/user/invitations/{invitation_id}/accept": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2350,7 +2362,7 @@
                 "operationId": "acceptInvitation",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "invitation_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -2392,7 +2404,7 @@
                 ]
             }
         },
-        "/user/invitations/{id}/decline": {
+        "/user/invitations/{invitation_id}/decline": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2401,7 +2413,7 @@
                 "operationId": "declineInvitation",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "invitation_id",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -4597,6 +4609,35 @@
                         "description": "The id of the role.",
                         "type": "integer",
                         "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "ClientUser": {
+                "properties": {
+                    "client_id": {
+                        "description": "The id of the client.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "last_active_at": {
+                        "description": "The last time the user was active.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "login_counter": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
                     }
                 },
                 "type": "object"

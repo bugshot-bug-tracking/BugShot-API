@@ -7,19 +7,19 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Mail\InvitationReceived;
 
 // Resources
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\BugResource;
-use App\Mail\InvitationReceived;
 
 // Models
 use App\Models\Company;
 use App\Models\Bug;
 use App\Models\Project;
 
-class InvitationNotification extends Notification
+class InvitationReceivedNotification extends Notification
 {
     use Queueable;
 
@@ -28,9 +28,8 @@ class InvitationNotification extends Notification
      *
      * @return void
      */
-    public function __construct($user, $invitation)
+    public function __construct($invitation)
     {
-        $this->user = $user;
         $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
@@ -73,8 +72,8 @@ class InvitationNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceived($this->user, $this->invitation, $this->resource, $this->message))
-        ->to($this->invitation->target_email);
+        return (new InvitationReceived($notifiable, $this->invitation, $this->resource, $this->message))
+        ->to($notifiable->email);
     }
 
     /**
