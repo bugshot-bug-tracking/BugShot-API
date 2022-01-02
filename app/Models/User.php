@@ -163,5 +163,12 @@ class User extends Authenticatable implements MustVerifyEmail
 	    $this->notify(new ResetPasswordLinkNotification($url));
 	}
 
+	/**
+	 * Check if the user is an admin
+	 */
+	public function isAdministrator() {
+		return $this->is_admin;
+	 }
+
 }
 
