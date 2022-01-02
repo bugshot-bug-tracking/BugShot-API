@@ -18,11 +18,12 @@ class ProjectPolicy
      * Roles:
      * | id | designation
      * |----|----------------------
-     * | 1  | Owner
-     * | 2  | Company Manager
-     * | 3  | Project Manager
-     * | 4  | Developer
-     * | 5  | Client (e.g. Customer)
+     * | 1  | Admin
+     * | 2  | Owner
+     * | 3  | Company Manager
+     * | 4  | Project Manager
+     * | 5  | Developer
+     * | 6  | Client (e.g. Customer)
      */
 
     /**
@@ -63,6 +64,9 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
+            case 4:
+                return true;
+                break;
             
             default:
                 return false;
@@ -94,6 +98,9 @@ class ProjectPolicy
                 return true;
                 break;
             case 3:
+                return true;
+                break;
+            case 4:
                 return true;
                 break;
             
@@ -129,6 +136,9 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
+            case 4:
+                return true;
+                break;
             
             default:
                 return false;
@@ -160,6 +170,9 @@ class ProjectPolicy
                 return true;
                 break;
             case 3:
+                return true;
+                break;
+            case 4:
                 return true;
                 break;
             
@@ -234,6 +247,9 @@ class ProjectPolicy
             case 4:
                 return true;
                 break;
+            case 5:
+                return true;
+                break;
             
             default:
                 return false;
@@ -270,6 +286,9 @@ class ProjectPolicy
             case 4:
                 return true;
                 break;
+            case 5:
+                return true;
+                break;
             
             default:
                 return false;
@@ -298,6 +317,9 @@ class ProjectPolicy
                 return true;
                 break;
             case 2:
+                return true;
+                break;
+            case 3:
                 return true;
                 break;
             
