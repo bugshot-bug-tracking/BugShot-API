@@ -16,31 +16,26 @@ class RoleSeeder extends Seeder
 	{
 		Role::create([
 			"id" => 1,
-			"designation" => "Admin"
-		]);
-
-		Role::create([
-			"id" => 2,
 			"designation" => "Owner"
 		]);
 
 		Role::create([
-			"id" => 3,
+			"id" => 2,
 			"designation" => "Company Manager"
 		]);
 
 		Role::create([
-			"id" => 4,
+			"id" => 3,
 			"designation" => "Project Manager"
 		]);
 
 		Role::create([
-			"id" => 5,
+			"id" => 4,
 			"designation" => "Developer"
 		]);
 
 		Role::create([
-			"id" => 6,
+			"id" => 5,
 			"designation" => "Client"
 		]);
 

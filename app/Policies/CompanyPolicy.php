@@ -17,12 +17,11 @@ class CompanyPolicy
      * Roles:
      * | id | designation
      * |----|----------------------
-     * | 1  | Admin
-     * | 2  | Owner
-     * | 3  | Company Manager
-     * | 4  | Project Manager
-     * | 5  | Developer
-     * | 6  | Client (e.g. Customer)
+     * | 1  | Owner
+     * | 2  | Company Manager
+     * | 3  | Project Manager
+     * | 4  | Developer
+     * | 5  | Client (e.g. Customer)
      */
 
     /**
@@ -82,9 +81,6 @@ class CompanyPolicy
             case 2:
                 return true;
                 break;
-            case 3:
-                return true;
-                break;
             
             default:
                 return false;
@@ -110,9 +106,6 @@ class CompanyPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
@@ -187,9 +180,6 @@ class CompanyPolicy
             case 4:
                 return true;
                 break;
-            case 5:
-                return true;
-                break;
             
             default:
                 return false;
@@ -226,9 +216,6 @@ class CompanyPolicy
             case 4:
                 return true;
                 break;
-            case 5:
-               return true;
-               break;
             
             default:
                 return false;
@@ -257,9 +244,6 @@ class CompanyPolicy
                 return true;
                 break;
             case 2:
-                return true;
-                break;
-            case 3:
                 return true;
                 break;
             
