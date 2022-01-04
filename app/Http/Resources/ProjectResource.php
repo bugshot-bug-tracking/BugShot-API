@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Company;
 
 class ProjectResource extends JsonResource
 {
@@ -26,7 +27,7 @@ class ProjectResource extends JsonResource
 				"designation" => $this->designation,
 				"url" => $this->url,
 				"color_hex" => $this->color_hex,
-				"company_id" => $this->company_id,
+				"company" => new CompanyResource(Company::find($this->company_id)),
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone
 			]
