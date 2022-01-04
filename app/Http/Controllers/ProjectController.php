@@ -555,10 +555,12 @@ class ProjectController extends Controller
 			"deleted_at" => new \DateTime()
 		]);
 
-		// Delete the respective image
-		$project->image->update([
-			"deleted_at" => new \DateTime()
-		]);
+		// Delete the respective image if present
+		if($project->image != NULL) {
+			$project->image->update([
+				"deleted_at" => new \DateTime()
+			]);
+		};
 
 		return response($val, 204);
 	}

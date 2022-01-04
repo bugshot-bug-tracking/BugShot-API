@@ -517,10 +517,12 @@ class CompanyController extends Controller
 			"deleted_at" => new \DateTime()
 		]);
 		
-		// Delete the respective image
-		$company->image->update([
-			"deleted_at" => new \DateTime()
-		]);
+		// Delete the respective image if present
+		if($company->image != NULL) {
+			$company->image->update([
+				"deleted_at" => new \DateTime()
+			]);
+		};
 
 		return response($val, 204);
 	}
