@@ -4402,7 +4402,7 @@
                 ]
             }
         },
-        "/check-project": {
+        "/user/check-project": {
             "post": {
                 "tags": [
                     "User"
@@ -4467,8 +4467,8 @@
             "Attachment": {
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "maxLength": 255
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "bug_id": {
                         "description": "The id of the bug to which the object belongs.",

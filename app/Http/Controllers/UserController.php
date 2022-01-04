@@ -29,7 +29,7 @@ class UserController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/check-project",
+	 *	path="/user/check-project",
 	 *	tags={"User"},
 	 *	summary="Return a project with the specified url where the user is a part of",
 	 *	operationId="checkProject",
@@ -77,6 +77,7 @@ class UserController extends Controller
 	 **/
 	public function checkProject(Request $request)
 	{
+		// TODO: Regex http und ohne http
 		$request->validate([
 			"url" => ["required", "url"]
 		]);
