@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\User;
 
 class BugResource extends JsonResource
 {
@@ -19,6 +20,7 @@ class BugResource extends JsonResource
 			"type" => "Bug",
 			"attributes" => [
 				"project_id" => $this->project_id,
+				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"description" => $this->description,
 				"url" => $this->url,
