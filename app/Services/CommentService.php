@@ -10,9 +10,7 @@ class CommentService
     // Delete the comment
     public function delete($comment) 
     {
-        $val = $comment->update([
-            "deleted_at" => new \DateTime()
-        ]);
+        $val = $comment->delete();
 
         return $val;
     }

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Attachment extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -62,7 +63,7 @@ class Attachment extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "designation", "url", "deleted_at"];
+	protected $fillable = ["bug_id", "designation", "url"];
 
 	protected $touches = ["bug"];
 

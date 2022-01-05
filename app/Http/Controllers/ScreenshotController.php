@@ -424,7 +424,7 @@ class ScreenshotController extends Controller
 	 * @param  \App\Models\Screenshot  $screenshot
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Screenshot $screenshot, ScreenshotService $screenshotService)
+	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to delete the screenshot
 		$this->authorize('update', [Screenshot::class, $screenshot->bug->project]);

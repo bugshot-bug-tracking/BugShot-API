@@ -451,7 +451,7 @@ class CompanyController extends Controller
 			$image != false ? $company->image()->save($image) : true;
 			$color_hex = $company->color_hex;
 		} else {
-			$imageService->destroy($image);
+			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
 
@@ -508,21 +508,15 @@ class CompanyController extends Controller
 	 * @param  \App\Models\Company  $company
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Company $company)
+	public function destroy(Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the company
 		$this->authorize('delete', $company);
 
-		$val = $company->update([
-			"deleted_at" => new \DateTime()
-		]);
+		$val = $company->delete();
 		
 		// Delete the respective image if present
-		if($company->image != NULL) {
-			$company->image->update([
-				"deleted_at" => new \DateTime()
-			]);
-		};
+		$imageService->delete($company->image);
 
 		return response($val, 204);
 	}

@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
@@ -16,7 +17,7 @@ use App\Notifications\ResetPasswordLinkNotification;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use HasApiTokens, HasFactory, Notifiable;
+	use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -96,7 +97,6 @@ class User extends Authenticatable implements MustVerifyEmail
 		'email',
 		'password',
 		'email_verified_at',
-		'deleted_at'
 	];
 
 	/**
@@ -123,7 +123,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function companies()
     {
-        return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id')->where("deleted_at", NULL);
+        return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id');
     }
 
 	/**
@@ -131,7 +131,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function projects()
     {
-        return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('updated_at', 'desc');
+        return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->orderBy('updated_at', 'desc');
     }
 
 	/**
@@ -139,7 +139,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function bugs()
     {
-        return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->where("deleted_at", NULL)->orderBy('order_number');
+        return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->orderBy('order_number');
     }
 
 	/**
@@ -147,7 +147,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function clients()
     {
-        return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter'])->where("deleted_at", NULL);
+        return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter']);
     }
 
 	/**

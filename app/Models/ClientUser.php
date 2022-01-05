@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class ClientUser extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -48,7 +49,7 @@ class ClientUser extends Model
 	 * )
 	 */
 
-	protected $fillable = ["client_id", "user_id", "last_active_at", "login_counter", "deleted_at"];
+	protected $fillable = ["client_id", "user_id", "last_active_at", "login_counter"];
 
 	public $timestamps = true;
 

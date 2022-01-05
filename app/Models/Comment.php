@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Comment extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -75,7 +76,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "content", "deleted_at"];
+	protected $fillable = ["id", "bug_id", "user_id", "content"];
 
 	protected $touches = ['bug'];
 

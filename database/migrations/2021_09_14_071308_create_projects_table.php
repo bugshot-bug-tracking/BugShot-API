@@ -25,7 +25,7 @@ class CreateProjectsTable extends Migration
 			$table->text('url')->nullable();
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

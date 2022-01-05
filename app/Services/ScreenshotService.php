@@ -40,9 +40,7 @@ class ScreenshotService
     // Delete the screenshot
     public function delete($screenshot) 
     {
-        $val = $screenshot->update([
-            "deleted_at" => new \DateTime()
-        ]);
+        $val = $screenshot->delete();
 
         return $val;
     }

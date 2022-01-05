@@ -29,7 +29,7 @@ class CreateScreenshotsTable extends Migration
 
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

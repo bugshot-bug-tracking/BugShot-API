@@ -25,7 +25,7 @@ class CreateCommentsTable extends Migration
 			$table->string('content');
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 
