@@ -135,12 +135,15 @@ class CompanyController extends Controller
 	 */
 	public function index(Request $request)
 	{
+		// Get timestamp
+		$timestamp = $request->header('timestamp');
+
 		// Check if the request includes a timestamp and query the companies accordingly
-        if($request->timestamp == NULL) {
+        if($timestamp == NULL) {
             $companies = Auth::user()->companies->sortBy('designation');
         } else {
             $companies = Auth::user()->companies->where([
-                ["companies.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
+                ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
             ])->sortBy('designation');
         }
 		

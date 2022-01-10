@@ -54,6 +54,11 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="timestamp",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-statuses",
 	 *		required=false,
 	 *		in="header"
@@ -131,13 +136,17 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the projects of the company
 		$this->authorize('viewAny', [Project::class, $company]);
 
+		// Get timestamp
+		$timestamp = $request->header('timestamp');
+
 		// Check if the request includes a timestamp and query the projects accordingly
-		if($request->timestamp == NULL) {
-            $projects = $company->projects;
+		if($timestamp == NULL) {
+            $projects = Auth::user()->projects->where('company_id', $company->id);
         } else {
-            $projects = $company->projects->where(
-                ["projects.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-			);
+            $projects = Auth::user()->projects->where([
+                ["projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp)],
+				['company_id', $company->id]
+			]);
         }
 
 		return ProjectResource::collection($projects);

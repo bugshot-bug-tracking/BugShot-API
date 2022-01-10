@@ -109,11 +109,14 @@ class BugController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $status->project]);
 
+		// Get timestamp
+		$timestamp = $request->header('timestamp');
+
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if($request->timestamp == NULL) {
+		if($timestamp == NULL) {
             $bugs = $status->bugs;
         } else {
-            $bugs = $status->bugs->where(["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]);
+            $bugs = $status->bugs->where(["bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]);
         }
 		
 		return BugResource::collection($bugs);
