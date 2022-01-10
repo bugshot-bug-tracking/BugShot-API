@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
 use App\Http\Requests\CheckProjectRequest;
+use Illuminate\Support\Facades\Auth;
 
 // Resources
 use App\Http\Resources\ProjectResource;
@@ -69,11 +70,8 @@ class UserController extends Controller
 	 **/
 	public function checkProject(CheckProjectRequest $request)
 	{
-		$project = Project::where('url', $request->url)->first();
+		$projects = Auth::user()->projects->where('url', $request->url);
 
-		// Check if the user is authorized to view the project
-		$this->authorize('view', $project);
-
-		return new ProjectResource($project);
+		return ProjectResource::collection($projects);
 	}
 }

@@ -847,10 +847,6 @@
                                     "priority_id"
                                 ],
                                 "properties": {
-                                    "project_id": {
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
                                     "designation": {
                                         "description": "The bug name",
                                         "type": "string"
@@ -4563,6 +4559,16 @@
                         "description": "The resolution of the display.",
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "order_number": {
+                        "description": "The order number.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "ai_id": {
+                        "description": "Auto-Incrementing Id.",
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "deadline": {
                         "nullable": true,
