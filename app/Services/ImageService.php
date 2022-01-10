@@ -19,7 +19,7 @@ class ImageService
             if ($md5OldImage == $md5NewImage) {
                 return false;
             } else {
-                $this->destroy($image);
+                $this->delete($image);
             }
         }
 
