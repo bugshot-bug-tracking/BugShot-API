@@ -24,7 +24,7 @@ class CreateClientUsersTable extends Migration
             $table->timestamp('last_active_at')->nullable();
             $table->integer('login_counter')->default(0);
 
-            $table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
         });
     }
 

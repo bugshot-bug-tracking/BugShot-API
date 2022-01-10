@@ -133,12 +133,11 @@ class ProjectController extends Controller
 
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($request->timestamp == NULL) {
-            $projects = Auth::user()->projects->where("company_id", $company->id);
+            $projects = $company->projects;
         } else {
-            $projects = Auth::user()->projects->where([
-				["company_id", "=", $company->id],
+            $projects = $company->projects->where(
                 ["projects.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-			]);
+			);
         }
 
 		return ProjectResource::collection($projects);
@@ -480,7 +479,7 @@ class ProjectController extends Controller
 			$image != false ? $project->image()->save($image) : true;
 			$color_hex = $company->color_hex;
 		} else {
-			$imageService->destroy($image);
+			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
 
@@ -546,21 +545,16 @@ class ProjectController extends Controller
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Company $company, Project $project)
+	public function destroy(Company $company, Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the project
 		$this->authorize('delete', $project);
 
-		$val = $project->update([
-			"deleted_at" => new \DateTime()
-		]);
+		// Softdelete the project
+		$val = $project->delete();
 
 		// Delete the respective image if present
-		if($project->image != NULL) {
-			$project->image->update([
-				"deleted_at" => new \DateTime()
-			]);
-		};
+		$imageService->delete($project->image);
 
 		return response($val, 204);
 	}

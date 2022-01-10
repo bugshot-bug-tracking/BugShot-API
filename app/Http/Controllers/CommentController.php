@@ -371,7 +371,7 @@ class CommentController extends Controller
 	 * @param  \App\Models\Comment  $comment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Comment $comment, CommentService $commentService)
+	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
 	{
 		// Check if the user is authorized to delete the comment
 		$this->authorize('update', [$comment, $comment->bug->project]);

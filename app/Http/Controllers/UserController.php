@@ -3,21 +3,13 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CheckProjectRequest;
 
 // Resources
-use App\Http\Resources\CompanyUserRoleResource;
-use App\Http\Resources\InvitationResource;
-use App\Http\Resources\ProjectUserRoleResource;
+use App\Http\Resources\ProjectResource;
 
 // Models
-use App\Models\Company;
-use App\Models\CompanyUserRole;
-use App\Models\Invitation;
-use App\Models\InvitationStatus;
 use App\Models\Project;
-use App\Models\ProjectUserRole;
 
 /**
  * @OA\Tag(
@@ -75,41 +67,13 @@ class UserController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function checkProject(Request $request)
+	public function checkProject(CheckProjectRequest $request)
 	{
-		// TODO: Regex http und ohne http
-		$request->validate([
-			"url" => ["required", "url"]
-		]);
+		$project = Project::where('url', $request->url)->first();
 
-		$projects = Project::where("url", $request->url)->get();
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
 
-		if ($projects->count() == 0) return response()->json([
-			"errors" => [
-				"status" => 404,
-				"source" => $request->getPathInfo(),
-				"detail" => "Project not found."
-			]
-		], 404);
-
-		$foundProjects = [];
-		foreach ($projects as $project) {
-			$val = 	ProjectUserRole::where([
-				["project_id", $project->id],
-				["user_id", Auth::id()],
-			])->get();
-
-			if ($val->count() > 0) array_push($foundProjects, $val->first());
-		}
-
-		if (count($foundProjects) == 0) return response()->json([
-			"errors" => [
-				"status" => 404,
-				"source" => $request->getPathInfo(),
-				"detail" => "Project not found."
-			]
-		], 404);
-
-		return ProjectUserRoleResource::collection($foundProjects);
+		return new ProjectResource($project);
 	}
 }

@@ -461,9 +461,7 @@ class StatusController extends Controller
 		// Check if the user is authorized to delete the status
 		$this->authorize('delete', [Status::class, $project]);
 
-		$val = $status->update([
-			"deleted_at" => new \DateTime()
-		]);
+		$val = $status->delete();
 
 		return response($val, 204);
 	}

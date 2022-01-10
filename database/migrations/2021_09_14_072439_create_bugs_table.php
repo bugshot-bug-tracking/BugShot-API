@@ -37,9 +37,10 @@ class CreateBugsTable extends Migration
 			$table->string('resolution')->nullable();
 			$table->timestamp('deadline')->nullable();
 			$table->smallInteger('order_number')->default(0);
+			$table->smallInteger('ai_id'); // Auto-Incremeting Id
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

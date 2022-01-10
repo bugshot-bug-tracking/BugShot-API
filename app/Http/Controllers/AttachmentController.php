@@ -397,7 +397,7 @@ class AttachmentController extends Controller
 	 * @param  \App\Models\Attachment  $attachment
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Attachment $attachment, AttachmentService $attachmentService)
+	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to delete the attachment
 		$this->authorize('delete', [Attachment::class, $attachment->bug->project]);

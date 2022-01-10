@@ -29,7 +29,7 @@ class CreateInvitationsTable extends Migration
 			$table->foreign('status_id')->references('id')->on('invitation_statuses')->onDelete('cascade');
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

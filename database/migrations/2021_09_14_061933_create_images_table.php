@@ -15,15 +15,14 @@ class CreateImagesTable extends Migration
 	{
 		Schema::create('images', function (Blueprint $table) {
 			$table->id()->unique();
-			
-			// $table->string("designation"); // VARCHAR(255)
+
 			$table->text("url");
 
 			$table->string("imageable_id");
 			$table->string("imageable_type");
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

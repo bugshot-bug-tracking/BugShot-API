@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Bug extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -110,6 +111,20 @@ class Bug extends Model
 	 *  nullable=true,
 	 * 	description="The resolution of the display."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="order_number",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The order number."
+	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="ai_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="Auto-Incrementing Id."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="deadline",
@@ -142,7 +157,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "operating_system", "browser", "selector", "resolution", "deadline", "deleted_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "operating_system", "browser", "selector", "resolution", "deadline"];
 
 	protected $touches = ["project", "status"];
 
@@ -183,7 +198,7 @@ class Bug extends Model
      */
 	public function screenshots()
 	{
-		return $this->hasMany(Screenshot::class)->where("deleted_at", NULL);
+		return $this->hasMany(Screenshot::class);
 	}
 
 	/**
@@ -191,7 +206,7 @@ class Bug extends Model
      */
 	public function attachments()
 	{
-		return $this->hasMany(Attachment::class)->where("deleted_at", NULL);
+		return $this->hasMany(Attachment::class);
 	}
 
 	/**
@@ -199,6 +214,6 @@ class Bug extends Model
      */
 	public function comments()
 	{
-		return $this->hasMany(Comment::class)->where("deleted_at", NULL)->orderBy('created_at');
+		return $this->hasMany(Comment::class)->orderBy('created_at');
 	}
 }

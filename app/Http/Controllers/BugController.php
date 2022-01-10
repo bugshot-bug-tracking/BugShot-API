@@ -141,11 +141,6 @@ class BugController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="project_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",
 	 *                  property="designation",
@@ -278,6 +273,10 @@ class BugController extends Controller
 		// Get the max order number in this status and increase it by one
 		$order_number = $status->bugs->max('order_number') + 1;
 
+		// Determine the number of bugs in the project to generate the $ai_id
+		$numberOfBugs = $status->project->bugs()->withTrashed()->count();
+		$ai_id = $numberOfBugs + 1;
+
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
 			"id" => $id,
@@ -292,7 +291,8 @@ class BugController extends Controller
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
 			"deadline" => $request->deadline,
-			"order_number" => $order_number
+			"order_number" => $order_number,
+			"ai_id" => $ai_id
 		]);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
@@ -570,7 +570,8 @@ class BugController extends Controller
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
 			"deadline" => $request->deadline,
-			"order_number" => $request->order_number
+			"order_number" => $request->order_number,
+			"ai_id" => $request->ai_id
 		]);
 
 		return new BugResource($bug);
@@ -632,9 +633,7 @@ class BugController extends Controller
 		// Check if the user is authorized to delete the bug
 		$this->authorize('delete', [Bug::class, $status->project]);
 
-		$val = $bug->update([
-			"deleted_at" => new \DateTime()
-		]);
+		$val = $bug->delete();
 
 		// Delete the respective screenshots
 		foreach($bug->screenshots as $screenshot) {

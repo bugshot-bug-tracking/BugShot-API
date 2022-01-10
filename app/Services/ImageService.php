@@ -43,12 +43,12 @@ class ImageService
         return $image;
     }
 
-    public function destroy($image)
+    public function delete($image)
     {
         if($image != NULL) {
-            $image->update([
-                "deleted_at" => new \DateTime()
-            ]);
+            $val = $image->delete();
+
+            return $val;
         }
     }
 }

@@ -180,9 +180,7 @@ class InvitationController extends Controller
 		// Check if the user is authorized to delete the invitation
 		$this->authorize('delete', $invitation);
 
-		$val = $invitation->update([
-			"deleted_at" => new \DateTime()
-		]);
+		$val = $invitation->delete();
 
 		return response($val, 204);
 	}

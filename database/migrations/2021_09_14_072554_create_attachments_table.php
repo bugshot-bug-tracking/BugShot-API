@@ -23,7 +23,7 @@ class CreateAttachmentsTable extends Migration
 			$table->text('url');
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 

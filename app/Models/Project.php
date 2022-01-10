@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Project extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -84,7 +85,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "url", "company_id", "color_hex", "deleted_at"];
+	protected $fillable = ["id", "designation", "url", "company_id", "color_hex"];
 
 	protected $touches = ['company'];
 
@@ -109,7 +110,7 @@ class Project extends Model
      */
 	public function statuses()
 	{
-		return $this->hasMany(Status::class)->where('deleted_at', NULL)->orderBy("order_number");
+		return $this->hasMany(Status::class)->orderBy("order_number");
 	}
 
 	/**
@@ -117,7 +118,7 @@ class Project extends Model
      */
 	public function bugs()
 	{
-		return $this->hasMany(Bug::class)->where("deleted_at", NULL);
+		return $this->hasMany(Bug::class);
 	}
 
 	/**
@@ -125,7 +126,7 @@ class Project extends Model
      */
     public function image()
     {
-        return $this->morphOne(Image::class, 'imageable')->where('deleted_at', NULL);
+        return $this->morphOne(Image::class, 'imageable');
     }
 
 	/**

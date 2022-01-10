@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Invitation extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
     /**
      * The "type" of the auto-incrementing ID.
@@ -97,7 +98,7 @@ class Invitation extends Model
 	 * )
 	 * 
 	 */
-	protected $fillable = ["id", "sender_id", "target_email", "role_id", "status_id", "deleted_at"];
+	protected $fillable = ["id", "sender_id", "target_email", "role_id", "status_id"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

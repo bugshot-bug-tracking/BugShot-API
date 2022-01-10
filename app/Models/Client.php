@@ -31,7 +31,7 @@ class Client extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'client_users')->withPivot(['last_active_at', 'login_counter'])->where("deleted_at", NULL);
+        return $this->belongsToMany(User::class, 'client_users')->withPivot(['last_active_at', 'login_counter']);
     }
 
     /**

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Status extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -77,7 +78,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "order_number", "project_id", "deleted_at"];
+	protected $fillable = ["id", "designation", "order_number", "project_id"];
 
 	protected $touches = ['project'];
 
@@ -94,6 +95,6 @@ class Status extends Model
      */
 	public function bugs()
 	{
-		return $this->hasMany(Bug::class)->where("deleted_at", NULL)->orderBy("order_number");
+		return $this->hasMany(Bug::class)->orderBy("order_number");
 	}
 }

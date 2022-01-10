@@ -20,7 +20,7 @@ class CreateCompaniesTable extends Migration
 			$table->string('color_hex')->default('#7A2EE6');
 
 			$table->timestamps();
-			$table->timestamp('deleted_at')->nullable();
+			$table->softDeletes();
 		});
 	}
 
