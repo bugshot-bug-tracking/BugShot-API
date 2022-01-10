@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Project extends Model
 {
-	use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes, CascadeSoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -88,6 +89,9 @@ class Project extends Model
 	protected $fillable = ["id", "designation", "url", "company_id", "color_hex"];
 
 	protected $touches = ['company'];
+
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
