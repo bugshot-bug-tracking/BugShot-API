@@ -177,18 +177,18 @@ class AuthController extends Controller
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
 		
-        // Check if the intermediate entry already exists and create/update it // LIVE ONLY
-        // if($userClient->exists()) {
-        //     $user->clients()->updateExistingPivot($clientId, [
-		// 		'last_active_at' => date('Y-m-d H:i:s'),
-		// 		'login_counter' => $userClient->first()->pivot->login_counter + 1
-		// 	]);
-        // } else {
-        //     $user->clients()->attach($clientId, [
-		// 		'last_active_at' => date('Y-m-d H:i:s'),
-		// 		'login_counter' => 1
-		// 	]);  
-        // }
+        // Check if the intermediate entry already exists and create/update it
+        if($userClient->exists()) {
+            $user->clients()->updateExistingPivot($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => $userClient->first()->pivot->login_counter + 1
+			]);
+        } else {
+            $user->clients()->attach($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => 1
+			]);  
+        }
 
 		return response()->json([
 			"data" => [
