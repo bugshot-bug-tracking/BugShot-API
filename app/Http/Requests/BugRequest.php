@@ -24,7 +24,6 @@ class BugRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"project_id" => ["required", "string", "exists:App\Models\Project,id"],
 			"designation" => ["required", "string", "min:5", "max:255"],
 			"description" => ["min:5", "string"],
 			"url" => ["string", "max:65535", "nullable"],
