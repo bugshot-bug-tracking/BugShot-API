@@ -263,6 +263,10 @@ class UserController extends Controller
 	 *                  property="email",
 	 *                  type="string",
 	 *              ),
+	 * 	  			@OA\Property(
+	 *                  property="old_password",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  property="password",
 	 *                  type="string",
