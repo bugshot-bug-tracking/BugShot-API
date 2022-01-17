@@ -15,7 +15,7 @@
     },
     "servers": [
         {
-            "url": "https://dev.bugshot.de/api/v1"
+            "url": "http://api.test/api/v1"
         }
     ],
     "paths": {
@@ -4945,13 +4945,23 @@
                 ]
             }
         },
-        "/user/check-project": {
+        "/users/{user_id}/check-project": {
             "post": {
                 "tags": [
                     "User"
                 ],
                 "summary": "Return a project with the specified url where the user is a part of",
                 "operationId": "checkProject",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {

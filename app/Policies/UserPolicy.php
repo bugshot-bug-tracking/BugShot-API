@@ -110,4 +110,15 @@ class UserPolicy
     {
         //
     }
+
+    /**
+     * Determine whether the user can check if the url belongs to a project of the user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function checkProject(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
 }

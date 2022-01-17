@@ -453,12 +453,19 @@ class UserController extends Controller
 
 	/**
 	 * @OA\Post(
-	 *	path="/user/check-project",
+	 *	path="/users/{user_id}/check-project",
 	 *	tags={"User"},
 	 *	summary="Return a project with the specified url where the user is a part of",
 	 *	operationId="checkProject",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -499,9 +506,18 @@ class UserController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function checkProject(CheckProjectRequest $request)
+	/**
+	 * Check if url belongs to a project of the user
+	 *
+	 * @param  \App\Models\User  $user
+	 * @return \Illuminate\Http\Response
+	*/
+	public function checkProject(CheckProjectRequest $request, User $user)
 	{
-		$projects = Auth::user()->projects->where('url', $request->url);
+		// Check if the user is authorized to view the image of a user
+		$this->authorize('checkProject', $user);
+
+		$projects = $user->projects->where('url', $request->url);
 
 		return ProjectResource::collection($projects);
 	}
