@@ -22,7 +22,7 @@ class CompanyPolicy
      * | 3  | Project Manager
      * | 4  | Developer
      * | 5  | Client (e.g. Customer)
-     */
+    */
 
     /**
      * Perform pre-authorization checks.
@@ -195,6 +195,36 @@ class CompanyPolicy
                 return true;
                 break;
             
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can remove a user from the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function removeUser(User $user, Company $company)
+    {
+        $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
+        $role = $company->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+
             default:
                 return false;
                 break;
