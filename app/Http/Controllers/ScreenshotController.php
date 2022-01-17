@@ -32,6 +32,16 @@ class ScreenshotController extends Controller
 	 *	summary="All screenshots of the bug.",
 	 *	operationId="allScreenshots",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
@@ -89,6 +99,16 @@ class ScreenshotController extends Controller
 	 *	summary="Store one screenshots.",
 	 *	operationId="storeScreenshot",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
@@ -181,6 +201,16 @@ class ScreenshotController extends Controller
 	 *	summary="Show one screenshots.",
 	 *	operationId="showScreenshot",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
@@ -245,6 +275,16 @@ class ScreenshotController extends Controller
 	 *	summary="Update one screenshots.",
 	 *	operationId="updateScreenshot",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
@@ -378,6 +418,16 @@ class ScreenshotController extends Controller
 	 *	summary="Delete one screenshots.",
 	 *	operationId="deleteScreenshot",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",

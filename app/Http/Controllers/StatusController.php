@@ -32,6 +32,16 @@ class StatusController extends Controller
 	 *	summary="All statuses.",
 	 *	operationId="allStatuses",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
@@ -123,6 +133,16 @@ class StatusController extends Controller
 	 *	summary="Store one status.",
 	 *	operationId="storeStatus",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
@@ -211,6 +231,16 @@ class StatusController extends Controller
 	 *	summary="Show one status.",
 	 *	operationId="showStatus",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -304,6 +334,16 @@ class StatusController extends Controller
 	 *	summary="Update a status.",
 	 *	operationId="updateStatus",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
@@ -412,6 +452,16 @@ class StatusController extends Controller
 	 *	summary="Delete a status.",
 	 *	operationId="deleteStatus",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,

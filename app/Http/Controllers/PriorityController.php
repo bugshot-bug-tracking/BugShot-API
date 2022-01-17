@@ -28,6 +28,16 @@ class PriorityController extends Controller
 	 *	summary="All prioritys.",
 	 *	operationId="allPrioritys",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Response(
 	 *		response=200,
@@ -73,6 +83,16 @@ class PriorityController extends Controller
 	 *	summary="Store one priority.",
 	 *	operationId="storePriority",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *
 	 *  @OA\RequestBody(
@@ -134,6 +154,16 @@ class PriorityController extends Controller
 	 *	summary="Show one priority.",
 	 *	operationId="showPriority",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -187,6 +217,16 @@ class PriorityController extends Controller
 	 *	summary="Update a priority.",
 	 *	operationId="updatePriority",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -269,6 +309,16 @@ class PriorityController extends Controller
 	 *	summary="Delete a priority.",
 	 *	operationId="deletePriority",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",

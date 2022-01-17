@@ -40,6 +40,16 @@ class BugController extends Controller
 	 *	summary="All bugs.",
 	 *	operationId="allBugs",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
@@ -131,6 +141,16 @@ class BugController extends Controller
 	 *	summary="Store one bug.",
 	 *	operationId="storeBug",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="status_id",
@@ -331,6 +351,16 @@ class BugController extends Controller
 	 *	summary="Show one bug.",
 	 *	operationId="showBug",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="status_id",
@@ -420,6 +450,16 @@ class BugController extends Controller
 	 *	summary="Update a bug.",
 	 *	operationId="updateBug",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 * 	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
@@ -590,6 +630,16 @@ class BugController extends Controller
 	 *	operationId="deleteBug",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
 	 *		in="path",
@@ -666,6 +716,16 @@ class BugController extends Controller
 	 *	operationId="assignUser",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
 	 *		in="path",
@@ -734,6 +794,16 @@ class BugController extends Controller
 	 *	summary="All bug users.",
 	 *	operationId="allBugUsers",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
