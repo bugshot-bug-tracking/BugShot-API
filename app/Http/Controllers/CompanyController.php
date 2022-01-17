@@ -474,7 +474,6 @@ class CompanyController extends Controller
 	 *	summary="Delete a company.",
 	 *	operationId="deleteCompany",
 	 *	security={ {"sanctum": {} }},
-
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
@@ -644,6 +643,69 @@ class CompanyController extends Controller
 				->with("role")
 				->get()
 		);
+	}
+
+	/**
+	 * @OA\Delete(
+	 *	path="/companies/{company_id}/users/{user_id}",
+	 *	tags={"Company"},
+	 *	summary="Remove user from the company.",
+	 *	operationId="removeCompanyUser",
+	 *	security={ {"sanctum": {} }},
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Remove a user from the company
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
+	public function removeUser(Company $company, User $user)
+	{
+		// Check if the user is authorized to view the users of the company
+		$this->authorize('removeUser', $company);
+
+		$val = $company->users()->detach($user);
+	
+		return response($val, 204);
 	}
 
 	/**

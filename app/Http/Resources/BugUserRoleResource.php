@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProjectUserRoleResource extends JsonResource
+class BugUserRoleResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -14,12 +14,12 @@ class ProjectUserRoleResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$project = $this->project;
+		$bug = $this->bug;
 		$user = $this->user;
 		$role = $this->role;
 
 		return [
-			"project" => new ProjectResource($project),
+			"bug" => new BugResource($bug),
 			"user" => new UserResource($user),
 			"role" => new RoleResource($role),
 		];

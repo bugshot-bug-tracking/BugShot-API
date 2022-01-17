@@ -256,6 +256,39 @@ class ProjectPolicy
     }
 
     /**
+     * Determine whether the user can remove a user from the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function removeUser(User $user, Project $project)
+    {
+        $project = $user->companies()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+        
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
      * Determine whether the user can view the invitations of the the model.
      *
      * @param  \App\Models\User  $user

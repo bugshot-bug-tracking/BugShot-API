@@ -173,17 +173,17 @@ class BugPolicy
      * Determine whether the user can assign a user to the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Bug  $bug
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function assignUser(User $user, Bug $bug)
+    public function assignUser(User $user, Project $project)
     {
-        $bug = $user->bugs()->find($bug);
-        if ($bug == NULL) {
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
             return false;
         }
-        
-        $role = $bug->pivot->role_id;
+
+        $role = $project->pivot->role_id;
     
         switch ($role) {
             case 1:
@@ -196,6 +196,75 @@ class BugPolicy
                 return true;
                 break;
             
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the users of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUsers(User $user, Project $project)
+    {
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            case 4:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can remove a user from the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function removeUser(User $user, Project $project)
+    {
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+
             default:
                 return false;
                 break;

@@ -2,7 +2,6 @@
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -17,12 +16,6 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UserController;
-
-// Resources
-use App\Http\Resources\UserResource;
-
-// Models
-use App\Models\Company;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,7 +65,7 @@ Route::middleware(['auth:sanctum'])->group(
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-	// Company routes
+	// Company resource routes
 	Route::apiResource('/companies', CompanyController::class);
 
 	// Company prefixed routes
@@ -82,6 +75,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
+		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
 	});
 
 	// Project prefixed routes
@@ -92,6 +86,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
+		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
 
 	// Status prefixed routes
@@ -101,28 +96,20 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 	// Bug prefixed routes
 	Route::prefix('bugs/{bug}')->group(function () {
-		// Route::apiResource('/comments', CommentController::class)->except([
-		// 	'destroy'
-		// ]);
-		// Route::apiResource('/screenshots', ScreenshotController::class)->except([
-		// 	'destroy'
-		// ]);
-		// Route::apiResource('/attachments', AttachmentController::class)->except([
-		// 	'destroy'
-		// ]);
 		Route::apiResource('/comments', CommentController::class);
 		Route::apiResource('/screenshots', ScreenshotController::class);
 		Route::apiResource('/attachments', AttachmentController::class);
 		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
+		Route::get("/users", [BugController::class, "users"])->name("bug.users");
+		Route::delete("/users/{user}", [BugController::class, "removeUser"])->name("bug.remove-user");
 	});
 
-	// Delete routes for screenshots, comments and attachments
-	// Route::delete('/screenshots/{screenshot}', [ScreenshotController::class, "destroy"])->name("screenshot.destroy");
-	// Route::delete('/comments/{comment}', [CommentController::class, "destroy"])->name("comment.destroy");
-	// Route::delete('/attachments/{attachment}', [AttachmentController::class, "destroy"])->name("attachment.destroy");
+	// User resource routes
+	Route::apiResource('/users', UserController::class);
 
-	Route::prefix('/user')->group(function () {
-		// Route for the chrome extention to check if the visited website has a respective project
+	// User prefixed routes
+	Route::prefix('/users/{user}')->group(function () {
+		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
 
 		// Invitation prefixed routes
@@ -134,6 +121,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
 			Route::get("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
 		});
 	});
+
+
 
 	/*
 	|--------------------------------------------------------------------------

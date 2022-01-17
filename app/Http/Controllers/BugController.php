@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 // Resources
 use App\Http\Resources\BugResource;
+use App\Http\Resources\BugUserRoleResource;
 
 // Services
 use App\Services\ScreenshotService;
@@ -18,6 +19,7 @@ use App\Services\CommentService;
 use App\Models\Bug;
 use App\Models\User;
 use App\Models\Status;
+use App\Models\BugUserRole;
 
 // Requests
 use App\Http\Requests\BugRequest;
@@ -717,12 +719,139 @@ class BugController extends Controller
 	public function assignUser(Request $request, Bug $bug)
 	{ 
 		// Check if the user is authorized to assign a user to the bug
-		$this->authorize('assignUser', $bug);
+		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
 		$targetUser = User::find($request->user_id);
 		$targetUser->bugs()->attach($bug->id, ['role_id' => 4]);
 
 		return response()->json("", 204);
+	}
+
+	/**
+	 * @OA\Get(
+	 *	path="/bugs/{bug_id}/users",
+	 *	tags={"Bug"},
+	 *	summary="All bug users.",
+	 *	operationId="allBugUsers",
+	 *	security={ {"sanctum": {} }},
+	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/BugUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Display a list of users that belongs to the bug.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function users(Bug $bug)
+	{
+		// Check if the user is authorized to view the users of the bug
+		$this->authorize('viewUsers', [Bug::class, $bug->project]);
+		
+		return BugUserRoleResource::collection(
+			BugUserRole::where("bug_id", $bug->id)
+				->with('bug')
+				->with('user')
+				->with("role")
+				->get()
+		);
+	}
+
+	/**
+	 * @OA\Delete(
+	 *	path="/bugs/{bug_id}/users/{user_id}",
+	 *	tags={"Bug"},
+	 *	summary="Remove user from the bug.",
+	 *	operationId="removeBugUser",
+	 *	security={ {"sanctum": {} }},
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	/**
+	 * Remove a user from the bug
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
+	public function removeUser(Bug $bug, User $user)
+	{
+		// Check if the user is authorized to view the users of the bug
+		$this->authorize('removeUser', [Bug::class, $bug->project]);
+
+		$val = $bug->users()->detach($user);
+	
+		return response($val, 204);
 	}
 
 	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
