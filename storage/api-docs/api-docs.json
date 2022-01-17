@@ -3,9 +3,8 @@
     "info": {
         "title": "BugShot API Documentation",
         "description": "OpenApi documentation using swagger for BugShot project.",
-        "termsOfService": "https://www.google.ro/",
         "contact": {
-            "email": "r.memetea@proxima-idea.com"
+            "email": "info@it-michel.de"
         },
         "license": {
             "name": "Apache 2.0",
@@ -27,6 +26,16 @@
                 "summary": "All attachments.",
                 "operationId": "allAttachments",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -81,6 +90,16 @@
                 "summary": "Store one attachment.",
                 "operationId": "storeAttachment",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -152,6 +171,16 @@
                 "operationId": "showAttachment",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -205,6 +234,16 @@
                 "summary": "Update one attachment.",
                 "operationId": "updateAttachment",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -299,6 +338,16 @@
                 "operationId": "deleteAttachment",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -348,6 +397,16 @@
                 "operationId": "downloadAttachment",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "attachment_id",
                         "in": "path",
                         "required": true,
@@ -387,6 +446,18 @@
                 ],
                 "summary": "Register a user.",
                 "operationId": "authRegister",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -458,7 +529,12 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": false
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "requestBody": {
@@ -516,6 +592,18 @@
                 ],
                 "summary": "Log out.",
                 "operationId": "authLogout",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "Success"
@@ -542,6 +630,18 @@
                 ],
                 "summary": "Show current user.",
                 "operationId": "authUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -580,6 +680,18 @@
                 ],
                 "summary": "Handle the forgot password functionality.",
                 "operationId": "forgotPassword",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -615,6 +727,18 @@
                 ],
                 "summary": "Handle the reset password functionality.",
                 "operationId": "resetPassword",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {

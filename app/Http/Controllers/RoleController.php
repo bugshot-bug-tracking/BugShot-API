@@ -28,6 +28,16 @@ class RoleController extends Controller
 	 *	summary="All roles.",
 	 *	operationId="allRoles",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Response(
 	 *		response=200,
@@ -73,6 +83,16 @@ class RoleController extends Controller
 	 *	summary="Store one role.",
 	 *	operationId="storeRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *
 	 *  @OA\RequestBody(
@@ -134,6 +154,16 @@ class RoleController extends Controller
 	 *	summary="Show one role.",
 	 *	operationId="showRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -187,6 +217,16 @@ class RoleController extends Controller
 	 *	summary="Update a role.",
 	 *	operationId="updateRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -269,6 +309,16 @@ class RoleController extends Controller
 	 *	summary="Delete a role.",
 	 *	operationId="deleteRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",

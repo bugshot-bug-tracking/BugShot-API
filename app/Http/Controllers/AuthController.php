@@ -38,7 +38,16 @@ class AuthController extends Controller
 	 *	tags={"Auth"},
 	 *	summary="Register a user.",
 	 *	operationId="authRegister",
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -68,7 +77,6 @@ class AuthController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success",
@@ -117,7 +125,12 @@ class AuthController extends Controller
 	 *	operationId="authLogin",
 	 * 	@OA\Parameter(
 	 *		name="clientId",
-	 *		required=false,
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
 	 *		in="header"
 	 *	),
 	 *  @OA\RequestBody(
@@ -175,20 +188,20 @@ class AuthController extends Controller
 
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
+	
+        // Check if the intermediate entry already exists and create/update it 
+        if($userClient->exists()) {
+            $user->clients()->updateExistingPivot($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => $userClient->first()->pivot->login_counter + 1
+			]);
+        } else {
+            $user->clients()->attach($clientId, [
+				'last_active_at' => date('Y-m-d H:i:s'),
+				'login_counter' => 1
+			]);  
+        }
 		
-        // Check if the intermediate entry already exists and create/update it // LIVE ONLY
-        // if($userClient->exists()) {
-        //     $user->clients()->updateExistingPivot($clientId, [
-		// 		'last_active_at' => date('Y-m-d H:i:s'),
-		// 		'login_counter' => $userClient->first()->pivot->login_counter + 1
-		// 	]);
-        // } else {
-        //     $user->clients()->attach($clientId, [
-		// 		'last_active_at' => date('Y-m-d H:i:s'),
-		// 		'login_counter' => 1
-		// 	]);  
-        // }
-
 		return response()->json([
 			"data" => [
 				"user" => new UserResource($user),
@@ -204,7 +217,16 @@ class AuthController extends Controller
 	 *	tags={"Auth"},
 	 *	summary="Log out.",
 	 *	operationId="authLogout",
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=204,
 	 *		description="Success",
@@ -241,7 +263,16 @@ class AuthController extends Controller
 	 *	summary="Show current user.",
 	 *	operationId="authUser",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -279,7 +310,16 @@ class AuthController extends Controller
 	 *	tags={"Auth"},
 	 *	summary="Handle the forgot password functionality.",
 	 *	operationId="forgotPassword",
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -328,7 +368,16 @@ class AuthController extends Controller
 	 *	tags={"Auth"},
 	 *	summary="Handle the reset password functionality.",
 	 *	operationId="resetPassword",
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(

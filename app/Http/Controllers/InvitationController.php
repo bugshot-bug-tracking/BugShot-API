@@ -35,6 +35,16 @@ class InvitationController extends Controller
 	 *	summary="Show all invitations that the user has received.",
 	 *	operationId="showInvitations",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Response(
 	 *		response=200,
@@ -82,6 +92,16 @@ class InvitationController extends Controller
 	 *	summary="Show one invitation.",
 	 *	operationId="showInvitation",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
@@ -138,6 +158,16 @@ class InvitationController extends Controller
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
@@ -192,6 +222,16 @@ class InvitationController extends Controller
 	 *	summary="Accept one invitation.",
 	 *	operationId="acceptInvitation",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
@@ -281,6 +321,16 @@ class InvitationController extends Controller
 	 *	summary="Decline one invitation.",
 	 *	operationId="declineInvitation",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",

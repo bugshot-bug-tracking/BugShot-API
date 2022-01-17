@@ -39,6 +39,16 @@ class CompanyController extends Controller
 	 *	summary="All companies.",
 	 *	operationId="allCompanies",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 * 
 	 * 	@OA\Parameter(
 	 *		name="include-projects",
@@ -157,6 +167,16 @@ class CompanyController extends Controller
 	 *	summary="Store one company.",
 	 *	operationId="storeCompany",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *
 	 *  @OA\RequestBody(
@@ -248,6 +268,16 @@ class CompanyController extends Controller
 	 *	summary="Show one company.",
 	 *	operationId="showCompany",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -363,6 +393,16 @@ class CompanyController extends Controller
 	 *	summary="Update a company.",
 	 *	operationId="updateCompany",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -474,6 +514,16 @@ class CompanyController extends Controller
 	 *	summary="Delete a company.",
 	 *	operationId="deleteCompany",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
@@ -530,6 +580,16 @@ class CompanyController extends Controller
 	 *	summary="Company image.",
 	 *	operationId="showCompanyImage",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -588,6 +648,16 @@ class CompanyController extends Controller
 	 *	summary="All company users.",
 	 *	operationId="allCompaniesUsers",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -652,6 +722,16 @@ class CompanyController extends Controller
 	 *	summary="Remove user from the company.",
 	 *	operationId="removeCompanyUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
@@ -715,6 +795,16 @@ class CompanyController extends Controller
 	 *	summary="All company invitations.",
 	 *	operationId="allCompaniesInvitations",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -773,6 +863,16 @@ class CompanyController extends Controller
 	 *	summary="Invite a user to the company and asign a role to him",
 	 *	operationId="inviteCompany",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,

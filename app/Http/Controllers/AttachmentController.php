@@ -33,7 +33,16 @@ class AttachmentController extends Controller
 	 *	summary="All attachments.",
 	 *	operationId="allAttachments",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -94,7 +103,16 @@ class AttachmentController extends Controller
 	 *	summary="Store one attachment.",
 	 *	operationId="storeAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -170,7 +188,16 @@ class AttachmentController extends Controller
 	 *	summary="Show one attachment.",
 	 *	operationId="showAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -234,7 +261,16 @@ class AttachmentController extends Controller
 	 *	summary="Update one attachment.",
 	 *	operationId="updateAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -352,6 +388,16 @@ class AttachmentController extends Controller
 	 *	summary="Delete one attachment.",
 	 *	operationId="deleteAttachment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -414,7 +460,16 @@ class AttachmentController extends Controller
 	 *	summary="Download one attachment. (Not Working In Swagger.)",
 	 *	operationId="downloadAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="attachment_id",
 	 *		required=true,

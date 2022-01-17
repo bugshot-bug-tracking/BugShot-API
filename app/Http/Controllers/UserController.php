@@ -35,6 +35,16 @@ class UserController extends Controller
 	 *	summary="All users.",
 	 *	operationId="allUsers",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 * 
 	 *	@OA\Response(
 	 *		response=200,
@@ -83,6 +93,16 @@ class UserController extends Controller
 	 *	summary="Store one user.",
 	 *	operationId="storeUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
@@ -172,6 +192,16 @@ class UserController extends Controller
 	 *	summary="Show one user.",
 	 *	operationId="showUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="user_id",
@@ -228,6 +258,16 @@ class UserController extends Controller
 	 *	summary="Update a user.",
 	 *	operationId="updateUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="user_id",
@@ -349,6 +389,16 @@ class UserController extends Controller
 	 *	summary="Delete a user.",
 	 *	operationId="deleteUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="user_id",
 	 *		required=true,
@@ -405,6 +455,16 @@ class UserController extends Controller
 	 *	summary="User image.",
 	 *	operationId="showUserImage",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="user_id",
@@ -462,6 +522,16 @@ class UserController extends Controller
 	 *	summary="Return a project with the specified url where the user is a part of",
 	 *	operationId="checkProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="user_id",
 	 *		required=true,
