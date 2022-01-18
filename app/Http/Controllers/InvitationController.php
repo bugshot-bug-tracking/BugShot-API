@@ -16,7 +16,7 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use App\Models\Invitation;
-use App\Models\InvitationStatus;
+use App\Models\User;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
 
@@ -30,7 +30,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations",
+	 *	path="/users/{user_id}/invitations",
 	 *	tags={"Invitation"},
 	 *	summary="Show all invitations that the user has received.",
 	 *	operationId="showInvitations",
@@ -44,6 +44,14 @@ class InvitationController extends Controller
 	 *		name="version",
 	 *		required=true,
 	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
 	 *	),
 	 *
 	 *	@OA\Response(
@@ -72,7 +80,7 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function index()
+	public function index(User $user)
 	{
 		// Check if the user is authorized to list the invitations
 		$this->authorize('viewAny', Invitation::class);
@@ -87,7 +95,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{invitation_id}",
+	 *	path="/users/{user_id}/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Show one invitation.",
 	 *	operationId="showInvitation",
@@ -102,7 +110,15 @@ class InvitationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -143,7 +159,7 @@ class InvitationController extends Controller
 	 * @param  \App\Models\Invitation  $invitation
 	 * @return \App\Http\Resources\InvitationResource
 	 */
-	public function show(Invitation $invitation)
+	public function show(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to view the invitation
 		$this->authorize('view', $invitation);
@@ -153,7 +169,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/user/invitations/{invitation_id}",
+	 *	path="/users/{user_id}/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
@@ -168,7 +184,15 @@ class InvitationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
-
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -205,7 +229,7 @@ class InvitationController extends Controller
 	 * @param  \App\Models\Invitation  $invitation
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Invitation $invitation)
+	public function destroy(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to delete the invitation
 		$this->authorize('delete', $invitation);
@@ -217,7 +241,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{invitation_id}/accept",
+	 *	path="/users/{user_id}/invitations/{invitation_id}/accept",
 	 *	tags={"Invitation"},
 	 *	summary="Accept one invitation.",
 	 *	operationId="acceptInvitation",
@@ -232,7 +256,15 @@ class InvitationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -277,7 +309,7 @@ class InvitationController extends Controller
 	 * @param  \App\Models\Invitation  $invitation
 	 * @return \Illuminate\Http\Response
 	 */
-	public function accept(Invitation $invitation)
+	public function accept(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to accept the invitation
 		$this->authorize('accept', $invitation);
@@ -299,11 +331,11 @@ class InvitationController extends Controller
 
 		switch ($invitation->invitable_type) {
 			case Company::class:
-				return $this->acceptCompany($invitation, $invitable);
+				return $this->acceptCompany($user, $invitation, $invitable);
 				break;
 
 			case Project::class:
-				return $this->acceptProject($invitation, $invitable);
+				return $this->acceptProject($user, $invitation, $invitable);
 				break;
 		}
 
@@ -316,7 +348,7 @@ class InvitationController extends Controller
 
 	/**
 	 * @OA\Get(
-	 *	path="/user/invitations/{invitation_id}/decline",
+	 *	path="/users/{user_id}/invitations/{invitation_id}/decline",
 	 *	tags={"Invitation"},
 	 *	summary="Decline one invitation.",
 	 *	operationId="declineInvitation",
@@ -331,7 +363,15 @@ class InvitationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -373,7 +413,7 @@ class InvitationController extends Controller
 	 * @param  \App\Models\Invitation  $invitation
 	 * @return \Illuminate\Http\Response
 	 */
-	public function decline(Invitation $invitation)
+	public function decline(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to decline the invitation
 		$this->authorize('decline', $invitation);
@@ -398,14 +438,13 @@ class InvitationController extends Controller
 	/**
 	 * Generate the link between user, company and role.
 	 *
+	 * @param  \App\Models\User  $user
 	 * @param  \App\Models\Invitation  $invitation
 	 * @param  \App\Models\Company  $company
 	 * @return \App\Http\Resources\CompanyUserRoleResource
 	 */
-	private function acceptCompany(Invitation $invitation, Company $company)
+	private function acceptCompany(User $user, Invitation $invitation, Company $company)
 	{
-		$user = Auth::user();
-
 		// Check if the user is already part of this company
 		if ($user->companies->find($company) !== NULL) {
 			$invitation->update(["status_id" => 5]);
@@ -423,14 +462,13 @@ class InvitationController extends Controller
 	/**
 	 * Generate the link between user, project and role.
 	 * And if needed between user, company and role.
+	 * @param  \App\Models\User  $user
 	 * @param  \App\Models\Invitation  $invitation
 	 * @param  \App\Models\Project  $project
 	 * @return \App\Http\Resources\ProjectUserRoleResource
 	 */
-	private function acceptProject(Invitation $invitation, Project $project)
+	private function acceptProject(User $user, Invitation $invitation, Project $project)
 	{
-		$user = Auth::user();
-
 		// Check if the user is already part of this project
 		if ($user->projects->find($project) !== NULL) {
 			$invitation->update(["status_id" => 5]);
