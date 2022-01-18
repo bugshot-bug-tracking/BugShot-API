@@ -877,6 +877,16 @@
                 "operationId": "allBugs",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -950,6 +960,16 @@
                 "summary": "Store one bug.",
                 "operationId": "storeBug",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "status_id",
                         "in": "path",
@@ -1090,6 +1110,16 @@
                 "operationId": "showBug",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1168,6 +1198,16 @@
                 "summary": "Update a bug.",
                 "operationId": "updateBug",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "status_id",
                         "in": "path",
@@ -1302,6 +1342,16 @@
                 "operationId": "deleteBug",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1350,6 +1400,16 @@
                 "summary": "Assign user to bug.",
                 "operationId": "assignUser",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -1411,6 +1471,16 @@
                 "summary": "All bug users.",
                 "operationId": "allBugUsers",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -1512,6 +1582,16 @@
                 "operationId": "allComments",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1560,6 +1640,16 @@
                 "summary": "Store one comment.",
                 "operationId": "storeComment",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -1629,6 +1719,16 @@
                 "operationId": "showComment",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1682,6 +1782,16 @@
                 "summary": "Update a comment.",
                 "operationId": "updateComment",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -1770,6 +1880,16 @@
                 "operationId": "deleteComment",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1818,6 +1938,16 @@
                 "summary": "All companies.",
                 "operationId": "allCompanies",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "include-projects",
                         "in": "header",
@@ -1918,6 +2048,18 @@
                 ],
                 "summary": "Store one company.",
                 "operationId": "storeCompany",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1984,6 +2126,16 @@
                 "summary": "Show one company.",
                 "operationId": "showCompany",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -2091,6 +2243,16 @@
                 "operationId": "updateCompany",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2176,6 +2338,16 @@
                 "operationId": "deleteCompany",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2216,6 +2388,16 @@
                 "summary": "Company image.",
                 "operationId": "showCompanyImage",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -2268,6 +2450,16 @@
                 "operationId": "allCompaniesUsers",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2319,6 +2511,16 @@
                 "operationId": "removeCompanyUser",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2367,6 +2569,16 @@
                 "summary": "All company invitations.",
                 "operationId": "allCompaniesInvitations",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -2418,6 +2630,16 @@
                 "summary": "Invite a user to the company and asign a role to him",
                 "operationId": "inviteCompany",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -2496,6 +2718,18 @@
                 ],
                 "summary": "Show all invitations that the user has received.",
                 "operationId": "showInvitations",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -2538,6 +2772,16 @@
                 "summary": "Show one invitation.",
                 "operationId": "showInvitation",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "invitation_id",
                         "in": "path",
@@ -2585,6 +2829,16 @@
                 "operationId": "deleteInvitation",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "invitation_id",
                         "in": "path",
                         "required": true,
@@ -2625,6 +2879,16 @@
                 "summary": "Accept one invitation.",
                 "operationId": "acceptInvitation",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "invitation_id",
                         "in": "path",
@@ -2677,6 +2941,16 @@
                 "operationId": "declineInvitation",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "invitation_id",
                         "in": "path",
                         "required": true,
@@ -2719,6 +2993,18 @@
                 ],
                 "summary": "All prioritys.",
                 "operationId": "allPrioritys",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -2758,6 +3044,18 @@
                 ],
                 "summary": "Store one priority.",
                 "operationId": "storePriority",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -2817,6 +3115,16 @@
                 "operationId": "showPriority",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -2862,6 +3170,16 @@
                 "summary": "Update a priority.",
                 "operationId": "updatePriority",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -2940,6 +3258,16 @@
                 "operationId": "deletePriority",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -2980,6 +3308,16 @@
                 "summary": "All projects.",
                 "operationId": "allProjects",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -3075,6 +3413,16 @@
                 "operationId": "storeProject",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -3155,6 +3503,16 @@
                 "summary": "Show one project.",
                 "operationId": "showProject",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "company_id",
                         "in": "path",
@@ -3255,6 +3613,16 @@
                 "operationId": "updateProject",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -3354,6 +3722,16 @@
                 "operationId": "deleteProject",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -3402,6 +3780,16 @@
                 "summary": "Project image.",
                 "operationId": "showProjectImage",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -3453,6 +3841,16 @@
                 "summary": "All project bugs.",
                 "operationId": "allProjectsBugs",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -3535,6 +3933,16 @@
                 "operationId": "allProjectsUsers",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -3586,6 +3994,16 @@
                 "operationId": "removeProjectUser",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -3634,6 +4052,16 @@
                 "summary": "All project invitations.",
                 "operationId": "allProjectInvitations",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -3685,6 +4113,16 @@
                 "summary": "Invite a user to the project and asign it a role",
                 "operationId": "inviteProject",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -3760,6 +4198,18 @@
                 ],
                 "summary": "All roles.",
                 "operationId": "allRoles",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -3801,6 +4251,18 @@
                 ],
                 "summary": "Store one role.",
                 "operationId": "storeRole",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -3860,6 +4322,16 @@
                 "operationId": "showRole",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -3905,6 +4377,16 @@
                 "summary": "Update a role.",
                 "operationId": "updateRole",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -3983,6 +4465,16 @@
                 "operationId": "deleteRole",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -4023,6 +4515,16 @@
                 "summary": "All screenshots of the bug.",
                 "operationId": "allScreenshots",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -4072,6 +4574,16 @@
                 "summary": "Store one screenshots.",
                 "operationId": "storeScreenshot",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -4155,6 +4667,16 @@
                 "operationId": "showScreenshot",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -4208,6 +4730,16 @@
                 "summary": "Update one screenshots.",
                 "operationId": "updateScreenshot",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "bug_id",
                         "in": "path",
@@ -4311,6 +4843,16 @@
                 "operationId": "deleteScreenshot",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -4359,6 +4901,16 @@
                 "summary": "All statuses.",
                 "operationId": "allStatuses",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -4439,6 +4991,16 @@
                 "operationId": "storeStatus",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4510,6 +5072,16 @@
                 "summary": "Show one status.",
                 "operationId": "showStatus",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -4594,6 +5166,16 @@
                 "summary": "Update a status.",
                 "operationId": "updateStatus",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "project_id",
                         "in": "path",
@@ -4685,6 +5267,16 @@
                 "operationId": "deleteStatus",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4732,6 +5324,18 @@
                 ],
                 "summary": "All users.",
                 "operationId": "allUsers",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -4771,6 +5375,18 @@
                 ],
                 "summary": "Store one user.",
                 "operationId": "storeUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -4845,6 +5461,16 @@
                 "operationId": "showUser",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -4890,6 +5516,16 @@
                 "summary": "Update a user.",
                 "operationId": "updateUser",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "user_id",
                         "in": "path",
@@ -4989,6 +5625,16 @@
                 "operationId": "deleteUser",
                 "parameters": [
                     {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -5029,6 +5675,16 @@
                 "summary": "User image.",
                 "operationId": "showUserImage",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "user_id",
                         "in": "path",
@@ -5080,6 +5736,16 @@
                 "summary": "Return a project with the specified url where the user is a part of",
                 "operationId": "checkProject",
                 "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "name": "user_id",
                         "in": "path",
