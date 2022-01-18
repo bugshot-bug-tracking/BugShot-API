@@ -72,8 +72,11 @@ class InvitationReceivedNotification extends Notification
                 break;
         }
 
+        // Set email address dependet of the existence of the user
+        $email = isset($notifiable->email) ? $notifiable->email : $notifiable->routes['email'];
+
         return (new InvitationReceived($notifiable, $this->invitation, $this->resource, $this->message))
-        ->to($notifiable->email);
+        ->to($email);
     }
 
     /**
