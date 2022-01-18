@@ -36,16 +36,16 @@ use App\Http\Controllers\UserController;
 
 Route::prefix('auth')->group(function () {
 	// Register Routes
-	Route::post('/register', [AuthController::class, "register"])->name("register");
+	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
 	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
 	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
 
 	// Login Routes
-	Route::post('/login', [AuthController::class, "login"])->name("login")->middleware('verified');
+	Route::post('/login', [AuthController::class, "login"])->middleware('check.version')->name("login");
 
 	// Password Reset Routes
-	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware('guest')->name('password.email');
-	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware('guest')->name('password.update');
+	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware(['guest', 'check.version'])->name('password.email');
+	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware(['guest', 'check.version'])->name('password.update');
 });
 
 
@@ -54,7 +54,7 @@ Route::prefix('auth')->group(function () {
 | Private API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum'])->group(
+Route::middleware(['auth:sanctum', 'check.version'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
@@ -63,7 +63,7 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Company resource routes
 	Route::apiResource('/companies', CompanyController::class);

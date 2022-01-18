@@ -185,6 +185,8 @@ class AuthController extends Controller
 
 		if (!$user || !Hash::check($request->password, $user->password)) {
 			return response()->json(["message" => "Bad Credentials!"], 401);
+		} else if (!$user->hasVerifiedEmail()) {
+			return response()->json(["message" => "Email address not verified."], 401);
 		}
 
 		// ? Set the token name to either device name or device type in the future
