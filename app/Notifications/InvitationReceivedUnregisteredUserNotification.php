@@ -7,7 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\InvitationReceived;
+use App\Mail\InvitationReceivedUnregisteredUser;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -19,7 +19,7 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\Project;
 
-class InvitationReceivedNotification extends Notification
+class InvitationReceivedUnregisteredUserNotification extends Notification
 {
     use Queueable;
 
@@ -33,6 +33,7 @@ class InvitationReceivedNotification extends Notification
         $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
+        $this->registerUrl = NULL;
     }
 
     /**
@@ -72,9 +73,11 @@ class InvitationReceivedNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceived($notifiable, $this->invitation, $this->resource, $this->message))
+        $this->registerUrl = config('app.webpanel_url') . '/auth/register';
+
+        return (new InvitationReceivedUnregisteredUser($this->invitation, $this->resource, $this->message, $this->registerUrl))
         ->subject('BugShot - Invitation Received')
-        ->to($notifiable->email);
+        ->to($notifiable->routes['email']);
     }
 
     /**
