@@ -18,10 +18,12 @@ class CheckVersion
     public function handle(Request $request, Closure $next)
     {
         $client_version = Version::where('client_id', $request->header('clientId'))->first();
-
-        if($request->header('version') == $client_version->designation) {
-            return $next($request);
-        } 
+   
+        if($client_version != NULL) {
+            if($request->header('version') == $client_version->designation) {
+                return $next($request);
+            } 
+        }
 
         $response = [
             'success' => false,

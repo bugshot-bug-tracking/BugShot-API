@@ -34,6 +34,16 @@ class CommentController extends Controller
 	 *	summary="All comments.",
 	 *	operationId="allComments",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
@@ -91,6 +101,16 @@ class CommentController extends Controller
 	 *	summary="Store one comment.",
 	 *	operationId="storeComment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	 @OA\Parameter(
 	 *		name="bug_id",
@@ -171,6 +191,16 @@ class CommentController extends Controller
 	 *	summary="Show one comment.",
 	 *	operationId="showComment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -234,6 +264,16 @@ class CommentController extends Controller
 	 *	summary="Update a comment.",
 	 *	operationId="updateComment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -327,6 +367,16 @@ class CommentController extends Controller
 	 *	summary="Delete a comment.",
 	 *	operationId="deleteComment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,

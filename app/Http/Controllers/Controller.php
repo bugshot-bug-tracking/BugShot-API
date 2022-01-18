@@ -25,13 +25,12 @@ class Controller extends BaseController
  *      version="1.0.0",
  *      title="BugShot API Documentation",
  *      description="OpenApi documentation using swagger for BugShot project.",
- * 		termsOfService="https://www.google.ro/",
  *      @OA\Contact(
- *          email="r.memetea@proxima-idea.com"
+ *          email="info@it-michel.de"
  *      ),
  *      @OA\License(
  *          name="Apache 2.0",
  *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
- *      )
+ *      ),
  * )
  */

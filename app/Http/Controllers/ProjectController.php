@@ -44,6 +44,16 @@ class ProjectController extends Controller
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 * 
 	 * 	@OA\Parameter(
 	 *		name="company_id",
@@ -159,6 +169,16 @@ class ProjectController extends Controller
 	 *	summary="Store one project.",
 	 *	operationId="storeProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	 @OA\Parameter(
 	 *		name="company_id",
@@ -275,6 +295,16 @@ class ProjectController extends Controller
 	 *	summary="Show one project.",
 	 *	operationId="showProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
@@ -384,6 +414,16 @@ class ProjectController extends Controller
 	 *	summary="Update a project.",
 	 *	operationId="updateProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
@@ -511,6 +551,16 @@ class ProjectController extends Controller
 	 *	operationId="deleteProject",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
 	 *		in="path",
@@ -575,6 +625,16 @@ class ProjectController extends Controller
 	 *	summary="Project image.",
 	 *	operationId="showProjectImage",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -633,6 +693,16 @@ class ProjectController extends Controller
 	 *	summary="All project bugs.",
 	 *	operationId="allProjectsBugs",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -729,6 +799,16 @@ class ProjectController extends Controller
 	 *	summary="All project users.",
 	 *	operationId="allProjectsUsers",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -793,6 +873,16 @@ class ProjectController extends Controller
 	 *	summary="Remove user from the project.",
 	 *	operationId="removeProjectUser",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
@@ -856,6 +946,16 @@ class ProjectController extends Controller
 	 *	summary="All project invitations.",
 	 *	operationId="allProjectInvitations",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -914,6 +1014,16 @@ class ProjectController extends Controller
 	 *	summary="Invite a user to the project and asign it a role",
 	 *	operationId="inviteProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
