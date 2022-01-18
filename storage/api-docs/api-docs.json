@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://api.bugshot.de/api/v1"
+            "url": "http://api.test/api/v1"
         }
     ],
     "paths": {
@@ -2711,7 +2711,7 @@
                 ]
             }
         },
-        "/user/invitations": {
+        "/users/{user_id}/invitations": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2728,6 +2728,14 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     }
                 ],
                 "responses": {
@@ -2764,7 +2772,7 @@
                 ]
             }
         },
-        "/user/invitations/{invitation_id}": {
+        "/users/{user_id}/invitations/{invitation_id}": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2781,6 +2789,14 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "invitation_id",
@@ -2839,6 +2855,14 @@
                         "required": true
                     },
                     {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
                         "name": "invitation_id",
                         "in": "path",
                         "required": true,
@@ -2871,7 +2895,7 @@
                 ]
             }
         },
-        "/user/invitations/{invitation_id}/accept": {
+        "/users/{user_id}/invitations/{invitation_id}/accept": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2888,6 +2912,14 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "invitation_id",
@@ -2932,7 +2964,7 @@
                 ]
             }
         },
-        "/user/invitations/{invitation_id}/decline": {
+        "/users/{user_id}/invitations/{invitation_id}/decline": {
             "get": {
                 "tags": [
                     "Invitation"
@@ -2949,6 +2981,14 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "invitation_id",
