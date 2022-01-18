@@ -41,7 +41,7 @@ Route::prefix('auth')->group(function () {
 	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
 
 	// Login Routes
-	Route::post('/login', [AuthController::class, "login"])->name("login");
+	Route::post('/login', [AuthController::class, "login"])->name("login")->middleware('verified');
 
 	// Password Reset Routes
 	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware('guest')->name('password.email');
