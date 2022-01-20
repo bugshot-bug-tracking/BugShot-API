@@ -25,13 +25,13 @@ class BugRequest extends FormRequest
 	{
 		return [
 			"designation" => ["required", "string", "min:5", "max:255"],
-			"description" => ["min:5", "string"],
+			"description" => ["min:5", "string", "nullable"],
 			"url" => ["string", "max:65535", "nullable"],
 			"priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],
-			"operating_system" => ["max:255", "string"],
-			"browser" => ["max:255", "string"],
-			"selector" => ["max:65535", "string"],
-			"resolution" => ["max:255", "string"],
+			"operating_system" => ["max:255", "string", "nullable"],
+			"browser" => ["max:255", "string", "nullable"],
+			"selector" => ["max:65535", "string", "nullable"],
+			"resolution" => ["max:255", "string", "nullable"],
 			"deadline" => ["date"],
 			"order_number" => ["integer", "min:0"]
 		];
