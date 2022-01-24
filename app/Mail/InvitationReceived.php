@@ -16,7 +16,6 @@ class InvitationReceived extends Mailable
 
     public $user;
     public $invitation;
-    public $resource;
     public $entryMessage;
 
     /**
@@ -24,11 +23,10 @@ class InvitationReceived extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Invitation $invitation, $resource, $message)
+    public function __construct(User $notifiable, Invitation $invitation, $message)
     {
         $this->user = $notifiable;
         $this->invitation = $invitation;
-        $this->resource = $resource;
         $this->entryMessage = $message;
     }
 

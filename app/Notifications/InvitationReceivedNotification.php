@@ -72,7 +72,7 @@ class InvitationReceivedNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceived($notifiable, $this->invitation, $this->resource, $this->message))
+        return (new InvitationReceived($notifiable, $this->invitation, $this->message))
         ->subject('BugShot - Invitation Received')
         ->to($notifiable->email);
     }

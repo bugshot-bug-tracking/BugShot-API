@@ -22,9 +22,15 @@ class VerifyEmailAddress extends Mailable
      * @return void
      */
     public function __construct(User $notifiable, $url)
-    {
+    {   
+        preg_match(
+            '/[^\/]*$/',
+            $url,
+            $matches
+        );
+
         $this->user = $notifiable;
-        $this->url = $url;
+        $this->url = config('app.webpanel_url') . '/auth/verify/' . $matches[0];
     }
 
     /**
