@@ -151,14 +151,6 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
-	public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
-	/**
 	 * Send a password reset notification to the user.
 	 *
 	 * @param  string  $token
@@ -176,7 +168,65 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function isAdministrator() {
 		return $this->is_admin;
-	 }
+	}
+
+	/**
+	 * Check if the user is priviliege to have access to certain resources
+	 * E.g.: A user with the role of a company manager should have acces to all projects within
+	 * that company, eventhough he isn't part of all projects
+	 */
+	public function isPriviliegated($resourceType, $userRoleId) {
+    
+		/**
+		 * Roles:
+		 * | id | designation
+		 * |----|----------------------
+		 * | 1  | Owner
+		 * | 2  | Company Manager
+		 * | 3  | Project Manager
+		 * | 4  | Developer
+		 * | 5  | Client (e.g. Customer)
+		 */
+
+		// Check if the user is an admin
+		if($this->isAdministrator()) {
+			return true;
+		}
+
+		// Check if the user has a sufficient role within the given resource
+		if($resourceType == 'projects') {
+			switch ($userRoleId) {
+				case 1:
+					return true;
+					break;
+				case 2:
+					return true;
+					break;
+				
+				default:
+					return false;
+					break;
+			}
+		} else if($resourceType == 'bugs') {
+			switch ($userRoleId) {
+				case 1:
+					return true;
+					break;
+				case 2:
+					return true;
+					break;
+				case 3:
+					return true;
+					break;
+				
+				default:
+					return false;
+					break;
+			}
+		}
+
+		return false;
+	}
 
 }
 

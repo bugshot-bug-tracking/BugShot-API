@@ -180,14 +180,15 @@ class AuthController extends Controller
 	public function login(LoginRequest $request)
 	{
 		$user = User::where("email", $request->email)->first();
-		$clientId = $request->header('clientId');
-		$userClient = $user->clients()->where('client_id', $clientId);
 
 		if (!$user || !Hash::check($request->password, $user->password)) {
 			return response()->json(["message" => "Bad Credentials!"], 401);
 		} else if (!$user->hasVerifiedEmail()) {
 			return response()->json(["message" => "Email address not verified."], 401);
 		}
+
+		$clientId = $request->header('clientId');
+		$userClient = $user->clients()->where('client_id', $clientId);
 
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");

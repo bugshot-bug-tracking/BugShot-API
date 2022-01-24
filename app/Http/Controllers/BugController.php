@@ -301,7 +301,7 @@ class BugController extends Controller
 		// Determine the number of bugs in the project to generate the $ai_id
 		$numberOfBugs = $status->project->bugs()->withTrashed()->count();
 		$ai_id = $numberOfBugs + 1;
-
+		
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
 			"id" => $id,

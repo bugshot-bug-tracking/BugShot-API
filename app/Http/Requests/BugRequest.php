@@ -24,15 +24,15 @@ class BugRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "string", "min:5", "max:255"],
-			"description" => ["min:5", "string", "nullable"],
+			"designation" => ["required", "string", "min:1", "max:255"],
+			"description" => ["min:1", "max:255", "string", "nullable"],
 			"url" => ["string", "max:65535", "nullable"],
 			"priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],
 			"operating_system" => ["max:255", "string", "nullable"],
 			"browser" => ["max:255", "string", "nullable"],
 			"selector" => ["max:65535", "string", "nullable"],
 			"resolution" => ["max:255", "string", "nullable"],
-			"deadline" => ["date"],
+			"deadline" => ["date", "nullable"],
 			"order_number" => ["integer", "min:0"]
 		];
 	}

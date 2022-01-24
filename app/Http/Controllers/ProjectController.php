@@ -149,14 +149,25 @@ class ProjectController extends Controller
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 
+		$userCompanyRoleId = $this->user->companies->find($company)->pivot->role_id;
+		$userIsPriviliegated = $this->user->isPriviliegated('projects', $userCompanyRoleId);
+		
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
-            $projects = Auth::user()->projects->where('company_id', $company->id);
+			if($userIsPriviliegated) {
+				$projects = $company->projects;
+			} else {
+				$projects = Auth::user()->projects->where('company_id', $company->id);
+			}
         } else {
-            $projects = Auth::user()->projects->where([
-                ["projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp)],
-				['company_id', $company->id]
-			]);
+			if($userIsPriviliegated) {
+				$company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			} else {
+				$projects = Auth::user()->projects->where([
+					["projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp)],
+					['company_id', $company->id]
+				]);
+			}
         }
 
 		return ProjectResource::collection($projects);

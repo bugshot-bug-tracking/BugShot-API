@@ -25,7 +25,7 @@ class CompanyRequest extends FormRequest
 	{
 		return [
 			"id" => ["string", "max:36"],
-			"designation" => ["required", "string", "min:5", "max:255"],
+			"designation" => ["required", "string", "min:1", "max:255"],
 			"base64" => ["string", "nullable"],
 			"color_hex" => ["string", "max:7", "nullable"],
 			"timestamp" => ["date"]
