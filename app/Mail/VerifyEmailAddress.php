@@ -31,7 +31,7 @@ class VerifyEmailAddress extends Mailable
         );
 
         $this->user = $notifiable;
-        $this->url = config('app.webpanel_url') . '/auth/verify/' . $notifiable->id . '/' . $matches[0];
+        $this->url = config('app.webpanel_url') . '/auth/verify/' . $matches[0];
     }
 
     /**
