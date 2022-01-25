@@ -75,7 +75,7 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
 
         $this->registerUrl = config('app.webpanel_url') . '/auth/register';
 
-        return (new InvitationReceivedUnregisteredUser($this->invitation, $this->resource, $this->message, $this->registerUrl))
+        return (new InvitationReceivedUnregisteredUser($this->invitation, $this->message, $this->registerUrl))
         ->subject('BugShot - Invitation Received')
         ->to($notifiable->routes['email']);
     }

@@ -15,7 +15,6 @@ class InvitationReceivedUnregisteredUser extends Mailable
     use Queueable, SerializesModels;
 
     public $invitation;
-    public $resource;
     public $entryMessage;
     public $registerUrl;
 
@@ -24,13 +23,11 @@ class InvitationReceivedUnregisteredUser extends Mailable
      *
      * @return void
      */
-    public function __construct(Invitation $invitation, $resource, $message, $registerUrl)
+    public function __construct(Invitation $invitation, $message, $registerUrl)
     {
         $this->invitation = $invitation;
-        $this->resource = $resource;
         $this->entryMessage = $message;
         $this->registerUrl = $registerUrl;
-
     }
 
     /**

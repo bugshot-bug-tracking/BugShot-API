@@ -17,9 +17,9 @@ class ResetPasswordLinkNotification extends Notification
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct($token)
     {
-        $this->url = $url;
+        $this->url = config('app.webpanel_url') . '/auth/reset-password/' . $token;
     }
 
     /**
@@ -42,6 +42,7 @@ class ResetPasswordLinkNotification extends Notification
     public function toMail($notifiable)
     {
         return (new ResetPasswordLink($notifiable, $this->url))
+        ->subject('BugShot - Password Reset Link')
         ->to($notifiable->email);
     }
 

@@ -158,9 +158,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-	    $url = route('password.update') . '?token=' . $token;
-
-	    $this->notify(new ResetPasswordLinkNotification($url));
+	    $this->notify(new ResetPasswordLinkNotification('?token=' . $token));
 	}
 
 	/**

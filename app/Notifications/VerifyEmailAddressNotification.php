@@ -42,6 +42,7 @@ class VerifyEmailAddressNotification extends Notification
     public function toMail($notifiable)
     {
         return (new VerifyEmailAddress($notifiable, $this->url))
+        ->subject('BugShot - Verify Email Address')
         ->to($notifiable->email);
     }
 
