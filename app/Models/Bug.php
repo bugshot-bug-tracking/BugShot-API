@@ -176,6 +176,14 @@ class Bug extends Model
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+	public function creator()
+	{
+		return $this->belongsTo(User::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function users()
     {
         return $this->belongsToMany(User::class, 'bug_user_roles')->withPivot('role_id');

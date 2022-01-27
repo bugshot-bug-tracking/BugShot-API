@@ -34,6 +34,13 @@ class Project extends Model
 	 * 	type="string",
 	 *  maxLength=255,
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="user_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the user that created the object."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="company_id",
@@ -86,12 +93,20 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "url", "company_id", "color_hex"];
+	protected $fillable = ["id", "user_id", "designation", "url", "company_id", "color_hex"];
 
 	protected $touches = ['company'];
 
 	// Cascade the soft deletion to the given child resources
 	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image'];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function creator()
+	{
+		return $this->belongsTo(User::class);
+	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

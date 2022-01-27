@@ -244,6 +244,7 @@ class CompanyController extends Controller
 		// Store the new company in the database
 		$company = Company::create([
 			"id" => $id,
+			"user_id" => Auth::user()->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 		]);

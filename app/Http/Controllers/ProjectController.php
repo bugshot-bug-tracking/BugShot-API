@@ -271,6 +271,7 @@ class ProjectController extends Controller
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
+			"user_id" => Auth::user()->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 			"url" => $request->url

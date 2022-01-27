@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\User;
 
 class CompanyResource extends JsonResource
 {
@@ -19,6 +20,7 @@ class CompanyResource extends JsonResource
 			"id" => $this->id,
 			"type" => "Company",
 			"attributes" => [
+				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
 			]

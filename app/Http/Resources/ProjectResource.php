@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Company;
+use App\Models\User;
 
 class ProjectResource extends JsonResource
 {
@@ -24,6 +25,7 @@ class ProjectResource extends JsonResource
 			"id" => $this->id,
 			"type" => "Project",
 			"attributes" => [
+				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"url" => $this->url,
 				"color_hex" => $this->color_hex,

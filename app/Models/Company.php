@@ -37,6 +37,13 @@ class Company extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="user_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the user that created the object."
+	 * )
+	 * 
+	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
 	 *  maxLength=255,
@@ -74,10 +81,18 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "color_hex"];
+	protected $fillable = ["id", "user_id", "designation", "color_hex"];
 
 	// Cascade the soft deletion to the given child resources
 	protected $cascadeDeletes = ['projects', 'invitations', 'image'];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function creator()
+	{
+		return $this->belongsTo(User::class);
+	}
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
