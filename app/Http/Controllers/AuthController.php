@@ -446,8 +446,7 @@ class AuthController extends Controller
 		);
 
 		if($status === PasswordFacade::PASSWORD_RESET) {
-			return redirect()->away(config('app.webpanel_url'))->with('status', __($status));
-			// return response(__($status), 200);
+			return response(__($status), 200);
 		} else {
 			return response()->json([
 				"errors" => [
@@ -501,8 +500,7 @@ class AuthController extends Controller
 	public function verifyEmail(CustomEmailVerificationRequest $request) {
 		$request->fulfill();
 	
-		return redirect(config('app.webpanel_url'))->with('status', "Email verification successfull");
-		// return response()->json("Email verification successfull", 204);
+		return response()->json("Email verification successfull", 204);
 	}
 
 	/**
