@@ -122,8 +122,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		});
 	});
 
-
-
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes
