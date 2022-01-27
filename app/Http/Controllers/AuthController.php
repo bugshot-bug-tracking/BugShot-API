@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Password as PasswordFacade;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\URL;
+
+// Notifications
+use App\Notifications\VerifyEmailAddressNotification;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -105,6 +112,7 @@ class AuthController extends Controller
 	 **/
 	public function register(RegisterRequest $request)
 	{
+	
 		$user = User::create([
 			"first_name" => $request->first_name,
 			"last_name" => $request->last_name,
@@ -112,7 +120,16 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-		event(new Registered($user));
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+
+		$user->notify(new VerifyEmailAddressNotification($url));
 
 		return new UserResource($user);
 	}

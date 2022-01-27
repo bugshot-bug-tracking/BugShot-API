@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\ResetPasswordLink;
+use App\Mail\ResetPasswordLink as ResetPasswordLinkMailable;
 
 class ResetPasswordLinkNotification extends Notification
 {
@@ -41,7 +41,7 @@ class ResetPasswordLinkNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new ResetPasswordLink($notifiable, $this->url))
+        return (new ResetPasswordLinkMailable($notifiable, $this->url))
         ->subject('BugShot - Password Reset Link')
         ->to($notifiable->email);
     }

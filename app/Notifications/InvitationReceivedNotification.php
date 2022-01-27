@@ -7,7 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\InvitationReceived;
+use App\Mail\InvitationReceived as InvitationReceivedMailable;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -72,7 +72,7 @@ class InvitationReceivedNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceived($notifiable, $this->invitation, $this->message))
+        return (new InvitationReceivedMailable($notifiable, $this->invitation, $this->message))
         ->subject('BugShot - Invitation Received')
         ->to($notifiable->email);
     }

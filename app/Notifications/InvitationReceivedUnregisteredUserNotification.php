@@ -7,7 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\InvitationReceivedUnregisteredUser;
+use App\Mail\InvitationReceivedUnregisteredUser as InvitationReceivedUnregisteredUserMailable;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -75,7 +75,7 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
 
         $this->registerUrl = config('app.webpanel_url') . '/auth/register';
 
-        return (new InvitationReceivedUnregisteredUser($this->invitation, $this->message, $this->registerUrl))
+        return (new InvitationReceivedUnregisteredUserMailable($this->invitation, $this->message, $this->registerUrl))
         ->subject('BugShot - Invitation Received')
         ->to($notifiable->routes['email']);
     }

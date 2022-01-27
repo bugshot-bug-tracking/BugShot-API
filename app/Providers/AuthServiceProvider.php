@@ -6,7 +6,6 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Notifications\Messages\MailMessage;
-use App\Mail\VerifyEmailAddress;
 use App\Notifications\VerifyEmailAddressNotification;
 
 class AuthServiceProvider extends ServiceProvider
@@ -28,10 +27,6 @@ class AuthServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		$this->registerPolicies();
-
-		VerifyEmail::toMailUsing(function ($notifiable, $url) {
-			$notifiable->notify(new VerifyEmailAddressNotification($url));
-		});
 
 		//
 	}

@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\VerifyEmailAddress;
+use App\Mail\VerifyEmailAddress as VerifyEmailAddressMailable;
 
 class VerifyEmailAddressNotification extends Notification
 {
@@ -41,7 +41,7 @@ class VerifyEmailAddressNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new VerifyEmailAddress($notifiable, $this->url))
+        return (new VerifyEmailAddressMailable($notifiable, $this->url))
         ->subject('BugShot - Verify Email Address')
         ->to($notifiable->email);
     }
