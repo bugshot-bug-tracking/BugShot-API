@@ -9,10 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as PasswordFacade;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\URL;
 
 // Notifications
