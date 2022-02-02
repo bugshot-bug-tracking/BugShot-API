@@ -19,7 +19,8 @@ use App\Services\ImageService;
 use App\Models\User;
 
 // Requests
-use App\Http\Requests\UserRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Http\Requests\UserStoreRequest;
 
 /**
  * @OA\Tag(
@@ -162,10 +163,10 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\UserStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserRequest $request)
+    public function store(UserStoreRequest $request)
     {
         // Check if the user is authorized to create a new user
 		$this->authorize('create', [User::class]);
@@ -319,7 +320,7 @@ class UserController extends Controller
 	 *                  property="base64",
 	 *                  type="string"
 	 *              ),
-	 *              required={"first_name","last_name","email","password","password_confirmation"}
+	 *              required={"first_name","last_name","email", "old_password"}
 	 *          )
 	 *      )
 	 *  ),
@@ -355,15 +356,15 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\UserUpdateRequest  $request
 	 * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(UserRequest $request, User $user, ImageService $imageService)
+    public function update(UserUpdateRequest $request, User $user, ImageService $imageService)
     {
 		// Check if the user is authorized to update the user
 		$this->authorize('update', $user);
-
+		
         // Check if the request comes with an image and if so, store it
 		$image = $user->image;
 		if($request->base64 != NULL) {
@@ -371,13 +372,8 @@ class UserController extends Controller
 			$this->user->image()->save($image);
 		}
 
-		// Create the user
-		$user->update([
-			'first_name' => $request->first_name,
-			'last_name' => $request->last_name,
-			'email' => $request->email,
-			'password' => Hash::make($request->password)
-		]);
+		// Update the user
+		$user->update(array_filter($request->all()));
 
 		return new UserResource($user);
     }

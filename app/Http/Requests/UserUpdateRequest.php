@@ -6,10 +6,8 @@ use App\Rules\OldPasswordConfirmed;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\Support\Facades\Hash;
-use App\Rules\Uppercase;
 
-class UserRequest extends FormRequest
+class UserUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,10 +29,10 @@ class UserRequest extends FormRequest
         return [
 			'first_name' => ['required', 'alpha_dash', 'max:255'],
 			'last_name' => ['required', 'alpha_dash', 'max:255'],
-			'email' => ['required', 'email', Rule::unique('users')->ignore($this->user->id),],
+			'email' => ['required', 'email', Rule::unique('users')->ignore($this->user->id)],
             'old_password' => ['required', new OldPasswordConfirmed($this->user)],
-			'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
-			'password_confirmation' => ['required', 'same:password']
+			'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
+			'password_confirmation' => ['exclude_unless:password,true','required', 'same:password']
         ];
     }
 }
