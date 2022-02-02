@@ -318,13 +318,13 @@ class InvitationController extends Controller
 			return response()->json([
 				"errors" => [
 					"status" => 403,
-					"details" => "This invitation is not for you!"
+					"details" => __('application.invitation-not-for-you')
 				]
 			], 403);
 
 		if ($invitation->status_id !== 1)
 			return response()->json(["data" => [
-				"message" => "Invitation already processed."
+				"message" => __('application.invitation-already-in-progress')
 			]], 288);
 
 		$invitable = $invitation->invitable;
@@ -422,13 +422,13 @@ class InvitationController extends Controller
 			return response()->json([
 				"errors" => [
 					"status" => 403,
-					"details" => "This invitation is not for you!"
+					"details" => __('application.invitation-not-for-you')
 				]
 			], 403);
 
 		if ($invitation->status_id !== 1)
 			return response()->json(["data" => [
-				"message" => "Invitation already processed."
+				"message" => __('application.invitation-already-in-progress')
 			]], 288);
 
 		$invitation->update(["status_id" => 3]);
@@ -449,7 +449,7 @@ class InvitationController extends Controller
 		if ($user->companies->find($company) !== NULL) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
-				"message" => "You are already part of the company."
+				"message" => __('application.already-part-of-the-company')
 			]], 288);
 		}
 
@@ -473,7 +473,7 @@ class InvitationController extends Controller
 		if ($user->projects->find($project) !== NULL) {
 			$invitation->update(["status_id" => 5]);
 			return response()->json(["data" => [
-				"message" => "You are already part of the project."
+				"message" => __('application.already-part-of-the-project')
 			]], 288);
 		}
 

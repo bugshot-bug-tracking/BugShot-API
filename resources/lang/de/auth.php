@@ -13,10 +13,10 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-    'email-not-verified' => 'Email address not verified.',
-    'email-verified-successfully' => 'Email verification successfull.',
-    'verification-link-sent' => 'Verification link sent!'
+    'failed' => 'Email oder Passwort falsch.',
+    'password' => 'Das eingegeben Passwort ist nicht korrekt.',
+    'throttle' => 'Zu viele Login Versuche. Bitte versuche es in :seconds Sekunden erneut.',
+    'email-not-verified' => 'E-Mail Adresse nicht verifiziert.',
+    'email-verified-successfully' => 'E-Mail erfolgreich verifiziert.',
+    'verification-link-sent' => 'Verifzierungslink erfolgreich versendet!'
 ];

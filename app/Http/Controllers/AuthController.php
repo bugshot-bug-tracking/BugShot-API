@@ -197,9 +197,9 @@ class AuthController extends Controller
 		$user = User::where("email", $request->email)->first();
 
 		if (!$user || !Hash::check($request->password, $user->password)) {
-			return response()->json(["message" => "Bad Credentials!"], 401);
+			return response()->json(["message" => __('auth.failed')], 401);
 		} else if (!$user->hasVerifiedEmail()) {
-			return response()->json(["message" => "Email address not verified."], 401);
+			return response()->json(["message" => __('auth.email-not-verified')], 401);
 		}
 
 		$clientId = $request->header('clientId');
@@ -515,7 +515,7 @@ class AuthController extends Controller
 	public function verifyEmail(CustomEmailVerificationRequest $request) {
 		$request->fulfill();
 	
-		return response()->json("Email verification successfull", 204);
+		return response()->json( __('auth.email-verified-successfully'), 204);
 	}
 
 	/**
@@ -566,6 +566,6 @@ class AuthController extends Controller
 		$user = User::find($request->user_id);
 		$user->sendEmailVerificationNotification();
 	
-		return response('Verification link sent!', 200);
+		return response(__('auth.verification-link-sent'), 200);
 	}
 }

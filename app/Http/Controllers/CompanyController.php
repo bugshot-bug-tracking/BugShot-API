@@ -49,6 +49,11 @@ class CompanyController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 * 
 	 * 	@OA\Parameter(
 	 *		name="include-projects",
@@ -945,7 +950,7 @@ class CompanyController extends Controller
 		$targetUser = User::where('email', $request->target_email)->first();
 		if($company->invitations->contains('target_email', $request->target_email) || $company->users->contains($targetUser)) {
 			return response()->json(["data" => [
-				"message" => "User has already been invited to the company or is already part of it."
+				"message" => __('application.company-user-already-invited')
 			]], 409);
 		}
 
