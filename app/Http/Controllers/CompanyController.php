@@ -161,7 +161,7 @@ class CompanyController extends Controller
                 ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
             ])->sortBy('designation');
         }
-		
+
 		return CompanyResource::collection($companies);
 	}
 

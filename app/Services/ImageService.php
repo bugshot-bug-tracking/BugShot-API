@@ -7,7 +7,7 @@ use App\Models\Image;
 
 class ImageService
 {
-    private $storagePath = "/uploads/images";
+    private $storagePath = "/uploads/images/";
 
     // Store a newly created image on the server.
     public function store($base64, $image)

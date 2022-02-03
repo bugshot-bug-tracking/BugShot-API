@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ScreenshotService
 {
-    private $storagePath = "/uploads/screenshots";
+    private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
     public function store($bug, $screenshot)
@@ -20,7 +20,7 @@ class ScreenshotService
         // Complete building the path where the screenshot will be stored
         $project = $bug->project;
 		$company = $project->company;
-        $filePath = $this->storagePath . "/$company->id/$project->id/$bug->id/" . $fileName;
+        $filePath = $this->storagePath . "$company->id/$project->id/$bug->id/" . $fileName;
 
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);

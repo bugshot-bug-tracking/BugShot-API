@@ -20,7 +20,7 @@ class ProjectResource extends JsonResource
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();
 		$bugsTotal = $this->bugs->count();
-
+		
 		$project = array(
 			"id" => $this->id,
 			"type" => "Project",
@@ -29,12 +29,12 @@ class ProjectResource extends JsonResource
 				"designation" => $this->designation,
 				"url" => $this->url,
 				"color_hex" => $this->color_hex,
-				"company" => new CompanyResource(Company::find($this->company_id)),
+				"company" => $this->company_id,
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone
 			]
 		);
-
+		
 		$header = $request->header();
 
 		// Check if the response should contain the respective statuses
@@ -53,7 +53,7 @@ class ProjectResource extends JsonResource
 			$image = $this->image;
 			$project['attributes']['image'] = new ImageResource($image);
 		}
-	
+		
 		return $project;
 	}
 }

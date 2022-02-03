@@ -7,7 +7,7 @@ use App\Models\Attachment;
 
 class AttachmentService
 {
-    private $storagePath = "/uploads/attachments";
+    private $storagePath = "/uploads/attachments/";
 
     // Store a newly created attachment on the server.
     public function store($bug, $attachment)
@@ -21,7 +21,7 @@ class AttachmentService
         // Complete building the path where the attachment will be stored
         $project = $bug->project;
 		$company = $project->company;
-        $filePath = $this->storagePath . "/$company->id/$project->id/$bug->id/" . $fileName;
+        $filePath = $this->storagePath . "$company->id/$project->id/$bug->id/" . $fileName;
 
         // Store the attachment in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
