@@ -538,7 +538,7 @@ class ProjectController extends Controller
 		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $project->image()->save($image) : true;
-			$color_hex = $company->color_hex;
+			$color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
 		} else {
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
