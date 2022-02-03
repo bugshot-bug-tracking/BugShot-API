@@ -20,6 +20,7 @@ class ProjectResource extends JsonResource
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();
 		$bugsTotal = $this->bugs->count();
+		$company = Company::find($this->company_id);
 		
 		$project = array(
 			"id" => $this->id,
@@ -29,7 +30,15 @@ class ProjectResource extends JsonResource
 				"designation" => $this->designation,
 				"url" => $this->url,
 				"color_hex" => $this->color_hex,
-				"company" => $this->company_id,
+				"company" => array(
+					"id" => $company->id,
+					"type" => "Company",
+					"attributes" => [
+						"creator" => new UserResource(User::find($company->user_id)),
+						"designation" => $company->designation,
+						"color_hex" => $company->color_hex,
+					]
+				),
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone
 			]
