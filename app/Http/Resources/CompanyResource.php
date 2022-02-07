@@ -23,6 +23,7 @@ class CompanyResource extends JsonResource
 				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
+				"created_at" => $this->created_at
 			]
 		);
 		

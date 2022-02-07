@@ -40,7 +40,8 @@ class ProjectResource extends JsonResource
 					]
 				),
 				"bugsTotal" => $bugsTotal,
-				"bugsDone" => $bugsDone
+				"bugsDone" => $bugsDone,
+				"created_at" => $this->created_at
 			]
 		);
 		
