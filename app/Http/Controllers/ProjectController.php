@@ -544,6 +544,9 @@ class ProjectController extends Controller
 			$color_hex = $request->color_hex;
 		}
 
+		// Apply default color if color_hex is null
+		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
+
 		// Update the project
 		$project->update([
 			"company_id" => $company->id,

@@ -495,7 +495,7 @@ class CompanyController extends Controller
 
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
-		
+
 		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $company->image()->save($image) : true;
@@ -504,6 +504,9 @@ class CompanyController extends Controller
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
+
+		// Apply default color if color_hex is null
+		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
 		$company->update([
