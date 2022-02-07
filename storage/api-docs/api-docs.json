@@ -3668,11 +3668,6 @@
                         "required": true
                     },
                     {
-                        "name": "include-project-image",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
