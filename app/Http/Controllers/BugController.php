@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 // Resources
 use App\Http\Resources\BugResource;
@@ -315,7 +316,7 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			"deadline" => $request->deadline,
+			"deadline" => new Carbon($request->deadline),
 			"order_number" => $order_number,
 			"ai_id" => $ai_id
 		]);
@@ -614,7 +615,7 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			"deadline" => $request->deadline,
+			"deadline" => new Carbon($request->deadline),
 			"order_number" => $request->order_number,
 			"ai_id" => $request->ai_id
 		]);
