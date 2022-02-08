@@ -27,8 +27,8 @@ class UserUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-			'first_name' => ['required', 'alpha_dash', 'max:255'],
-			'last_name' => ['required', 'alpha_dash', 'max:255'],
+			'first_name' => ['required', 'string', 'max:255'],
+			'last_name' => ['required', 'string', 'max:255'],
 			'email' => ['required', 'email', Rule::unique('users')->ignore($this->user->id)],
             'old_password' => ['required', new OldPasswordConfirmed($this->user)],
 			'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
