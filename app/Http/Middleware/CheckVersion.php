@@ -20,7 +20,7 @@ class CheckVersion
         $client_version = Version::where('client_id', $request->header('clientId'))->first();
    
         if($client_version != NULL) {
-            if($request->header('version') == $client_version->designation) {
+            if($request->header('version') == $client_version->designation && $client_version->supported == true) {
                 return $next($request);
             } 
         }

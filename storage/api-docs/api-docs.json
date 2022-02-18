@@ -1240,10 +1240,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "user_id",
-                                    "project_id",
                                     "designation",
-                                    "url",
                                     "status_id",
                                     "priority_id"
                                 ],
@@ -1290,6 +1287,10 @@
                                     },
                                     "resolution": {
                                         "type": "string"
+                                    },
+                                    "ai_id": {
+                                        "type": "integer",
+                                        "format": "int64"
                                     },
                                     "deadline": {
                                         "type": "string",

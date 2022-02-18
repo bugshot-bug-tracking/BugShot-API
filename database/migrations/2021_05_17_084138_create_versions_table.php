@@ -23,6 +23,8 @@ class CreateVersionsTable extends Migration
             $table->foreign('client_id')->references('id')->on('clients');
             $table->unsignedBigInteger('version_type_id')->onDelete('cascade');
             $table->foreign('version_type_id')->references('id')->on('version_types');
+
+            $table->boolean('supported');
             
             $table->timestamps();
         });

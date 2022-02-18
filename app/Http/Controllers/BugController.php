@@ -548,11 +548,16 @@ class BugController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
+	 *                  property="ai_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
 	 *                  property="deadline",
 	 *                  type="string",
 	 * 					format="date-time",
 	 *              ),
-	 *              required={"user_id","project_id","designation","url","status_id","priority_id",}
+	 *              required={"designation","status_id","priority_id",}
 	 *          )
 	 *      )
 	 *  ),
