@@ -17,12 +17,14 @@ class CheckVersion
      */
     public function handle(Request $request, Closure $next)
     {
-        $client_version = Version::where('client_id', $request->header('clientId'))->first();
-   
+        $client_version = Version::where([
+            ['client_id', '=', $request->header('clientId')],
+            ['designation', '=', $request->header('version')],
+            ['supported', '=', true]
+        ])->first();
+
         if($client_version != NULL) {
-            if($request->header('version') == $client_version->designation && $client_version->supported == true) {
-                return $next($request);
-            } 
+            return $next($request);
         }
 
         $response = [
