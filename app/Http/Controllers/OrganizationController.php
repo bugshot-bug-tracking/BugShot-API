@@ -7,37 +7,37 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 // Resources
-use App\Http\Resources\CompanyResource;
+use App\Http\Resources\OrganizationResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
-use App\Http\Resources\CompanyUserRoleResource;
+use App\Http\Resources\OrganizationUserRoleResource;
 
 // Services
-use App\Services\ImageService;
 use App\Services\InvitationService;
+use App\Services\OrganizationService;
 
 // Models
-use App\Models\Company;
+use App\Models\Organization;
 use App\Models\User;
-use App\Models\CompanyUserRole;
+use App\Models\OrganizationUserRole;
 
 // Requests
-use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\OrganizationRequest;
 use App\Http\Requests\InvitationRequest;
 
 /**
  * @OA\Tag(
- *     name="Company",
+ *     name="Organization",
  * )
  */
-class CompanyController extends Controller
+class OrganizationController extends Controller
 {
 	/**
 	 * @OA\Get(
-	 *	path="/companies",
-	 *	tags={"Company"},
-	 *	summary="All companies.",
-	 *	operationId="allCompanies",
+	 *	path="/organizations",
+	 *	tags={"Organization"},
+	 *	summary="All organizations.",
+	 *	operationId="allOrganizations",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -55,73 +55,12 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 
-	 * 	@OA\Parameter(
-	 *		name="include-projects",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-statuses",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-bugs",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-screenshots",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-comments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-company-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-project-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-bug-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-company-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-project-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachment-base64",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
 	 *		@OA\JsonContent(
 	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Company")
+	 *			@OA\Items(ref="#/components/schemas/Organization")
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -150,27 +89,17 @@ class CompanyController extends Controller
 	 */
 	public function index(Request $request)
 	{
-		// Get timestamp
-		$timestamp = $request->header('timestamp');
+        $organizations = Organization::all();
 
-		// Check if the request includes a timestamp and query the companies accordingly
-        if($timestamp == NULL) {
-            $companies = Auth::user()->companies->sortBy('designation');
-        } else {
-            $companies = Auth::user()->companies->where([
-                ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
-            ])->sortBy('designation');
-        }
-
-		return CompanyResource::collection($companies);
+		return OrganizationResource::collection($organizations);
 	}
 
 	/**
 	 * @OA\Post(
-	 *	path="/companies",
-	 *	tags={"Company"},
-	 *	summary="Store one company.",
-	 *	operationId="storeCompany",
+	 *	path="/organizations",
+	 *	tags={"Organization"},
+	 *	summary="Store one organization.",
+	 *	operationId="storeOrganization",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -190,18 +119,8 @@ class CompanyController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The company name",
+	 *                  description="The organization name",
 	 *                  property="designation",
-	 *                  type="string",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  description="The hexcode of the color (optional)",
-	 *                  property="color_hex",
-	 * 					type="string",
-	 *              ),
-	 *              @OA\Property(
-	 *                  description="The base64 string of the image belonging to the company (optional)",
-	 *                  property="base64",
 	 *                  type="string",
 	 *              ),
 	 *              required={"designation"}
@@ -213,7 +132,7 @@ class CompanyController extends Controller
 	 *		response=201,
 	 *		description="Success",
 	 *		@OA\JsonContent(
-	 *			ref="#/components/schemas/Company"
+	 *			ref="#/components/schemas/Organization"
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -238,41 +157,34 @@ class CompanyController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
+	 * @param  \Illuminate\Http\OrganizationRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(CompanyRequest $request, ImageService $imageService)
+	public function store(OrganizationRequest $request, OrganizationService $organizationService, InvitationService $invitationService)
 	{	
-		// Check if the the request already contains a UUID for the company
+		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
 
-		// Store the new company in the database
-		$company = Company::create([
-			"id" => $id,
-			"user_id" => Auth::user()->id,
-			"designation" => $request->designation,
-			"color_hex" => $request->color_hex,
-		]);
-		
-		// Check if the company comes with an image (or a color)
-		$image = NULL;
-		if($request->base64 != NULL) {
-			$image = $imageService->store($request->base64, $image);
-			$company->image()->save($image);
+		// Store the new organization in the database
+		$organization = $organizationService->store($request, $this->user, $id);
+
+        // Send invites to the selected recipients
+		$recipients = $request->recipients;
+		if($recipients != NULL) {
+			foreach($recipients as $recipient) {
+                $invitationService->send($request, $organization, $id, $recipient);
+			}
 		}
 
-		// Store the respective role
-		Auth::user()->companies()->attach($company->id, ['role_id' => 1]);
-
-		return new CompanyResource($company);
+		return new OrganizationResource($organization);
 	}
-
+    // TODO: Rest of the functions down below
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}",
-	 *	tags={"Company"},
-	 *	summary="Show one company.",
-	 *	operationId="showCompany",
+	 *	path="/organizations/{organization_id}",
+	 *	tags={"Organization"},
+	 *	summary="Show one organization.",
+	 *	operationId="showOrganization",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -286,11 +198,11 @@ class CompanyController extends Controller
 	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
@@ -324,7 +236,7 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-company-users",
+	 *		name="include-organization-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -339,7 +251,7 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-company-image",
+	 *		name="include-organization-image",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -357,7 +269,7 @@ class CompanyController extends Controller
 	 *		response=200,
 	 *		description="Success",
 	 *		@OA\JsonContent(
-	 *			ref="#/components/schemas/Company"
+	 *			ref="#/components/schemas/Organization"
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -381,23 +293,23 @@ class CompanyController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Company $company)
+	public function show(Organization $organization)
 	{
-		// Check if the user is authorized to view the company
-		$this->authorize('view', $company);
+		// Check if the user is authorized to view the organization
+		$this->authorize('view', $organization);
 
-		return new CompanyResource($company);
+		return new OrganizationResource($organization);
 	}
 
 	/**
 	 * @OA\Put(
-	 *	path="/companies/{company_id}",
-	 *	tags={"Company"},
-	 *	summary="Update a company.",
-	 *	operationId="updateCompany",
+	 *	path="/organizations/{organization_id}",
+	 *	tags={"Organization"},
+	 *	summary="Update a organization.",
+	 *	operationId="updateOrganization",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -411,11 +323,11 @@ class CompanyController extends Controller
 	 *	),
 
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *	@OA\Parameter(
@@ -433,7 +345,7 @@ class CompanyController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The company name",
+	 *                  description="The organization name",
 	 *                  property="designation",
 	 *                  type="string",
 	 *              ),
@@ -443,7 +355,7 @@ class CompanyController extends Controller
 	 * 					type="string",
 	 *              ),
 	 *              @OA\Property(
-	 *                  description="The base64 string of the image belonging to the company (optional)",
+	 *                  description="The base64 string of the image belonging to the organization (optional)",
 	 *                  property="base64",
 	 *                  type="string",
 	 *              ),
@@ -456,7 +368,7 @@ class CompanyController extends Controller
 	 *		response=200,
 	 *		description="Success",
 	 *		@OA\JsonContent(
-	 *			ref="#/components/schemas/Company"
+	 *			ref="#/components/schemas/Organization"
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -484,22 +396,22 @@ class CompanyController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @param  \App\Models\Company  $company
+	 * @param  \Illuminate\Http\OrganizationRequest  $request
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
+	public function update(OrganizationRequest $request, Organization $organization, ImageService $imageService)
 	{
-		// Check if the user is authorized to update the company
-		$this->authorize('update', $company);
+		// Check if the user is authorized to update the organization
+		$this->authorize('update', $organization);
 
-		// Check if the company comes with an image (or a color)
-		$image = $company->image;
+		// Check if the organization comes with an image (or a color)
+		$image = $organization->image;
 
 		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
-			$image != false ? $company->image()->save($image) : true;
-			$color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
+			$image != false ? $organization->image()->save($image) : true;
+			$color_hex = $organization->color_hex == $request->color_hex ? $organization->color_hex : $request->color_hex;
 		} else {
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
@@ -508,21 +420,21 @@ class CompanyController extends Controller
 		// Apply default color if color_hex is null
 		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
-		// Update the company
-		$company->update([
+		// Update the organization
+		$organization->update([
             'designation' => $request->designation,
 			'color_hex' => $color_hex
         ]);
 		
-		return new CompanyResource($company);
+		return new OrganizationResource($organization);
 	}
 
 	/**
 	 * @OA\Delete(
-	 *	path="/companies/{company_id}",
-	 *	tags={"Company"},
-	 *	summary="Delete a company.",
-	 *	operationId="deleteCompany",
+	 *	path="/organizations/{organization_id}",
+	 *	tags={"Organization"},
+	 *	summary="Delete a organization.",
+	 *	operationId="deleteOrganization",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -535,11 +447,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -567,28 +479,28 @@ class CompanyController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Company $company, ImageService $imageService)
+	public function destroy(Organization $organization, ImageService $imageService)
 	{
-		// Check if the user is authorized to delete the company
-		$this->authorize('delete', $company);
+		// Check if the user is authorized to delete the organization
+		$this->authorize('delete', $organization);
 
-		$val = $company->delete();
+		$val = $organization->delete();
 		
 		// Delete the respective image if present
-		$imageService->delete($company->image);
+		$imageService->delete($organization->image);
 
 		return response($val, 204);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}/image",
-	 *	tags={"Company"},
-	 *	summary="Company image.",
-	 *	operationId="showCompanyImage",
+	 *	path="/organizations/{organization_id}/image",
+	 *	tags={"Organization"},
+	 *	summary="Organization image.",
+	 *	operationId="showOrganizationImage",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -602,11 +514,11 @@ class CompanyController extends Controller
 	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *
@@ -638,25 +550,25 @@ class CompanyController extends Controller
 	 *
 	 **/
 	/**
-	 * Display the image that belongs to the company.
+	 * Display the image that belongs to the organization.
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function image(Company $company, ImageService $imageService)
+	public function image(Organization $organization, ImageService $imageService)
 	{
-		// Check if the user is authorized to view the image of the company
-		$this->authorize('viewImage', $company);
+		// Check if the user is authorized to view the image of the organization
+		$this->authorize('viewImage', $organization);
 
-		return new ImageResource($company->image);
+		return new ImageResource($organization->image);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}/users",
-	 *	tags={"Company"},
-	 *	summary="All company users.",
-	 *	operationId="allCompaniesUsers",
+	 *	path="/organizations/{organization_id}/users",
+	 *	tags={"Organization"},
+	 *	summary="All organization users.",
+	 *	operationId="allOrganizationsUsers",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -670,11 +582,11 @@ class CompanyController extends Controller
 	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *
@@ -683,7 +595,7 @@ class CompanyController extends Controller
 	 *		description="Success",
 	 *		@OA\JsonContent(
 	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/CompanyUserRole")
+	 *			@OA\Items(ref="#/components/schemas/OrganizationUserRole")
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -706,19 +618,19 @@ class CompanyController extends Controller
 	 *
 	 **/
 	/**
-	 * Display a list of users that belongs to the company.
+	 * Display a list of users that belongs to the organization.
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function users(Company $company)
+	public function users(Organization $organization)
 	{
-		// Check if the user is authorized to view the users of the company
-		$this->authorize('viewUsers', $company);
+		// Check if the user is authorized to view the users of the organization
+		$this->authorize('viewUsers', $organization);
 
-		return CompanyUserRoleResource::collection(
-			CompanyUserRole::where("company_id", $company->id)
-				->with('company')
+		return OrganizationUserRoleResource::collection(
+			OrganizationUserRole::where("organization_id", $organization->id)
+				->with('organization')
 				->with('user')
 				->with("role")
 				->get()
@@ -727,10 +639,10 @@ class CompanyController extends Controller
 
 	/**
 	 * @OA\Delete(
-	 *	path="/companies/{company_id}/users/{user_id}",
-	 *	tags={"Company"},
-	 *	summary="Remove user from the company.",
-	 *	operationId="removeCompanyUser",
+	 *	path="/organizations/{organization_id}/users/{user_id}",
+	 *	tags={"Organization"},
+	 *	summary="Remove user from the organization.",
+	 *	operationId="removeOrganizationUser",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -743,11 +655,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *	@OA\Parameter(
@@ -783,27 +695,27 @@ class CompanyController extends Controller
 	 *
 	 **/
 	/**
-	 * Remove a user from the company
+	 * Remove a user from the organization
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function removeUser(Company $company, User $user)
+	public function removeUser(Organization $organization, User $user)
 	{
-		// Check if the user is authorized to view the users of the company
-		$this->authorize('removeUser', $company);
+		// Check if the user is authorized to view the users of the organization
+		$this->authorize('removeUser', $organization);
 
-		$val = $company->users()->detach($user);
+		$val = $organization->users()->detach($user);
 	
 		return response($val, 204);
 	}
 
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}/invitations",
-	 *	tags={"Company"},
-	 *	summary="All company invitations.",
-	 *	operationId="allCompaniesInvitations",
+	 *	path="/organizations/{organization_id}/invitations",
+	 *	tags={"Organization"},
+	 *	summary="All organization invitations.",
+	 *	operationId="allOrganizationsInvitations",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -817,11 +729,11 @@ class CompanyController extends Controller
 	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *
@@ -853,25 +765,25 @@ class CompanyController extends Controller
 	 *
 	 **/
 	/**
-	 * Display a list of invitations that belongs to the company.
+	 * Display a list of invitations that belongs to the organization.
 	 *
-	 * @param  \App\Models\Company  $company
+	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function invitations(Company $company)
+	public function invitations(Organization $organization)
 	{
-		// Check if the user is authorized to view the invitations of the company
-		$this->authorize('viewInvitations', $company);
+		// Check if the user is authorized to view the invitations of the organization
+		$this->authorize('viewInvitations', $organization);
 		
-		return InvitationResource::collection($company->invitations);
+		return InvitationResource::collection($organization->invitations);
 	}
 
 	/**
 	 * @OA\Post(
-	 *	path="/companies/{company_id}/invite",
-	 *	tags={"Company"},
-	 *	summary="Invite a user to the company and asign a role to him",
-	 *	operationId="inviteCompany",
+	 *	path="/organizations/{organization_id}/invite",
+	 *	tags={"Organization"},
+	 *	summary="Invite a user to the organization and asign a role to him",
+	 *	operationId="inviteOrganization",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -884,11 +796,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
-	 *		name="company_id",
+	 *		name="organization_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Company/properties/id"
+	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
 	 *  @OA\RequestBody(
@@ -945,21 +857,22 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function invite(InvitationRequest $request, Company $company, InvitationService $invitationService)
+	public function invite(InvitationRequest $request, Organization $organization, InvitationService $invitationService)
 	{
-		// Check if the user is authorized to invite users to the company
-		$this->authorize('invite', $company);
+		// Check if the user is authorized to invite users to the organization
+		$this->authorize('invite', $organization);
 
-		// Check if the user has already been invited to the company or is already part of it
-		$recipient_mail = $request->target_email;
-		$recipient = User::where('email', $recipient_mail)->first();
-		if($company->invitations->contains('target_email', $recipient_mail) || $company->users->contains($recipient)) {
+		// Check if the user has already been invited to the organization or is already part of it
+		$recipient = User::where('email', $request->target_email)->first();
+		if($organization->invitations->contains('target_email', $request->target_email) || $organization->users->contains($recipient)) {
 			return response()->json(["data" => [
-				"message" => __('application.company-user-already-invited')
+				"message" => __('application.organization-user-already-invited')
 			]], 409);
 		}
 
-		$invitation = $invitationService->send($request, $company, $id, $recipient_mail);
+		$id = $this->setId($request);
+
+		$invitation = $invitationService->send($request, $organization, $id);
 
 		return new InvitationResource($invitation);
 	}

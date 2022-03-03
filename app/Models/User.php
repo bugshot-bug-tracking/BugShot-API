@@ -25,6 +25,13 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * 	type="integer",
 	 *  format="int64",
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="organization_id",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The id of the organization to which the user belongs."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="first_name",
@@ -92,6 +99,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * @var string[]
 	 */
 	protected $fillable = [
+		'organization_id',
 		'first_name',
 		'last_name',
 		'email',
@@ -149,6 +157,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter']);
     }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function organization()
+	{
+		return $this->belongsTo(Organization::class);
+	}
 
 	/**
 	 * Send a password reset notification to the user.

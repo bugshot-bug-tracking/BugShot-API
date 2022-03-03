@@ -16,6 +16,9 @@ class CreateProjectsTable extends Migration
 		Schema::create('projects', function (Blueprint $table) {
 			$table->uuid('id')->primary();
 
+			$table->unsignedBigInteger('user_id')->nullable();
+			$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+
 			$table->string('company_id');
 			$table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
 

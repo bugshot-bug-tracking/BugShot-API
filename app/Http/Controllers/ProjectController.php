@@ -1104,16 +1104,15 @@ class ProjectController extends Controller
 		$this->authorize('invite', $project);
 		
 		// Check if the user has already been invited to the project or is already part of it
-		$targetUser = User::where('email', $request->target_email)->first();
-		if($project->invitations->contains('target_email', $request->target_email) || $project->users->contains($targetUser)) {
+		$recipient_mail = $request->target_email;
+		$recipient = User::where('email', $recipient_mail)->first();
+		if($project->invitations->contains('target_email', $recipient_mail) || $project->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.project-user-already-invited')
 			]], 409);
 		}
 
-		$id = $this->setId($request);
-
-		$invitation = $invitationService->send($request, $project, $id);
+		$invitation = $invitationService->send($request, $project, $id, $recipient_mail);
 
 		return new InvitationResource($invitation);
 	}
