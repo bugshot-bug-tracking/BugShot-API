@@ -12,6 +12,7 @@ return [
     |
     */
 
+    'invited_to_organization' => 'Du wurdest zur :organization ":organizationDesignation" eingeladen',
     'invited_to_company' => 'Du wurdest zur :company ":companyDesignation" eingeladen',
     'invited_to_project' => 'Du wurdest zum :project ":projectDesignation" eingeladen',
     'invited_to_bug' => 'Du wurdest dem :bug ":bugDesignation" als Bearbeiter zugewiesen'

@@ -8,13 +8,11 @@ use Illuminate\Http\Request;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
-use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\OrganizationUserRoleResource;
 
 // Services
 use App\Services\InvitationService;
-use App\Services\OrganizationService;
 
 // Models
 use App\Models\Organization;
@@ -89,7 +87,17 @@ class OrganizationController extends Controller
 	 */
 	public function index(Request $request)
 	{
-        $organizations = Organization::all();
+		// Get timestamp
+		$timestamp = $request->header('timestamp');
+
+		// Check if the request includes a timestamp and query the organizations accordingly
+        if($timestamp == NULL) {
+            $organizations = $this->user->organizations->sortBy('designation');
+        } else {
+            $organizations = $this->user->organizations->where([
+                ["organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
+            ])->sortBy('designation');
+        }
 
 		return OrganizationResource::collection($organizations);
 	}
@@ -160,25 +168,24 @@ class OrganizationController extends Controller
 	 * @param  \Illuminate\Http\OrganizationRequest  $request
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(OrganizationRequest $request, OrganizationService $organizationService, InvitationService $invitationService)
+	public function store(OrganizationRequest $request)
 	{	
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
 
 		// Store the new organization in the database
-		$organization = $organizationService->store($request, $this->user, $id);
+        $organization = Organization::create([
+			"id" => $id,
+			"user_id" => $this->user->id,
+			"designation" => $request->designation
+		]);
 
-        // Send invites to the selected recipients
-		$recipients = $request->recipients;
-		if($recipients != NULL) {
-			foreach($recipients as $recipient) {
-                $invitationService->send($request, $organization, $id, $recipient);
-			}
-		}
+		// Add the organization_id to the user
+		$organization->users()->attach($this->user->id, ['role_id' => 1]);
 
 		return new OrganizationResource($organization);
 	}
-    // TODO: Rest of the functions down below
+
 	/**
 	 * @OA\Get(
 	 *	path="/organizations/{organization_id}",
@@ -204,66 +211,6 @@ class OrganizationController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-projects",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-statuses",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-bugs",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-screenshots",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-comments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-organization-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-project-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-bug-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-organization-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-project-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachment-base64",
-	 *		required=false,
-	 *		in="header"
 	 *	),
 	 *	@OA\Response(
 	 *		response=200,
@@ -321,7 +268,6 @@ class OrganizationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
-
 	 *	@OA\Parameter(
 	 *		name="organization_id",
 	 *		required=true,
@@ -347,16 +293,6 @@ class OrganizationController extends Controller
 	 *              @OA\Property(
 	 *                  description="The organization name",
 	 *                  property="designation",
-	 *                  type="string",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  description="The hexcode of the color (optional)",
-	 *                  property="color_hex",
-	 * 					type="string",
-	 *              ),
-	 *              @OA\Property(
-	 *                  description="The base64 string of the image belonging to the organization (optional)",
-	 *                  property="base64",
 	 *                  type="string",
 	 *              ),
 	 *              required={"designation"}
@@ -400,30 +336,14 @@ class OrganizationController extends Controller
 	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(OrganizationRequest $request, Organization $organization, ImageService $imageService)
+	public function update(OrganizationRequest $request, Organization $organization)
 	{
 		// Check if the user is authorized to update the organization
 		$this->authorize('update', $organization);
 
-		// Check if the organization comes with an image (or a color)
-		$image = $organization->image;
-
-		if($request->base64 != NULL && $request->base64 != 'true') {
-			$image = $imageService->store($request->base64, $image);
-			$image != false ? $organization->image()->save($image) : true;
-			$color_hex = $organization->color_hex == $request->color_hex ? $organization->color_hex : $request->color_hex;
-		} else {
-			$imageService->delete($image);
-			$color_hex = $request->color_hex;
-		}
-
-		// Apply default color if color_hex is null
-		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
-
 		// Update the organization
 		$organization->update([
-            'designation' => $request->designation,
-			'color_hex' => $color_hex
+            'designation' => $request->designation
         ]);
 		
 		return new OrganizationResource($organization);
@@ -482,85 +402,14 @@ class OrganizationController extends Controller
 	 * @param  \App\Models\Organization  $organization
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy(Organization $organization, ImageService $imageService)
+	public function destroy(Organization $organization)
 	{
 		// Check if the user is authorized to delete the organization
 		$this->authorize('delete', $organization);
 
 		$val = $organization->delete();
-		
-		// Delete the respective image if present
-		$imageService->delete($organization->image);
 
 		return response($val, 204);
-	}
-
-	/**
-	 * @OA\Get(
-	 *	path="/organizations/{organization_id}/image",
-	 *	tags={"Organization"},
-	 *	summary="Organization image.",
-	 *	operationId="showOrganizationImage",
-	 *	security={ {"sanctum": {} }},
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header"
-	 *	),
-	 *
-	 *	@OA\Parameter(
-	 *		name="organization_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Organization/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Image")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 *)
-	 *
-	 **/
-	/**
-	 * Display the image that belongs to the organization.
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
-	public function image(Organization $organization, ImageService $imageService)
-	{
-		// Check if the user is authorized to view the image of the organization
-		$this->authorize('viewImage', $organization);
-
-		return new ImageResource($organization->image);
 	}
 
 	/**
@@ -863,16 +712,16 @@ class OrganizationController extends Controller
 		$this->authorize('invite', $organization);
 
 		// Check if the user has already been invited to the organization or is already part of it
-		$recipient = User::where('email', $request->target_email)->first();
-		if($organization->invitations->contains('target_email', $request->target_email) || $organization->users->contains($recipient)) {
+        $recipient_mail = $request->target_email;
+		$recipient = User::where('email', $recipient_mail)->first();
+		if($organization->invitations->contains('target_email', $recipient_mail) || $organization->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.organization-user-already-invited')
 			]], 409);
 		}
 
 		$id = $this->setId($request);
-
-		$invitation = $invitationService->send($request, $organization, $id);
+		$invitation = $invitationService->send($request, $organization, $id, $recipient_mail);
 
 		return new InvitationResource($invitation);
 	}

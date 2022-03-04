@@ -10,11 +10,13 @@ use Illuminate\Notifications\Notification;
 use App\Mail\InvitationReceived as InvitationReceivedMailable;
 
 // Resources
+use App\Http\Resources\OrganizationResource;
 use App\Http\Resources\CompanyResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\BugResource;
 
 // Models
+use App\Models\Organization;
 use App\Models\Company;
 use App\Models\Bug;
 use App\Models\Project;
@@ -56,6 +58,11 @@ class InvitationReceivedNotification extends Notification
     {
         // Check the model type of the invitation
         switch ($this->invitation->invitable_type) {
+            case Organization::class:
+                $this->resource = new OrganizationResource($this->invitation->invitable);
+                $this->message = __('email.invited_to_organization', ['organization' => __('data.organization'), 'organizationDesignation' => $this->resource->designation]);
+                break;
+
             case Company::class:
                 $this->resource = new CompanyResource($this->invitation->invitable);
                 $this->message = __('email.invited_to_company', ['company' => __('data.company'), 'companyDesignation' => $this->resource->designation]);

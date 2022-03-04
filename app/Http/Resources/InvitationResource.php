@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Organization;
 use App\Models\Company;
 use App\Models\Project;
 
@@ -18,6 +19,10 @@ class InvitationResource extends JsonResource
     {
         // Check the model type of the invitation
         switch ($this->invitable_type) {
+            case Organization::class:
+                $resource = new OrganizationResource($this->invitable);
+                break;
+
             case Company::class:
                 $resource = new CompanyResource($this->invitable);
                 break;

@@ -12,8 +12,8 @@ return [
     |
     */
 
+    'organization' => 'organization',
     'company' => 'company',
     'project' => 'project',
     'bug' => 'bug'
-
 ];

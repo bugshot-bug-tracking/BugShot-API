@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 // Resources
@@ -155,9 +154,9 @@ class CompanyController extends Controller
 
 		// Check if the request includes a timestamp and query the companies accordingly
         if($timestamp == NULL) {
-            $companies = Auth::user()->companies->sortBy('designation');
+            $companies = $this->user->companies->sortBy('designation');
         } else {
-            $companies = Auth::user()->companies->where([
+            $companies = $this->user->companies->where([
                 ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
             ])->sortBy('designation');
         }
@@ -249,7 +248,7 @@ class CompanyController extends Controller
 		// Store the new company in the database
 		$company = Company::create([
 			"id" => $id,
-			"user_id" => Auth::user()->id,
+			"user_id" => $this->user->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 		]);
@@ -262,7 +261,7 @@ class CompanyController extends Controller
 		}
 
 		// Store the respective role
-		Auth::user()->companies()->attach($company->id, ['role_id' => 1]);
+		$this->user->companies()->attach($company->id, ['role_id' => 1]);
 
 		return new CompanyResource($company);
 	}
@@ -959,6 +958,7 @@ class CompanyController extends Controller
 			]], 409);
 		}
 
+		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $company, $id, $recipient_mail);
 
 		return new InvitationResource($invitation);

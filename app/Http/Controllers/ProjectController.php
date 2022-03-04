@@ -1112,6 +1112,7 @@ class ProjectController extends Controller
 			]], 409);
 		}
 
+		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $project, $id, $recipient_mail);
 
 		return new InvitationResource($invitation);

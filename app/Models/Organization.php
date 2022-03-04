@@ -83,11 +83,19 @@ class Organization extends Model
 		return $this->belongsTo(User::class);
 	}
 
-	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-	public function users()
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'organization_user_roles')->withPivot('role_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+	public function invitations()
 	{
-		return $this->hasMany(User::class);
+		return $this->morphMany(Invitation::class, "invitable");
 	}
 }

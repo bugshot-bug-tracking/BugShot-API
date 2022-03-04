@@ -19,12 +19,8 @@ use App\Notifications\VerifyEmailAddressNotification;
 // Resources
 use App\Http\Resources\UserResource;
 
-// Services
-use App\Services\OrganizationService;
-
 // Models
 use App\Models\User;
-use App\Models\Organization;
 
 // Requests
 use App\Http\Requests\CustomEmailVerificationRequest;
@@ -112,21 +108,14 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function register(RegisterRequest $request, OrganizationService $organizationService)
+	public function register(RegisterRequest $request)
 	{
-	
 		$user = User::create([
 			"first_name" => $request->first_name,
 			"last_name" => $request->last_name,
 			"email" => $request->email,
 			"password" => Hash::make($request->password),
 		]);
-
-		// Check if the user wants to create an organization
-		if($request->organization_designation) {
-			// Store the new organization in the database
-			$organization = $organizationService->store($request, $this->user);
-		}
 
         $url = URL::temporarySignedRoute(
             'verification.verify',

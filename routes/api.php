@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // Controllers
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
@@ -37,7 +38,6 @@ use App\Http\Controllers\UserController;
 Route::get('/debug-sentry', function () {
     throw new Exception('My first Sentry error!');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +75,17 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
+
+	// Organization resource routes
+	Route::apiResource('/organizations', OrganizationController::class);
+
+	// Organization prefixed routes
+	Route::prefix('organizations/{organization}')->group(function () {
+		Route::get("/invitations", [OrganizationController::class, "invitations"])->name("organization.invitations");
+		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
+		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
+		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
+	});
 
 	// Company resource routes
 	Route::apiResource('/companies', CompanyController::class);

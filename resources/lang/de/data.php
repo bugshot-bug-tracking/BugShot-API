@@ -12,6 +12,7 @@ return [
     |
     */
 
+    'organization' => 'Organisation',
     'company' => 'Firma',
     'project' => 'Projekt',
     'bug' => 'Bug'

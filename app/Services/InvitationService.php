@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Notification;
 class InvitationService
 {
     // Send the invitation to the for the respective model
-    public function send($request, $model, $id = null, $recipient_mail) 
+    public function send($request, $model, $id, $recipient_mail) 
     {
         $invitation = $model->invitations()->create([
 			"id" => $id,
