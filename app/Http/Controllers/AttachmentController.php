@@ -27,8 +27,13 @@ use App\Http\Requests\AttachmentRequest;
 class AttachmentController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/bugs/{bug_id}/attachments ",
+	 *	path="/bugs/{bug_id}/attachments",
 	 *	tags={"Attachment"},
 	 *	summary="All attachments.",
 	 *	operationId="allAttachments",
@@ -83,11 +88,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the attachments of the bug
@@ -96,6 +96,12 @@ class AttachmentController extends Controller
 		return AttachmentResource::collection($bug->attachments);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\AttachmentRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/bugs/{bug_id}/attachments ",
@@ -165,12 +171,6 @@ class AttachmentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(AttachmentRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the attachment
@@ -181,6 +181,12 @@ class AttachmentController extends Controller
 		return new AttachmentResource($attachment);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Attachment  $attachment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
@@ -240,12 +246,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Bug $bug, Attachment $attachment)
 	{
 		// Check if the user is authorized to view the attachment
@@ -254,6 +254,13 @@ class AttachmentController extends Controller
 		return new AttachmentResource($attachment);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\AttachmentRequest  $request
+	 * @param  \App\Models\Attachment  $attachment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
@@ -349,13 +356,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(AttachmentRequest $request, Bug $bug, Attachment $attachment)
 	{
 		// Check if the user is authorized to update the attachment
@@ -381,6 +381,12 @@ class AttachmentController extends Controller
 		return new AttachmentResource($attachment);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Attachment  $attachment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
@@ -437,12 +443,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to delete the attachment
@@ -453,6 +453,12 @@ class AttachmentController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Download the specified resource.
+	 *
+	 * @param  \App\Models\Attachment  $attachment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/attachments/{attachment_id}/download",
@@ -505,12 +511,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Download the specified resource.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function download(Attachment $attachment)
 	{
 		return Storage::download($attachment->url, $attachment->designation);

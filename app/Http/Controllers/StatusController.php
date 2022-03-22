@@ -26,6 +26,11 @@ use App\Http\Requests\StatusRequest;
 class StatusController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/statuses",
 	 *	tags={"Status"},
@@ -107,11 +112,6 @@ class StatusController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Request $request, Project $project)
 	{
 		// Check if the user is authorized to list the statuses of the project
@@ -126,6 +126,12 @@ class StatusController extends Controller
 		return StatusResource::collection($statuses);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\StatusRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/projects/{project_id}/statuses",
@@ -197,12 +203,6 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(StatusRequest $request, Project $project)
 	{
 		// Check if the user is authorized to create the status
@@ -224,6 +224,12 @@ class StatusController extends Controller
 		return new StatusResource($status);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Status  $status
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/statuses/{status_id}",
@@ -313,12 +319,6 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Project $project, Status $status)
 	{
 		// Check if the user is authorized to view the status
@@ -327,6 +327,13 @@ class StatusController extends Controller
 		return new StatusResource($status);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\StatusRequest  $request
+	 * @param  \App\Models\Status  $status
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/projects/{project_id}/statuses/{status_id}",
@@ -418,13 +425,6 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(StatusRequest $request, Project $project, Status $status)
 	{
 		// Check if the user is authorized to update the status
@@ -445,6 +445,12 @@ class StatusController extends Controller
 		return new StatusResource($status);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Status  $status
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/projects/{project_id}/statuses/{status_id}",
@@ -500,12 +506,6 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Project $project, Status $status)
 	{
 		// Check if the user is authorized to delete the status

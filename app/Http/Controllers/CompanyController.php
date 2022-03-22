@@ -32,6 +32,11 @@ use App\Http\Requests\InvitationRequest;
 class CompanyController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/companies",
 	 *	tags={"Company"},
@@ -142,11 +147,7 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function index(Request $request)
 	{
 		// Get timestamp
@@ -164,6 +165,12 @@ class CompanyController extends Controller
 		return CompanyResource::collection($companies);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\CompanyRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/companies",
@@ -233,13 +240,6 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(CompanyRequest $request, ImageService $imageService)
 	{	
 		// Check if the the request already contains a UUID for the company
@@ -266,6 +266,12 @@ class CompanyController extends Controller
 		return new CompanyResource($company);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}",
@@ -377,12 +383,6 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Company $company)
 	{
 		// Check if the user is authorized to view the company
@@ -391,6 +391,13 @@ class CompanyController extends Controller
 		return new CompanyResource($company);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\CompanyRequest  $request
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/companies/{company_id}",
@@ -480,13 +487,6 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the company
@@ -516,6 +516,12 @@ class CompanyController extends Controller
 		return new CompanyResource($company);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/companies/{company_id}",
@@ -563,12 +569,6 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the company
@@ -582,6 +582,12 @@ class CompanyController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display the image that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/image",
@@ -636,12 +642,6 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the image that belongs to the company.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function image(Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the company
@@ -650,6 +650,12 @@ class CompanyController extends Controller
 		return new ImageResource($company->image);
 	}
 
+	/**
+	 * Display a list of users that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/users",
@@ -704,12 +710,6 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the company.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function users(Company $company)
 	{
 		// Check if the user is authorized to view the users of the company
@@ -724,6 +724,12 @@ class CompanyController extends Controller
 		);
 	}
 
+	/**
+	 * Remove a user from the company
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/companies/{company_id}/users/{user_id}",
@@ -781,12 +787,6 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove a user from the company
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function removeUser(Company $company, User $user)
 	{
 		// Check if the user is authorized to view the users of the company
@@ -797,6 +797,12 @@ class CompanyController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display a list of invitations that belongs to the company.
+	 *
+	 * @param  \App\Models\Company  $company
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/invitations",
@@ -851,12 +857,6 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of invitations that belongs to the company.
-	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
-	 */
 	public function invitations(Company $company)
 	{
 		// Check if the user is authorized to view the invitations of the company

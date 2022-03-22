@@ -34,6 +34,12 @@ use App\Http\Requests\BugRequest;
 class BugController extends Controller
 {
 
+		
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/statuses/{status_id}/bugs",
@@ -111,12 +117,6 @@ class BugController extends Controller
 	 *)
 	 *
 	 **/
-	
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Request $request, Status $status)
 	{
 		// Check if the user is authorized to list the bugs of the project
@@ -135,6 +135,12 @@ class BugController extends Controller
 		return BugResource::collection($bugs);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\BugRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/statuses/{status_id}/bugs",
@@ -282,12 +288,6 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the bug 
@@ -345,6 +345,12 @@ class BugController extends Controller
 		return new BugResource($bug);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/statuses/{status_id}/bugs/{bug_id}",
@@ -430,12 +436,6 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Status $status, Bug $bug)
 	{
 		// Check if the user is authorized to view the bug
@@ -444,6 +444,13 @@ class BugController extends Controller
 		return new BugResource($bug);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\BugRequest  $request
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/statuses/{status_id}/bugs/{bug_id}",
@@ -591,13 +598,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function update(BugRequest $request, Status $status, Bug $bug)
 	{
 		// Check if the user is authorized to update the bug
@@ -620,7 +621,8 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			"deadline" => new Carbon($request->deadline),
+			// "deadline" => new Carbon($request->deadline),
+			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
 			"order_number" => $request->order_number,
 			"ai_id" => $request->ai_id
 		]);
@@ -628,6 +630,12 @@ class BugController extends Controller
 		return new BugResource($bug);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/statuses/{status_id}/bugs/{bug_id}",
@@ -683,12 +691,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to delete the bug
@@ -714,6 +717,12 @@ class BugController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Assign a user to the bug
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/bugs/{bug_id}/assign-user",
@@ -776,12 +785,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Assign a user to the bug
-	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function assignUser(Request $request, Bug $bug)
 	{ 
 		// Check if the user is authorized to assign a user to the bug
@@ -793,6 +797,12 @@ class BugController extends Controller
 		return response()->json("", 204);
 	}
 
+	/**
+	 * Display a list of users that belongs to the bug.
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/users",
@@ -847,12 +857,7 @@ class BugController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the bug.
-	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function users(Bug $bug)
 	{
 		// Check if the user is authorized to view the users of the bug
@@ -867,6 +872,12 @@ class BugController extends Controller
 		);
 	}
 
+	/**
+	 * Remove a user from the bug
+	 *
+	 * @param  \App\Models\Bug  $bug
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/bugs/{bug_id}/users/{user_id}",
@@ -914,12 +925,7 @@ class BugController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove a user from the bug
-	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
-	 */
+
 	public function removeUser(Bug $bug, User $user)
 	{
 		// Check if the user is authorized to view the users of the bug

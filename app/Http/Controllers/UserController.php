@@ -30,6 +30,11 @@ use App\Http\Requests\UserStoreRequest;
 class UserController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    /**
 	 * @OA\Get(
 	 *	path="/users",
 	 *	tags={"User"},
@@ -74,11 +79,6 @@ class UserController extends Controller
 	 *)
 	 *
 	 **/
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         // Check if the user is authorized to retrieve a list of users
@@ -87,6 +87,12 @@ class UserController extends Controller
         return UserResource::collection(User::all());
     }
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  App\Http\UserStoreRequest  $request
+     * @return \Illuminate\Http\Response
+     */
 	/**
 	 * @OA\Post(
 	 *	path="/users",
@@ -160,12 +166,6 @@ class UserController extends Controller
 	 *	),
 	 * )
 	**/
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  App\Http\UserStoreRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(UserStoreRequest $request)
     {
         // Check if the user is authorized to create a new user
@@ -186,6 +186,12 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
+    /**
+     * Display the specified resource.
+     *
+	 * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}",
@@ -238,12 +244,6 @@ class UserController extends Controller
 	 *	),
 	 * )
 	 **/
-    /**
-     * Display the specified resource.
-     *
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function show(User $user)
     {
 		// Check if the user is authorized to view the user
@@ -252,6 +252,13 @@ class UserController extends Controller
 		return new UserResource($user);
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  App\Http\UserUpdateRequest  $request
+	 * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
 	/**
 	 * @OA\Put(
 	 *	path="/users/{user_id}",
@@ -353,13 +360,6 @@ class UserController extends Controller
 	 *	),
 	 * )
 	**/
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  App\Http\UserUpdateRequest  $request
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function update(UserUpdateRequest $request, User $user, ImageService $imageService)
     {
 		// Check if the user is authorized to update the user
@@ -378,6 +378,12 @@ class UserController extends Controller
 		return new UserResource($user);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+	 * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
 	/**
 	 * @OA\Delete(
 	 *	path="/users/{user_id}",
@@ -425,12 +431,6 @@ class UserController extends Controller
 	 *	),
 	 * )
 	**/
-    /**
-     * Remove the specified resource from storage.
-     *
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(User $user, ImageService $imageService)
     {
 		// Check if the user is authorized to delete the user
@@ -444,6 +444,12 @@ class UserController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display the image that belongs to the user.
+	 *
+	 * @param  \App\Models\User  $user
+	 * @return \Illuminate\Http\Response
+	*/
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}/image",
@@ -497,12 +503,6 @@ class UserController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the image that belongs to the user.
-	 *
-	 * @param  \App\Models\User  $user
-	 * @return \Illuminate\Http\Response
-	*/
 	public function image(User $user)
 	{
 		// Check if the user is authorized to view the image of a user
@@ -511,6 +511,12 @@ class UserController extends Controller
 		return new ImageResource($user->image);
 	}
 
+	/**
+	 * Check if url belongs to a project of the user
+	 *
+	 * @param  \App\Models\User  $user
+	 * @return \Illuminate\Http\Response
+	*/
 	/**
 	 * @OA\Post(
 	 *	path="/users/{user_id}/check-project",
@@ -576,12 +582,6 @@ class UserController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Check if url belongs to a project of the user
-	 *
-	 * @param  \App\Models\User  $user
-	 * @return \Illuminate\Http\Response
-	*/
 	public function checkProject(CheckProjectRequest $request, User $user)
 	{
 		// Check if the user is authorized to view the image of a user

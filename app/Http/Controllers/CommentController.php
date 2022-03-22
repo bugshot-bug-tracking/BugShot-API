@@ -28,7 +28,12 @@ use App\Http\Requests\CommentRequest;
 class CommentController extends Controller
 {
 	/**
-	 * @OA\get(
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
+	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="All comments.",
@@ -81,11 +86,6 @@ class CommentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the comments of the bug
@@ -94,6 +94,12 @@ class CommentController extends Controller
 		return CommentResource::collection($bug->comments);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\CommentRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/bugs/{bug_id}/comments",
@@ -160,12 +166,6 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(CommentRequest $request, Bug $bug)
 	{
 		// Check if the user is authorized to create the comment
@@ -184,6 +184,12 @@ class CommentController extends Controller
 		return new CommentResource($comment);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Comment  $comment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/comments/{comment_id}",
@@ -243,12 +249,6 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Bug $bug, Comment $comment)
 	{
 		// Check if the user is authorized to view the comment
@@ -257,6 +257,13 @@ class CommentController extends Controller
 		return new CommentResource($comment);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\CommentRequest  $request
+	 * @param  \App\Models\Comment  $comment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/comments/{comment_id}",
@@ -343,13 +350,6 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(CommentRequest $request, Bug $bug, Comment $comment)
 	{
 		// Check if the user is authorized to update the comment
@@ -360,6 +360,12 @@ class CommentController extends Controller
 		return new CommentResource($comment);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Comment  $comment
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/bugs/{bug_id}/comments/{comment_id}",
@@ -415,12 +421,6 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
 	{
 		// Check if the user is authorized to delete the comment

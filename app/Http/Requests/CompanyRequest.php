@@ -23,6 +23,7 @@ class CompanyRequest extends FormRequest
 	 */
 	public function rules()
 	{
+		// dd($this);
 		return [
 			"id" => ["string", "max:36"],
 			"designation" => ["required", "string", "min:1", "max:255"],

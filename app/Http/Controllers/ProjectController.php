@@ -174,6 +174,12 @@ class ProjectController extends Controller
 	}
 
 	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\ProjectRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Post(
 	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
@@ -254,12 +260,6 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to create the project
@@ -300,6 +300,12 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/projects/{project_id}",
@@ -405,12 +411,6 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Company $company, Project $project)
 	{
 		// Check if the user is authorized to view the project
@@ -419,6 +419,13 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\ProjectRequest  $request
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/companies/{company_id}/projects/{project_id}",
@@ -521,13 +528,6 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(ProjectRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the project
@@ -558,6 +558,12 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/companies/{company_id}/projects/{project_id}",
@@ -613,12 +619,6 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Company $company, Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the project
@@ -633,6 +633,12 @@ class ProjectController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display the image that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/image",
@@ -687,12 +693,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the image that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function image(Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the project
@@ -701,6 +701,12 @@ class ProjectController extends Controller
 		return new ImageResource($project->image);
 	}
 
+	/**
+	 * Display a list of users that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/bugs",
@@ -784,12 +790,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function bugs(Request $request, Project $project)
 	{
 		// Check if the user is authorized to list the bugs of the project
@@ -807,6 +807,12 @@ class ProjectController extends Controller
 		return BugResource::collection($bugs);
 	}
 
+	/**
+	 * Display a list of users that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/users",
@@ -861,12 +867,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function users(Project $project)
 	{
 		// Check if the user is authorized to view the users of the project
@@ -881,6 +881,12 @@ class ProjectController extends Controller
 		);
 	}
 
+	/**
+	 * Remove a user from the project
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/projects/{project_id}/users/{user_id}",
@@ -938,12 +944,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove a user from the project
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function removeUser(Project $project, User $user)
 	{
 		// Check if the user is authorized to view the users of the project
@@ -954,6 +954,12 @@ class ProjectController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display a list of invitations that belongs to the project.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/projects/{project_id}/invitations",
@@ -1008,12 +1014,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of invitations that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function invitations(Project $project)
 	{
 		// Check if the user is authorized to view the invitations of the project

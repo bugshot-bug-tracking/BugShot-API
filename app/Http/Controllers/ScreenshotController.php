@@ -26,6 +26,11 @@ use App\Http\Requests\ScreenshotRequest;
 class ScreenshotController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/screenshots",
 	 *	tags={"Screenshot"},
@@ -79,11 +84,6 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Bug $bug)
 	{
 		// Check if the user is authorized to list the screenshots of the bug
@@ -92,6 +92,12 @@ class ScreenshotController extends Controller
 		return ScreenshotResource::collection($bug->screenshots);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\ScreenshotRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/bugs/{bug_id}/screenshots",
@@ -178,12 +184,6 @@ class ScreenshotController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to create the screenshot
@@ -194,6 +194,12 @@ class ScreenshotController extends Controller
 		return new ScreenshotResource($screenshot);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Screenshot  $screenshot
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
@@ -254,12 +260,6 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to view the screenshot
@@ -268,6 +268,13 @@ class ScreenshotController extends Controller
 		return new ScreenshotResource($screenshot);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\ScreenshotRequest  $request
+	 * @param  \App\Models\Screenshot  $screenshot
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
@@ -375,13 +382,6 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to update the screenshot
@@ -411,6 +411,12 @@ class ScreenshotController extends Controller
 		return new ScreenshotResource($screenshot);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Screenshot  $screenshot
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/bugs/{bug_id}/screenshots/{screenshot_id}",
@@ -468,12 +474,6 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to delete the screenshot

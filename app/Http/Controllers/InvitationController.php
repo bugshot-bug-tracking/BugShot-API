@@ -94,6 +94,12 @@ class InvitationController extends Controller
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \App\Http\Resources\InvitationResource
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
@@ -153,12 +159,6 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Invitation  $invitation
-	 * @return \App\Http\Resources\InvitationResource
-	 */
 	public function show(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to view the invitation
@@ -167,6 +167,12 @@ class InvitationController extends Controller
 		return new InvitationResource($invitation);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/users/{user_id}/invitations/{invitation_id}",
@@ -223,12 +229,6 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Invitation  $invitation
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to delete the invitation
@@ -239,6 +239,12 @@ class InvitationController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Update the resource to a new status.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}/invitations/{invitation_id}/accept",
@@ -303,12 +309,6 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the resource to a new status.
-	 *
-	 * @param  \App\Models\Invitation  $invitation
-	 * @return \Illuminate\Http\Response
-	 */
 	public function accept(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to accept the invitation
@@ -346,6 +346,12 @@ class InvitationController extends Controller
 		], 422);
 	}
 
+	/**
+	 * Update the resource to a new status.
+	 *
+	 * @param  \App\Models\Invitation  $invitation
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}/invitations/{invitation_id}/decline",
@@ -407,12 +413,6 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the resource to a new status.
-	 *
-	 * @param  \App\Models\Invitation  $invitation
-	 * @return \Illuminate\Http\Response
-	 */
 	public function decline(User $user, Invitation $invitation)
 	{
 		// Check if the user is authorized to decline the invitation

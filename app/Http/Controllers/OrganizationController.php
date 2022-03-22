@@ -31,6 +31,11 @@ use App\Http\Requests\InvitationRequest;
 class OrganizationController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/organizations",
 	 *	tags={"Organization"},
@@ -80,11 +85,6 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Request $request)
 	{
 		// Get timestamp
@@ -102,6 +102,12 @@ class OrganizationController extends Controller
 		return OrganizationResource::collection($organizations);
 	}
 
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  \Illuminate\Http\OrganizationRequest  $request
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/organizations",
@@ -161,13 +167,6 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\OrganizationRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
 	public function store(OrganizationRequest $request)
 	{	
 		// Check if the the request already contains a UUID for the organization
@@ -186,6 +185,12 @@ class OrganizationController extends Controller
 		return new OrganizationResource($organization);
 	}
 
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  \App\Models\Organization  $organization
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/organizations/{organization_id}",
@@ -237,12 +242,6 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Organization $organization)
 	{
 		// Check if the user is authorized to view the organization
@@ -251,6 +250,13 @@ class OrganizationController extends Controller
 		return new OrganizationResource($organization);
 	}
 
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\OrganizationRequest  $request
+	 * @param  \App\Models\Organization  $organization
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/organizations/{organization_id}",
@@ -329,13 +335,6 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\OrganizationRequest  $request
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function update(OrganizationRequest $request, Organization $organization)
 	{
 		// Check if the user is authorized to update the organization
@@ -349,6 +348,12 @@ class OrganizationController extends Controller
 		return new OrganizationResource($organization);
 	}
 
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  \App\Models\Organization  $organization
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/organizations/{organization_id}",
@@ -396,12 +401,6 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Organization $organization)
 	{
 		// Check if the user is authorized to delete the organization
@@ -412,6 +411,12 @@ class OrganizationController extends Controller
 		return response($val, 204);
 	}
 
+	/**
+	 * Display a list of users that belongs to the organization.
+	 *
+	 * @param  \App\Models\Organization  $organization
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/organizations/{organization_id}/users",
@@ -466,12 +471,6 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the organization.
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function users(Organization $organization)
 	{
 		// Check if the user is authorized to view the users of the organization
@@ -486,6 +485,12 @@ class OrganizationController extends Controller
 		);
 	}
 
+	/**
+	 * Remove a user from the organization
+	 *
+	 * @param  \App\Models\Organization  $organization
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/organizations/{organization_id}/users/{user_id}",
@@ -543,12 +548,6 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove a user from the organization
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function removeUser(Organization $organization, User $user)
 	{
 		// Check if the user is authorized to view the users of the organization
@@ -613,12 +612,6 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of invitations that belongs to the organization.
-	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
-	 */
 	public function invitations(Organization $organization)
 	{
 		// Check if the user is authorized to view the invitations of the organization
