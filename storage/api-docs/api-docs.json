@@ -3938,6 +3938,110 @@
             }
         },
         "/companies/{company_id}/projects": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "All projects.",
+                "operationId": "allProjects",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    },
+                    {
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Project"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Project"
@@ -4421,6 +4525,75 @@
                         "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bug"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/projects/{project_id}/markers": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "All project markers according to a given url.",
+                "operationId": "allProjectMarkers",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {

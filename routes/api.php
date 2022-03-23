@@ -111,6 +111,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");

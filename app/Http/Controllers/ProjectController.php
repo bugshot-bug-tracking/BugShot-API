@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 // Resources
 use App\Http\Resources\BugResource;
@@ -13,6 +14,7 @@ use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
+use App\Http\Resources\MarkerResource;
 
 // Services
 use App\Services\ImageService;
@@ -37,6 +39,11 @@ use App\Http\Requests\ProjectRequest;
 class ProjectController extends Controller
 {
 
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/companies/{company_id}/projects",
@@ -136,11 +143,6 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index(Request $request, Company $company)
 	{
 		// Check if the user is authorized to list the projects of the company
@@ -161,7 +163,7 @@ class ProjectController extends Controller
 			}
         } else {
 			if($userIsPriviliegated) {
-				$company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				$projects = $company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 			} else {
 				$projects = Auth::user()->projects->where([
 					["projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp)],
@@ -702,7 +704,7 @@ class ProjectController extends Controller
 	}
 
 	/**
-	 * Display a list of users that belongs to the project.
+	 * Display a list of bugs that belong to the project.
 	 *
 	 * @param  \App\Models\Project  $project
 	 * @return \Illuminate\Http\Response
@@ -805,6 +807,102 @@ class ProjectController extends Controller
         }
 		
 		return BugResource::collection($bugs);
+	}
+
+	/**
+	 * Display a list of the markers that belong to the project according to a given url.
+	 *
+	 * @param  \App\Models\Project  $project
+	 * @return \Illuminate\Http\Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/markers",
+	 *	tags={"Project"},
+	 *	summary="All project markers according to a given url.",
+	 *	operationId="allProjectMarkers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="url",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Bug")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function markers(Request $request, Project $project)
+	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+		
+		// Get the bugs that belong to the given url
+		$bugs = $project->bugs->where("url", "=", $request->url);
+
+		// Map the bugs correctly
+		$bugs = $bugs->map(function ($bug) {
+			$markers = $bug->screenshots->map(function ($screenshot) {
+				return [
+					'screenshot_id' => $screenshot->id ,
+					'x' => $screenshot->web_position_x,
+					'y' => $screenshot->web_position_y
+				];
+			});
+		
+			return [
+				'bug_id' => $bug->id,
+				'designation' => $bug->designation,
+				'priority_id' => $bug->priority_id,
+				'markers' => $markers
+			];
+		});
+
+		return MarkerResource::collection($bugs);
 	}
 
 	/**
