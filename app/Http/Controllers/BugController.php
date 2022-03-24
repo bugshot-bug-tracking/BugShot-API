@@ -129,7 +129,7 @@ class BugController extends Controller
 		if($timestamp == NULL) {
             $bugs = $status->bugs;
         } else {
-            $bugs = $status->bugs->where(["bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]);
+            $bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 		
 		return BugResource::collection($bugs);

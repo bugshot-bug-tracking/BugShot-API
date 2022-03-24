@@ -165,10 +165,9 @@ class ProjectController extends Controller
 			if($userIsPriviliegated) {
 				$projects = $company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 			} else {
-				$projects = Auth::user()->projects->where([
-					["projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp)],
-					['company_id', $company->id]
-				]);
+				$projects = Auth::user()->projects
+					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('company_id', $company->id);
 			}
         }
 
@@ -801,9 +800,7 @@ class ProjectController extends Controller
 		if($request->timestamp == NULL) {
             $bugs = $project->bugs;
         } else {
-            $bugs = $project->bugs->where([
-                ["bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]
-			]);
+            $bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
         }
 		
 		return BugResource::collection($bugs);
@@ -884,20 +881,30 @@ class ProjectController extends Controller
 		// Get the bugs that belong to the given url
 		$bugs = $project->bugs->where("url", "=", $request->url);
 
-		// Map the bugs correctly
+		// Get the corresponding screenshots and map everything correctly
 		$bugs = $bugs->map(function ($bug) {
-			$markers = $bug->screenshots->map(function ($screenshot) {
-				return [
-					'screenshot_id' => $screenshot->id ,
-					'x' => $screenshot->web_position_x,
-					'y' => $screenshot->web_position_y
-				];
-			});
+			$markers = $bug->screenshots
+				->whereNotNull("web_position_x")
+				->whereNotNull("web_position_y")
+				->filter(function ($value) {
+					return $value->web_position_x > 0 || $value->web_position_y > 0;
+				})
+				->map(function ($screenshot) {
+					return [
+						'screenshot_id' => $screenshot->id ,
+						'x' => $screenshot->web_position_x,
+						'y' => $screenshot->web_position_y
+					];
+				});
 		
 			return [
 				'bug_id' => $bug->id,
 				'designation' => $bug->designation,
 				'priority_id' => $bug->priority_id,
+				'status' => [
+					'id' => $bug->status_id,
+					'done' => $bug->status->designation == 'Done' ? true : false
+				],
 				'markers' => $markers
 			];
 		});

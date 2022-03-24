@@ -120,7 +120,7 @@ class StatusController extends Controller
 		if($request->timestamp == NULL) {
             $statuses = $project->statuses;
         } else {
-            $statuses = $project->statuses->where(["statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]);
+            $statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
         }
 
 		return StatusResource::collection($statuses);

@@ -157,9 +157,9 @@ class CompanyController extends Controller
         if($timestamp == NULL) {
             $companies = $this->user->companies->sortBy('designation');
         } else {
-            $companies = $this->user->companies->where([
-                ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
-            ])->sortBy('designation');
+            $companies = $this->user->companies
+				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+				->sortBy('designation');
         }
 
 		return CompanyResource::collection($companies);

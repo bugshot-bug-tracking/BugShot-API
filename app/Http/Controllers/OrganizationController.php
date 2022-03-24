@@ -57,7 +57,11 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 * 	@OA\Parameter(
+	 *		name="timestamp",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -94,9 +98,9 @@ class OrganizationController extends Controller
         if($timestamp == NULL) {
             $organizations = $this->user->organizations->sortBy('designation');
         } else {
-            $organizations = $this->user->organizations->where([
-                ["organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
-            ])->sortBy('designation');
+            $organizations = $this->user->organizations
+				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+				->sortBy('designation');
         }
 
 		return OrganizationResource::collection($organizations);

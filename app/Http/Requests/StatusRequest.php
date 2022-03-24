@@ -24,7 +24,7 @@ class StatusRequest extends FormRequest
 	public function rules()
 	{
 		return [
-			"designation" => ["required", "string", "min:5", "max:255"],
+			"designation" => ["required", "string", "min:1", "max:255"],
 			"order_number" => ["required", "integer", "min:0"],
 			"timestamp" => ["date"]
 		];
