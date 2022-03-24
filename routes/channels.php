@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Comment;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -13,10 +14,9 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-// This is only for testing purposes
-Broadcast::channel('testchannel', function ($user) {
-    return true;
-}); 
+Broadcast::channel('comments.{comment_id}', function ($user, $comment_id) {
+    return $user->id === Comment::find($comment_id)->user_id;
+});
 
 // Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 //     return (int) $user->id === (int) $id;

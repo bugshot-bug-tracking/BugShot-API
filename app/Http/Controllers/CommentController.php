@@ -20,6 +20,9 @@ use App\Models\Bug;
 // Requests
 use App\Http\Requests\CommentRequest;
 
+// Events
+use App\Events\CommentSent;
+
 /**
  * @OA\Tag(
  *     name="Comment",
@@ -180,6 +183,8 @@ class CommentController extends Controller
 			'content' => $request->content,
 			'user_id' => Auth::id()
 		]);
+
+		CommentSent::dispatch($comment);
 
 		return new CommentResource($comment);
 	}
