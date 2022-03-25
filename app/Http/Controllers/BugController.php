@@ -316,7 +316,7 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			"deadline" => new Carbon($request->deadline),
+			"deadline" => $request->deadline == NULL ? null : new Carbon($request->deadline),
 			"order_number" => $order_number,
 			"ai_id" => $ai_id
 		]);
