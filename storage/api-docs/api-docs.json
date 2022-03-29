@@ -37,6 +37,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -101,6 +106,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -183,6 +193,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -245,6 +260,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -350,6 +370,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -409,6 +434,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "attachment_id",
                         "in": "path",
                         "required": true,
@@ -458,6 +488,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -537,6 +572,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -604,6 +644,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -642,6 +687,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -692,6 +742,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -739,6 +794,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -889,6 +949,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -971,6 +1036,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "status_id",
@@ -1122,6 +1192,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1209,6 +1284,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "status_id",
@@ -1355,6 +1435,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1412,6 +1497,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1483,6 +1573,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1595,6 +1690,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1652,6 +1752,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1732,6 +1837,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1794,6 +1904,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1891,6 +2006,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -2066,6 +2186,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -2143,6 +2268,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2261,6 +2391,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2356,6 +2491,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2405,6 +2545,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2468,6 +2613,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2529,6 +2679,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2586,6 +2741,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2647,6 +2807,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2738,6 +2903,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -2797,6 +2967,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -2863,6 +3038,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -2920,6 +3100,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -2991,6 +3176,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -3058,6 +3248,11 @@
                         "required": false
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "timestamp",
                         "in": "header",
                         "required": false
@@ -3112,6 +3307,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -3183,6 +3383,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3237,6 +3442,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3326,6 +3536,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3375,6 +3590,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3438,6 +3658,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3495,6 +3720,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3556,6 +3786,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3645,6 +3880,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -3696,6 +3936,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -3767,6 +4012,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -3821,6 +4071,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "id",
@@ -3910,6 +4165,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -3959,6 +4219,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -4065,6 +4330,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4154,6 +4424,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -4265,6 +4540,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4374,6 +4654,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4431,6 +4716,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4492,6 +4782,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4585,6 +4880,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4654,6 +4954,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4715,6 +5020,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4772,6 +5082,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4833,6 +5148,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4919,6 +5239,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -4972,6 +5297,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -5043,6 +5373,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -5097,6 +5432,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "id",
@@ -5186,6 +5526,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -5235,6 +5580,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -5294,6 +5644,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -5388,6 +5743,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -5450,6 +5810,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -5564,6 +5929,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -5621,6 +5991,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -5712,6 +6087,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -5792,6 +6172,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -5886,6 +6271,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -5988,6 +6378,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -6045,6 +6440,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -6096,6 +6496,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -6182,6 +6587,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -6236,6 +6646,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -6345,6 +6760,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -6394,6 +6814,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -6455,6 +6880,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -7145,6 +7575,9 @@
                         "type": "string",
                         "maxLength": 255
                     },
+                    "permanent": {
+                        "type": "boolean"
+                    },
                     "created_at": {
                         "description": "The creation date.",
                         "type": "string",
@@ -7193,6 +7626,9 @@
                     "remember_token": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean"
                     },
                     "created_at": {
                         "description": "The creation date.",
