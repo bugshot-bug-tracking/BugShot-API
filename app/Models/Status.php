@@ -54,6 +54,11 @@ class Status extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="permanent",
+	 * 	type="boolean"
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="created_at",
@@ -78,7 +83,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "order_number", "project_id"];
+	protected $fillable = ["id", "designation", "order_number", "project_id", "permanent"];
 
 	protected $touches = ['project'];
 

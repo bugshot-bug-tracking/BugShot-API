@@ -21,6 +21,7 @@ class CreateStatusesTable extends Migration
 
 			$table->smallInteger('order_number')->default(0);
 			$table->string('designation');
+			$table->boolean('permanent')->default(0);
 
 			$table->timestamps();
 			$table->softDeletes();

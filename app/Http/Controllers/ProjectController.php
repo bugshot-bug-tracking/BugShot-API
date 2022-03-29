@@ -290,13 +290,15 @@ class ProjectController extends Controller
 		// Store the respective role
 		Auth::user()->projects()->attach($project->id, ['role_id' => 1]);
 
-		$defaultStatuses = ['Backlog', 'ToDo', 'Doing', 'Done'];
-		foreach ($defaultStatuses as $key=>$status) {
+		// Create the default statuses for the new project
+		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
+		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
 				"order_number" => $key++,
-				"project_id" => $project->id
+				"project_id" => $project->id,
+				"permanent" => $key == 1 || $key == 3 ? true : false // Check wether the status is backlog or done
 			]);
 		}
 
