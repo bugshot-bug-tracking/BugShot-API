@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
 // Resources
@@ -12,7 +13,8 @@ use App\Http\Resources\PriorityResource;
 use App\Models\Priority;
 
 // Requests
-use App\Http\Requests\PriorityRequest;
+use App\Http\Requests\PriorityStoreRequest;
+use App\Http\Requests\PriorityUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -24,7 +26,7 @@ class PriorityController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -79,8 +81,8 @@ class PriorityController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  PriorityStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -141,7 +143,7 @@ class PriorityController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(PriorityRequest $request)
+	public function store(PriorityStoreRequest $request)
 	{
 		$priority = Priority::create($request->all());
 		return new PriorityResource($priority);
@@ -150,8 +152,8 @@ class PriorityController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Priority  $priority
-	 * @return \Illuminate\Http\Response
+	 * @param  Priority  $priority
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -213,9 +215,9 @@ class PriorityController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\Models\Priority  $priority
-	 * @return \Illuminate\Http\Response
+	 * @param  PriorityUpdateRequest  $request
+	 * @param  Priority  $priority
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -296,7 +298,7 @@ class PriorityController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(PriorityRequest $request, Priority $priority)
+	public function update(PriorityUpdateRequest $request, Priority $priority)
 	{
 		$priority->update($request->all());
 		return new PriorityResource($priority);
@@ -305,8 +307,8 @@ class PriorityController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Priority  $priority
-	 * @return \Illuminate\Http\Response
+	 * @param  Priority  $priority
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -23,7 +24,8 @@ use App\Models\Status;
 use App\Models\BugUserRole;
 
 // Requests
-use App\Http\Requests\BugRequest;
+use App\Http\Requests\BugStoreRequest;
+use App\Http\Requests\BugUpdateRequest;
 
 
 /**
@@ -38,7 +40,7 @@ class BugController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -138,8 +140,8 @@ class BugController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  BugStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -288,7 +290,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the bug 
 		$this->authorize('create', [Bug::class, $status->project]);
@@ -348,8 +350,8 @@ class BugController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -447,9 +449,9 @@ class BugController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  BugUpdateRequest  $request
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -599,7 +601,7 @@ class BugController extends Controller
 	 * )
 	 **/
 
-	public function update(BugRequest $request, Status $status, Bug $bug)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug)
 	{
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
@@ -633,8 +635,8 @@ class BugController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -720,8 +722,8 @@ class BugController extends Controller
 	/**
 	 * Assign a user to the bug
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -800,8 +802,8 @@ class BugController extends Controller
 	/**
 	 * Display a list of users that belongs to the bug.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -875,8 +877,8 @@ class BugController extends Controller
 	/**
 	 * Remove a user from the bug
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(

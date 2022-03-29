@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 // Resources
@@ -16,7 +17,8 @@ use App\Models\Bug;
 use App\Models\Screenshot;
 
 // Requests
-use App\Http\Requests\ScreenshotRequest;
+use App\Http\Requests\ScreenshotStoreRequest;
+use App\Http\Requests\ScreenshotUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -28,7 +30,7 @@ class ScreenshotController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -95,8 +97,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  ScreenshotStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -184,7 +186,7 @@ class ScreenshotController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
+	public function store(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService)
 	{
 		// Check if the user is authorized to create the screenshot
 		$this->authorize('create', [Screenshot::class, $bug->project]);
@@ -197,8 +199,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -271,9 +273,9 @@ class ScreenshotController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  ScreenshotUpdateRequest  $request
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -382,7 +384,7 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
+	public function update(ScreenshotUpdateRequest $request, Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to update the screenshot
 		$this->authorize('update', [Screenshot::class, $bug->project]);
@@ -414,8 +416,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InvitationRequest extends FormRequest
+class CommentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,13 @@ class InvitationRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            "target_email" => ["required", "email"],
-            "role_id" => ["required", "integer", "exists:roles,id"]
-        ];
+        // Check if the request method is of type PATCH or POST and validate accordingly
+        if ($this->isMethod('patch')) {
+            return [];
+        } else {
+            return [
+                "content" => ["required", "string", "max:255"]
+            ];
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,8 @@ use App\Models\Status;
 use App\Models\Project;
 
 // Requests
-use App\Http\Requests\StatusRequest;
+use App\Http\Requests\StatusStoreRequest;
+use App\Http\Requests\StatusUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -28,7 +30,7 @@ class StatusController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -129,8 +131,8 @@ class StatusController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  StatusStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -203,7 +205,7 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(StatusRequest $request, Project $project)
+	public function store(StatusStoreRequest $request, Project $project)
 	{
 		// Check if the user is authorized to create the status
 		$this->authorize('create', [Status::class, $project]);
@@ -227,8 +229,8 @@ class StatusController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -330,9 +332,9 @@ class StatusController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  StatusUpdateRequest  $request
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -425,7 +427,7 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(StatusRequest $request, Project $project, Status $status)
+	public function update(StatusUpdateRequest $request, Project $project, Status $status)
 	{
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
@@ -448,8 +450,8 @@ class StatusController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(

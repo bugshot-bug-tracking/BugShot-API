@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InvitationRequest extends FormRequest
+class PriorityUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,12 @@ class InvitationRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            "target_email" => ["required", "email"],
-            "role_id" => ["required", "integer", "exists:roles,id"]
-        ];
+        if ($this->isMethod('patch')) {
+            return [];
+        } else {
+            return [
+                "designation" => ["required", "alpha", "max:255", "unique:App\Models\Priority,designation"]
+            ];
+        }
     }
 }

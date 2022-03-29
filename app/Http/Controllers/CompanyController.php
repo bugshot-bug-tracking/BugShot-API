@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
 // Resources
@@ -21,7 +22,8 @@ use App\Models\User;
 use App\Models\CompanyUserRole;
 
 // Requests
-use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\InvitationRequest;
 
 /**
@@ -34,7 +36,7 @@ class CompanyController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -168,8 +170,8 @@ class CompanyController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  CompanyStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -240,7 +242,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CompanyRequest $request, ImageService $imageService)
+	public function store(CompanyStoreRequest $request, ImageService $imageService)
 	{	
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
@@ -269,8 +271,8 @@ class CompanyController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -394,9 +396,9 @@ class CompanyController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  CompanyUpdateRequest  $request
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -487,7 +489,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
+	public function update(CompanyUpdateRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
@@ -519,8 +521,8 @@ class CompanyController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -585,8 +587,8 @@ class CompanyController extends Controller
 	/**
 	 * Display the image that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -653,8 +655,8 @@ class CompanyController extends Controller
 	/**
 	 * Display a list of users that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -727,8 +729,8 @@ class CompanyController extends Controller
 	/**
 	 * Remove a user from the company
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -800,8 +802,8 @@ class CompanyController extends Controller
 	/**
 	 * Display a list of invitations that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(

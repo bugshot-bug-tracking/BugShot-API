@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,8 @@ use App\Models\Status;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
-use App\Http\Requests\ProjectRequest;
+use App\Http\Requests\ProjectStoreRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -42,7 +44,7 @@ class ProjectController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -177,8 +179,8 @@ class ProjectController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  ProjectStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -261,7 +263,7 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(ProjectRequest $request, Company $company, ImageService $imageService)
+	public function store(ProjectStoreRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to create the project
 		$this->authorize('create', [Project::class, $company]);
@@ -304,8 +306,8 @@ class ProjectController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -423,9 +425,9 @@ class ProjectController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  ProjectUpdateRequest  $request
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -529,7 +531,7 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(ProjectRequest $request, Company $company, Project $project, ImageService $imageService)
+	public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the project
 		$this->authorize('update', $project);
@@ -562,8 +564,8 @@ class ProjectController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -637,8 +639,8 @@ class ProjectController extends Controller
 	/**
 	 * Display the image that belongs to the project.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -705,8 +707,8 @@ class ProjectController extends Controller
 	/**
 	 * Display a list of bugs that belong to the project.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -809,8 +811,8 @@ class ProjectController extends Controller
 	/**
 	 * Display a list of the markers that belong to the project according to a given url.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -915,8 +917,8 @@ class ProjectController extends Controller
 	/**
 	 * Display a list of users that belongs to the project.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -989,8 +991,8 @@ class ProjectController extends Controller
 	/**
 	 * Remove a user from the project
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -1062,8 +1064,8 @@ class ProjectController extends Controller
 	/**
 	 * Display a list of invitations that belongs to the project.
 	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
+	 * @param  Project  $project
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
