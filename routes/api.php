@@ -2,7 +2,6 @@
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
-use App\Events\Test;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -76,11 +75,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
-
-	Route::get('/test', function () {
-		event(new Test());
-		return "Event has been sent!";
-	});
 
 	// Organization resource routes
 	Route::apiResource('/organizations', OrganizationController::class);

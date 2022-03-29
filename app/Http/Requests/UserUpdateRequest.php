@@ -26,13 +26,18 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-			'first_name' => ['required', 'string', 'max:255'],
-			'last_name' => ['required', 'string', 'max:255'],
-			'email' => ['required', 'email', Rule::unique('users')->ignore($this->user->id)],
-            'old_password' => ['required', new OldPasswordConfirmed($this->user)],
-			'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
-			'password_confirmation' => ['exclude_unless:password,true','required', 'same:password']
-        ];
+        // Check if the request method is of type PATCH or POST and validate accordingly
+        if ($this->isMethod('patch')) {
+            return [];
+        } else {
+            return [
+                'first_name' => ['required', 'string', 'max:255'],
+                'last_name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', Rule::unique('users')->ignore($this->user->id)],
+                'old_password' => ['required', new OldPasswordConfirmed($this->user)],
+                'password' => ['nullable', 'confirmed', Password::min(8)->letters()->numbers()],
+                'password_confirmation' => ['exclude_unless:password,true','required', 'same:password']
+            ];
+        }
     }
 }
