@@ -555,8 +555,8 @@ class AuthController extends Controller
 			'api-key' => config('app.sendinblue_v3_api_key')
 		])->post(config('app.sendinblue_v3_api_url') . '/contacts', [
 			'attributes' => [
-				'FIRSTNAME' => $user->first_name,
-				'LASTNAME' => $user->last_name,
+				'VORNAME' => $user->first_name,
+				'NACHNAME' => $user->last_name,
 				'isVIP' => true
 			],
 			'email' => $user->email,
