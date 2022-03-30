@@ -32,7 +32,7 @@ class VerifyEmailAddress extends Mailable
         );
 
         $this->user = $notifiable;
-        $this->url = config('app.webpanel_url') . '/auth/verify/' . $notifiable->id . '/' . $matches[0] . '?locale=' . App::currentLocale();
+        $this->url = config('app.webpanel_url') . '/auth/verify/' . $notifiable->id . '/' . $matches[0] . '&locale=' . App::currentLocale();
     }
 
     /**
