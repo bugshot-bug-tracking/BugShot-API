@@ -15,6 +15,10 @@ return [
     'invited_to_organization' => 'You were invited to the :organization ":organizationDesignation"',
     'invited_to_company' => 'You were invited to the :company ":companyDesignation"',
     'invited_to_project' => 'You were invited to the :project ":projectDesignation"',
-    'invited_to_bug' => 'You were assigned to the :bug ":bugDesignation"'
+    'invited_to_bug' => 'You were assigned to the :bug ":bugDesignation"',
+    'verification-successful' => 'Verification successful',
+    'invitation-received' => 'Invitation received',
+    'password-reset-link' => 'Password Reset Link',
+    'verify-email' => 'Email Verification'
 
 ];

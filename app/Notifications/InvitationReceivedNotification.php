@@ -80,7 +80,7 @@ class InvitationReceivedNotification extends Notification
         }
 
         return (new InvitationReceivedMailable($notifiable, $this->invitation, $this->message))
-        ->subject('BugShot - Invitation Received')
+        ->subject('BugShot - ' . __('email.invitation-received'))
         ->to($notifiable->email);
     }
 

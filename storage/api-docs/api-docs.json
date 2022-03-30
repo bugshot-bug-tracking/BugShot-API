@@ -3248,11 +3248,6 @@
                         "required": false
                     },
                     {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
                         "name": "timestamp",
                         "in": "header",
                         "required": false

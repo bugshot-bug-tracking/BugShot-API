@@ -6,9 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\VerifyEmailAddress as VerifyEmailAddressMailable;
+use App\Mail\VerificationSuccessful as VerificationSuccessfulMailable;
 
-class VerifyEmailAddressNotification extends Notification
+class VerificationSuccessfulNotification extends Notification
 {
     use Queueable;
 
@@ -17,9 +17,9 @@ class VerifyEmailAddressNotification extends Notification
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct()
     {
-        $this->url = $url;
+        //
     }
 
     /**
@@ -41,8 +41,8 @@ class VerifyEmailAddressNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new VerifyEmailAddressMailable($notifiable, $this->url))
-        ->subject('BugShot - ' . __('email.verify-email'))
+        return (new VerificationSuccessfulMailable($notifiable))
+        ->subject('BugShot - ' . __('email.verification-successful'))
         ->to($notifiable->email);
     }
 

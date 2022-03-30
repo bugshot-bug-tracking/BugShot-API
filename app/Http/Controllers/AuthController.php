@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\URL;
 
 // Notifications
 use App\Notifications\VerifyEmailAddressNotification;
+use App\Notifications\VerificationSuccessfulNotification;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -541,9 +542,10 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(CustomEmailVerificationRequest $request) {
+	public function verifyEmail(CustomEmailVerificationRequest $request, User $user) {
 		$request->fulfill();
-	
+		$user->notify(new VerificationSuccessfulNotification());
+
 		return response()->json( __('auth.email-verified-successfully'), 204);
 	}
 

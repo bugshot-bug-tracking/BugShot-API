@@ -42,7 +42,7 @@ class ResetPasswordLinkNotification extends Notification
     public function toMail($notifiable)
     {
         return (new ResetPasswordLinkMailable($notifiable, $this->url))
-        ->subject('BugShot - Password Reset Link')
+        ->subject('BugShot - ' . __('email.password-reset-link'))
         ->to($notifiable->email);
     }
 
