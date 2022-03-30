@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
 
 // Notifications
 use App\Notifications\VerifyEmailAddressNotification;
@@ -543,8 +544,10 @@ class AuthController extends Controller
 	 *
 	 **/
 	public function verifyEmail(CustomEmailVerificationRequest $request, $id) {
-		// $request->fulfill();
-		dd($request);
+		$request->fulfill();
+		
+		App::setLocale($request->header('locale'));
+
 		$user = User::find($id);
 		$user->notify(new VerificationSuccessfulNotification());
 
