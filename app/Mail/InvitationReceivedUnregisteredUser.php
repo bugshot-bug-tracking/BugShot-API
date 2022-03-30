@@ -17,18 +17,16 @@ class InvitationReceivedUnregisteredUser extends Mailable
 
     public $invitation;
     public $entryMessage;
-    public $registerUrl;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Invitation $invitation, $message, $registerUrl)
+    public function __construct(Invitation $invitation, $message)
     {
         $this->invitation = $invitation;
         $this->entryMessage = $message;
-        $this->registerUrl = $registerUrl;
     }
 
     /**

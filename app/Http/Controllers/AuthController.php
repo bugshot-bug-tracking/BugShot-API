@@ -548,12 +548,28 @@ class AuthController extends Controller
 		$request->fulfill();
 		$user = User::find($id);
 		
+		// Create the corresponding user in sendinblue
+		Http::withHeaders([
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+			'api-key' => config('app.sendinblue_v3_api_key')
+		])->post(config('app.sendinblue_v3_api_url') . '/contacts', [
+			'attributes' => [
+				'FNAME' => $user->first_name,
+				'LNAME' => $user->last_name,
+				'isVIP' => true
+			],
+			'email' => $user->email,
+			'updateEnabled' => true,
+			'listIds' => [4, 5]
+		]);
+
 		// Trigger the corresponding sendinblue event
 		Http::withHeaders([
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 			'ma-key' => config('app.sendinblue_ma_key')
-		])->post(config('app.sendinblue_api_url') . '/trackEvent', [
+		])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
 			'properties' => [
 				'firstname' => $user->first_name,
 				'lastname' => $user->last_name

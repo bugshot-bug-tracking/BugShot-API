@@ -1,45 +1,144 @@
 <!DOCTYPE html>
-<html class="mail" id="verify-email-address-mail">
+<html class="mail">
     <head>
         <style>
             html.mail {
                 font-family: 'Arial';
-                text-align: center;
             }
 
             html.mail body {
-                width: 80%;
-                margin: 0 auto;
-                background-color: #1a2040;
-                color: #fff;
-                padding: 50px 30px;
+                max-width: 600px;
+                border: 1px solid #C8C8C8;
+                margin: 50px auto;
+            }
+
+            html.mail body header {
+                background-color: #7A2EE6;
+                padding: 17px 50px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            html.mail header figure {
+                overflow: hidden;
+                margin: 0;
+            }
+
+            html.mail header figure img {
+                overflow: hidden;
+                margin: 0;
+                max-width: 152px;
+                min-width: 120px;
+            }
+
+            html.mail header div {
+                position: absolute;
+                right: 50px;
+                top: 50%;
+                transform: translate(0, -50%);
             }
 
             html.mail h1 {
-                margin: 20px 20px 40px 20px;
+                margin: 0;
+                color: #ffffff;
+                font-size: 18px;
+            }
+
+            html.mail body main {
+                padding: 20px 50px;
             }
 
             html.mail .action-buttons-wrapper {
                 margin-top: 50px;
             }
 
-            html.mail .action-buttons-wrapper a {
+            html.mail main a.action-button {
+                background-color: #18D992;
+                font-size: 14px;
+                font-weight: bold;
+                border-radius: 21px;
+                padding: 12px 25px;
+                color: #fff;
                 text-decoration: none;
-                color: #1a2040;
-                padding: 10px 20px;
-                background-color: #18d891;
-                border-radius: 12px;
-                font-weight: 600;
+                text-transform: uppercase;
+                display: block;
+                width: fit-content;
+                margin: 30px 0px;
+            }
+
+            html.mail a {
+                color: #7A2EE6;
+            }
+
+            html.mail body footer {
+                margin: 0 50px;
+                overflow: hidden;
+                border-top: 1px solid #C8C8C8;
+                padding: 25px 0;
+            }
+
+            html.mail body footer figure {
+                width: calc(40% - 40px);
+                min-width: 120px;
+                margin: 0 40px 25px 0;
+                float: left;
+                overflow: hidden;
+                background-color: #000;
+            }
+
+            html.mail body footer div {
+                text-align: right;
+                float: left;
+                width: 60%;
+            }
+
+            html.mail body footer div * {
+                margin-top: 0;
+            }
+
+            html.mail body footer div > a {
+                text-decoration: none;
+                font-weight: bold;
             }
         </style>
-        <title>BugShot - {{ __('email.verify-email') }}</title>
+        <title>BugShot - Verifizierung</title>
     </head>
     <body>
-        <p>{{ __('email.verify-email-text', ['user' => $user->first_name]) }}</p>
-
-        <p>Hi {{ $user->first_name }}! You just made your life a whole lot easier by rocking with BugShot. Please verify your email address via clicking on the following button</p>
-        <div class="action-buttons-wrapper">
-            <a href="{{ $url }}" type="button">Verify email address</a>
-        </div>
+        <header>
+            <figure>
+                <img src="{{ asset('img/bugshot_logo_white.png') }}" alt="BugShot">
+            </figure>
+            <div>
+                <h1>Verifizierung</h1>
+            </div>
+        </header>
+        <main>
+            <p>Hallo {{ $user->first_name }},</p>
+            <p>
+                vielen Dank für deine Anmeldung. Es ist soweit: Bald hast Du wieder mehr Zeit für die schönen Dinge im Leben!
+                Um BugShot und damit unser volles Potential zu nutzen, musst Du nur noch deine E-Mail-Adresse verifizieren.
+                <br /><br />
+                Klick dazu einfach auf den folgenden Button:
+            </p>
+            <a href="{{ $url }}" type="button" class="action-button">Jetzt verifizieren</a>
+            <p>
+                Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
+            </p>
+            <a href="{{ config('app.webpanel_url') . '/register' }}">{{ config('app.webpanel_url') . '/register' }}</a>
+            <p>
+                Fehlerfreie Grüße,
+                <br />
+                dein BugShot Team
+            </p>
+        </main>
+        <footer>
+            <figure>
+                <img src="{{ asset('img/bugshot_logo.svg') }}" alt="BugShot">
+            </figure>
+            <div>
+                <p>Indem du BugShot nutzt, stimmst du unseren <a href="{{ config('app.proposal_url') . '/terms-and-conditions' }}">Bedingungen und Konditionen</a> zu.</p>
+                <a href="{{ config('app.proposal_url') }}">{{ config('app.proposal_url') }}</a>
+            </div>
+        </footer>
     </body>
 </html>

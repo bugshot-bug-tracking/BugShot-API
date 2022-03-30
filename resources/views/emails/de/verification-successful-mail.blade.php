@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="mail" id="verify-email-address-mail">
+<html class="mail">
     <head>
         <style>
             html.mail {
@@ -9,6 +9,7 @@
             html.mail body {
                 max-width: 600px;
                 border: 1px solid #C8C8C8;
+                margin: 50px auto;
             }
 
             html.mail body header {
@@ -21,7 +22,13 @@
             html.mail header figure {
                 overflow: hidden;
                 margin: 0;
-                min-width: 152px;
+            }
+
+            html.mail header figure img {
+                overflow: hidden;
+                margin: 0;
+                max-width: 152px;
+                min-width: 120px;
             }
 
             html.mail header div {
@@ -55,14 +62,46 @@
                 text-decoration: none;
                 text-transform: uppercase;
                 display: block;
-                width: max-content;
+                width: fit-content;
                 margin: 30px 0px;
             }
-            html.mail main a {
+
+            html.mail a {
                 color: #7A2EE6;
             }
+
+            html.mail body footer {
+                margin: 0 50px;
+                overflow: hidden;
+                border-top: 1px solid #C8C8C8;
+                padding: 25px 0;
+            }
+
+            html.mail body footer figure {
+                width: calc(40% - 40px);
+                min-width: 120px;
+                margin: 0 40px 25px 0;
+                float: left;
+                overflow: hidden;
+                background-color: #000;
+            }
+
+            html.mail body footer div {
+                text-align: right;
+                float: left;
+                width: 60%;
+            }
+
+            html.mail body footer div * {
+                margin-top: 0;
+            }
+
+            html.mail body footer div > a {
+                text-decoration: none;
+                font-weight: bold;
+            }
         </style>
-        <title>BugShot - {{ __('email.verification-successful') }}</title>
+        <title>BugShot - Verifizierung</title>
     </head>
     <body>
         <header>
@@ -70,22 +109,25 @@
                 <img src="{{ asset('img/bugshot_logo_white.png') }}" alt="BugShot">
             </figure>
             <div>
-                <h1>Project Invitation</h1>
+                <h1>Verifizierung</h1>
             </div>
         </header>
         <main>
-            <p>Hello ###USER###,</p>
+            <p>Hallo {{ $user->first_name }},</p>
             <p>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
-                At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                vielen Dank für deine Verifizierung!<br /><br />
+                Du bist jetzt Mitglied der BugShot-Familie. Zusammen machen wir die digitale Welt fehlerfrei!<br /><br />
+                Am besten du schaust dich erstmal etwas um. Klick dazu einfach auf den folgenden Button:
             </p>
-            <a href="{{ config('app.webpanel_url') }}" type="button" class="action-button">Go to Dashboard</a>
+            <a href="{{ config('app.webpanel_url') }}" type="button" class="action-button">Zum Dashboard</a>
             <p>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. 
+                Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
             </p>
-            <a href="{{ config('app.webpanel_url') . '/register' }}">{{ config('app.webpanel_url') . '/register' }}</a>
+            <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a>
             <p>
-                Lorem ipsum dolor sit amet, consetetur sadipscing elitr
+                Fehlerfreie Grüße,
+                <br />
+                dein BugShot Team
             </p>
         </main>
         <footer>
@@ -93,7 +135,7 @@
                 <img src="{{ asset('img/bugshot_logo.svg') }}" alt="BugShot">
             </figure>
             <div>
-                <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+                <p>Indem du BugShot nutzt, stimmst du unseren <a href="{{ config('app.proposal_url') . '/terms-and-conditions' }}">Bedingungen und Konditionen</a> zu.</p>
                 <a href="{{ config('app.proposal_url') }}">{{ config('app.proposal_url') }}</a>
             </div>
         </footer>
