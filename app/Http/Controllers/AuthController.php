@@ -555,13 +555,16 @@ class AuthController extends Controller
 			'api-key' => config('app.sendinblue_v3_api_key')
 		])->post(config('app.sendinblue_v3_api_url') . '/contacts', [
 			'attributes' => [
-				'FNAME' => $user->first_name,
-				'LNAME' => $user->last_name,
+				'FIRSTNAME' => $user->first_name,
+				'LASTNAME' => $user->last_name,
 				'isVIP' => true
 			],
 			'email' => $user->email,
 			'updateEnabled' => true,
-			'listIds' => [4, 5]
+			'listIds' => [
+				4,
+				5
+			]
 		]);
 
 		// Trigger the corresponding sendinblue event if the contact creation was successful
