@@ -28,6 +28,7 @@ class ScreenshotResource extends JsonResource
 				"position_y" => $this->position_y,
 				"web_position_x" => $this->web_position_x,
 				"web_position_y" => $this->web_position_y,
+				"selector" => $this->selector,
 				"base64" => $base64
 			]
 		];

@@ -163,6 +163,10 @@ class ScreenshotController extends Controller
 	 *                  format="int32",
 	 *              ),
 	 * 	   			@OA\Property(
+	 *                  property="selector",
+	 *                  type="string"
+	 *              ),
+	 * 	   			@OA\Property(
 	 *                  property="base64",
 	 *                  type="string"
 	 *              ),
@@ -366,6 +370,10 @@ class ScreenshotController extends Controller
 	 *                  format="int32",
 	 *              ),
 	 * 	   			@OA\Property(
+	 *                  property="selector",
+	 *                  type="string"
+	 *              ),
+	 * 	   			@OA\Property(
 	 *                  property="base64",
 	 *                  type="string"
 	 *              ),
@@ -428,6 +436,7 @@ class ScreenshotController extends Controller
 			"position_y" => $request->position_y,
 			"web_position_x" =>  $request->web_position_x,
 			"web_position_y" =>  $request->web_position_y,
+			"selector" =>  $request->selector
 		]);
 
 		return new ScreenshotResource($screenshot);
