@@ -1117,6 +1117,9 @@
                                                 "web_position_y": {
                                                     "type": "integer",
                                                     "format": "int32"
+                                                },
+                                                "selector": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "type": "object"
@@ -5679,6 +5682,9 @@
                                         "type": "integer",
                                         "format": "int32"
                                     },
+                                    "selector": {
+                                        "type": "string"
+                                    },
                                     "base64": {
                                         "type": "string"
                                     }
@@ -5863,6 +5869,9 @@
                                     "web_position_y": {
                                         "type": "integer",
                                         "format": "int32"
+                                    },
+                                    "selector": {
+                                        "type": "string"
                                     },
                                     "base64": {
                                         "type": "string"
@@ -7530,6 +7539,11 @@
                         "type": "integer",
                         "format": "int32",
                         "nullable": true
+                    },
+                    "selector": {
+                        "description": "The selector of the marker.",
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",

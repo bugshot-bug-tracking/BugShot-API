@@ -542,8 +542,10 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(CustomEmailVerificationRequest $request, User $user) {
-		$request->fulfill();
+	public function verifyEmail(CustomEmailVerificationRequest $request, $id) {
+		// $request->fulfill();
+		dd($request);
+		$user = User::find($id);
 		$user->notify(new VerificationSuccessfulNotification());
 
 		return response()->json( __('auth.email-verified-successfully'), 204);
