@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 use App\Models\User;
 
@@ -36,6 +37,6 @@ class VerificationSuccessful extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.verification-successful-mail');
+        return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
     }
 }

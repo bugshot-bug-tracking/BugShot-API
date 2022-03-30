@@ -42,6 +42,6 @@ class VerifyEmailAddress extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.verify-email-address-mail');
+        return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Http;
 
 // Notifications
 use App\Notifications\VerifyEmailAddressNotification;
@@ -545,8 +546,25 @@ class AuthController extends Controller
 	 **/
 	public function verifyEmail(CustomEmailVerificationRequest $request, $id) {
 		$request->fulfill();
+		$user = User::find($id);
 		
-		App::setLocale($request->header('locale'));
+		// Trigger the corresponding sendinblue event
+		Http::withHeaders([
+			'Accept' => 'application/json',
+			'Content-Type' => 'application/json',
+			'ma-key' => config('app.sendinblue_ma_key')
+		])->post(config('app.sendinblue_api_url') . '/trackEvent', [
+			'properties' => [
+				'firstname' => $user->first_name,
+				'lastname' => $user->last_name
+			],
+			'email' => $user->email,
+			'event' => 'registered_for_betatest'
+		]);
+
+		if($request->header('locale')) {
+			App::setLocale($request->header('locale'));
+		}
 
 		$user = User::find($id);
 		$user->notify(new VerificationSuccessfulNotification());
@@ -605,3 +623,4 @@ class AuthController extends Controller
 		return response(__('auth.verification-link-sent'), 200);
 	}
 }
+	

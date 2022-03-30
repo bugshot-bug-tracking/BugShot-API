@@ -45,6 +45,12 @@ Route::get('/debug-sentry', function () {
 |--------------------------------------------------------------------------
 */
 
+Route::get('/mail', function () {
+    $user = App\Models\User::find(1);
+ 
+    return new App\Mail\VerificationSuccessful($user);
+});
+
 Route::prefix('auth')->group(function () {
 	// Register Routes
 	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
