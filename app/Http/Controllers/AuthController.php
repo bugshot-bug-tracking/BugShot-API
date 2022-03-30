@@ -548,8 +548,8 @@ class AuthController extends Controller
 		$request->fulfill();
 		$user = User::find($id);
 		
-		// Create the corresponding user in sendinblue
-		Http::withHeaders([
+		// Create the corresponding contact in sendinblue
+		$response = Http::withHeaders([
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 			'api-key' => config('app.sendinblue_v3_api_key')
@@ -564,19 +564,21 @@ class AuthController extends Controller
 			'listIds' => [4, 5]
 		]);
 
-		// Trigger the corresponding sendinblue event
-		Http::withHeaders([
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json',
-			'ma-key' => config('app.sendinblue_ma_key')
-		])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
-			'properties' => [
-				'firstname' => $user->first_name,
-				'lastname' => $user->last_name
-			],
-			'email' => $user->email,
-			'event' => 'registered_for_betatest'
-		]);
+		// Trigger the corresponding sendinblue event if the contact creation was successful
+		if($response->successful()) {
+			Http::withHeaders([
+				'Accept' => 'application/json',
+				'Content-Type' => 'application/json',
+				'ma-key' => config('app.sendinblue_ma_key')
+			])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
+				'properties' => [
+					'firstname' => $user->first_name,
+					'lastname' => $user->last_name
+				],
+				'email' => $user->email,
+				'event' => 'registered_for_betatest'
+			]);
+		}
 
 		if($request->header('locale')) {
 			App::setLocale($request->header('locale'));
