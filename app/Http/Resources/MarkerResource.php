@@ -22,6 +22,7 @@ class MarkerResource extends JsonResource
 				"position_x" => $this->position_x,
                 "position_y" => $this->position_y,
                 "web_position_x" => $this->web_position_x,
+                "web_position_y" => $this->web_position_y,
                 "target_x" => $this->target_x,
                 "target_y" => $this->target_y,
                 "target_height" => $this->target_height,
