@@ -28,10 +28,10 @@ class BugUpdateRequest extends FormRequest
             return [];
         } else {
             return [
-                "designation" => ["required", "string", "min:1", "max:255"],
+                "designation" => ["string", "min:1", "max:255"],
                 "description" => ["min:1", "max:255", "string", "nullable"],
                 "url" => ["string", "max:65535", "nullable"],
-                "priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],
+                "priority_id" => ["integer", "exists:App\Models\Priority,id"],
                 "operating_system" => ["max:255", "string", "nullable"],
                 "browser" => ["max:255", "string", "nullable"],
                 "selector" => ["max:65535", "string", "nullable"],
