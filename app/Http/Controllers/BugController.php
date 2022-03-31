@@ -999,7 +999,7 @@ class BugController extends Controller
 			// Descrease all the order numbers that were greater than the original bug order number
 			foreach($originalStatusBugs as $originalStatusBug) {
 				$originalStatusBug->update([
-					"order_number" => $originalStatusBug->order_number - 1
+					"order_number" => $originalOrderNumber < $newOrderNumber ? $originalStatusBug->order_number - 1 : $originalStatusBug->order_number + 1
 				]);
 			}
 
