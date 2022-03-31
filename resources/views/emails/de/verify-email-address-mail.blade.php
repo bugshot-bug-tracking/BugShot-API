@@ -9,7 +9,9 @@
 @section('main')
     <p>Hallo {{ $user->first_name }},</p>
     <p>
-        vielen Dank für deine Anmeldung. Es ist soweit: Bald hast Du wieder mehr Zeit für die schönen Dinge im Leben!
+        vielen Dank für deine Anmeldung! 
+        <br /><br />
+        Es ist soweit: Bald hast Du wieder mehr Zeit für die schönen Dinge im Leben!
         Um BugShot und damit unser volles Potential zu nutzen, musst Du nur noch deine E-Mail-Adresse verifizieren.
         <br /><br />
         Klick dazu einfach auf den folgenden Button:

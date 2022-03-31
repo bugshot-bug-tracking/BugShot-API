@@ -9,8 +9,10 @@
 @section('main')
     <p>Hello {{ $user->first_name }},</p>
     <p>
-        vielen Dank für deine Anmeldung. Es ist soweit: Bald hast Du wieder mehr Zeit für die schönen Dinge im Leben!
-        Um BugShot und damit unser volles Potential zu nutzen, musst Du nur noch deine E-Mail-Adresse verifizieren.
+        thank you for your registration!
+        <br /><br />
+        The time has come: Soon you will have more time for the good things in life!
+        To use BugShot and thus our full potential, you only need to verify your email address.
         <br /><br />
         In order to do that, just click on the following button:
     </p>

@@ -102,8 +102,29 @@
             }
 
             @media only screen and (max-width: 600px) {
-                body {
-                    background-color: red;
+                html.mail body header figure, html.mail body footer figure {
+                    margin: 0 auto 20px;
+                    float: none;
+                    width: 80%;
+                    text-align: center;
+                }
+
+                html.mail header figure img {
+                    width: 100%;
+                }
+
+                html.mail header div {
+                    text-align: center;
+                    width: 100%;
+                }
+
+                html.mail header div h1 {
+                    font-size: 16px;
+                }
+
+                html.mail body footer div {
+                    width: 100%;
+                    text-align: center;
                 }
             }
         </style>
