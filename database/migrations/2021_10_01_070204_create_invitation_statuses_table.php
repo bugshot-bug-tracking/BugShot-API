@@ -15,6 +15,7 @@ class CreateInvitationStatusesTable extends Migration
 	{
 		Schema::create('invitation_statuses', function (Blueprint $table) {
 			$table->id();
+			
 			$table->string("designation");
 		});
 	}

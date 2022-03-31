@@ -4,19 +4,34 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Invitation extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
+
+    /**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
 
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
@@ -27,7 +42,7 @@ class Invitation extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="target_id",
+	 * 	property="target_email",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The id of the user whom the invitation is for."
@@ -74,31 +89,52 @@ class Invitation extends Model
 	 *  format="date-time",
 	 * 	description="The last date when the resource was changed."
 	 * )
-	 *
+	 * 
+	 * @OA\Property(
+	 * 	property="deleted_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The deletion date."
+	 * )
+	 * 
 	 */
-	protected $fillable = ["sender_id",	"target_id", "role_id", "status_id"];
+	protected $fillable = ["id", "sender_id", "target_email", "role_id", "status_id"];
 
-
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
 	public function invitable()
 	{
 		return $this->morphTo();
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function sender()
 	{
 		return $this->belongsTo(User::class, "sender_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function target()
 	{
-		return $this->belongsTo(User::class, "target_id");
+		return $this->belongsTo(User::class, "target_email");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function role()
 	{
 		return $this->belongsTo(Role::class, "role_id");
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function status()
 	{
 		return $this->belongsTo(InvitationStatus::class, "status_id");

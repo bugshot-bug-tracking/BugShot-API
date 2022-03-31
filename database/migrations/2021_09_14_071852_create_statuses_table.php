@@ -14,14 +14,16 @@ class CreateStatusesTable extends Migration
 	public function up()
 	{
 		Schema::create('statuses', function (Blueprint $table) {
-			$table->id()->unique();
+			$table->uuid('id')->primary();
 
-			$table->unsignedBigInteger('project_id');
+			$table->string('project_id');
 			$table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
 
+			$table->smallInteger('order_number')->default(0);
 			$table->string('designation');
 
 			$table->timestamps();
+			$table->softDeletes();
 		});
 	}
 

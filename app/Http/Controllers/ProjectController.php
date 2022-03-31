@@ -2,18 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProjectInviteRequest;
-use App\Http\Requests\ProjectRequest;
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
+
+// Resources
 use App\Http\Resources\BugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
-use App\Http\Resources\StatusResource;
+use App\Http\Resources\ImageResource;
+use App\Http\Resources\MarkerResource;
+
+// Services
+use App\Services\ImageService;
+use App\Services\InvitationService;
+
+// Models
+use App\Models\User;
 use App\Models\Project;
+use App\Models\Company;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
+// Requests
+use App\Http\Requests\InvitationRequest;
+use App\Http\Requests\ProjectStoreRequest;
+use App\Http\Requests\ProjectUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -24,13 +42,92 @@ class ProjectController extends Controller
 {
 
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/project",
+	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
 	 *	summary="All projects.",
 	 *	operationId="allProjects",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="timestamp",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -58,25 +155,74 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index()
+	public function index(Request $request, Company $company)
 	{
-		return ProjectResource::collection(Project::all());
+		// Check if the user is authorized to list the projects of the company
+		$this->authorize('viewAny', [Project::class, $company]);
+
+		// Get timestamp
+		$timestamp = $request->header('timestamp');
+
+		$userCompanyRoleId = $this->user->companies->find($company)->pivot->role_id;
+		$userIsPriviliegated = $this->user->isPriviliegated('projects', $userCompanyRoleId);
+		
+		// Check if the request includes a timestamp and query the projects accordingly
+		if($timestamp == NULL) {
+			if($userIsPriviliegated) {
+				$projects = $company->projects;
+			} else {
+				$projects = Auth::user()->projects->where('company_id', $company->id);
+			}
+        } else {
+			if($userIsPriviliegated) {
+				$projects = $company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			} else {
+				$projects = Auth::user()->projects
+					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('company_id', $company->id);
+			}
+        }
+
+		return ProjectResource::collection($projects);
 	}
 
 	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  ProjectStoreRequest  $request
+	 * @return Response
+	 */
+	/**
 	 * @OA\Post(
-	 *	path="/project",
+	 *	path="/companies/{company_id}/projects",
 	 *	tags={"Project"},
 	 *	summary="Store one project.",
 	 *	operationId="storeProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
-	 *
+	 *	 @OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -93,14 +239,31 @@ class ProjectController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="company_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
 	 *              ),
-	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the project (optional)",
+	 *                  property="base64",
+	 *                  type="string",
+	 *              ),
+	 *    			@OA\Property(
+	 *                  property="invitations",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The invited user email.",
+	 *              		    property="target_email",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The invited user role.",
+	 *              		    property="role_id",
+	 *              		    type="integer",
+	 *              		    format="int64"
+	 *              		),
+	 * 					)
 	 *              ),
 	 *              required={"designation","url","company_id"}
 	 *          )
@@ -132,27 +295,47 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(ProjectRequest $request)
+	public function store(ProjectStoreRequest $request, Company $company, ImageService $imageService, InvitationService $invitationService)
 	{
-		$project = Project::create($request->all());
+		// Check if the user is authorized to create the project
+		$this->authorize('create', [Project::class, $company]);
 
-		$projectUserRole = ProjectUserRole::create([
-			"project_id" => $project->id,
-			"user_id" => Auth::id(),
-			"role_id" => 1 // Owner
+		// Check if the the request already contains a UUID for the project
+		$id = $this->setId($request);
+		
+		// Store the new project in the database
+		$project = $company->projects()->create([
+			"id" => $id,
+			"user_id" => Auth::user()->id,
+			"designation" => $request->designation,
+			"color_hex" => $request->color_hex,
+			"url" => $request->url
 		]);
 
-		$defaultStatuses = ['Backlog', 'To Do', 'Doing', 'Done'];
-		foreach ($defaultStatuses as $status) {
+		// Check if the project comes with an image (or a color)
+		$image = NULL;
+		if($request->base64 != NULL) {
+			$image = $imageService->store($request->base64, $image);
+			$project->image()->save($image);
+		}
+
+		// Send the invitations 
+		foreach($request->invitations as $invitation) {
+			$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
+		}
+
+		// Store the respective role
+		Auth::user()->projects()->attach($project->id, ['role_id' => 1]);
+
+		// Create the default statuses for the new project
+		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
+		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
+				"id" => (string) Str::uuid(),
 				"designation" => $status,
-				"project_id" => $project->id
+				"order_number" => $key++,
+				"project_id" => $project->id,
+				"permanent" => $key == 1 || $key == 3 ? true : false // Check wether the status is backlog or done
 			]);
 		}
 
@@ -160,22 +343,101 @@ class ProjectController extends Controller
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/project/{id}",
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Show one project.",
 	 *	operationId="showProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -201,27 +463,54 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(Project $project)
+	public function show(Company $company, Project $project)
 	{
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
+
 		return new ProjectResource($project);
 	}
 
 	/**
-	 * @OA\Post(
-	 *	path="/project/{id}",
+	 * Update the specified resource in storage.
+	 *
+	 * @param  ProjectUpdateRequest  $request
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Update a project.",
 	 *	operationId="updateProject",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -253,14 +542,14 @@ class ProjectController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
-	 *                  property="company_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *                  description="The hexcode of the color (optional)",
+	 *                  property="color_hex",
+	 * 					type="string",
 	 *              ),
-	 *  			@OA\Property(
-	 *                  property="image_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *              @OA\Property(
+	 *                  description="The base64 string of the image belonging to the company (optional)",
+	 *                  property="base64",
+	 *                  type="string",
 	 *              ),
 	 *              required={"designation","url","company_id"}
 	 *          )
@@ -296,29 +585,74 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\ProjectRequest  $request
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(ProjectRequest $request, Project $project)
+	public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService)
 	{
-		$project->update($request->all());
+		// Check if the user is authorized to update the project
+		$this->authorize('update', $project);
+
+		// Check if the project comes with an image (or a color)
+		$image = $project->image;
+		if($request->base64 != NULL && $request->base64 != 'true') {
+			$image = $imageService->store($request->base64, $image);
+			$image != false ? $project->image()->save($image) : true;
+			$color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
+		} else {
+			$imageService->delete($image);
+			$color_hex = $request->color_hex;
+		}
+
+		// Apply default color if color_hex is null
+		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
+
+		// Update the project
+		$project->update(array_filter([
+			"company_id" => $company->id,
+			"designation" => $request->designation,
+			"color_hex" => $color_hex,
+			"url" => $request->url
+		]));
+
 		return new ProjectResource($project);
 	}
 
 	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
 	 * @OA\Delete(
-	 *	path="/project/{id}",
+	 *	path="/companies/{company_id}/projects/{project_id}",
 	 *	tags={"Project"},
 	 *	summary="Delete a project.",
 	 *	operationId="deleteProject",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -347,28 +681,51 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy(Project $project)
+	public function destroy(Company $company, Project $project, ImageService $imageService)
 	{
+		// Check if the user is authorized to delete the project
+		$this->authorize('delete', $project);
+
+		// Softdelete the project
 		$val = $project->delete();
+
+		// Delete the respective image if present
+		$imageService->delete($project->image);
+
 		return response($val, 204);
 	}
 
 	/**
+	 * Display the image that belongs to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/project/{id}/statuses",
+	 *	path="/projects/{project_id}/image",
 	 *	tags={"Project"},
-	 *	summary="All project statuses.",
-	 *	operationId="allProjectsStatuses",
+	 *	summary="Project image.",
+	 *	operationId="showProjectImage",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -381,7 +738,7 @@ class ProjectController extends Controller
 	 *		description="Success",
 	 *		@OA\JsonContent(
 	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Status")
+	 *			@OA\Items(ref="#/components/schemas/Image")
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -403,34 +760,86 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function statuses(Project $project)
+	public function image(Project $project, ImageService $imageService)
 	{
-		return StatusResource::collection($project->statuses);
+		// Check if the user is authorized to view the image of the project
+		$this->authorize('viewImage', $project);
+
+		return new ImageResource($project->image);
 	}
 
 	/**
+	 * Display a list of bugs that belong to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/project/{id}/bugs",
+	 *	path="/projects/{project_id}/bugs",
 	 *	tags={"Project"},
 	 *	summary="All project bugs.",
 	 *	operationId="allProjectsBugs",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -458,27 +867,164 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of bugs that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
-	public function bugs(Project $project)
+	public function bugs(Request $request, Project $project)
 	{
-		return BugResource::collection($project->bugs);
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+
+		// Check if the request includes a timestamp and query the bugs accordingly
+		if($request->timestamp == NULL) {
+            $bugs = $project->bugs;
+        } else {
+            $bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+        }
+		
+		return BugResource::collection($bugs);
 	}
 
 	/**
+	 * Display a list of the markers that belong to the project according to a given url.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/project/{id}/users",
+	 *	path="/projects/{project_id}/markers",
+	 *	tags={"Project"},
+	 *	summary="All project markers according to a given url.",
+	 *	operationId="allProjectMarkers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="url",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Bug")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function markers(Request $request, Project $project)
+	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+		
+		// Get the bugs that belong to the given url
+		$bugs = $project->bugs->where("url", "=", $request->url);
+
+		// Get the corresponding screenshots and map everything correctly
+		$bugs = $bugs->map(function ($bug) {
+			$markers = $bug->screenshots
+				->whereNotNull("web_position_x")
+				->whereNotNull("web_position_y")
+				->filter(function ($value) {
+					return $value->web_position_x > 0 || $value->web_position_y > 0;
+				})
+				->map(function ($screenshot) {
+					return [
+						'screenshot_id' => $screenshot->id ,
+						'x' => $screenshot->web_position_x,
+						'y' => $screenshot->web_position_y,
+						'selector' => $screenshot->selector
+					];
+				});
+		
+			return [
+				'bug_id' => $bug->id,
+				'designation' => $bug->designation,
+				'priority_id' => $bug->priority_id,
+				'status' => [
+					'id' => $bug->status_id,
+					'done' => $bug->status->designation == 'Done' ? true : false
+				],
+				'markers' => $markers
+			];
+		});
+
+		return MarkerResource::collection($bugs);
+	}
+
+	/**
+	 * Display a list of users that belongs to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/users",
 	 *	tags={"Project"},
 	 *	summary="All project users.",
 	 *	operationId="allProjectsUsers",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -513,14 +1059,11 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a list of users that belongs to the project.
-	 *
-	 * @param  \App\Models\Project  $project
-	 * @return \Illuminate\Http\Response
-	 */
 	public function users(Project $project)
 	{
+		// Check if the user is authorized to view the users of the project
+		$this->authorize('viewUsers', $project);
+
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)
 				->with('project')
@@ -531,15 +1074,181 @@ class ProjectController extends Controller
 	}
 
 	/**
+	 * Remove a user from the project
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Delete(
+	 *	path="/projects/{project_id}/users/{user_id}",
+	 *	tags={"Project"},
+	 *	summary="Remove user from the project.",
+	 *	operationId="removeProjectUser",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function removeUser(Project $project, User $user)
+	{
+		// Check if the user is authorized to view the users of the project
+		$this->authorize('removeUser', $project);
+
+		$val = $project->users()->detach($user);
+	
+		return response($val, 204);
+	}
+
+	/**
+	 * Display a list of invitations that belongs to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/invitations",
+	 *	tags={"Project"},
+	 *	summary="All project invitations.",
+	 *	operationId="allProjectInvitations",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Invitation")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function invitations(Project $project)
+	{
+		// Check if the user is authorized to view the invitations of the project
+		$this->authorize('viewInvitations', $project);
+		
+		return InvitationResource::collection($project->invitations);
+	}
+
+	/**
 	 * @OA\Post(
-	 *	path="/project/{id}/invite",
+	 *	path="/projects/{project_id}/invite",
 	 *	tags={"Project"},
 	 *	summary="Invite a user to the project and asign it a role",
 	 *	operationId="inviteProject",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="project_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -552,10 +1261,9 @@ class ProjectController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The invited user id.",
-	 *                  property="target_id",
-	 *					type="integer",
-	 *                  format="int64",
+	 *                  description="The invited user email.",
+	 *                  property="target_email",
+	 *					type="string"
 	 *              ),
 	 *              @OA\Property(
 	 *                  description="The invited user role.",
@@ -563,7 +1271,7 @@ class ProjectController extends Controller
 	 *					type="integer",
 	 *                  format="int64",
 	 *              ),
-	 *              required={"target_id","role_id"}
+	 *              required={"target_email","role_id"}
 	 *          )
 	 *      )
 	 *  ),
@@ -597,12 +1305,23 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function invite(Project $project, ProjectInviteRequest $request)
+	public function invite(InvitationRequest $request, Project $project, InvitationService $invitationService)
 	{
-		$inputs = $request->all();
-		$inputs['sender_id'] = Auth::id();
-		$inputs['status_id'] = 1;
+		// Check if the user is authorized to invite users to the project
+		$this->authorize('invite', $project);
+		
+		// Check if the user has already been invited to the project or is already part of it
+		$recipient_mail = $request->target_email;
+		$recipient = User::where('email', $recipient_mail)->first();
+		if($project->invitations->contains('target_email', $recipient_mail) || $project->users->contains($recipient)) {
+			return response()->json(["data" => [
+				"message" => __('application.project-user-already-invited')
+			]], 409);
+		}
 
-		return new InvitationResource($project->invitations()->create($inputs));
+		$id = $this->setId($request);
+		$invitation = $invitationService->send($request, $project, $id, $recipient_mail);
+
+		return new InvitationResource($invitation);
 	}
 }

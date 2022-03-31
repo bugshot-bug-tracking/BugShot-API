@@ -2,12 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AttachmentRequest;
-use App\Http\Resources\AttachmentResource;
-use App\Models\Attachment;
-use App\Models\Bug;
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
+// Resources
+use App\Http\Resources\AttachmentResource;
+
+// Services
+use App\Services\AttachmentService;
+
+// Models
+use App\Models\Attachment;
+use App\Models\Bug;
+
+// Requests
+use App\Http\Requests\AttachmentStoreRequest;
+use App\Http\Requests\AttachmentUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -17,13 +29,45 @@ use Illuminate\Support\Facades\Storage;
 class AttachmentController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/attachment",
+	 *	path="/bugs/{bug_id}/attachments",
 	 *	tags={"Attachment"},
 	 *	summary="All attachments.",
 	 *	operationId="allAttachments",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -51,42 +95,65 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index()
+	public function index(Bug $bug)
 	{
-		return AttachmentResource::collection(Attachment::all());
+		// Check if the user is authorized to list the attachments of the bug
+		$this->authorize('viewAny', [Attachment::class, $bug->project]);
+
+		return AttachmentResource::collection($bug->attachments);
 	}
 
 	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  AttachmentStoreRequest  $request
+	 * @return Response
+	 */
+	/**
 	 * @OA\Post(
-	 *	path="/attachment",
+	 *	path="/bugs/{bug_id}/attachments ",
 	 *	tags={"Attachment"},
 	 *	summary="Store one attachment.",
 	 *	operationId="storeAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *  	   		@OA\Property(
+	 *                  property="designation",
+	 *                  type="string"
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","file"}
+	 *              required={"base64", "designation"}
 	 *          )
 	 *      )
 	 *  ),
@@ -116,43 +183,54 @@ class AttachmentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(AttachmentRequest $request)
+	public function store(AttachmentStoreRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
-		$storagePath = "/uploads/attachments";
+		// Check if the user is authorized to create the attachment
+		$this->authorize('create', [Attachment::class, $bug->project]);
 
-		$bug = Bug::where("id", $request->bug_id)->with("project")->get()->first();
-		$project = $bug->project;
-		$company = $project->company;
-
-		$filePath = $storagePath . "/$company->id/$project->id/$bug->id";
-
-		$savedPath = $request->file->store($filePath);
-
-		$attachment = Attachment::create([
-			"bug_id" => $request->bug_id,
-			"designation" => $request->file->getClientOriginalName(),
-			"url" => $savedPath,
-		]);
+		$attachment = $attachmentService->store($bug, $request);
 
 		return new AttachmentResource($attachment);
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Attachment  $attachment
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/attachment/{id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Show one attachment.",
 	 *	operationId="showAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -185,27 +263,58 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(Attachment $attachment)
+	public function show(Bug $bug, Attachment $attachment)
 	{
+		// Check if the user is authorized to view the attachment
+		$this->authorize('view', [Attachment::class, $bug->project]);
+
 		return new AttachmentResource($attachment);
 	}
 
 	/**
-	 * @OA\Post(
-	 *	path="/attachment/{id}",
+	 * Update the specified resource in storage.
+	 *
+	 * @param  AttachmentUpdateRequest  $request
+	 * @param  Attachment  $attachment
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Update one attachment.",
 	 *	operationId="updateAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -224,21 +333,17 @@ class AttachmentController extends Controller
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
-	 *          mediaType="multipart/form-data",
+	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
+	 *  	   		@OA\Property(
+	 *                  property="designation",
+	 *                  type="string"
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Binary content of file",
-	 *                  property="file",
-	 *                  type="string",
-	 *                  format="binary",
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
 	 *              ),
-	 *              required={"bug_id","file"}
+	 *              required={"base64", "designation"}
 	 *          )
 	 *      )
 	 *  ),
@@ -273,15 +378,11 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(AttachmentRequest $request, Attachment $attachment)
+	public function update(AttachmentUpdateRequest $request, Bug $bug, Attachment $attachment)
 	{
+		// Check if the user is authorized to update the attachment
+		$this->authorize('update', [Attachment::class, $bug->project]);
+
 		$storagePath = "/uploads/attachments";
 
 		$bug = Bug::where("id", $attachment->bug_id)->with("project")->get()->first();
@@ -294,24 +395,52 @@ class AttachmentController extends Controller
 
 		Storage::delete($attachment->url);
 
-		$attachment->update([
+		$attachment->update(array_filter([
 			"designation" => $request->file->getClientOriginalName(),
 			"url" => $savedPath,
-		]);
+		]));
 
 		return new AttachmentResource($attachment);
 	}
 
 	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Attachment  $attachment
+	 * @return Response
+	 */
+	/**
 	 * @OA\Delete(
-	 *	path="/attachment/{id}",
+	 *	path="/bugs/{bug_id}/attachments/{attachment_id}",
 	 *	tags={"Attachment"},
 	 *	summary="Delete one attachment.",
 	 *	operationId="deleteAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -341,28 +470,46 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy(Attachment $attachment)
+	public function destroy(Bug $bug, Attachment $attachment, AttachmentService $attachmentService)
 	{
-		$val = $attachment->delete();
+		// Check if the user is authorized to delete the attachment
+		$this->authorize('delete', [Attachment::class, $attachment->bug->project]);
+
+		$val = $attachmentService->delete($attachment);
+
 		return response($val, 204);
 	}
 
 	/**
+	 * Download the specified resource.
+	 *
+	 * @param  Attachment  $attachment
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/attachment/{id}/download",
+	 *	path="/attachments/{attachment_id}/download",
 	 *	tags={"Attachment"},
 	 *	summary="Download one attachment. (Not Working In Swagger.)",
 	 *	operationId="downloadAttachment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="attachment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -396,12 +543,6 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Download the specified resource.
-	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
-	 */
 	public function download(Attachment $attachment)
 	{
 		return Storage::download($attachment->url, $attachment->designation);

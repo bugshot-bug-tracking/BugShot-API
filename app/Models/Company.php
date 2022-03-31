@@ -4,34 +4,58 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Company extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+
+    /**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
+
 
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
+	 * @OA\Property(
+	 * 	property="user_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the user that created the object."
+	 * )
+	 * 
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
 	 *  maxLength=255,
-	 * 	description="The status name."
+	 * 	description="The company name."
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="image_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	property="color_hex",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	nullable=true,
-	 * 	description="The id of the image that belongs to the company."
+	 * 	description="The colorcode for the company."
 	 * )
 	 *
 	 * @OA\Property(
@@ -57,20 +81,48 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["designation", "image_id"];
+	protected $fillable = ["id", "user_id", "designation", "color_hex"];
 
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['projects', 'invitations', 'image'];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function creator()
+	{
+		return $this->belongsTo(User::class);
+	}
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'company_user_roles')->withPivot('role_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function projects()
 	{
-		return $this->hasMany(Project::class);
+		return $this->hasMany(Project::class)->orderBy('updated_at', 'desc');
 	}
 
-	public function images()
-	{
-		return $this->belongsTo(Image::class, "image_id");
-	}
-
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
 	public function invitations()
 	{
 		return $this->morphMany(Invitation::class, "invitable");
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
+    }
 }

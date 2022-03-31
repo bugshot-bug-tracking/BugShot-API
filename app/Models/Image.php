@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Image extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -46,7 +47,23 @@ class Image extends Model
 	 *  format="date-time",
 	 * 	description="The last date when the resource was changed."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="deleted_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The deletion date."
+	 * )
+	 * 
 	 */
 
-	protected $fillable = ["designation", "url"];
+	protected $fillable = ["url"];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+	public function imageable()
+	{
+		return $this->morphTo();
+	}
 }
