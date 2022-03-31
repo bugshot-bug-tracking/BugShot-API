@@ -18,6 +18,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SendinblueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,10 @@ Route::prefix('auth')->group(function () {
 	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware(['guest', 'check.version'])->name('password.update');
 });
 
+// Sendinblue specific routes
+Route::prefix('sendinblue')->group(function () {
+	Route::post("/contact/number-of-bugs", [SendinblueController::class, "getNumberOfBugs"])->name("sendinblue.number-of-bugs");
+});
 
 /*
 |--------------------------------------------------------------------------

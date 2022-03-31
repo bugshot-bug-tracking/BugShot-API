@@ -290,9 +290,12 @@ class CompanyController extends Controller
 			$company->image()->save($image);
 		}
 
-		// Send the invitations 
-		foreach($request->invitations as $invitation) {
-			$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
+		// Send the invitations
+		$invitations = $request->invitations;
+		if($invitations != NULL) {
+			foreach($invitations as $invitation) {
+				$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
+			}
 		}
 
 		// Store the respective role

@@ -320,8 +320,11 @@ class ProjectController extends Controller
 		}
 
 		// Send the invitations 
-		foreach($request->invitations as $invitation) {
-			$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
+		$invitations = $request->invitations;
+		if($invitations != NULL) {
+			foreach($request->invitations as $invitation) {
+				$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
+			}
 		}
 
 		// Store the respective role
