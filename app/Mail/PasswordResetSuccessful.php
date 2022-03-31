@@ -10,22 +10,20 @@ use Illuminate\Support\Facades\App;
 
 use App\Models\User;
 
-class ResetPasswordLink extends Mailable
+class PasswordResetSuccessful extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
-    public $url;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable, $url)
+    public function __construct(User $notifiable)
     {
         $this->user = $notifiable;
-        $this->url = $url;
     }
 
     /**
@@ -35,6 +33,6 @@ class ResetPasswordLink extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.reset-password-link-mail');
+        return $this->view('emails.' . App::currentLocale() . '.password-reset-successful-mail');
     }
 }

@@ -9,14 +9,15 @@
 @section('main')
     <p>Hello {{ $user->first_name }},</p>
     <p>
-        You have requested a password reset.<br /><br />
-        Please use the following link to reset your password:
+        Your password reset was successful!<br /><br />
+        You can now log in to the dashboard with your new credentials.<br />
+        In order to do that, just click on the following button:
     </p>
-    <a href="{{ $url }}" type="button" class="action-button">Reset Password</a>
+    <a href="{{ config('app.webpanel_url') }}" type="button" class="action-button">Go to Dashboard</a>
     <p>
         If that doesn't work, you can also just copy the following URL into your browser:
     </p>
-    <a href="{{ $url }}">{{ $url }}</a>
+    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a>
     <p>
         Error-free Greetings,
         <br />

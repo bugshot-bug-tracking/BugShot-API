@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Http;
 // Notifications
 use App\Notifications\VerifyEmailAddressNotification;
 use App\Notifications\VerificationSuccessfulNotification;
+use App\Notifications\PasswordResetSuccessfulNotification;
 
 // Resources
 use App\Http\Resources\UserResource;
@@ -493,6 +494,9 @@ class AuthController extends Controller
 		);
 
 		if($status === PasswordFacade::PASSWORD_RESET) {
+			// Send password reset success mail
+			$request->user()->notify(new PasswordResetSuccessfulNotification());
+
 			return response(__($status), 200);
 		} else {
 			return response()->json([
@@ -580,10 +584,6 @@ class AuthController extends Controller
 				'email' => $user->email,
 				'event' => 'registered_for_betatest'
 			]);
-		}
-
-		if($request->header('locale')) {
-			App::setLocale($request->header('locale'));
 		}
 
 		$user = User::find($id);

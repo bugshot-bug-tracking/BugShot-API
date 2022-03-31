@@ -19,6 +19,7 @@ return [
     'verification-successful' => 'Verification successful',
     'invitation-received' => 'Invitation received',
     'password-reset-link' => 'Password Reset Link',
+    'password-reset-successful' => 'Passwortzurücksetzung erfolgreich',
     'verify-email' => 'Email Verification'
 
 ];

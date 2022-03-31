@@ -69,6 +69,7 @@
 
             html.mail a {
                 color: #7A2EE6;
+                word-break: break-word;
             }
 
             html.mail body footer {

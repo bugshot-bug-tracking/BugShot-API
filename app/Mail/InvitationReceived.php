@@ -38,6 +38,6 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . 'invitation-mail');
+        return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
     }
 }

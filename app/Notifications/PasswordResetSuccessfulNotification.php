@@ -6,10 +6,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\ResetPasswordLink as ResetPasswordLinkMailable;
-use Illuminate\Support\Facades\App;
+use App\Mail\PasswordResetSuccessful as PasswordResetSuccessfulMailable;
 
-class ResetPasswordLinkNotification extends Notification
+class PasswordResetSuccessfulNotification extends Notification
 {
     use Queueable;
 
@@ -18,9 +17,9 @@ class ResetPasswordLinkNotification extends Notification
      *
      * @return void
      */
-    public function __construct($email, $token)
+    public function __construct()
     {
-        $this->url = config('app.webpanel_url') . '/auth/reset-password/' . base64_encode($email) . '/' . $token;
+        //
     }
 
     /**
@@ -42,8 +41,8 @@ class ResetPasswordLinkNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new ResetPasswordLinkMailable($notifiable, $this->url))
-        ->subject('BugShot - ' . __('email.password-reset-link'))
+        return (new PasswordResetSuccessfulMailable($notifiable))
+        ->subject('BugShot - ' . __('email.password-reset-successful'))
         ->to($notifiable->email);
     }
 
