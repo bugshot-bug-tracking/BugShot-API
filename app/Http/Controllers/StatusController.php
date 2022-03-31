@@ -556,12 +556,21 @@ class StatusController extends Controller
 	// Synchronize the order numbers of all the statuses, that are affected by the updated status
 	private function synchronizeStatusOrder($request, $status, $project)
 	{
-		$statuses = $project->statuses->whereBetween('order_number', [$request->order_number, $status->getOriginal('order_number')]);
+		$originalOrderNumber = $status->getOriginal('order_number');
+		$newOrderNumber = $request->order_number;
+
+		$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+		// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
+		if($originalOrderNumber < $newOrderNumber) {
+			$statuses = $project->statuses->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
+		} else {
+			$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+		}
 
 		// Increase all the order numbers that are greater than the original status order number
 		foreach($statuses as $status) {
 			$status->update([
-				"order_number" => $status->order_number + 1
+				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
 			]);
 		}
 	}
