@@ -188,6 +188,14 @@ class CommentController extends Controller
 
 		// Check if the the request already contains a UUID for the comment
 		$id = $this->setId($request);
+		
+        preg_match(
+            '/(?<=@)[\p{L}\p{N}]+/',
+            $request->content,
+            $matches
+        );
+		
+dd($matches);
 
 		// Store the new comment in the database
 		$comment = $bug->comments()->create([
