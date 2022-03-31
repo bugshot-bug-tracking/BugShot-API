@@ -243,6 +243,23 @@ class ProjectController extends Controller
 	 *                  property="base64",
 	 *                  type="string",
 	 *              ),
+	 *    			@OA\Property(
+	 *                  property="invitations",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The invited user email.",
+	 *              		    property="target_email",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The invited user role.",
+	 *              		    property="role_id",
+	 *              		    type="integer",
+	 *              		    format="int64"
+	 *              		),
+	 * 					)
+	 *              ),
 	 *              required={"designation","url","company_id"}
 	 *          )
 	 *      )
@@ -273,7 +290,7 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(ProjectStoreRequest $request, Company $company, ImageService $imageService)
+	public function store(ProjectStoreRequest $request, Company $company, ImageService $imageService, InvitationService $invitationService)
 	{
 		// Check if the user is authorized to create the project
 		$this->authorize('create', [Project::class, $company]);
@@ -295,6 +312,11 @@ class ProjectController extends Controller
 		if($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$project->image()->save($image);
+		}
+
+		// Send the invitations 
+		foreach($request->invitations as $invitation) {
+			$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
 		}
 
 		// Store the respective role

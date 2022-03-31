@@ -2216,6 +2216,23 @@
                                     "base64": {
                                         "description": "The base64 string of the image belonging to the company (optional)",
                                         "type": "string"
+                                    },
+                                    "invitations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "target_email": {
+                                                    "description": "The invited user email.",
+                                                    "type": "string"
+                                                },
+                                                "role_id": {
+                                                    "description": "The invited user role.",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"

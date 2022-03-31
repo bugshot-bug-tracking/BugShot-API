@@ -7,7 +7,7 @@
 @endsection
 
 @section('main')
-    <p>Hello {{ $user->first_name }},</p>
+    <p>Hello there,</p>
     <p>
         {{ $entryMessage }}<br /><br />
         To accept the invitation you have to register at BugShot with this email address.<br />

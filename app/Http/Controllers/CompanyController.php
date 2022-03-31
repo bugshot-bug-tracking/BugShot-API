@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -217,6 +218,23 @@ class CompanyController extends Controller
 	 *                  property="base64",
 	 *                  type="string",
 	 *              ),
+	 *    			@OA\Property(
+	 *                  property="invitations",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The invited user email.",
+	 *              		    property="target_email",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The invited user role.",
+	 *              		    property="role_id",
+	 *              		    type="integer",
+	 *              		    format="int64"
+	 *              		),
+	 * 					)
+	 *              ),
 	 *              required={"designation"}
 	 *          )
 	 *      )
@@ -247,7 +265,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CompanyStoreRequest $request, ImageService $imageService)
+	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
 	{	
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
@@ -265,6 +283,11 @@ class CompanyController extends Controller
 		if($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$company->image()->save($image);
+		}
+
+		// Send the invitations 
+		foreach($request->invitations as $invitation) {
+			$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
 		}
 
 		// Store the respective role

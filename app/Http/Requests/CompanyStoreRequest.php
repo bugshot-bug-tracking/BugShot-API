@@ -28,7 +28,7 @@ class CompanyStoreRequest extends FormRequest
 			"designation" => ["required", "string", "min:1", "max:255"],
 			"base64" => ["string", "nullable"],
 			"color_hex" => ["string", "max:7", "nullable"],
-			"timestamp" => ["date"]
+			"timestamp" => ["date"],
 		];
     }
 }
