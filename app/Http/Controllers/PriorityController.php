@@ -320,7 +320,7 @@ class PriorityController extends Controller
 	 **/
 	public function update(PriorityUpdateRequest $request, Priority $priority)
 	{
-		$priority->update($request->all());
+		$priority->update(array_filter($request->all()));
 		return new PriorityResource($priority);
 	}
 

@@ -284,7 +284,7 @@ class UserController extends Controller
      * @return Response
      */
 	/**
-	 * @OA\Put(
+	 * @OA\Patch(
 	 *	path="/users/{user_id}",
 	 *	tags={"User"},
 	 *	summary="Update a user.",
@@ -320,7 +320,7 @@ class UserController extends Controller
 	 *		in="query",
 	 *		@OA\Schema(
 	 *			type="string",
-	 *			default="PUT"
+	 *			default="PATCH"
 	 *		)
 	 *	),
 	 *  @OA\RequestBody(
@@ -402,12 +402,12 @@ class UserController extends Controller
 		}
 
 		// Update the user
-		$user->update([
+		$user->update(array_filter([
 			'first_name' => $request->first_name,
 			'last_name' => $request->last_name,
 			'email' => $request->email,
-			'password' => Hash::make($request->password)
-		]);
+			'password' => $request->password ? Hash::make($request->password) : null
+		]));
 
 		// Update the corresponding Stripe customer
 		$response = Http::put(config('app.payment_url') . '/users/' . $user->id, [

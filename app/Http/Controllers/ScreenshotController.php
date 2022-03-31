@@ -429,7 +429,7 @@ class ScreenshotController extends Controller
 
 		Storage::delete($screenshot->url);
 
-		$screenshot->update([
+		$screenshot->update(array_filter([
 			"designation" => $request->file->getClientOriginalName(),
 			"url" => $savedPath,
 			"position_x" => $request->position_x,
@@ -437,7 +437,7 @@ class ScreenshotController extends Controller
 			"web_position_x" =>  $request->web_position_x,
 			"web_position_y" =>  $request->web_position_y,
 			"selector" =>  $request->selector
-		]);
+		]));
 
 		return new ScreenshotResource($screenshot);
 	}

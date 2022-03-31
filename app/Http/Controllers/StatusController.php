@@ -458,11 +458,11 @@ class StatusController extends Controller
 		}
 
 		// Update the status
-		$status->update([
+		$status->update(array_filter([
 			"designation" => $request->designation,
 			"project_id" => $project->id,
 			"order_number" => $request->order_number 
-		]);
+		]));
 
 		return new StatusResource($status);
 	}

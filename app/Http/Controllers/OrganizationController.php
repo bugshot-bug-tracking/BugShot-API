@@ -362,9 +362,9 @@ class OrganizationController extends Controller
 		$this->authorize('update', $organization);
 
 		// Update the organization
-		$organization->update([
+		$organization->update(array_filter([
             'designation' => $request->designation
-        ]);
+        ]));
 		
 		return new OrganizationResource($organization);
 	}

@@ -1271,7 +1271,69 @@
                     }
                 ]
             },
-            "put": {
+            "delete": {
+                "tags": [
+                    "Bug"
+                ],
+                "summary": "Delete a bug.",
+                "operationId": "deleteBug",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "status_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Status/properties/id"
+                        }
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
                 "tags": [
                     "Bug"
                 ],
@@ -1315,7 +1377,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "default": "PUT"
+                            "default": "PATCH"
                         }
                     }
                 ],
@@ -1412,68 +1474,6 @@
                     },
                     "422": {
                         "description": "Unprocessable Entity"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Bug"
-                ],
-                "summary": "Delete a bug.",
-                "operationId": "deleteBug",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "status_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Status/properties/id"
-                        }
-                    },
-                    {
-                        "name": "bug_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Bug/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
                     }
                 },
                 "security": [
@@ -4384,6 +4384,23 @@
                                     "base64": {
                                         "description": "The base64 string of the image belonging to the project (optional)",
                                         "type": "string"
+                                    },
+                                    "invitations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "target_email": {
+                                                    "description": "The invited user email.",
+                                                    "type": "string"
+                                                },
+                                                "role_id": {
+                                                    "description": "The invited user role.",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -6651,7 +6668,61 @@
                     }
                 ]
             },
-            "put": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete a user.",
+                "operationId": "deleteUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
                 "tags": [
                     "User"
                 ],
@@ -6687,7 +6758,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "default": "PUT"
+                            "default": "PATCH"
                         }
                     }
                 ],
@@ -6755,60 +6826,6 @@
                     },
                     "422": {
                         "description": "Unprocessable Entity"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete a user.",
-                "operationId": "deleteUser",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
                     }
                 },
                 "security": [

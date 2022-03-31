@@ -382,7 +382,7 @@ class CommentController extends Controller
 		// Check if the user is authorized to update the comment
 		$this->authorize('update', [$comment, $bug->project]);
 
-		$comment->update($request->all());
+		$comment->update(array_filter($request->all()));
 
 		return new CommentResource($comment);
 	}

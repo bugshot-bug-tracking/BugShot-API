@@ -543,15 +543,15 @@ class CompanyController extends Controller
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
-
+	
 		// Apply default color if color_hex is null
-		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
+		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
-		$company->update([
+		$company->update(array_filter([
             'designation' => $request->designation,
 			'color_hex' => $color_hex
-        ]);
+        ]));
 		
 		return new CompanyResource($company);
 	}

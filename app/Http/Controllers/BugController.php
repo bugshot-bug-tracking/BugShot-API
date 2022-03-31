@@ -473,7 +473,7 @@ class BugController extends Controller
 	 * @return Response
 	 */
 	/**
-	 * @OA\Put(
+	 * @OA\Patch(
 	 *	path="/statuses/{status_id}/bugs/{bug_id}",
 	 *	tags={"Bug"},
 	 *	summary="Update a bug.",
@@ -516,7 +516,7 @@ class BugController extends Controller
 	 *		in="query",
 	 *		@OA\Schema(
 	 *			type="string",
-	 *			default="PUT"
+	 *			default="PATCH"
 	 *		)
 	 *	),
 	 *
@@ -636,7 +636,7 @@ class BugController extends Controller
 		}
 
 		// Update the bug
-		$bug->update([
+		$bug->update(array_filter([
 			"project_id" => $status->project_id,
 			"status_id" => $request->status_id,
 			"priority_id" => $request->priority_id,
@@ -647,11 +647,10 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			// "deadline" => new Carbon($request->deadline),
 			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
 			"order_number" => $request->order_number,
 			"ai_id" => $request->ai_id
-		]);
+		]));
 
 		return new BugResource($bug);
 	}
@@ -985,7 +984,7 @@ class BugController extends Controller
 			$originalStatus = Status::find($bug->getOriginal('status_id'));
 			$originalStatusBugs = $originalStatus->bugs->where('order_number', '>', $bug->getOriginal('order_number'));
 
-			// Descrease all the order numbers that war greater than the original bug order number
+			// Descrease all the order numbers that were greater than the original bug order number
 			foreach($originalStatusBugs as $originalStatusBug) {
 				$originalStatusBug->update([
 					"order_number" => $originalStatusBug->order_number - 1
