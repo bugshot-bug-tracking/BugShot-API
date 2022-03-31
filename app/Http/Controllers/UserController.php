@@ -284,7 +284,7 @@ class UserController extends Controller
      * @return Response
      */
 	/**
-	 * @OA\Patch(
+	 * @OA\Put(
 	 *	path="/users/{user_id}",
 	 *	tags={"User"},
 	 *	summary="Update a user.",
@@ -320,7 +320,7 @@ class UserController extends Controller
 	 *		in="query",
 	 *		@OA\Schema(
 	 *			type="string",
-	 *			default="PATCH"
+	 *			default="PUT"
 	 *		)
 	 *	),
 	 *  @OA\RequestBody(

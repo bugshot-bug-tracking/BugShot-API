@@ -78,6 +78,11 @@ class BugController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-attachments",
 	 *		required=false,
 	 *		in="header"
@@ -413,6 +418,11 @@ class BugController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-attachments",
 	 *		required=false,
 	 *		in="header"
@@ -473,7 +483,7 @@ class BugController extends Controller
 	 * @return Response
 	 */
 	/**
-	 * @OA\Patch(
+	 * @OA\Put(
 	 *	path="/statuses/{status_id}/bugs/{bug_id}",
 	 *	tags={"Bug"},
 	 *	summary="Update a bug.",
@@ -516,7 +526,7 @@ class BugController extends Controller
 	 *		in="query",
 	 *		@OA\Schema(
 	 *			type="string",
-	 *			default="PATCH"
+	 *			default="PUT"
 	 *		)
 	 *	),
 	 *

@@ -98,6 +98,11 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-attachments",
 	 *		required=false,
 	 *		in="header"
@@ -395,6 +400,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -797,6 +807,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),

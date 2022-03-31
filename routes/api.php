@@ -16,6 +16,7 @@ use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
 
 /*
@@ -131,6 +132,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
 		Route::get("/users", [BugController::class, "users"])->name("bug.users");
 		Route::delete("/users/{user}", [BugController::class, "removeUser"])->name("bug.remove-user");
+	});
+
+	// Screenshot prefixed routes
+	Route::prefix('screenshots/{screenshot}')->group(function () {
+		Route::apiResource('/markers', MarkerController::class);
 	});
 
 	// User resource routes

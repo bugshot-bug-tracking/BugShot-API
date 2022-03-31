@@ -113,4 +113,12 @@ class Screenshot extends Model
 	{
 		return $this->belongsTo(Bug::class);
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function markers()
+	{
+		return $this->hasMany(Marker::class);
+	}
 }
