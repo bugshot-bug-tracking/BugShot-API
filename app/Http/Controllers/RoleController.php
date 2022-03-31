@@ -2,10 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\RoleRequest;
-use App\Http\Resources\RoleResource;
-use App\Models\Role;
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+
+// Resources
+use App\Http\Resources\RoleResource;
+
+// Models
+use App\Models\Role;
+
+// Requests
+use App\Http\Requests\RoleStoreRequest;
+use App\Http\Requests\RoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -15,12 +24,32 @@ use Illuminate\Http\Request;
 class RoleController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/role",
+	 *	path="/administration/roles",
 	 *	tags={"Role"},
 	 *	summary="All roles.",
 	 *	operationId="allRoles",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Response(
 	 *		response=200,
@@ -49,23 +78,39 @@ class RoleController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
 	public function index()
 	{
 		return RoleResource::collection(Role::all());
 	}
 
 	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  RoleStoreRequest  $request
+	 * @return Response
+	 */
+	/**
 	 * @OA\Post(
-	 *	path="/role",
+	 *	path="/administration/role",
 	 *	tags={"Role"},
 	 *	summary="Store one role.",
 	 *	operationId="storeRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *
 	 *  @OA\RequestBody(
@@ -108,25 +153,40 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(RoleRequest $request)
+	public function store(RoleStoreRequest $request)
 	{
 		$role = Role::create($request->all());
 		return new RoleResource($role);
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Role  $role
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/role/{id}",
+	 *	path="/administration/roles/{id}",
 	 *	tags={"Role"},
 	 *	summary="Show one role.",
 	 *	operationId="showRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -162,24 +222,40 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
-	 */
 	public function show(Role $role)
 	{
 		return new RoleResource($role);
 	}
 
 	/**
-	 * @OA\Post(
-	 *	path="/role/{id}",
+	 * Update the specified resource in storage.
+	 *
+	 * @param  RoleUpdateRequest  $request
+	 * @param  Role  $role
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/administration/roles/{id}",
 	 *	tags={"Role"},
 	 *	summary="Update a role.",
 	 *	operationId="updateRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -242,26 +318,40 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(RoleRequest $request, Role $role)
+	public function update(RoleUpdateRequest $request, Role $role)
 	{
 		$role->update($request->all());
 		return new RoleResource($role);
 	}
 
 	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Role  $role
+	 * @return Response
+	 */
+	/**
 	 * @OA\Delete(
-	 *	path="/role/{id}",
+	 *	path="/administration/roles/{id}",
 	 *	tags={"Role"},
 	 *	summary="Delete a role.",
 	 *	operationId="deleteRole",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 
 	 *	@OA\Parameter(
 	 *		name="id",
@@ -293,15 +383,10 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
-	 */
 	public function destroy(Role $role)
 	{
 		$val = $role->delete();
+
 		return response($val, 204);
 	}
 }

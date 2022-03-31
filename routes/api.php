@@ -1,10 +1,13 @@
 <?php
 
+// Miscellaneous, Helpers, ...
+use Illuminate\Support\Facades\Route;
+
+// Controllers
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\CompanyController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ImageController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\BugController;
@@ -26,6 +29,15 @@ use App\Http\Controllers\UserController;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Debug API Route for Sentry
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/debug-sentry', function () {
+    throw new Exception('My first Sentry error!');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -33,12 +45,25 @@ use App\Http\Controllers\UserController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('auth')->group(function () {
-	Route::post('register', [AuthController::class, "register"])->name("register");
-	Route::post('login', [AuthController::class, "login"])->name("login");
+Route::get('/mail', function () {
+    $user = App\Models\User::find(1);
+ 
+    return new App\Mail\PasswordResetSuccessful($user);
 });
 
+Route::prefix('auth')->group(function () {
+	// Register Routes
+	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
+	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
+	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
 
+	// Login Routes
+	Route::post('/login', [AuthController::class, "login"])->middleware('check.version')->name("login");
+
+	// Password Reset Routes
+	Route::post('/forgot-password', [AuthController::class, "forgotPassword"])->middleware(['guest', 'check.version'])->name('password.email');
+	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware(['guest', 'check.version'])->name('password.update');
+});
 
 
 /*
@@ -46,7 +71,7 @@ Route::prefix('auth')->group(function () {
 | Private API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum'])->group(
+Route::middleware(['auth:sanctum', 'check.version'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
@@ -55,85 +80,88 @@ Route::middleware(['auth:sanctum'])->group(
 	}
 );
 
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
-	Route::post('/check-project', [UserController::class, "checkProject"])->name("check-project");
+	// Organization resource routes
+	Route::apiResource('/organizations', OrganizationController::class);
 
-	Route::prefix('user')->group(function () {
-		Route::get("/companies", [UserController::class, "companies"])->name("user.companies");
-		Route::get("/company/{company}/projects", [UserController::class, "companyProjects"])->name("user.company.projects");
-		// ->missing(function (Request $request) { //! need a better solution for the other routes
-		// 	return response()->json([
-		// 		"errors" => [
-		// 			"status" => 404,
-		// 			"source" => $request->getPathInfo(),
-		// 			"detail" => "Company not found."
-		// 		]
-		// 	], 404);
-		// });
-
-		Route::get("/invitations", [UserController::class, "invitations"])->name("user.invitations");
-		Route::get("/invitations/{status}", [UserController::class, "invitationsByStatus"])->name("user.invitationsByStatus");
+	// Organization prefixed routes
+	Route::prefix('organizations/{organization}')->group(function () {
+		Route::get("/invitations", [OrganizationController::class, "invitations"])->name("organization.invitations");
+		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
+		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
+		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
 	});
 
-	Route::prefix('company/{company}')->group(function () {
-		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
-		Route::get("/projects", [CompanyController::class, "projects"])->name("company.projects");
+	// Company resource routes
+	Route::apiResource('/companies', CompanyController::class);
+
+	// Company prefixed routes
+	Route::prefix('companies/{company}')->group(function () {
+		Route::apiResource('/projects', ProjectController::class);
+		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
+		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
+		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
+		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
 	});
 
-	Route::prefix('project/{project}')->group(function () {
-		Route::get("/statuses", [ProjectController::class, "statuses"])->name("project.statuses");
-		Route::get("/bugs", [ProjectController::class, "bugs"])->name("project.bugs");
+	// Project prefixed routes
+	Route::prefix('projects/{project}')->group(function () {
+		Route::apiResource('/statuses', StatusController::class);
+		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
+		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
+		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
+		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
-		Route::post("/invite", [ProjectController::class, "invite"])->name("project.invite");
+		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
 
-	Route::prefix('status/{status}')->group(function () {
-		Route::get("/bugs", [StatusController::class, "bugs"])->name("status.bugs");
+	// Status prefixed routes
+	Route::prefix('statuses/{status}')->group(function () {
+		Route::apiResource('/bugs', BugController::class);
 	});
 
-	Route::prefix('bug/{bug}')->group(function () {
-		Route::get("/attachments", [BugController::class, "attachments"])->name("bug.attachments");
-		Route::get("/screenshots", [BugController::class, "screenshots"])->name("bug.screenshots");
-		Route::get("/comments", [BugController::class, "comments"])->name("bug.comments");
+	// Bug prefixed routes
+	Route::prefix('bugs/{bug}')->group(function () {
+		Route::apiResource('/comments', CommentController::class);
+		Route::apiResource('/screenshots', ScreenshotController::class);
+		Route::apiResource('/attachments', AttachmentController::class);
+		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
+		Route::get("/users", [BugController::class, "users"])->name("bug.users");
+		Route::delete("/users/{user}", [BugController::class, "removeUser"])->name("bug.remove-user");
 	});
 
-	Route::get('/screenshot/{screenshot}/download', [ScreenshotController::class, "download"])->name("screenshot.download");
-	Route::get('/attachment/{attachment}/download', [AttachmentController::class, "download"])->name("attachment.download");
-	Route::get('/image/{image}/download', [ImageController::class, "download"])->name("image.download");
+	// User resource routes
+	Route::apiResource('/users', UserController::class);
 
-	Route::prefix('invitation')->group(function () {
-		Route::get("/status", [InvitationController::class, "statusIndex"])->name("invitation.statusIndex");
-		Route::get("/status/{status}", [InvitationController::class, "statusShow"])->name("invitation.statusShow");
+	// User prefixed routes
+	Route::prefix('/users/{user}')->group(function () {
+		// Route for the chrome extension to check if the visited website has a respective project
+		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
 
-		Route::get("/{invitation}", [InvitationController::class, "show"])->name("invitation.show");
-		Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
-		Route::post("/{invitation}/accept", [InvitationController::class, "accept"])->name("invitation.accept");
-		Route::post("/{invitation}/decline", [InvitationController::class, "decline"])->name("invitation.decline");
+		// Invitation prefixed routes
+		Route::prefix('invitations')->group(function () {
+			Route::get("/", [InvitationController::class, "index"])->name("user.invitation.index");
+			Route::get("/{invitation}", [InvitationController::class, "show"])->name("user.invitation.show");
+			Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("user.invitation.destroy");
+			Route::get("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
+			Route::get("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
+		});
 	});
 
-	Route::apiResources(
-		[
-			'company' => CompanyController::class,
-			'project' => ProjectController::class,
-			'status' => StatusController::class,
-			'bug' => BugController::class,
-			'image' => ImageController::class,
-			'role' => RoleController::class,
-			'priority' => PriorityController::class,
-			'attachment' => AttachmentController::class,
-			'screenshot' => ScreenshotController::class,
-			'comment' => CommentController::class,
-		],
-		// ["missing" => (function (Request $request) {
-		// 	return response()->json([
-		// 		"errors" => [
-		// 			"status" => 404,
-		// 			"source" => $request->getPathInfo(),
-		// 			"detail" => "Resource with specified id not found."
-		// 		]
-		// 	], 404);
-		// })]
-	);
+	/*
+	|--------------------------------------------------------------------------
+	| Administrative API Routes
+	|--------------------------------------------------------------------------
+	*/
+	Route::prefix('/administration')->group(function () {
+		Route::apiResources(
+			[
+				'roles' => RoleController::class,
+				'priorities' => PriorityController::class,
+			]
+		);
+	});
 });

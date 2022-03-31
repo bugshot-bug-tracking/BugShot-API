@@ -2,11 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CommentRequest;
-use App\Http\Resources\CommentResource;
-use App\Models\Comment;
+// Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+
+// Resources
+use App\Http\Resources\CommentResource;
+
+// Services
+use App\Services\CommentService;
+
+// Models
+use App\Models\Comment;
+use App\Models\Bug;
+
+// Requests
+use App\Http\Requests\CommentStoreRequest;
+use App\Http\Requests\CommentUpdateRequest;
+
+// Events
+use App\Events\CommentSent;
 
 /**
  * @OA\Tag(
@@ -16,13 +33,42 @@ use Illuminate\Support\Facades\Auth;
 class CommentController extends Controller
 {
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/comment",
+	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="All comments.",
 	 *	operationId="allComments",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -50,35 +96,56 @@ class CommentController extends Controller
 	 *)
 	 *
 	 **/
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index()
+	public function index(Bug $bug)
 	{
-		return CommentResource::collection(Comment::all());
+		// Check if the user is authorized to list the comments of the bug
+		$this->authorize('viewAny', [Comment::class, $bug->project]);
+
+		return CommentResource::collection($bug->comments);
 	}
 
 	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  CommentStoreRequest  $request
+	 * @return Response
+	 */
+	/**
 	 * @OA\Post(
-	 *	path="/comment",
+	 *	path="/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="Store one comment.",
 	 *	operationId="storeComment",
 	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
-	 *
+	 *	 @OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
 	 *                  property="content",
@@ -114,30 +181,64 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(CommentRequest $request)
+	public function store(CommentStoreRequest $request, Bug $bug)
 	{
-		$inputs = $request->all();
-		$inputs['user_id'] = Auth::id();
-		$comment = Comment::create($inputs);
+		// Check if the user is authorized to create the comment
+		$this->authorize('create', [Comment::class, $bug->project]);
+
+		// Check if the the request already contains a UUID for the comment
+		$id = $this->setId($request);
+
+		// Store the new comment in the database
+		$comment = $bug->comments()->create([
+			'id' => $id,
+			'content' => $request->content,
+			'user_id' => Auth::id()
+		]);
+
+		CommentSent::dispatch($comment);
+
 		return new CommentResource($comment);
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Comment  $comment
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
-	 *	path="/comment/{id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Show one comment.",
 	 *	operationId="showComment",
 	 *	security={ {"sanctum": {} }},
-	 *
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -170,27 +271,53 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(Comment $comment)
+	public function show(Bug $bug, Comment $comment)
 	{
+		// Check if the user is authorized to view the comment
+		$this->authorize('view', [Comment::class, $bug->project]);
+
 		return new CommentResource($comment);
 	}
 
 	/**
-	 * @OA\Post(
-	 *	path="/comment/{id}",
+	 * Update the specified resource in storage.
+	 *
+	 * @param  CommentUpdateRequest  $request
+	 * @param  Comment  $comment
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Update a comment.",
 	 *	operationId="updateComment",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -211,16 +338,6 @@ class CommentController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="bug_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The message",
 	 *                  property="content",
@@ -260,29 +377,54 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function update(CommentRequest $request, Comment $comment)
+	public function update(CommentUpdateRequest $request, Bug $bug, Comment $comment)
 	{
+		// Check if the user is authorized to update the comment
+		$this->authorize('update', [$comment, $bug->project]);
+
 		$comment->update($request->all());
+
 		return new CommentResource($comment);
 	}
 
 	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Comment  $comment
+	 * @return Response
+	 */
+	/**
 	 * @OA\Delete(
-	 *	path="/comment/{id}",
+	 *	path="/bugs/{bug_id}/comments/{comment_id}",
 	 *	tags={"Comment"},
 	 *	summary="Delete a comment.",
 	 *	operationId="deleteComment",
 	 *	security={ {"sanctum": {} }},
-
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
-	 *		name="id",
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="comment_id",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -311,15 +453,13 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
-	 */
-	public function destroy(Comment $comment)
+	public function destroy(Bug $bug, Comment $comment, CommentService $commentService)
 	{
-		$val = $comment->delete();
+		// Check if the user is authorized to delete the comment
+		$this->authorize('update', [$comment, $comment->bug->project]);
+
+		$val = $commentService->delete($comment);
+
 		return response($val, 204);
 	}
 }

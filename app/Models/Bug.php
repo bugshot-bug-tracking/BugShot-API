@@ -4,25 +4,41 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Bug extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+
+	/**
+     * The "type" of the auto-incrementing ID.
+     * 
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     * 
+     * @var bool
+     */
+    public $incrementing = false;
 
 	/**
 	 * @OA\Property(
 	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="project_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
 	 *
@@ -54,8 +70,8 @@ class Bug extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="status_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the status to which the object belongs."
 	 * )
 	 *
@@ -96,6 +112,20 @@ class Bug extends Model
 	 *  nullable=true,
 	 * 	description="The resolution of the display."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="order_number",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The order number."
+	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="ai_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="Auto-Incrementing Id."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="deadline",
@@ -128,42 +158,74 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "operating_system", "browser", "selector", "resolution", "deadline"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "operating_system", "browser", "selector", "resolution", "deadline"];
 
 	protected $touches = ["project", "status"];
 
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['screenshots', 'attachments', 'comments'];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function project()
 	{
 		return $this->belongsTo(Project::class);
 	}
 
-	public function user()
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function creator()
 	{
 		return $this->belongsTo(User::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'bug_user_roles')->withPivot('role_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function status()
 	{
 		return $this->belongsTo(Status::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function priority()
 	{
 		return $this->belongsTo(Priority::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function screenshots()
 	{
 		return $this->hasMany(Screenshot::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function attachments()
 	{
 		return $this->hasMany(Attachment::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
 	public function comments()
 	{
-		return $this->hasMany(Comment::class);
+		return $this->hasMany(Comment::class)->orderBy('created_at');
 	}
 }

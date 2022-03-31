@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Screenshot extends Model
 {
-	use HasFactory;
+	use HasFactory, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -21,8 +22,8 @@ class Screenshot extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="bug_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the but to which the object belongs."
 	 * )
 	 *
@@ -72,6 +73,13 @@ class Screenshot extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="selector",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The selector of the marker."
+	 * )
+	 * 
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -94,10 +102,13 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "designation", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
+	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y", "selector"];
 
 	protected $touches = ["bug"];
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);

@@ -15,8 +15,8 @@ class CompanyUserRole extends Model
 	/**
 	 * @OA\Property(
 	 * 	property="company_id",
-	 * 	type="integer",
-	 *  format="int64",
+	 * 	type="string",
+	 *  maxLength=255,
 	 * 	description="The id of the company."
 	 * )
 	 *
@@ -40,16 +40,25 @@ class CompanyUserRole extends Model
 
 	public $timestamps = false;
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function company()
 	{
 		return $this->belongsTo(Company::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function user()
 	{
 		return $this->belongsTo(User::class);
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
 	public function role()
 	{
 		return $this->belongsTo(Role::class);
