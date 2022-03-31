@@ -26,8 +26,9 @@ class SendinblueController extends Controller
 			'Accept' => 'application/json',
 			'Content-Type' => 'application/json',
 			'api-key' => config('app.sendinblue_v3_api_key')
-		])->put(config('app.sendinblue_v3_api_url') . '/contacts/' . $request->email, [
+		])->put(config('app.sendinblue_v3_api_url') . '/contacts/' . urlencode($request->email), [
 			'attributes' => [
+				'EMAIL' => $request->email,
 				'BUGS' => $numberOfBugs
 			]
 		]);
@@ -39,7 +40,7 @@ class SendinblueController extends Controller
                 'Content-Type' => 'application/json',
                 'ma-key' => config('app.sendinblue_ma_key')
             ])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
-
+				'email' => $user->email,
                 'event' => 'transmited_bugs_figure'
             ]);
         }
