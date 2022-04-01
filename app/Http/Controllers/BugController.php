@@ -321,8 +321,9 @@ class BugController extends Controller
 		$order_number = $status->bugs->isEmpty() ? 0 : $status->bugs->max('order_number') + 1;
 
 		// Determine the number of bugs in the project to generate the $ai_id
-		$numberOfBugs = $status->project->bugs()->withTrashed()->count();
-		$ai_id = $status->project->bugs()->withTrashed()->isEmpty() ? 0 : $numberOfBugs + 1;
+		$allBugsQuery = $status->project->bugs()->withTrashed();
+		$numberOfBugs = $allBugsQuery->count();
+		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
 		
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
@@ -987,11 +988,11 @@ class BugController extends Controller
 			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
 
 			// Descrease all the order numbers that were greater than the original bug order number
-			// foreach($originalStatusBugs as $originalStatusBug) {
-			// 	$originalStatusBug->update([
-			// 		"order_number" => $originalStatusBug->order_number - 1
-			// 	]);
-			// }
+			foreach($originalStatusBugs as $originalStatusBug) {
+				$originalStatusBug->update([
+					"order_number" => $originalStatusBug->order_number - 1
+				]);
+			}
 
 			$newStatus = Status::find($request->status_id);
 			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
