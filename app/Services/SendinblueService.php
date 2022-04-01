@@ -27,37 +27,54 @@ class SendinblueService
     }
 
     // Create a contact via the sendinblue API
-    public function createContact(User $user, $updateEnabled, $listIds) 
+    public function createContact(User $user, $attributes, $emailBlacklisted, $smsBlacklisted, $listIds, $updateEnabled, $smtpBlacklistSender) 
     {
         $header = $this->buildHeader([
             'api-key' => $this->sendinblueApiKey
         ]);
 
         $response = Http::withHeaders($header)->post($this->sendiblueV3ApiUrl . '/contacts', [
-			'attributes' => [
-				'VORNAME' => $user->first_name,
-				'NACHNAME' => $user->last_name
-			],
-			'email' => $user->email,
+            'email' => $user->email,
+			'attributes' => $attributes,
+            'emailBlacklisted' => $emailBlacklisted,
+            'smsBlacklisted' => $smsBlacklisted,
+            'listIds' => $listIds,
 			'updateEnabled' => $updateEnabled,
-			'listIds' => $listIds
+			'smtpBlacklistSender' => $smtpBlacklistSender
 		]);
 
         return $response;
     }
 
+    // Update a contact via the sendinblue API
+    public function updateContact(User $user, $attributes, $emailBlacklisted, $smsBlacklisted, $listIds, $unlinkListIds, $smtpBlacklistSender) 
+    {
+        $header = $this->buildHeader([
+            'api-key' => $this->sendinblueApiKey
+        ]);
+    
+        $response = Http::withHeaders($header)->post($this->sendiblueV3ApiUrl . '/contacts/' . $user->email, [
+            'attributes' => $attributes,
+            'emailBlacklisted' => $emailBlacklisted,
+            'smsBlacklisted' => $smsBlacklisted,
+            'listIds' => $listIds,
+            'unlinkListIds' => $unlinkListIds,
+            'smtpBlacklistSender' => $smtpBlacklistSender
+        ]);
+
+        return $response;
+    }
+    
+
     // Trigger the given event on the sendinblue API
-    public function triggerEvent($event, User $user) 
+    public function triggerEvent($event, User $user, $properties) 
     {
         $header = $this->buildHeader([
             'ma-key' => $this->sendinblueMaKey
         ]);
 
 		$response = Http::withHeaders($header)->post($this->sendiblueV2ApiUrl . '/trackEvent', [
-			'properties' => [
-				'firstname' => $user->first_name,
-				'lastname' => $user->last_name
-			],
+			'properties' => $properties,
 			'email' => $user->email,
 			'event' => $event
 		]);
