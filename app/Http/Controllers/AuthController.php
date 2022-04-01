@@ -556,11 +556,32 @@ class AuthController extends Controller
 		$user = User::find($id);
 		
 		// Create the corresponding contact in sendinblue
-		$response = $sendinblueService->createContact($user, true, array(4, 5));
+		$response = $sendinblueService->createContact(
+			$user, 
+			array(
+				'VORNAME' => $user->first_name,
+				'NACHNAME' => $user->last_name
+			),
+			false,
+			false,
+			array(
+				4, 
+				5
+			),
+			true,
+			array()
+		);
 		
 		// Trigger the corresponding sendinblue event if the contact creation was successful
 		if($response->successful()) {
-			$response = $sendinblueService->triggerEvent('registered_for_betatest', $user);
+			$response = $sendinblueService->triggerEvent(
+				'registered_for_betatest', 
+				$user, 
+				array(
+					'firstname' => $user->first_name,
+					'lastname' => $user->last_name
+				)
+			);
 		}
 
 		$user = User::find($id);

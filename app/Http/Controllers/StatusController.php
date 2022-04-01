@@ -362,7 +362,7 @@ class StatusController extends Controller
 	 * @return Response
 	 */
 	/**
-	 * @OA\Put(
+	 * @OA\Patch(
 	 *	path="/projects/{project_id}/statuses/{status_id}",
 	 *	tags={"Status"},
 	 *	summary="Update a status.",
@@ -458,7 +458,7 @@ class StatusController extends Controller
 	 * )
 	 **/
 	public function update(StatusUpdateRequest $request, Project $project, Status $status)
-	{
+	{	
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
@@ -468,11 +468,10 @@ class StatusController extends Controller
 		}
 
 		// Update the status
-		$status->update(array_filter([
-			"designation" => $request->designation,
-			"project_id" => $project->id,
-			"order_number" => $request->order_number 
-		]));
+		$status->update($request->all());
+		$status->update([
+			"project_id" => $project->id
+		]);
 
 		return new StatusResource($status);
 	}

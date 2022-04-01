@@ -498,7 +498,8 @@ class MarkerController extends Controller
 		// Check if the user is authorized to update the marker
 		$this->authorize('update', [$marker, $screenshot->bug->project]);
 
-		$marker->update(array_filter($request->all()));
+		// Update the marker
+		$marker->update($request->all());
 
 		return new MarkerResource($marker);
     }

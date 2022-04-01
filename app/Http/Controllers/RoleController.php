@@ -320,7 +320,8 @@ class RoleController extends Controller
 	 **/
 	public function update(RoleUpdateRequest $request, Role $role)
 	{
-		$role->update(array_filter($request->all()));
+		$role->update($request->all());
+
 		return new RoleResource($role);
 	}
 

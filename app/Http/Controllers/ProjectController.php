@@ -608,12 +608,11 @@ class ProjectController extends Controller
 		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the project
-		$project->update(array_filter([
+		$project->update($request->all());
+		$project->update([
 			"company_id" => $company->id,
-			"designation" => $request->designation,
-			"color_hex" => $color_hex,
-			"url" => $request->url
-		]));
+			"color_hex" => $color_hex
+		]);
 
 		return new ProjectResource($project);
 	}
