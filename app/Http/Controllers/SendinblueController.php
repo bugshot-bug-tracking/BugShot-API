@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Http;
 // Models
 use App\Models\User;
 
+// Services
+use App\Services\SendinblueService;
+
 class SendinblueController extends Controller
 {
     /**
@@ -16,34 +19,32 @@ class SendinblueController extends Controller
 	 *
 	 * @return Response
 	 */
-	public function getNumberOfBugs(Request $request)
+	public function getNumberOfBugs(Request $request, SendinblueService $sendinblueService)
 	{
         $user = User::where('email', $request->email)->first();
         $numberOfBugs = $user->bugs()->count();
 
-		// Update the corresponding sendiblue contact
-		$response = Http::withHeaders([
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json',
-			'api-key' => config('app.sendinblue_v3_api_key')
-		])->put(config('app.sendinblue_v3_api_url') . '/contacts/' . urlencode($request->email), [
-			'attributes' => [
-				'EMAIL' => $request->email,
+		// Update the corresponding contact in sendinblue
+		$response = $sendinblueService->updateContact(
+			$user, 
+			array(
 				'BUGS' => $numberOfBugs
-			]
-		]);
-
-		// Trigger the corresponding sendinblue event and send the number of bugs
-        if($response->successful()) {
-            $response = Http::withHeaders([
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-                'ma-key' => config('app.sendinblue_ma_key')
-            ])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
-				'email' => $user->email,
-                'event' => 'transmited_bugs_figure'
-            ]);
-        }
+			),
+			false,
+			false,
+			array(),
+			array(),
+			array()
+		);
+				
+		// Trigger the corresponding sendinblue event if the contact creation was successful
+		if($response->successful()) {
+			$response = $sendinblueService->triggerEvent(
+				'transmited_bugs_figure', 
+				$user, 
+				array()
+			);
+		}
 
 		return $response;
 	}
