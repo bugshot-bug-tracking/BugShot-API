@@ -194,8 +194,6 @@ class CommentController extends Controller
             $request->content,
             $matches
         );
-		
-dd($matches);
 
 		// Store the new comment in the database
 		$comment = $bug->comments()->create([
@@ -390,7 +388,7 @@ dd($matches);
 		// Check if the user is authorized to update the comment
 		$this->authorize('update', [$comment, $bug->project]);
 
-		$comment->update(array_filter($request->all()));
+		$comment->update($request->all());
 
 		return new CommentResource($comment);
 	}

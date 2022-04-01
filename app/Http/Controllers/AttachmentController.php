@@ -395,10 +395,11 @@ class AttachmentController extends Controller
 
 		Storage::delete($attachment->url);
 
-		$attachment->update(array_filter([
+		// Update the attachment
+		$attachment->update([
 			"designation" => $request->file->getClientOriginalName(),
 			"url" => $savedPath,
-		]));
+		]);
 
 		return new AttachmentResource($attachment);
 	}

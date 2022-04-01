@@ -156,6 +156,7 @@ class PriorityController extends Controller
 	public function store(PriorityStoreRequest $request)
 	{
 		$priority = Priority::create($request->all());
+		
 		return new PriorityResource($priority);
 	}
 
@@ -320,7 +321,9 @@ class PriorityController extends Controller
 	 **/
 	public function update(PriorityUpdateRequest $request, Priority $priority)
 	{
-		$priority->update(array_filter($request->all()));
+		// Update the priority
+		$priority->update($request->all());
+
 		return new PriorityResource($priority);
 	}
 

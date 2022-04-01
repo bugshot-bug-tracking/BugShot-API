@@ -561,10 +561,10 @@ class CompanyController extends Controller
 		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
-		$company->update(array_filter([
-            'designation' => $request->designation,
+		$company->update($request->all());
+		$company->update([
 			'color_hex' => $color_hex
-        ]));
+		]);
 		
 		return new CompanyResource($company);
 	}

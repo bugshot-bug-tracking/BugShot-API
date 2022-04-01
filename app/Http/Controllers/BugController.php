@@ -318,11 +318,11 @@ class BugController extends Controller
 		$id = $this->setId($request);
 		
 		// Get the max order number in this status and increase it by one
-		$order_number = $status->bugs->max('order_number') + 1;
+		$order_number = $status->bugs->isEmpty() ? 0 : $status->bugs->max('order_number') + 1;
 
 		// Determine the number of bugs in the project to generate the $ai_id
 		$numberOfBugs = $status->project->bugs()->withTrashed()->count();
-		$ai_id = $numberOfBugs + 1;
+		$ai_id = $status->project->bugs()->withTrashed()->isEmpty() ? 0 : $numberOfBugs + 1;
 		
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
@@ -646,21 +646,11 @@ class BugController extends Controller
 		}
 
 		// Update the bug
-		$bug->update(array_filter([
+		$bug->update($request->all());
+		$bug->update([
 			"project_id" => $status->project_id,
-			"status_id" => $request->status_id,
-			"priority_id" => $request->priority_id,
-			"designation" => $request->designation,
-			"description" => $request->description,
-			"url" => $request->url,
-			"operating_system" => $request->operating_system,
-			"browser" => $request->browser,
-			"selector" => $request->selector,
-			"resolution" => $request->resolution,
 			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
-			"order_number" => $request->order_number,
-			"ai_id" => $request->ai_id
-		]));
+		]);
 
 		return new BugResource($bug);
 	}

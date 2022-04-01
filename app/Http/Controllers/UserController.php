@@ -402,12 +402,10 @@ class UserController extends Controller
 		}
 
 		// Update the user
-		$user->update(array_filter([
-			'first_name' => $request->first_name,
-			'last_name' => $request->last_name,
-			'email' => $request->email,
+		$user->update($request->all());
+		$user->update([
 			'password' => $request->password ? Hash::make($request->password) : null
-		]));
+		]);
 
 		// Update the corresponding Stripe customer
 		$response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
