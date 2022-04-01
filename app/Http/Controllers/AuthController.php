@@ -23,6 +23,9 @@ use App\Notifications\PasswordResetSuccessfulNotification;
 // Resources
 use App\Http\Resources\UserResource;
 
+// Services
+use App\Services\SendinblueService;
+
 // Models
 use App\Models\User;
 
@@ -548,42 +551,16 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(CustomEmailVerificationRequest $request, $id) {
+	public function verifyEmail(CustomEmailVerificationRequest $request, $id, SendinblueService $sendinblueService) {
 		$request->fulfill();
 		$user = User::find($id);
 		
 		// Create the corresponding contact in sendinblue
-		$response = Http::withHeaders([
-			'Accept' => 'application/json',
-			'Content-Type' => 'application/json',
-			'api-key' => config('app.sendinblue_v3_api_key')
-		])->post(config('app.sendinblue_v3_api_url') . '/contacts', [
-			'attributes' => [
-				'VORNAME' => $user->first_name,
-				'NACHNAME' => $user->last_name
-			],
-			'email' => $user->email,
-			'updateEnabled' => true,
-			'listIds' => [
-				4,
-				5
-			]
-		]);
-
+		$response = $sendinblueService->createContact($user, true, array(4, 5));
+		
 		// Trigger the corresponding sendinblue event if the contact creation was successful
 		if($response->successful()) {
-			Http::withHeaders([
-				'Accept' => 'application/json',
-				'Content-Type' => 'application/json',
-				'ma-key' => config('app.sendinblue_ma_key')
-			])->post(config('app.sendinblue_v2_api_url') . '/trackEvent', [
-				'properties' => [
-					'firstname' => $user->first_name,
-					'lastname' => $user->last_name
-				],
-				'email' => $user->email,
-				'event' => 'registered_for_betatest'
-			]);
+			$response = $sendinblueService->triggerEvent('registered_for_betatest', $user);
 		}
 
 		$user = User::find($id);
