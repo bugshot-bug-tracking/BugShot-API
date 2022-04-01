@@ -992,7 +992,7 @@ class ProjectController extends Controller
 				'markers' => $markers
 			];
 		});
-
+		
 		return MarkerResource::collection($bugs);
 	}
 
