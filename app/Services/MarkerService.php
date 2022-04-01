@@ -11,7 +11,7 @@ class MarkerService
         // Create a new marker
 		$marker = $screenshot->markers()->create([
             "id" => (string) Str::uuid(),
-            "screenshot_id" => $marker->screenshot_id,
+            "screenshot_id" => $screenshot->id,
             "position_x" => $marker->position_x,
             "position_y" => $marker->position_y,
             "web_position_x" => $marker->web_position_x,
