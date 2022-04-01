@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 // Models
 use App\Models\User;
@@ -21,6 +21,8 @@ class SendinblueController extends Controller
 	 */
 	public function getNumberOfBugs(Request $request, SendinblueService $sendinblueService)
 	{
+		Log::info($request);
+	
         $user = User::where('email', $request->email)->first();
         $numberOfBugs = $user->bugs()->count();
 

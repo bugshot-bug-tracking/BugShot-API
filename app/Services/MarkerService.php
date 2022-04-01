@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Services;
+use Illuminate\Support\Str;
 
 class MarkerService
 {
     // Store a newly created marker on the server.
-    public function store($screenshot, $marker, $id)
+    public function store($screenshot, $marker)
     {
         // Create a new marker
 		$marker = $screenshot->markers()->create([
-            "id" => $id,
+            "id" => (string) Str::uuid(),
             "screenshot_id" => $marker->screenshot_id,
             "position_x" => $marker->position_x,
             "position_y" => $marker->position_y,
