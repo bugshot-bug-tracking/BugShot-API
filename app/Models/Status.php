@@ -57,7 +57,9 @@ class Status extends Model
 	 * 
 	 * @OA\Property(
 	 * 	property="permanent",
-	 * 	type="boolean"
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The definition of the status being done or in backlog."
 	 * )
 	 *
 	 * @OA\Property(

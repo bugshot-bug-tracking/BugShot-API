@@ -71,13 +71,6 @@ class Screenshot extends Model
 	 *  nullable=true,
 	 * 	description="The y coordinate value of the marker relative to web page top."
 	 * )
-	 *
-	 * @OA\Property(
-	 * 	property="selector",
-	 * 	type="string",
-	 *  maxLength=255,
-	 * 	description="The selector of the marker."
-	 * )
 	 * 
 	 * @OA\Property(
 	 * 	property="created_at",
@@ -102,7 +95,7 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y", "selector"];
+	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
 
 	protected $touches = ["bug"];
 

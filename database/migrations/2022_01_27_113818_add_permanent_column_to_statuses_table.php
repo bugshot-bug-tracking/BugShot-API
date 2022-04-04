@@ -15,7 +15,7 @@ class AddPermanentColumnToStatusesTable extends Migration
     {
         Schema::table('statuses', function (Blueprint $table) {
             $table->after('designation', function ($table) {
-                $table->boolean('permanent')->default(0);
+                $table->string('permanent')->nullable();
             });
         });
     }
@@ -28,7 +28,7 @@ class AddPermanentColumnToStatusesTable extends Migration
     public function down()
     {
         Schema::table('statuses', function (Blueprint $table) {
-			$table->boolean('permanent');
+			$table->string('permanent');
         });
     }
 }
