@@ -976,8 +976,7 @@ class ProjectController extends Controller
 					return [
 						'screenshot_id' => $screenshot->id ,
 						'x' => $screenshot->web_position_x,
-						'y' => $screenshot->web_position_y,
-						'selector' => $screenshot->selector
+						'y' => $screenshot->web_position_y
 					];
 				});
 		

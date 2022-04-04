@@ -259,10 +259,6 @@ class BugController extends Controller
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
-	 * 	   					@OA\Property(
-	 *              		    property="selector",
-	 *              		    type="string"
-	 *              		),
 	 * 					)
 	 *              ),
 	 *   			@OA\Property(

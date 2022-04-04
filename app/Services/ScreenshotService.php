@@ -31,8 +31,7 @@ class ScreenshotService
 			"position_x" => $screenshot->position_x,
 			"position_y" => $screenshot->position_y,
 			"web_position_x" =>  $screenshot->web_position_x,
-			"web_position_y" =>  $screenshot->web_position_y,
-            "selector" =>  $screenshot->selector
+			"web_position_y" =>  $screenshot->web_position_y
 		]);
 
         return $screenshot;
