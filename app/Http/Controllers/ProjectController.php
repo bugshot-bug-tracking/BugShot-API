@@ -15,7 +15,7 @@ use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
-use App\Http\Resources\MarkerResource;
+use App\Http\Resources\ProjectMarkerResource;
 
 // Services
 use App\Services\ImageService;
@@ -338,7 +338,7 @@ class ProjectController extends Controller
 				"designation" => $status,
 				"order_number" => $key++,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 3 ? true : false // Check wether the status is backlog or done
+				"permanent" => $key == 1 || $key == 3 ? ($key > 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
 			]);
 		}
 
@@ -964,35 +964,7 @@ class ProjectController extends Controller
 		// Get the bugs that belong to the given url
 		$bugs = $project->bugs->where("url", "=", $request->url);
 
-		// Get the corresponding screenshots and map everything correctly
-		$bugs = $bugs->map(function ($bug) {
-			$markers = $bug->screenshots
-				->whereNotNull("web_position_x")
-				->whereNotNull("web_position_y")
-				->filter(function ($value) {
-					return $value->web_position_x > 0 || $value->web_position_y > 0;
-				})
-				->map(function ($screenshot) {
-					return [
-						'screenshot_id' => $screenshot->id ,
-						'x' => $screenshot->web_position_x,
-						'y' => $screenshot->web_position_y
-					];
-				});
-		
-			return [
-				'bug_id' => $bug->id,
-				'designation' => $bug->designation,
-				'priority_id' => $bug->priority_id,
-				'status' => [
-					'id' => $bug->status_id,
-					'done' => $bug->status->designation == 'Done' ? true : false
-				],
-				'markers' => $markers
-			];
-		});
-		
-		return MarkerResource::collection($bugs);
+		return ProjectMarkerResource::collection($bugs);
 	}
 
 	/**
