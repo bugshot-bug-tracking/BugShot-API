@@ -32,11 +32,25 @@
                 font-weight: 600;
             }
         </style>
-        <title>BugShot - Invitation received</title>
+        <title>BugShot - Einladung erhalten</title>
     </head>
     <body>
         <h1>Invitation:</h1>
-        <p>Hi! {{ $entryMessage }}. As you are not a part of our community yet, feel free to register and accept/decline the invitation.</p>
+        <p>Hallo {{name}},<br />
+        <br />
+        du wurdest von Daniel Michel zu dem Projekt Zeitraum eingeladen.<br />
+        Um die Einladung anzunehmen musst Du dich auf BugShot mit dieser E-Mail-Adresse registrieren.<br />
+        Mit einem Klick auf den unten stehenden Button kommst Du direkt zur Registrierung.<br />
+        <br />
+        Button [JETZT REGISTRIEREN]<br />
+<br />
+Falls das nicht klappt, kannst Du auch einfach die folgende URL https://app.bugshot.de/register in deinen Browser kopieren.<br />
+<br />
+Fehlerfreie Grüße,<br />
+dein BugShot Team<br />
+<br />
+
+        {{ $entryMessage }}</p>
         <div class="action-buttons-wrapper">
             <a href="{{ $registerUrl }}" type="button">Register</a>
         </div>
