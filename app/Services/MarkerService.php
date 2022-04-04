@@ -15,6 +15,7 @@ class MarkerService
             "position_x" => $marker->position_x,
             "position_y" => $marker->position_y,
             "web_position_x" => $marker->web_position_x,
+            "web_position_y" => $marker->web_position_y,
             "target_x" => $marker->target_x,
             "target_y" => $marker->target_y,
             "target_height" => $marker->target_height,
