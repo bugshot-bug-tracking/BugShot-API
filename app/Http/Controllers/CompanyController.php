@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -21,7 +23,8 @@ use App\Models\User;
 use App\Models\CompanyUserRole;
 
 // Requests
-use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\CompanyStoreRequest;
+use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\InvitationRequest;
 
 /**
@@ -34,7 +37,7 @@ class CompanyController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -76,6 +79,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -157,9 +165,9 @@ class CompanyController extends Controller
         if($timestamp == NULL) {
             $companies = $this->user->companies->sortBy('designation');
         } else {
-            $companies = $this->user->companies->where([
-                ["companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
-            ])->sortBy('designation');
+            $companies = $this->user->companies
+				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+				->sortBy('designation');
         }
 
 		return CompanyResource::collection($companies);
@@ -168,8 +176,8 @@ class CompanyController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  CompanyStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -186,6 +194,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -209,6 +222,23 @@ class CompanyController extends Controller
 	 *                  description="The base64 string of the image belonging to the company (optional)",
 	 *                  property="base64",
 	 *                  type="string",
+	 *              ),
+	 *    			@OA\Property(
+	 *                  property="invitations",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The invited user email.",
+	 *              		    property="target_email",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The invited user role.",
+	 *              		    property="role_id",
+	 *              		    type="integer",
+	 *              		    format="int64"
+	 *              		),
+	 * 					)
 	 *              ),
 	 *              required={"designation"}
 	 *          )
@@ -240,7 +270,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CompanyRequest $request, ImageService $imageService)
+	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
 	{	
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
@@ -260,6 +290,14 @@ class CompanyController extends Controller
 			$company->image()->save($image);
 		}
 
+		// Send the invitations
+		$invitations = $request->invitations;
+		if($invitations != NULL) {
+			foreach($invitations as $invitation) {
+				$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
+			}
+		}
+
 		// Store the respective role
 		$this->user->companies()->attach($company->id, ['role_id' => 1]);
 
@@ -269,8 +307,8 @@ class CompanyController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -287,6 +325,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -315,6 +358,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -394,9 +442,9 @@ class CompanyController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CompanyRequest  $request
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  CompanyUpdateRequest  $request
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -413,6 +461,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 
@@ -487,7 +540,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(CompanyRequest $request, Company $company, ImageService $imageService)
+	public function update(CompanyUpdateRequest $request, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
@@ -503,15 +556,15 @@ class CompanyController extends Controller
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
-
+	
 		// Apply default color if color_hex is null
-		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
+		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
+		$company->update($request->all());
 		$company->update([
-            'designation' => $request->designation,
 			'color_hex' => $color_hex
-        ]);
+		]);
 		
 		return new CompanyResource($company);
 	}
@@ -519,8 +572,8 @@ class CompanyController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -537,6 +590,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -585,8 +643,8 @@ class CompanyController extends Controller
 	/**
 	 * Display the image that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -603,6 +661,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -653,8 +716,8 @@ class CompanyController extends Controller
 	/**
 	 * Display a list of users that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -671,6 +734,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -727,8 +795,8 @@ class CompanyController extends Controller
 	/**
 	 * Remove a user from the company
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -745,6 +813,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -800,8 +873,8 @@ class CompanyController extends Controller
 	/**
 	 * Display a list of invitations that belongs to the company.
 	 *
-	 * @param  \App\Models\Company  $company
-	 * @return \Illuminate\Http\Response
+	 * @param  Company  $company
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -818,6 +891,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -880,6 +958,11 @@ class CompanyController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(

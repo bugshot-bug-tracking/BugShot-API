@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
 // Resources
@@ -10,13 +11,15 @@ use App\Http\Resources\ScreenshotResource;
 
 // Services
 use App\Services\ScreenshotService;
+use App\Services\MarkerService;
 
 // Models
 use App\Models\Bug;
 use App\Models\Screenshot;
 
 // Requests
-use App\Http\Requests\ScreenshotRequest;
+use App\Http\Requests\ScreenshotStoreRequest;
+use App\Http\Requests\ScreenshotUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -28,7 +31,7 @@ class ScreenshotController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -47,6 +50,11 @@ class ScreenshotController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
@@ -56,7 +64,11 @@ class ScreenshotController extends Controller
 	 *			ref="#/components/schemas/Bug/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -95,8 +107,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  ScreenshotStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -113,6 +125,11 @@ class ScreenshotController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -154,6 +171,84 @@ class ScreenshotController extends Controller
 	 *                  property="base64",
 	 *                  type="string"
 	 *              ),
+	 *   			@OA\Property(
+	 *                  property="markers",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *  					@OA\Property(
+	 *              		    property="position_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_height",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_width",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="scroll_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="scroll_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="screenshot_height",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="screenshot_width",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 * 	   					@OA\Property(
+	 *              		    property="target_full_selector",
+	 *              		    type="string"
+	 *              		),
+     * 	   					@OA\Property(
+	 *              		    property="target_short_selector",
+	 *              		    type="string"
+	 *              		),
+     * 	   					@OA\Property(
+	 *              		    property="target_html",
+	 *              		    type="string"
+	 *              		),
+	 * 					)
+	 *              ),
 	 *              required={"base64"}
 	 *          )
 	 *      )
@@ -184,12 +279,21 @@ class ScreenshotController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(ScreenshotRequest $request, Bug $bug, ScreenshotService $screenshotService)
+	public function store(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService)
 	{
 		// Check if the user is authorized to create the screenshot
 		$this->authorize('create', [Screenshot::class, $bug->project]);
 
 		$screenshot = $screenshotService->store($bug, $request);
+
+		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
+		$markers = $request->markers;
+		if($markers != NULL) {
+			foreach($markers as $marker) {
+				$marker = (object) $marker;
+				$markerService->store($screenshot, $marker);
+			}
+		}
 
 		return new ScreenshotResource($screenshot);
 	}
@@ -197,8 +301,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -217,6 +321,11 @@ class ScreenshotController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
@@ -233,6 +342,11 @@ class ScreenshotController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Screenshot/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *	@OA\Response(
 	 *		response=200,
@@ -271,9 +385,9 @@ class ScreenshotController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\ScreenshotRequest  $request
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  ScreenshotUpdateRequest  $request
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -290,6 +404,11 @@ class ScreenshotController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -382,7 +501,7 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	public function update(ScreenshotRequest $request, Bug $bug, Screenshot $screenshot)
+	public function update(ScreenshotUpdateRequest $request, Bug $bug, Screenshot $screenshot)
 	{
 		// Check if the user is authorized to update the screenshot
 		$this->authorize('update', [Screenshot::class, $bug->project]);
@@ -399,13 +518,11 @@ class ScreenshotController extends Controller
 
 		Storage::delete($screenshot->url);
 
+		// Update the screenshot
+		$screenshot->update($request->all());
 		$screenshot->update([
 			"designation" => $request->file->getClientOriginalName(),
-			"url" => $savedPath,
-			"position_x" => $request->position_x,
-			"position_y" => $request->position_y,
-			"web_position_x" =>  $request->web_position_x,
-			"web_position_y" =>  $request->web_position_y,
+			"url" => $savedPath
 		]);
 
 		return new ScreenshotResource($screenshot);
@@ -414,8 +531,8 @@ class ScreenshotController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Screenshot  $screenshot
-	 * @return \Illuminate\Http\Response
+	 * @param  Screenshot  $screenshot
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -432,6 +549,11 @@ class ScreenshotController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -474,12 +596,17 @@ class ScreenshotController extends Controller
 	 *)
 	 *
 	 **/
-	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService)
+	public function destroy(Bug $bug, Screenshot $screenshot, ScreenshotService $screenshotService, MarkerService $markerService)
 	{
 		// Check if the user is authorized to delete the screenshot
 		$this->authorize('update', [Screenshot::class, $screenshot->bug->project]);
 
 		$val = $screenshotService->delete($screenshot);
+
+		// Delete the respective markers
+		foreach($screenshot->markers as $marker) {
+			$markerService->delete($marker);
+		}		
 
 		return response($val, 204);
 	}

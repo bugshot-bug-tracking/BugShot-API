@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,8 @@ use App\Models\Status;
 use App\Models\Project;
 
 // Requests
-use App\Http\Requests\StatusRequest;
+use App\Http\Requests\StatusStoreRequest;
+use App\Http\Requests\StatusUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -28,7 +30,7 @@ class StatusController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -47,6 +49,11 @@ class StatusController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
@@ -62,6 +69,11 @@ class StatusController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -120,7 +132,7 @@ class StatusController extends Controller
 		if($request->timestamp == NULL) {
             $statuses = $project->statuses;
         } else {
-            $statuses = $project->statuses->where(["statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp)]);
+            $statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
         }
 
 		return StatusResource::collection($statuses);
@@ -129,8 +141,8 @@ class StatusController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  StatusStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -147,6 +159,11 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -203,7 +220,7 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(StatusRequest $request, Project $project)
+	public function store(StatusStoreRequest $request, Project $project)
 	{
 		// Check if the user is authorized to create the status
 		$this->authorize('create', [Status::class, $project]);
@@ -227,8 +244,8 @@ class StatusController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -245,6 +262,11 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -271,6 +293,11 @@ class StatusController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -330,12 +357,12 @@ class StatusController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\StatusRequest  $request
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  StatusUpdateRequest  $request
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
-	 * @OA\Put(
+	 * @OA\Patch(
 	 *	path="/projects/{project_id}/statuses/{status_id}",
 	 *	tags={"Status"},
 	 *	summary="Update a status.",
@@ -349,6 +376,11 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -425,8 +457,8 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(StatusRequest $request, Project $project, Status $status)
-	{
+	public function update(StatusUpdateRequest $request, Project $project, Status $status)
+	{	
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
@@ -436,10 +468,9 @@ class StatusController extends Controller
 		}
 
 		// Update the status
+		$status->update($request->all());
 		$status->update([
-			"designation" => $request->designation,
-			"project_id" => $project->id,
-			"order_number" => $request->order_number 
+			"project_id" => $project->id
 		]);
 
 		return new StatusResource($status);
@@ -448,8 +479,8 @@ class StatusController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Status  $status
-	 * @return \Illuminate\Http\Response
+	 * @param  Status  $status
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -466,6 +497,11 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -519,12 +555,21 @@ class StatusController extends Controller
 	// Synchronize the order numbers of all the statuses, that are affected by the updated status
 	private function synchronizeStatusOrder($request, $status, $project)
 	{
-		$statuses = $project->statuses->whereBetween('order_number', [$request->order_number, $status->getOriginal('order_number')]);
+		$originalOrderNumber = $status->getOriginal('order_number');
+		$newOrderNumber = $request->order_number;
+
+		$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+		// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
+		if($originalOrderNumber < $newOrderNumber) {
+			$statuses = $project->statuses->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
+		} else {
+			$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+		}
 
 		// Increase all the order numbers that are greater than the original status order number
 		foreach($statuses as $status) {
 			$status->update([
-				"order_number" => $status->order_number + 1
+				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
 			]);
 		}
 	}

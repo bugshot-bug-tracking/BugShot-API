@@ -62,6 +62,11 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * 	type="string",
 	 * 	nullable=true,
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="is_admin",
+	 * 	type="boolean"
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="created_at",

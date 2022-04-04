@@ -22,6 +22,7 @@ class StatusResource extends JsonResource
 				"designation" => $this->designation,
 				"order_number" => $this->order_number,
 				"project_id" => $this->project_id,
+				"permanent" => $this->permanent,
 				"created_at" => $this->created_at,
                 "updated_at" => $this->updated_at
 			]

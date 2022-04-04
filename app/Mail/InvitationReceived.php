@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 
 use App\Models\User;
 use App\Models\Invitation;
@@ -37,6 +38,6 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.invitation-mail');
+        return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
     }
 }

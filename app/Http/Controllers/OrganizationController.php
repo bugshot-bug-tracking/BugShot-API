@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,8 @@ use App\Models\User;
 use App\Models\OrganizationUserRole;
 
 // Requests
-use App\Http\Requests\OrganizationRequest;
+use App\Http\Requests\OrganizationStoreRequest;
+use App\Http\Requests\OrganizationUpdateRequest;
 use App\Http\Requests\InvitationRequest;
 
 /**
@@ -33,7 +35,7 @@ class OrganizationController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -57,7 +59,11 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 * 	@OA\Parameter(
+	 *		name="timestamp",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -94,9 +100,9 @@ class OrganizationController extends Controller
         if($timestamp == NULL) {
             $organizations = $this->user->organizations->sortBy('designation');
         } else {
-            $organizations = $this->user->organizations->where([
-                ["organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]
-            ])->sortBy('designation');
+            $organizations = $this->user->organizations
+				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+				->sortBy('designation');
         }
 
 		return OrganizationResource::collection($organizations);
@@ -105,8 +111,8 @@ class OrganizationController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\OrganizationRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  OrganizationStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -123,6 +129,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -167,7 +178,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(OrganizationRequest $request)
+	public function store(OrganizationStoreRequest $request)
 	{	
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
@@ -188,8 +199,8 @@ class OrganizationController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
+	 * @param  Organization  $organization
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -206,6 +217,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -253,9 +269,9 @@ class OrganizationController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\OrganizationRequest  $request
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
+	 * @param  OrganizationUpdateRequest  $request
+	 * @param  Organization  $organization
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -272,6 +288,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -335,15 +356,13 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(OrganizationRequest $request, Organization $organization)
+	public function update(OrganizationStoreRequest $request, Organization $organization)
 	{
 		// Check if the user is authorized to update the organization
 		$this->authorize('update', $organization);
 
 		// Update the organization
-		$organization->update([
-            'designation' => $request->designation
-        ]);
+		$organization->update($request->all());
 		
 		return new OrganizationResource($organization);
 	}
@@ -351,8 +370,8 @@ class OrganizationController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
+	 * @param  Organization  $organization
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -369,6 +388,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -414,8 +438,8 @@ class OrganizationController extends Controller
 	/**
 	 * Display a list of users that belongs to the organization.
 	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
+	 * @param  Organization  $organization
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -432,6 +456,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -488,8 +517,8 @@ class OrganizationController extends Controller
 	/**
 	 * Remove a user from the organization
 	 *
-	 * @param  \App\Models\Organization  $organization
-	 * @return \Illuminate\Http\Response
+	 * @param  Organization  $organization
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -506,6 +535,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -575,6 +609,11 @@ class OrganizationController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -635,6 +674,11 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(

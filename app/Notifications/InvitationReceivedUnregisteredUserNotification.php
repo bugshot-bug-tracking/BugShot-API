@@ -33,7 +33,6 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
         $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
-        $this->registerUrl = NULL;
     }
 
     /**
@@ -73,10 +72,8 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
                 break;
         }
 
-        $this->registerUrl = config('app.webpanel_url') . '/auth/register';
-
-        return (new InvitationReceivedUnregisteredUserMailable($this->invitation, $this->message, $this->registerUrl))
-        ->subject('BugShot - Invitation Received')
+        return (new InvitationReceivedUnregisteredUserMailable($this->invitation, $this->message))
+        ->subject('BugShot - ' . __('email.invitation-received'))
         ->to($notifiable->routes['email']);
     }
 

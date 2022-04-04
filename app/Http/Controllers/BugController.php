@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -23,7 +24,8 @@ use App\Models\Status;
 use App\Models\BugUserRole;
 
 // Requests
-use App\Http\Requests\BugRequest;
+use App\Http\Requests\BugStoreRequest;
+use App\Http\Requests\BugUpdateRequest;
 
 
 /**
@@ -38,7 +40,7 @@ class BugController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -57,6 +59,11 @@ class BugController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
@@ -67,6 +74,11 @@ class BugController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -129,7 +141,7 @@ class BugController extends Controller
 		if($timestamp == NULL) {
             $bugs = $status->bugs;
         } else {
-            $bugs = $status->bugs->where(["bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp)]);
+            $bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 		
 		return BugResource::collection($bugs);
@@ -138,8 +150,8 @@ class BugController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  BugStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -156,6 +168,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -241,7 +258,7 @@ class BugController extends Controller
 	 *              		    property="web_position_y",
 	 *              		    type="integer",
 	 *              		    format="int32",
-	 *              		)
+	 *              		),
 	 * 					)
 	 *              ),
 	 *   			@OA\Property(
@@ -288,7 +305,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(BugRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the bug 
 		$this->authorize('create', [Bug::class, $status->project]);
@@ -297,11 +314,12 @@ class BugController extends Controller
 		$id = $this->setId($request);
 		
 		// Get the max order number in this status and increase it by one
-		$order_number = $status->bugs->max('order_number') + 1;
+		$order_number = $status->bugs->isEmpty() ? 0 : $status->bugs->max('order_number') + 1;
 
 		// Determine the number of bugs in the project to generate the $ai_id
-		$numberOfBugs = $status->project->bugs()->withTrashed()->count();
-		$ai_id = $numberOfBugs + 1;
+		$allBugsQuery = $status->project->bugs()->withTrashed();
+		$numberOfBugs = $allBugsQuery->count();
+		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
 		
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
@@ -316,7 +334,7 @@ class BugController extends Controller
 			"browser" => $request->browser,
 			"selector" => $request->selector,
 			"resolution" => $request->resolution,
-			"deadline" => new Carbon($request->deadline),
+			"deadline" => $request->deadline == NULL ? null : new Carbon($request->deadline),
 			"order_number" => $order_number,
 			"ai_id" => $ai_id
 		]);
@@ -348,8 +366,8 @@ class BugController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -366,6 +384,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -388,6 +411,11 @@ class BugController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -447,9 +475,9 @@ class BugController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\BugRequest  $request
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  BugUpdateRequest  $request
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -466,6 +494,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
@@ -599,32 +632,21 @@ class BugController extends Controller
 	 * )
 	 **/
 
-	public function update(BugRequest $request, Status $status, Bug $bug)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug)
 	{
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
-		// Check if the order of the bugs has to be synchronized
-		if($request->order_number != $bug->getOriginal('order_number') || $request->status_id != $bug->getOriginal('status_id') ) {
-			$this->synchronizeBugOrder($request, $bug);
+		// Check if the order of the bugs or the status has to be synchronized
+		if(($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
+			$this->synchronizeBugOrder($request, $bug, $status);
 		}
 
 		// Update the bug
+		$bug->update($request->all());
 		$bug->update([
 			"project_id" => $status->project_id,
-			"status_id" => $request->status_id,
-			"priority_id" => $request->priority_id,
-			"designation" => $request->designation,
-			"description" => $request->description,
-			"url" => $request->url,
-			"operating_system" => $request->operating_system,
-			"browser" => $request->browser,
-			"selector" => $request->selector,
-			"resolution" => $request->resolution,
-			// "deadline" => new Carbon($request->deadline),
 			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
-			"order_number" => $request->order_number,
-			"ai_id" => $request->ai_id
 		]);
 
 		return new BugResource($bug);
@@ -633,8 +655,8 @@ class BugController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -651,6 +673,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
@@ -720,8 +747,8 @@ class BugController extends Controller
 	/**
 	 * Assign a user to the bug
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -738,6 +765,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
@@ -800,8 +832,8 @@ class BugController extends Controller
 	/**
 	 * Display a list of users that belongs to the bug.
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -818,6 +850,11 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -875,8 +912,8 @@ class BugController extends Controller
 	/**
 	 * Remove a user from the bug
 	 *
-	 * @param  \App\Models\Bug  $bug
-	 * @return \Illuminate\Http\Response
+	 * @param  Bug  $bug
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -937,14 +974,16 @@ class BugController extends Controller
 	}
 
 	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
-	private function synchronizeBugOrder($request, $bug)
+	private function synchronizeBugOrder($request, $bug, $status)
 	{
+		$originalOrderNumber = $bug->getOriginal('order_number');
+		$newOrderNumber = $request->order_number;
+		
 		// Check if the bug also changed it's status
-		if($request->status_id != $bug->getOriginal('status_id')) {
-			$originalStatus = Status::find($bug->getOriginal('status_id'));
-			$originalStatusBugs = $originalStatus->bugs->where('order_number', '>', $bug->getOriginal('order_number'));
+		if($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
+			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
 
-			// Descrease all the order numbers that war greater than the original bug order number
+			// Descrease all the order numbers that were greater than the original bug order number
 			foreach($originalStatusBugs as $originalStatusBug) {
 				$originalStatusBug->update([
 					"order_number" => $originalStatusBug->order_number - 1
@@ -952,17 +991,28 @@ class BugController extends Controller
 			}
 
 			$newStatus = Status::find($request->status_id);
-			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $request->order_number);
-		} else {
-			$newStatus = Status::find($request->status_id);
-			$newStatusBugs = $newStatus->bugs->whereBetween('order_number', [$request->order_number, $bug->getOriginal('order_number')]);
-		}
+			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
 
-		// Increase all the order numbers that are greater than the original bug order number
-		foreach($newStatusBugs as $newStatusBug) {
-			$newStatusBug->update([
-				"order_number" => $newStatusBug->order_number + 1
-			]);
+			// Increase all the order numbers that are greater than the original bug order number
+			foreach($newStatusBugs as $newStatusBug) {
+				$newStatusBug->update([
+					"order_number" => $newStatusBug->order_number + 1
+				]);
+			}
+		} else {
+			// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
+			if($originalOrderNumber < $newOrderNumber) {
+				$statusBugs = $status->bugs->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
+			} else {
+				$statusBugs = $status->bugs->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+			}
+
+			// Change the order number of all affected bugs
+			foreach($statusBugs as $statusBug) {
+				$statusBug->update([
+					"order_number" => $originalOrderNumber < $newOrderNumber ? $statusBug->order_number - 1 : $statusBug->order_number + 1
+				]);
+			}
 		}
 	}
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 
 // Resources
@@ -12,7 +13,8 @@ use App\Http\Resources\RoleResource;
 use App\Models\Role;
 
 // Requests
-use App\Http\Requests\RoleRequest;
+use App\Http\Requests\RoleStoreRequest;
+use App\Http\Requests\RoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -24,7 +26,7 @@ class RoleController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -41,6 +43,11 @@ class RoleController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -79,8 +86,8 @@ class RoleController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  RoleStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -97,6 +104,11 @@ class RoleController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -141,7 +153,7 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(RoleRequest $request)
+	public function store(RoleStoreRequest $request)
 	{
 		$role = Role::create($request->all());
 		return new RoleResource($role);
@@ -150,8 +162,8 @@ class RoleController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
+	 * @param  Role  $role
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -168,6 +180,11 @@ class RoleController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -213,9 +230,9 @@ class RoleController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
+	 * @param  RoleUpdateRequest  $request
+	 * @param  Role  $role
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -232,6 +249,11 @@ class RoleController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 
@@ -296,17 +318,18 @@ class RoleController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(RoleRequest $request, Role $role)
+	public function update(RoleUpdateRequest $request, Role $role)
 	{
 		$role->update($request->all());
+
 		return new RoleResource($role);
 	}
 
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Role  $role
-	 * @return \Illuminate\Http\Response
+	 * @param  Role  $role
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -323,6 +346,11 @@ class RoleController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 

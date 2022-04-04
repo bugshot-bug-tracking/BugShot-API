@@ -23,10 +23,8 @@ class CreateScreenshotsTable extends Migration
 
 			$table->integer('position_x')->nullable();
 			$table->integer('position_y')->nullable();
-
 			$table->integer('web_position_x')->nullable();
 			$table->integer('web_position_y')->nullable();
-
 
 			$table->timestamps();
 			$table->softDeletes();

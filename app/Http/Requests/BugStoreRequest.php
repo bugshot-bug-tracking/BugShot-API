@@ -4,25 +4,25 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class BugRequest extends FormRequest
+class BugStoreRequest extends FormRequest
 {
-	/**
-	 * Determine if the user is authorized to make this request.
-	 *
-	 * @return bool
-	 */
-	public function authorize()
-	{
-		return true;
-	}
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize()
+    {
+        return true;
+    }
 
-	/**
-	 * Get the validation rules that apply to the request.
-	 *
-	 * @return array
-	 */
-	public function rules()
-	{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
 		return [
 			"designation" => ["required", "string", "min:1", "max:255"],
 			"description" => ["min:1", "max:255", "string", "nullable"],
@@ -35,5 +35,5 @@ class BugRequest extends FormRequest
 			"deadline" => ["date", "nullable"],
 			"order_number" => ["integer", "min:0"]
 		];
-	}
+    }
 }

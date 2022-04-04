@@ -16,7 +16,9 @@ use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SendinblueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +47,12 @@ Route::get('/debug-sentry', function () {
 |--------------------------------------------------------------------------
 */
 
+Route::get('/mail', function () {
+    $user = App\Models\User::find(1);
+ 
+    return new App\Mail\PasswordResetSuccessful($user);
+});
+
 Route::prefix('auth')->group(function () {
 	// Register Routes
 	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
@@ -59,6 +67,10 @@ Route::prefix('auth')->group(function () {
 	Route::post('/reset-password', [AuthController::class, "resetPassword"])->middleware(['guest', 'check.version'])->name('password.update');
 });
 
+// Sendinblue specific routes
+Route::prefix('sendinblue')->group(function () {
+	Route::post("/contact/number-of-bugs", [SendinblueController::class, "getNumberOfBugs"])->name("sendinblue.number-of-bugs");
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +117,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
@@ -124,6 +137,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
 		Route::get("/users", [BugController::class, "users"])->name("bug.users");
 		Route::delete("/users/{user}", [BugController::class, "removeUser"])->name("bug.remove-user");
+	});
+
+	// Screenshot prefixed routes
+	Route::prefix('screenshots/{screenshot}')->group(function () {
+		Route::apiResource('/markers', MarkerController::class);
 	});
 
 	// User resource routes

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,7 +18,8 @@ use App\Models\Attachment;
 use App\Models\Bug;
 
 // Requests
-use App\Http\Requests\AttachmentRequest;
+use App\Http\Requests\AttachmentStoreRequest;
+use App\Http\Requests\AttachmentUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -29,7 +31,7 @@ class AttachmentController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -46,6 +48,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
@@ -99,8 +106,8 @@ class AttachmentController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  AttachmentStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -117,6 +124,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -171,7 +183,7 @@ class AttachmentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(AttachmentRequest $request, Bug $bug, AttachmentService $attachmentService)
+	public function store(AttachmentStoreRequest $request, Bug $bug, AttachmentService $attachmentService)
 	{
 		// Check if the user is authorized to create the attachment
 		$this->authorize('create', [Attachment::class, $bug->project]);
@@ -184,8 +196,8 @@ class AttachmentController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
+	 * @param  Attachment  $attachment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -202,6 +214,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -257,9 +274,9 @@ class AttachmentController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\AttachmentRequest  $request
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
+	 * @param  AttachmentUpdateRequest  $request
+	 * @param  Attachment  $attachment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -276,6 +293,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -356,7 +378,7 @@ class AttachmentController extends Controller
 	 *)
 	 *
 	 **/
-	public function update(AttachmentRequest $request, Bug $bug, Attachment $attachment)
+	public function update(AttachmentUpdateRequest $request, Bug $bug, Attachment $attachment)
 	{
 		// Check if the user is authorized to update the attachment
 		$this->authorize('update', [Attachment::class, $bug->project]);
@@ -373,6 +395,7 @@ class AttachmentController extends Controller
 
 		Storage::delete($attachment->url);
 
+		// Update the attachment
 		$attachment->update([
 			"designation" => $request->file->getClientOriginalName(),
 			"url" => $savedPath,
@@ -384,8 +407,8 @@ class AttachmentController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
+	 * @param  Attachment  $attachment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -402,6 +425,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -456,8 +484,8 @@ class AttachmentController extends Controller
 	/**
 	 * Download the specified resource.
 	 *
-	 * @param  \App\Models\Attachment  $attachment
-	 * @return \Illuminate\Http\Response
+	 * @param  Attachment  $attachment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -474,6 +502,11 @@ class AttachmentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(

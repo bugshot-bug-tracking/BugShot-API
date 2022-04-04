@@ -42,8 +42,9 @@ class Controller extends BaseController
 
 	// Checks if request contains an uuid and sets the id accordingly
 	public function setId($request) {
+       
 		$id = $request->id == NULL ? (string) Str::uuid() : $request->id;
-		
+     
 		return $id;
 	}
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class OrganizationRequest extends FormRequest
+class RoleStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,7 @@ class OrganizationRequest extends FormRequest
     public function rules()
     {
 		return [
-			"id" => ["string", "max:36"],
-			"designation" => ["required", "string", "min:1", "max:255"],
-			"timestamp" => ["date"]
+			"designation" => ["required", "alpha", "max:255", "unique:App\Models\Role,designation"]
 		];
     }
 }

@@ -54,6 +54,13 @@ class Status extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
+	 * 
+	 * @OA\Property(
+	 * 	property="permanent",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The definition of the status being done or in backlog."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="created_at",
@@ -78,7 +85,7 @@ class Status extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "designation", "order_number", "project_id"];
+	protected $fillable = ["id", "designation", "order_number", "project_id", "permanent"];
 
 	protected $touches = ['project'];
 

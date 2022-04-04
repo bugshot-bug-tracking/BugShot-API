@@ -37,6 +37,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -101,6 +106,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -183,6 +193,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -245,6 +260,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -350,6 +370,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -409,6 +434,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "attachment_id",
                         "in": "path",
                         "required": true,
@@ -458,6 +488,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -537,6 +572,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -604,6 +644,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -642,6 +687,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -692,6 +742,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -739,6 +794,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -889,6 +949,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -898,6 +963,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -971,6 +1041,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "status_id",
@@ -1047,6 +1122,9 @@
                                                 "web_position_y": {
                                                     "type": "integer",
                                                     "format": "int32"
+                                                },
+                                                "selector": {
+                                                    "type": "string"
                                                 }
                                             },
                                             "type": "object"
@@ -1122,6 +1200,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1139,6 +1222,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -1209,6 +1297,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "status_id",
@@ -1355,6 +1448,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "status_id",
                         "in": "path",
                         "required": true,
@@ -1412,6 +1510,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1483,6 +1586,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1595,6 +1703,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1652,6 +1765,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1732,6 +1850,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1794,6 +1917,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -1893,6 +2021,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -1973,6 +2106,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -2066,6 +2204,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -2088,6 +2231,23 @@
                                     "base64": {
                                         "description": "The base64 string of the image belonging to the company (optional)",
                                         "type": "string"
+                                    },
+                                    "invitations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "target_email": {
+                                                    "description": "The invited user email.",
+                                                    "type": "string"
+                                                },
+                                                "role_id": {
+                                                    "description": "The invited user role.",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -2145,6 +2305,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2169,6 +2334,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -2259,6 +2429,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2356,6 +2531,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2405,6 +2585,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2468,6 +2653,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2529,6 +2719,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -2586,6 +2781,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2647,6 +2847,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -2738,6 +2943,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -2797,6 +3007,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -2863,6 +3078,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -2920,6 +3140,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -2991,6 +3216,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -3034,6 +3264,491 @@
                 ]
             }
         },
+        "/screenshots/{screenshot_id}/markers": {
+            "get": {
+                "tags": [
+                    "Marker"
+                ],
+                "summary": "All markers of the screenshot.",
+                "operationId": "allMarkers",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "screenshot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Screenshot/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Marker"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Marker"
+                ],
+                "summary": "Store one marker.",
+                "operationId": "storeMarker",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "screenshot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Screenshot/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [],
+                                "properties": {
+                                    "position_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "position_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "web_position_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "web_position_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_height": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_width": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "scroll_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "scroll_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "screenshot_height": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "screenshot_width": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_full_selector": {
+                                        "type": "string"
+                                    },
+                                    "target_short_selector": {
+                                        "type": "string"
+                                    },
+                                    "target_html": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marker"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/screenshots/{screenshot_id}/markers/{marker_id}": {
+            "get": {
+                "tags": [
+                    "Marker"
+                ],
+                "summary": "Show one marker.",
+                "operationId": "showMarker",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "screenshot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Screenshot/properties/id"
+                        }
+                    },
+                    {
+                        "name": "marker_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Marker/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marker"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Marker"
+                ],
+                "summary": "Update a marker.",
+                "operationId": "updateMarker",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "screenshot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Screenshot/properties/id"
+                        }
+                    },
+                    {
+                        "name": "marker_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Marker/properties/id"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [],
+                                "properties": {
+                                    "position_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "position_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "web_position_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "web_position_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_height": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_width": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "scroll_x": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "scroll_y": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "screenshot_height": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "screenshot_width": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "target_full_selector": {
+                                        "type": "string"
+                                    },
+                                    "target_short_selector": {
+                                        "type": "string"
+                                    },
+                                    "target_html": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marker"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Marker"
+                ],
+                "summary": "Delete a marker.",
+                "operationId": "deleteMarker",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "screenshot_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Screenshot/properties/id"
+                        }
+                    },
+                    {
+                        "name": "marker_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Marker/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Marker"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/organizations": {
             "get": {
                 "tags": [
@@ -3054,6 +3769,11 @@
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "timestamp",
                         "in": "header",
                         "required": false
                     }
@@ -3107,6 +3827,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -3178,6 +3903,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3232,6 +3962,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3321,6 +4056,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3370,6 +4110,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3433,6 +4178,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -3490,6 +4240,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3551,6 +4306,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -3640,6 +4400,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -3691,6 +4456,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -3762,6 +4532,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -3816,6 +4591,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "id",
@@ -3905,6 +4685,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -3938,6 +4723,120 @@
             }
         },
         "/companies/{company_id}/projects": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "All projects.",
+                "operationId": "allProjects",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Company/properties/id"
+                        }
+                    },
+                    {
+                        "name": "timestamp",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Project"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "post": {
                 "tags": [
                     "Project"
@@ -3954,6 +4853,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -3990,6 +4894,23 @@
                                     "base64": {
                                         "description": "The base64 string of the image belonging to the project (optional)",
                                         "type": "string"
+                                    },
+                                    "invitations": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "target_email": {
+                                                    "description": "The invited user email.",
+                                                    "type": "string"
+                                                },
+                                                "role_id": {
+                                                    "description": "The invited user role.",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -4047,6 +4968,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4074,6 +5000,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -4154,6 +5085,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "company_id",
@@ -4265,6 +5201,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4322,6 +5263,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4385,6 +5331,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4394,6 +5345,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -4457,6 +5413,80 @@
                 ]
             }
         },
+        "/projects/{project_id}/markers": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "All project markers according to a given url.",
+                "operationId": "allProjectMarkers",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Bug"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/projects/{project_id}/users": {
             "get": {
                 "tags": [
@@ -4474,6 +5504,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4537,6 +5572,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -4594,6 +5634,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4655,6 +5700,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -4741,6 +5791,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -4794,6 +5849,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -4865,6 +5925,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -4919,6 +5984,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "id",
@@ -5008,6 +6078,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "required": true,
@@ -5059,12 +6134,22 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Bug/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -5118,6 +6203,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -5151,8 +6241,76 @@
                                         "type": "integer",
                                         "format": "int32"
                                     },
+                                    "selector": {
+                                        "type": "string"
+                                    },
                                     "base64": {
                                         "type": "string"
+                                    },
+                                    "markers": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "position_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "position_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "web_position_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "web_position_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_height": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_width": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "scroll_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "scroll_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "screenshot_height": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "screenshot_width": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_full_selector": {
+                                                    "type": "string"
+                                                },
+                                                "target_short_selector": {
+                                                    "type": "string"
+                                                },
+                                                "target_html": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -5210,6 +6368,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -5224,6 +6387,11 @@
                         "schema": {
                             "$ref": "#/components/schemas/Screenshot/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -5272,6 +6440,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "bug_id",
@@ -5325,6 +6498,9 @@
                                     "web_position_y": {
                                         "type": "integer",
                                         "format": "int32"
+                                    },
+                                    "selector": {
+                                        "type": "string"
                                     },
                                     "base64": {
                                         "type": "string"
@@ -5386,6 +6562,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "bug_id",
                         "in": "path",
                         "required": true,
@@ -5445,6 +6626,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -5459,6 +6645,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -5532,6 +6723,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -5616,6 +6812,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -5638,6 +6839,11 @@
                     },
                     {
                         "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
                         "in": "header",
                         "required": false
                     },
@@ -5692,7 +6898,69 @@
                     }
                 ]
             },
-            "put": {
+            "delete": {
+                "tags": [
+                    "Status"
+                ],
+                "summary": "Delete a status.",
+                "operationId": "deleteStatus",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "project_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Project/properties/id"
+                        }
+                    },
+                    {
+                        "name": "status_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Status/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "patch": {
                 "tags": [
                     "Status"
                 ],
@@ -5708,6 +6976,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "project_id",
@@ -5791,63 +7064,6 @@
                         "sanctum": []
                     }
                 ]
-            },
-            "delete": {
-                "tags": [
-                    "Status"
-                ],
-                "summary": "Delete a status.",
-                "operationId": "deleteStatus",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "name": "project_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Project/properties/id"
-                        }
-                    },
-                    {
-                        "name": "status_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Status/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
             }
         },
         "/users": {
@@ -5867,6 +7083,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -5918,6 +7139,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "requestBody": {
@@ -6004,6 +7230,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -6058,6 +7289,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -6167,6 +7403,11 @@
                         "required": true
                     },
                     {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "user_id",
                         "in": "path",
                         "required": true,
@@ -6216,6 +7457,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -6277,6 +7523,11 @@
                         "name": "version",
                         "in": "header",
                         "required": true
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "user_id",
@@ -6733,6 +7984,107 @@
                 },
                 "type": "object"
             },
+            "Marker": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "screenshot_id": {
+                        "description": "The id of the screenshot to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "position_x": {
+                        "description": "The x position of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "position_y": {
+                        "description": "The y position of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "web_position_x": {
+                        "description": "The x position in web of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "web_position_y": {
+                        "description": "The y position in web of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "target_x": {
+                        "description": "The x position of the element the marker sits on.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "target_y": {
+                        "description": "The y position of the element the marker sits on.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "target_height": {
+                        "description": "The height of the element the marker sits on.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "target_width": {
+                        "description": "The width of the element the marker sits on.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "scroll_x": {
+                        "description": "The x scroll position of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "scroll_y": {
+                        "description": "The y scroll position of the marker.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "screenshot_height": {
+                        "description": "The height of the screenshot.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "screenshot_width": {
+                        "description": "The width of the screenshot.",
+                        "type": "number",
+                        "format": "float"
+                    },
+                    "target_full_selector": {
+                        "description": "The full selector name of the element the marker sits on.",
+                        "type": "string"
+                    },
+                    "target_short_selector": {
+                        "description": "The short selector name of the element the marker sits on",
+                        "type": "string"
+                    },
+                    "target_html": {
+                        "description": "The html of the element the marker sits on",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "Organization": {
                 "properties": {
                     "id": {
@@ -6928,6 +8280,11 @@
                         "format": "int32",
                         "nullable": true
                     },
+                    "selector": {
+                        "description": "The selector of the marker.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
                     "created_at": {
                         "description": "The creation date.",
                         "type": "string",
@@ -6966,6 +8323,9 @@
                         "description": "The id of the project to which the object belongs.",
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "permanent": {
+                        "type": "boolean"
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -7015,6 +8375,9 @@
                     "remember_token": {
                         "type": "string",
                         "nullable": true
+                    },
+                    "is_admin": {
+                        "type": "boolean"
                     },
                     "created_at": {
                         "description": "The creation date.",

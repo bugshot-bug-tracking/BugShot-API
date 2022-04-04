@@ -71,7 +71,7 @@ class Screenshot extends Model
 	 *  nullable=true,
 	 * 	description="The y coordinate value of the marker relative to web page top."
 	 * )
-	 *
+	 * 
 	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
@@ -105,5 +105,13 @@ class Screenshot extends Model
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function markers()
+	{
+		return $this->hasMany(Marker::class);
 	}
 }

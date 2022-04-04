@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use App\Http\Requests\CheckProjectRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 
 // Resources
 use App\Http\Resources\ProjectResource;
@@ -32,7 +34,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     /**
 	 * @OA\Get(
@@ -49,6 +51,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 
@@ -90,8 +97,8 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\UserStoreRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param  UserStoreRequest  $request
+     * @return Response
      */
 	/**
 	 * @OA\Post(
@@ -108,6 +115,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -183,14 +195,21 @@ class UserController extends Controller
 			'password' => Hash::make($request->password)
 		]);
 
+		// Create the corresponding Stripe customer
+		$response = Http::post(config('app.payment_url') . '/users', [
+            'user' => $user
+		]);
+		
+		$response->throw();
+
         return new UserResource($user);
     }
 
     /**
      * Display the specified resource.
      *
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+	 * @param  User  $user
+     * @return Response
      */
 	/**
 	 * @OA\Get(
@@ -207,6 +226,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -255,9 +279,9 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\UserUpdateRequest  $request
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @param  UserUpdateRequest  $request
+	 * @param  User  $user
+     * @return Response
      */
 	/**
 	 * @OA\Put(
@@ -274,6 +298,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 
@@ -373,7 +402,17 @@ class UserController extends Controller
 		}
 
 		// Update the user
-		$user->update(array_filter($request->all()));
+		$user->update($request->all());
+		$user->update([
+			'password' => $request->password ? Hash::make($request->password) : null
+		]);
+
+		// Update the corresponding Stripe customer
+		$response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
+			'user' => $user
+		]);
+
+		$response->throw();
 
 		return new UserResource($user);
     }
@@ -381,8 +420,8 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-	 * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+	 * @param  User  $user
+     * @return Response
      */
 	/**
 	 * @OA\Delete(
@@ -399,6 +438,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -447,8 +491,8 @@ class UserController extends Controller
 	/**
 	 * Display the image that belongs to the user.
 	 *
-	 * @param  \App\Models\User  $user
-	 * @return \Illuminate\Http\Response
+	 * @param  User  $user
+	 * @return Response
 	*/
 	/**
 	 * @OA\Get(
@@ -465,6 +509,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -514,8 +563,8 @@ class UserController extends Controller
 	/**
 	 * Check if url belongs to a project of the user
 	 *
-	 * @param  \App\Models\User  $user
-	 * @return \Illuminate\Http\Response
+	 * @param  User  $user
+	 * @return Response
 	*/
 	/**
 	 * @OA\Post(
@@ -532,6 +581,11 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(

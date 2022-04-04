@@ -15,6 +15,9 @@ return [
     'organization' => 'Organisation',
     'company' => 'Firma',
     'project' => 'Projekt',
-    'bug' => 'Bug'
-
+    'bug' => 'Bug',
+    'backlog' => 'Backlog',
+    'todo' => 'ToDo',
+    'doing' => 'In Arbeit',
+    'done' => 'Erledigt'
 ];

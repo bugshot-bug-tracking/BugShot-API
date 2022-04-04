@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,11 @@ use App\Models\Comment;
 use App\Models\Bug;
 
 // Requests
-use App\Http\Requests\CommentRequest;
+use App\Http\Requests\CommentStoreRequest;
+use App\Http\Requests\CommentUpdateRequest;
+
+// Events
+use App\Events\CommentSent;
 
 /**
  * @OA\Tag(
@@ -30,7 +35,7 @@ class CommentController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\Response
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -47,6 +52,11 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -97,8 +107,8 @@ class CommentController extends Controller
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @return \Illuminate\Http\Response
+	 * @param  CommentStoreRequest  $request
+	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
@@ -115,6 +125,11 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *
@@ -166,13 +181,19 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CommentRequest $request, Bug $bug)
+	public function store(CommentStoreRequest $request, Bug $bug)
 	{
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
 		// Check if the the request already contains a UUID for the comment
 		$id = $this->setId($request);
+		
+        preg_match(
+            '/(?<=@)[\p{L}\p{N}]+/',
+            $request->content,
+            $matches
+        );
 
 		// Store the new comment in the database
 		$comment = $bug->comments()->create([
@@ -181,14 +202,16 @@ class CommentController extends Controller
 			'user_id' => Auth::id()
 		]);
 
+		CommentSent::dispatch($comment);
+
 		return new CommentResource($comment);
 	}
 
 	/**
 	 * Display the specified resource.
 	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
+	 * @param  Comment  $comment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Get(
@@ -205,6 +228,11 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -260,9 +288,9 @@ class CommentController extends Controller
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  \Illuminate\Http\CommentRequest  $request
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
+	 * @param  CommentUpdateRequest  $request
+	 * @param  Comment  $comment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Put(
@@ -279,6 +307,11 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
@@ -350,7 +383,7 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(CommentRequest $request, Bug $bug, Comment $comment)
+	public function update(CommentUpdateRequest $request, Bug $bug, Comment $comment)
 	{
 		// Check if the user is authorized to update the comment
 		$this->authorize('update', [$comment, $bug->project]);
@@ -363,8 +396,8 @@ class CommentController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Comment  $comment
-	 * @return \Illuminate\Http\Response
+	 * @param  Comment  $comment
+	 * @return Response
 	 */
 	/**
 	 * @OA\Delete(
@@ -381,6 +414,11 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(

@@ -12,12 +12,19 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Http;
 
 // Notifications
 use App\Notifications\VerifyEmailAddressNotification;
+use App\Notifications\VerificationSuccessfulNotification;
+use App\Notifications\PasswordResetSuccessfulNotification;
 
 // Resources
 use App\Http\Resources\UserResource;
+
+// Services
+use App\Services\SendinblueService;
 
 // Models
 use App\Models\User;
@@ -51,6 +58,11 @@ class AuthController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *  @OA\RequestBody(
@@ -145,6 +157,11 @@ class AuthController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *  @OA\RequestBody(
@@ -245,6 +262,11 @@ class AuthController extends Controller
 	 *		required=true,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=204,
 	 *		description="Success",
@@ -289,6 +311,11 @@ class AuthController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *	@OA\Response(
@@ -336,6 +363,11 @@ class AuthController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *  @OA\RequestBody(
@@ -394,6 +426,11 @@ class AuthController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
 	 *		in="header"
 	 *	),
 	 *  @OA\RequestBody(
@@ -460,6 +497,9 @@ class AuthController extends Controller
 		);
 
 		if($status === PasswordFacade::PASSWORD_RESET) {
+			// Send password reset success mail
+			$request->user()->notify(new PasswordResetSuccessfulNotification());
+
 			return response(__($status), 200);
 		} else {
 			return response()->json([
@@ -511,9 +551,42 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(CustomEmailVerificationRequest $request) {
+	public function verifyEmail(CustomEmailVerificationRequest $request, $id, SendinblueService $sendinblueService) {
 		$request->fulfill();
-	
+		$user = User::find($id);
+		
+		// Create the corresponding contact in sendinblue
+		$response = $sendinblueService->createContact(
+			$user, 
+			array(
+				'VORNAME' => $user->first_name,
+				'NACHNAME' => $user->last_name
+			),
+			false,
+			false,
+			array(
+				4, 
+				5
+			),
+			true,
+			array()
+		);
+		
+		// Trigger the corresponding sendinblue event if the contact creation was successful
+		if($response->successful()) {
+			$response = $sendinblueService->triggerEvent(
+				'registered_for_betatest', 
+				$user, 
+				array(
+					'firstname' => $user->first_name,
+					'lastname' => $user->last_name
+				)
+			);
+		}
+
+		$user = User::find($id);
+		$user->notify(new VerificationSuccessfulNotification());
+
 		return response()->json( __('auth.email-verified-successfully'), 204);
 	}
 
@@ -568,3 +641,4 @@ class AuthController extends Controller
 		return response(__('auth.verification-link-sent'), 200);
 	}
 }
+	
