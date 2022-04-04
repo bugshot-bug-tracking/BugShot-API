@@ -15,10 +15,7 @@ class CreateCompaniesTable extends Migration
 	{
 		Schema::create('companies', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-
-			$table->unsignedBigInteger('user_id')->nullable();
-			$table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
-
+			
 			$table->string('designation');
 			$table->string('color_hex')->default('#7A2EE6');
 
