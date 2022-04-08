@@ -38,12 +38,14 @@ class PriorityController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -99,12 +101,14 @@ class PriorityController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -176,12 +180,14 @@ class PriorityController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -245,12 +251,14 @@ class PriorityController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -343,12 +351,14 @@ class PriorityController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
