@@ -25,7 +25,6 @@ class StatusStoreRequest extends FormRequest
     {
 		return [
 			"designation" => ["required", "string", "min:1", "max:255"],
-			"order_number" => ["required", "integer", "min:0"],
 			"timestamp" => ["date"]
 		];
     }
