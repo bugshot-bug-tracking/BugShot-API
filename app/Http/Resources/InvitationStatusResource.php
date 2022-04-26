@@ -14,6 +14,12 @@ class InvitationStatusResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+		return [
+			'id' => $this->id,
+			'type' => 'InvitationStatus',
+			'attributes' => [
+				'designation' => $this->designation
+			]
+		];
     }
 }
