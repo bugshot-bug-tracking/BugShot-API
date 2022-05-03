@@ -20,7 +20,7 @@
     <p>
         Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
     </p>
-    <a href="{{ config('app.webpanel_url') . '/register' }}">{{ config('app.webpanel_url') . '/register' }}</a>
+    <a href="{{ $url }}">{{ $url }}</a>
     <p>
         Fehlerfreie Grüße,
         <br />
