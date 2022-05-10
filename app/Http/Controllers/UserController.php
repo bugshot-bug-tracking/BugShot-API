@@ -199,12 +199,13 @@ class UserController extends Controller
 			'password' => Hash::make($request->password)
 		]);
 
-		// Create the corresponding Stripe customer
-		$response = Http::post(config('app.payment_url') . '/users', [
-            'user' => $user
-		]);
-		
-		$response->throw();
+		// TODO: Stripe update
+		// Update the corresponding Stripe customer
+		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
+		// 	'user' => $user
+		// ]);
+
+		// $response->throw();
 
         return new UserResource($user);
     }
@@ -417,12 +418,13 @@ class UserController extends Controller
 			]);
 		}
 
+		// TODO: Stripe update
 		// Update the corresponding Stripe customer
-		$response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
-			'user' => $user
-		]);
+		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
+		// 	'user' => $user
+		// ]);
 
-		$response->throw();
+		// $response->throw();
 
 		return new UserResource($user);
     }

@@ -42,7 +42,7 @@ class SendinblueService
 			'updateEnabled' => $updateEnabled,
 			'smtpBlacklistSender' => $smtpBlacklistSender
 		]);
-
+        
         return $response;
     }
 
