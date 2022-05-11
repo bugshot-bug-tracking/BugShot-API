@@ -22,7 +22,7 @@ class ProjectMarkerResource extends JsonResource
 
 		return [
 			"id" => $this->id,
-			"type" => "Bug",
+			"type" => "ProjektMarker",
 			"attributes" => [
 				"designation" => $this->designation,
                 'priority_id' => $this->priority_id,

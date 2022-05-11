@@ -206,7 +206,7 @@ class CommentController extends Controller
 			'user_id' => Auth::id()
 		]);
 
-		CommentSent::dispatch($comment);
+		CommentSent::dispatch($this->user, $comment);
 
 		return new CommentResource($comment);
 	}
