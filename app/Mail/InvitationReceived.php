@@ -38,6 +38,12 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
+        return $this->from(config('mail.noreply'))
+        ->markdown('emails.' . App::currentLocale() . '.invitation-mail', [
+            'user' => $this->user,
+            'invitation' => $this->invitation,
+            'entryMessage' => $this->entryMessage
+        ]);
     }
 }
