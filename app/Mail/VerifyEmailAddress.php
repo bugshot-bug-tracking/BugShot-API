@@ -14,8 +14,8 @@ class VerifyEmailAddress extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
-    public $url;
+    private $user;
+    private $url;
 
     /**
      * Create a new message instance.
@@ -42,6 +42,11 @@ class VerifyEmailAddress extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
+        return $this->from(config('mail.noreply'))
+                ->markdown('emails.' . App::currentLocale() . '.verify-email-address-mail', [
+                    'user' => $this->user,
+                    'url' => $this->url,
+                ]);
     }
 }
