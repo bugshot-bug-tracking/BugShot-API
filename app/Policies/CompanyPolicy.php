@@ -18,7 +18,7 @@ class CompanyPolicy
      * | id | designation
      * |----|----------------------
      * | 1  | Manager
-     * | 2  | Developer
+     * | 2  | Team
      * | 3  | Client (e.g. Customer)
     */
 
@@ -82,15 +82,14 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
 
         $role = $company->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
@@ -112,18 +111,8 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        }
-        
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
     }
 
@@ -175,21 +164,14 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
         
         $role = $company->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -211,15 +193,14 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
         
         $role = $company->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
 
@@ -241,21 +222,14 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
         
         $role = $company->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -277,15 +251,14 @@ class CompanyPolicy
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
+        } else if ($company->user_id == $user->id) {
+            return true;
         }
         
         $role = $company->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             

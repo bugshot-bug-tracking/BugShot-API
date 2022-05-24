@@ -126,11 +126,27 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function createdOrganizations()
+    {
+        return $this->hasMany(Organization::class, 'user_id');
+    }
+
+	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function companies()
     {
         return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function createdCompanies()
+    {
+        return $this->hasMany(Company::class, 'user_id');
     }
 
 	/**
@@ -142,11 +158,27 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function createdProjects()
+    {
+        return $this->hasMany(Project::class, 'user_id');
+    }
+
+	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function bugs()
     {
         return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->orderBy('order_number');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function createdBugs()
+    {
+        return $this->hasMany(Bug::class, 'user_id');
     }
 
 	/**
@@ -176,18 +208,18 @@ class User extends Authenticatable implements MustVerifyEmail
 	}
 
 	/**
-	 * Check if the user is priviliege to have access to certain resources
-	 * E.g.: A user with the role of a company manager should have acces to all projects within
+	 * Check if the user is privilieged to have access to certain resources
+	 * E.g.: A user with the role of a company manager should have access to all projects within
 	 * that company, eventhough he isn't part of all projects
 	 */
-	public function isPriviliegated($resourceType, $userRoleId) {
+	public function isPriviliegated($resourceType, $resource) {
     
 		/**
 		 * Roles:
 		 * | id | designation
 		 * |----|----------------------
 		 * | 1  | Manager
-		 * | 2  | Developer
+		 * | 2  | Team
 		 * | 3  | Client (e.g. Customer)
 		 */
 
@@ -196,13 +228,18 @@ class User extends Authenticatable implements MustVerifyEmail
 			return true;
 		}
 
+		// Check if the user is the creator of the resource
+		if($resource->user_id == $this->id) {
+			return true;
+		}
+
 		// Check if the user has a sufficient role within the given resource
 		if($resourceType == 'projects') {
-			switch ($userRoleId) {
+			// Get users resource role
+			$userProjectRoleId = $this->user->projects->find($resource)->pivot->role_id;
+
+			switch ($userProjectRoleId) {
 				case 1:
-					return true;
-					break;
-				case 2:
 					return true;
 					break;
 				
@@ -211,14 +248,11 @@ class User extends Authenticatable implements MustVerifyEmail
 					break;
 			}
 		} else if($resourceType == 'bugs') {
-			switch ($userRoleId) {
+			// Get users resource role
+			$userBugRoleId = $this->user->bugs->find($resource)->pivot->role_id;
+
+			switch ($userBugRoleId) {
 				case 1:
-					return true;
-					break;
-				case 2:
-					return true;
-					break;
-				case 3:
 					return true;
 					break;
 				
