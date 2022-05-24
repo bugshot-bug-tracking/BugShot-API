@@ -165,8 +165,7 @@ class ProjectController extends Controller
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 
-		$userCompanyRoleId = $this->user->companies->find($company)->pivot->role_id;
-		$userIsPriviliegated = $this->user->isPriviliegated('projects', $userCompanyRoleId);
+		$userIsPriviliegated = $this->user->isPriviliegated('projects', $company);
 		
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
@@ -174,6 +173,9 @@ class ProjectController extends Controller
 				$projects = $company->projects;
 			} else {
 				$projects = Auth::user()->projects->where('company_id', $company->id);
+				$createdProjects = $this->user->createdProjects->where('company_id', $company->id);
+				// Combine the two collections
+				$projects = $projects->concat($createdProjects);
 			}
         } else {
 			if($userIsPriviliegated) {
@@ -182,8 +184,15 @@ class ProjectController extends Controller
 				$projects = Auth::user()->projects
 					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
 					->where('company_id', $company->id);
+				$createdProjects = $this->user->createdProjects					
+					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('company_id', $company->id);
+
+				// Combine the two collections
+				$projects = $projects->concat($createdProjects);
 			}
         }
+
 
 		return ProjectResource::collection($projects);
 	}
@@ -330,9 +339,6 @@ class ProjectController extends Controller
 				$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
 			}
 		}
-
-		// Store the respective role
-		Auth::user()->projects()->attach($project->id, ['role_id' => 1]);
 
 		// Create the default statuses for the new project
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];

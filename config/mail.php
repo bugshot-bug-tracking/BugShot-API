@@ -136,10 +136,10 @@ return [
     */
 
     'markdown' => [
-        'theme' => 'mail.css',
+        'theme' => 'mail',
 
         'paths' => [
-            resource_path('views/vendor/mail'),
+            resource_path('views/emails'),
         ],
     ],
 
