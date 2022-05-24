@@ -833,7 +833,7 @@ class BugController extends Controller
 		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
 		$targetUser = User::find($request->user_id);
-		$targetUser->bugs()->attach($bug->id, ['role_id' => 4]);
+		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
 
 		return response()->json("", 204);
 	}
