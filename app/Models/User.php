@@ -232,11 +232,24 @@ class User extends Authenticatable implements MustVerifyEmail
 		if($resource->user_id == $this->id) {
 			return true;
 		}
-
+     
 		// Check if the user has a sufficient role within the given resource
-		if($resourceType == 'projects') {
+        if($resourceType == 'companies') {
 			// Get users resource role
-			$userProjectRoleId = $this->user->projects->find($resource)->pivot->role_id;
+			$userCompanyRoleId = $this->companies->find($resource)->pivot->role_id;
+
+			switch ($userCompanyRoleId) {
+				case 1:
+					return true;
+					break;
+				
+				default:
+					return false;
+					break;
+			}
+		} else if ($resourceType == 'projects') {
+			// Get users resource role
+			$userProjectRoleId = $this->projects->find($resource)->pivot->role_id;
 
 			switch ($userProjectRoleId) {
 				case 1:
@@ -249,7 +262,7 @@ class User extends Authenticatable implements MustVerifyEmail
 			}
 		} else if($resourceType == 'bugs') {
 			// Get users resource role
-			$userBugRoleId = $this->user->bugs->find($resource)->pivot->role_id;
+			$userBugRoleId = $this->bugs->find($resource)->pivot->role_id;
 
 			switch ($userBugRoleId) {
 				case 1:

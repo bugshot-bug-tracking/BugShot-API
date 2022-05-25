@@ -110,26 +110,7 @@ class OrganizationPolicy
      */
     public function delete(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        return $organization->user_id == $user->id;
     }
 
     /**
@@ -165,7 +146,7 @@ class OrganizationPolicy
      */
     public function viewImage(User $user, Organization $organization)
     {
-        return $user->organizations()->find($organization) != NULL;
+        //
     }
 
     /**
@@ -177,26 +158,7 @@ class OrganizationPolicy
      */
     public function viewUsers(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        //
     }
 
     /**
