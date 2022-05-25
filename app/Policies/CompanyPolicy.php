@@ -56,6 +56,10 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         return $user->companies()->find($company) != NULL;
     }
 
