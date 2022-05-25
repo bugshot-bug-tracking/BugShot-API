@@ -79,11 +79,13 @@ class OrganizationPolicy
      */
     public function update(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
 
         $role = $organization->pivot->role_id;
@@ -108,11 +110,13 @@ class OrganizationPolicy
      */
     public function delete(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
         
         $role = $organization->pivot->role_id;
@@ -173,11 +177,13 @@ class OrganizationPolicy
      */
     public function viewUsers(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
         
         $role = $organization->pivot->role_id;
@@ -202,11 +208,13 @@ class OrganizationPolicy
      */
     public function removeUser(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
         
         $role = $organization->pivot->role_id;
@@ -231,11 +239,13 @@ class OrganizationPolicy
      */
     public function viewInvitations(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
         
         $role = $organization->pivot->role_id;
@@ -260,11 +270,13 @@ class OrganizationPolicy
      */
     public function invite(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
-        } else if ($organization->user_id == $user->id) {
-            return true;
         }
         
         $role = $organization->pivot->role_id;

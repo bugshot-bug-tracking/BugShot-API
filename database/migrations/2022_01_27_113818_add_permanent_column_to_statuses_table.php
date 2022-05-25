@@ -28,7 +28,7 @@ class AddPermanentColumnToStatusesTable extends Migration
     public function down()
     {
         Schema::table('statuses', function (Blueprint $table) {
-			$table->string('permanent');
+			$table->dropColumn('permanent');
         });
     }
 }

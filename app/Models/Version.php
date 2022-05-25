@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property integer $version_type_id
  * @property string $designation
  * @property string $description
+ * @property boolean $supported
  * @property string $created_at
  * @property string $updated_at
  * @property Client $client
@@ -27,7 +28,7 @@ class Version extends Model
     /**
      * @var array
      */
-    protected $fillable = ['client_id', 'version_type_id', 'designation', 'description', 'updated_at'];
+    protected $fillable = ['client_id', 'version_type_id', 'designation', 'description', 'supported', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
