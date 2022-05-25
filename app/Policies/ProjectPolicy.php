@@ -95,7 +95,7 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
-        if($project->user_id == $user->id) {
+        if($company->user_id == $user->id) {
             return true;
         }
 
