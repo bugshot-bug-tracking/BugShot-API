@@ -20,7 +20,7 @@
     <p>
         If that doesn't work, you can also just copy the following URL into your browser:
     </p>
-    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a>
+    <a href="{{ $url }}">{{ $url }}</a>
     <p>
         Error-free Greetings,
         <br />

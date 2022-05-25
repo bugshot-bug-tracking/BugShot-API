@@ -15,7 +15,7 @@ use App\Services\SendinblueService;
 class SendinblueController extends Controller
 {
     /**
-	 * Get the number of bugs the given user has created and
+	 * Get the number of bugs the given user has created and send it to Sendinblue
 	 *
 	 * @return Response
 	 */

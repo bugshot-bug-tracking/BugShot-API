@@ -33,6 +33,9 @@ class CompanyResource extends JsonResource
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
 			$projects = Auth::user()->projects->where('company_id', $this->id);
+			$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
+			$projects = $projects->concat($createdProjects);
+
 			$company['attributes']['projects'] = ProjectResource::collection($projects);
 		}
 		

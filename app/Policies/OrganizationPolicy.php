@@ -17,11 +17,9 @@ class OrganizationPolicy
      * Roles:
      * | id | designation
      * |----|----------------------
-     * | 1  | Owner
-     * | 2  | Organization Manager
-     * | 3  | Project Manager
-     * | 4  | Developer
-     * | 5  | Client (e.g. Customer)
+     * | 1  | Manager
+     * | 2  | Team
+     * | 3  | Client (e.g. Customer)
     */
 
     /**
@@ -84,15 +82,14 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
 
         $role = $organization->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
@@ -114,6 +111,8 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
         
         $role = $organization->pivot->role_id;
@@ -177,21 +176,14 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
         
         $role = $organization->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -213,15 +205,14 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
         
         $role = $organization->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
 
@@ -243,21 +234,14 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
         
         $role = $organization->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -279,15 +263,14 @@ class OrganizationPolicy
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
+        } else if ($organization->user_id == $user->id) {
+            return true;
         }
         
         $role = $organization->pivot->role_id;
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             

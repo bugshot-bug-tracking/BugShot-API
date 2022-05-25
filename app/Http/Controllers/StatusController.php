@@ -559,7 +559,7 @@ class StatusController extends Controller
 		$this->authorize('delete', [Status::class, $project]);
 		
 		// Move the bugs into a new status 
-		if($request->header('move') !== NULL) {
+		if($request->header('move') != NULL) {
 			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
 		}
 

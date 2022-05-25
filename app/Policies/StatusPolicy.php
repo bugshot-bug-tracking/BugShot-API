@@ -18,11 +18,9 @@ class StatusPolicy
      * Roles:
      * | id | designation
      * |----|----------------------
-     * | 1  | Owner
-     * | 2  | Company Manager
-     * | 3  | Project Manager
-     * | 4  | Developer
-     * | 5  | Client (e.g. Customer)
+     * | 1  | Manager
+     * | 2  | Team
+     * | 3  | Client (e.g. Customer)
      */
 
     /**
@@ -75,6 +73,8 @@ class StatusPolicy
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
+        } else if ($project->user_id == $user->id) {
+            return true;
         }
         
         $role = $project->pivot->role_id;
@@ -84,12 +84,6 @@ class StatusPolicy
                 return true;
                 break;
             case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -111,6 +105,8 @@ class StatusPolicy
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
+        } else if ($project->user_id == $user->id) {
+            return true;
         }
         
         $role = $project->pivot->role_id;
@@ -120,12 +116,6 @@ class StatusPolicy
                 return true;
                 break;
             case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -147,6 +137,8 @@ class StatusPolicy
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
+        } else if ($project->user_id == $user->id) {
+            return true;
         }
         
         $role = $project->pivot->role_id;
@@ -156,12 +148,6 @@ class StatusPolicy
                 return true;
                 break;
             case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             

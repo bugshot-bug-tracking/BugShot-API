@@ -44,7 +44,7 @@ class InvitationResource extends JsonResource
 				"target_email" => $this->target_email,
                 "invitable" => $resource,
                 "role" => new RoleResource($this->role),
-                "status" => new StatusResource($this->status),
+                "status" => new InvitationStatusResource($this->status),
                 "created_at" => $this->created_at,
                 "updated_at" => $this->updated_at
 			]

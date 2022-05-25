@@ -508,9 +508,11 @@ class AuthController extends Controller
 			}
 		);
 
+		$user = User::where('email', $request->email)->first();
+
 		if($status === PasswordFacade::PASSWORD_RESET) {
 			// Send password reset success mail
-			$request->user()->notify(new PasswordResetSuccessfulNotification());
+			$user->notify(new PasswordResetSuccessfulNotification());
 
 			return response(__($status), 200);
 		} else {

@@ -49,8 +49,8 @@ Route::get('/debug-sentry', function () {
 
 Route::get('/mail', function () {
     $user = App\Models\User::find(1);
- 
-    return new App\Mail\PasswordResetSuccessful($user);
+	$url = config('app.webpanel_url') . '/auth/verify/' . $user->id . '/token';
+    return new App\Mail\VerifyEmailAddress($user, $url);
 });
 
 Route::prefix('auth')->group(function () {

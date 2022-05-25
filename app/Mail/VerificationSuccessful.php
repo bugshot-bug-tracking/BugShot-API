@@ -37,6 +37,12 @@ class VerificationSuccessful extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
+        return $this->from(config('mail.noreply'))
+        ->markdown('emails.' . App::currentLocale() . '.verification-successful-mail', [
+            'user' => $this->user,
+            'url' => $this->url,
+            'policyUrl' => $this->policyUrl
+        ]);
     }
 }
