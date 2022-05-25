@@ -80,11 +80,13 @@ class BugPolicy
      */
     public function update(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
 
         $role = $project->pivot->role_id;
@@ -112,11 +114,13 @@ class BugPolicy
      */
     public function delete(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
 
         $role = $project->pivot->role_id;
@@ -168,11 +172,13 @@ class BugPolicy
      */
     public function assignUser(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
 
         $role = $project->pivot->role_id;
@@ -200,11 +206,13 @@ class BugPolicy
      */
     public function viewUsers(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
 
         $role = $project->pivot->role_id;
@@ -232,11 +240,13 @@ class BugPolicy
      */
     public function removeUser(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
 
         $role = $project->pivot->role_id;

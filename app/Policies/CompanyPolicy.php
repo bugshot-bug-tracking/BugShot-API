@@ -79,15 +79,16 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        } else if ($company->user_id == $user->id) {
+        if($company->user_id == $user->id) {
             return true;
         }
 
-        $role = $company->pivot->role_id;
+        $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
 
+        $role = $company->pivot->role_id;
         switch ($role) {
             case 1:
                 return true;
@@ -108,11 +109,13 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        } else if ($company->user_id == $user->id) {
-            return true;
         }
     }
 
@@ -161,11 +164,13 @@ class CompanyPolicy
      */
     public function viewUsers(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        } else if ($company->user_id == $user->id) {
-            return true;
         }
         
         $role = $company->pivot->role_id;
@@ -190,11 +195,13 @@ class CompanyPolicy
      */
     public function removeUser(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        } else if ($company->user_id == $user->id) {
-            return true;
         }
         
         $role = $company->pivot->role_id;
@@ -219,11 +226,13 @@ class CompanyPolicy
      */
     public function viewInvitations(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        } else if ($company->user_id == $user->id) {
-            return true;
         }
         
         $role = $company->pivot->role_id;
@@ -248,11 +257,13 @@ class CompanyPolicy
      */
     public function invite(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
-        } else if ($company->user_id == $user->id) {
-            return true;
         }
         
         $role = $company->pivot->role_id;

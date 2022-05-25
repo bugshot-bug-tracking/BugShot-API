@@ -70,11 +70,13 @@ class StatusPolicy
      */
     public function create(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
         
         $role = $project->pivot->role_id;
@@ -102,11 +104,13 @@ class StatusPolicy
      */
     public function update(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
         
         $role = $project->pivot->role_id;
@@ -134,11 +138,13 @@ class StatusPolicy
      */
     public function delete(User $user, Project $project)
     {
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
-        } else if ($project->user_id == $user->id) {
-            return true;
         }
         
         $role = $project->pivot->role_id;

@@ -74,6 +74,7 @@ class ProjectController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -230,6 +231,7 @@ class ProjectController extends Controller
 	 *
 	 *	 @OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -388,6 +390,7 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -397,6 +400,7 @@ class ProjectController extends Controller
 	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -520,14 +524,17 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -663,14 +670,17 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -743,9 +753,10 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -821,6 +832,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -937,6 +949,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1019,9 +1032,9 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1100,8 +1113,10 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1110,6 +1125,7 @@ class ProjectController extends Controller
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="user_id",
+     *      example=1,
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1183,6 +1199,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1252,6 +1269,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
