@@ -722,7 +722,7 @@ class CompanyController extends Controller
 	public function image(Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the company
-		$this->authorize('viewImage', $company);
+		$this->authorize('view', $company);
 
 		return new ImageResource($company->image);
 	}
@@ -797,7 +797,7 @@ class CompanyController extends Controller
 	public function users(Company $company)
 	{
 		// Check if the user is authorized to view the users of the company
-		$this->authorize('viewUsers', $company);
+		$this->authorize('view', $company);
 
 		return CompanyUserRoleResource::collection(
 			CompanyUserRole::where("company_id", $company->id)

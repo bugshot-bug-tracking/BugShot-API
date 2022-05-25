@@ -113,14 +113,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
+        return $company->user_id == $user->id;
     }
 
     /**
@@ -156,7 +149,7 @@ class CompanyPolicy
      */
     public function viewImage(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        //
     }
 
     /**
@@ -168,26 +161,7 @@ class CompanyPolicy
      */
     public function viewUsers(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        //
     }
 
     /**
@@ -209,7 +183,6 @@ class CompanyPolicy
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;
@@ -240,7 +213,6 @@ class CompanyPolicy
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;
@@ -271,7 +243,6 @@ class CompanyPolicy
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;

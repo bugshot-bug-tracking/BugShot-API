@@ -46,6 +46,24 @@ class StatusPolicy
      */
     public function viewAny(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         return $user->projects()->find($project) != NULL;
     }
 
@@ -58,6 +76,24 @@ class StatusPolicy
      */
     public function view(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         return $user->projects()->find($project) != NULL;
     }
 
@@ -70,6 +106,24 @@ class StatusPolicy
      */
     public function create(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         if($project->user_id == $user->id) {
             return true;
         }
@@ -80,7 +134,6 @@ class StatusPolicy
         }
         
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;
@@ -104,6 +157,24 @@ class StatusPolicy
      */
     public function update(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         if($project->user_id == $user->id) {
             return true;
         }
@@ -138,6 +209,24 @@ class StatusPolicy
      */
     public function delete(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         if($project->user_id == $user->id) {
             return true;
         }
@@ -148,7 +237,6 @@ class StatusPolicy
         }
         
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;

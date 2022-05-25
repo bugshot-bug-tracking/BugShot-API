@@ -165,8 +165,7 @@ class ProjectController extends Controller
 
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
-
-		$userIsPriviliegated = $this->user->isPriviliegated('projects', $company);
+		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 		
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
@@ -794,7 +793,7 @@ class ProjectController extends Controller
 	public function image(Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the project
-		$this->authorize('viewImage', $project);
+		$this->authorize('view', $project);
 
 		return new ImageResource($project->image);
 	}
@@ -1072,7 +1071,7 @@ class ProjectController extends Controller
 	public function users(Project $project)
 	{
 		// Check if the user is authorized to view the users of the project
-		$this->authorize('viewUsers', $project);
+		$this->authorize('view', $project);
 
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)
