@@ -343,13 +343,14 @@ class ProjectController extends Controller
 
 		// Create the default statuses for the new project
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
+        
 		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
 				"order_number" => $key++,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 3 ? ($key > 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
+				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
 			]);
 		}
 
