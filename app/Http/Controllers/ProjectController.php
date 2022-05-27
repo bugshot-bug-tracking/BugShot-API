@@ -632,7 +632,8 @@ class ProjectController extends Controller
 		$project->update($request->all());
 		$project->update([
 			"company_id" => $company->id,
-			"color_hex" => $color_hex
+			"color_hex" => $color_hex,
+            "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
 		return new ProjectResource($project);
