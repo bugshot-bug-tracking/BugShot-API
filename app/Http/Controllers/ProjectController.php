@@ -323,7 +323,7 @@ class ProjectController extends Controller
 			"user_id" => Auth::user()->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
-			"url" => $request->url
+			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
 		// Check if the project comes with an image (or a color)
