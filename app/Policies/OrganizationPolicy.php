@@ -17,11 +17,9 @@ class OrganizationPolicy
      * Roles:
      * | id | designation
      * |----|----------------------
-     * | 1  | Owner
-     * | 2  | Organization Manager
-     * | 3  | Project Manager
-     * | 4  | Developer
-     * | 5  | Client (e.g. Customer)
+     * | 1  | Manager
+     * | 2  | Team
+     * | 3  | Client (e.g. Customer)
     */
 
     /**
@@ -81,6 +79,10 @@ class OrganizationPolicy
      */
     public function update(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
@@ -90,9 +92,6 @@ class OrganizationPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
@@ -111,22 +110,7 @@ class OrganizationPolicy
      */
     public function delete(User $user, Organization $organization)
     {
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        return $organization->user_id == $user->id;
     }
 
     /**
@@ -162,7 +146,7 @@ class OrganizationPolicy
      */
     public function viewImage(User $user, Organization $organization)
     {
-        return $user->organizations()->find($organization) != NULL;
+        //
     }
 
     /**
@@ -174,31 +158,7 @@ class OrganizationPolicy
      */
     public function viewUsers(User $user, Organization $organization)
     {
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        //
     }
 
     /**
@@ -210,6 +170,10 @@ class OrganizationPolicy
      */
     public function removeUser(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
@@ -219,9 +183,6 @@ class OrganizationPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
 
@@ -240,6 +201,10 @@ class OrganizationPolicy
      */
     public function viewInvitations(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
@@ -249,15 +214,6 @@ class OrganizationPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -276,6 +232,10 @@ class OrganizationPolicy
      */
     public function invite(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         $organization = $user->organizations()->find($organization);
         if ($organization == NULL) {
             return false;
@@ -285,9 +245,6 @@ class OrganizationPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             

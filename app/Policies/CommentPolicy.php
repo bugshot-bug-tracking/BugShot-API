@@ -19,7 +19,7 @@ class CommentPolicy
      * | id | designation
      * |----|----------------------
      * | 1  | Manager
-     * | 2  | Developer
+     * | 2  | Team
      * | 3  | Client (e.g. Customer)
      */
 
@@ -46,6 +46,24 @@ class CommentPolicy
      */
     public function viewAny(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         return $user->projects()->find($project) != NULL;
     }
 
@@ -58,6 +76,24 @@ class CommentPolicy
      */
     public function view(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         return $user->projects()->find($project) != NULL;
     }
 
@@ -70,6 +106,24 @@ class CommentPolicy
      */
     public function create(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
         return $user->projects()->find($project) != NULL;
     }
 
@@ -83,7 +137,8 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment, Project $project)
     {
-        return $user->projects()->find($project) != NULL && $comment->user->is($user);
+        // Check project role
+        return $comment->user->is($user);
     }
 
     /**
@@ -96,7 +151,7 @@ class CommentPolicy
      */
     public function delete(User $user, Comment $comment, Project $project)
     {
-        return $user->projects()->find($project) != NULL && $comment->user->is($user);
+        return $comment->user->is($user);
     }
 
     /**

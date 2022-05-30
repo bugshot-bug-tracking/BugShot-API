@@ -19,7 +19,7 @@ class ProjectPolicy
      * | id | designation
      * |----|----------------------
      * | 1  | Manager
-     * | 2  | Developer
+     * | 2  | Team
      * | 3  | Client (e.g. Customer)
      */
 
@@ -46,7 +46,14 @@ class ProjectPolicy
      */
     public function viewAny(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($company);
+        if ($company != NULL) {
+            return true;
+        }
     }
 
     /**
@@ -58,13 +65,34 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
         }
 
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;
@@ -91,6 +119,10 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
@@ -100,12 +132,6 @@ class ProjectPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
                 return true;
                 break;
             
@@ -124,6 +150,28 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
@@ -133,12 +181,6 @@ class ProjectPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
                 return true;
                 break;
             
@@ -157,27 +199,26 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
             return false;
         }
 
-        $role = $project->pivot->role_id;
-
+        $role = $company->pivot->role_id;
         switch ($role) {
             case 1:
                 return true;
                 break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
         }
     }
 
@@ -214,7 +255,7 @@ class ProjectPolicy
      */
     public function viewImage(User $user, Project $project)
     {
-        return $user->projects()->find($project) != NULL;
+        //
     }
 
     /**
@@ -226,31 +267,7 @@ class ProjectPolicy
      */
     public function viewUsers(User $user, Project $project)
     {
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        //
     }
 
     /**
@@ -261,22 +278,37 @@ class ProjectPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function removeUser(User $user, Project $project)
-    {
-        $project = $user->companies()->find($project);
+    {        
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
         }
         
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
                 return true;
                 break;
 
@@ -295,24 +327,36 @@ class ProjectPolicy
      */
     public function viewInvitations(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
         }
 
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -331,6 +375,28 @@ class ProjectPolicy
      */
     public function invite(User $user, Project $project)
     {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
         $project = $user->projects()->find($project);
         if ($project == NULL) {
             return false;
@@ -340,9 +406,6 @@ class ProjectPolicy
 
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             

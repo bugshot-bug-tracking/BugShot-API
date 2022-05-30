@@ -176,10 +176,12 @@ class AuthController extends Controller
 	 *  			@OA\Property(
 	 *                  property="email",
 	 *                  type="string",
+     *                  default="john@mail.de"
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="password",
 	 *                  type="string",
+     *                  default="password1"
 	 *              ),
 	 *              required={"email","password"}
 	 *          )

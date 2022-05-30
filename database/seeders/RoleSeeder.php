@@ -26,7 +26,7 @@ class RoleSeeder extends Seeder
 
 		Role::create([
 			"id" => 2,
-			"designation" => "Developer"
+			"designation" => "Team"
 		]);
 
 		Role::create([
