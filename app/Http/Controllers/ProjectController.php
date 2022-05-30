@@ -342,7 +342,7 @@ class ProjectController extends Controller
 				"designation" => $status,
 				"order_number" => $key++,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 3 ? ($key > 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
+				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
 			]);
 		}
 
