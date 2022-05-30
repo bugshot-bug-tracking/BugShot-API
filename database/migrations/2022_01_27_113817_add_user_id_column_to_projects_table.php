@@ -16,7 +16,7 @@ class AddUserIdColumnToProjectsTable extends Migration
         Schema::table('projects', function (Blueprint $table) {
             $table->after('id', function ($table) {
                 $table->unsignedBigInteger('user_id')->nullable();
-                $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+                $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             });
         });
     }

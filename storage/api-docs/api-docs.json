@@ -606,10 +606,12 @@
                                 ],
                                 "properties": {
                                     "email": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "john@mail.de"
                                     },
                                     "password": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "password1"
                                     }
                                 },
                                 "type": "object"
@@ -4866,7 +4868,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "timestamp",
@@ -4982,7 +4985,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "requestBody": {
@@ -5097,7 +5101,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -5105,7 +5110,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "include-statuses",
@@ -5218,7 +5224,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -5226,7 +5233,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "_method",
@@ -5334,7 +5342,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -5342,7 +5351,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5400,7 +5410,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5468,7 +5479,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "include-screenshots",
@@ -5571,7 +5583,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "url",
@@ -5647,7 +5660,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5715,7 +5729,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "user_id",
@@ -5723,7 +5738,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/User/properties/id"
-                        }
+                        },
+                        "example": 1
                     }
                 ],
                 "responses": {
@@ -5781,7 +5797,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5849,7 +5866,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "requestBody": {

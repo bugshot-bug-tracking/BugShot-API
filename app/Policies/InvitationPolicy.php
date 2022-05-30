@@ -15,7 +15,7 @@ class InvitationPolicy
      * | id | designation
      * |----|----------------------
      * | 1  | Manager
-     * | 2  | Developer
+     * | 2  | Team
      * | 3  | Client (e.g. Customer)
      */
 

@@ -909,7 +909,7 @@ class BugController extends Controller
 	public function users(Bug $bug)
 	{
 		// Check if the user is authorized to view the users of the bug
-		$this->authorize('viewUsers', [Bug::class, $bug->project]);
+		$this->authorize('view', [Bug::class, $bug->project]);
 		
 		return BugUserRoleResource::collection(
 			BugUserRole::where("bug_id", $bug->id)

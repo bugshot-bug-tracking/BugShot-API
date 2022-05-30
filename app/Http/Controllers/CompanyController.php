@@ -165,14 +165,19 @@ class CompanyController extends Controller
 
 		// Check if the request includes a timestamp and query the companies accordingly
         if($timestamp == NULL) {
-            $companies = $this->user->companies->sortBy('designation');
+            $companies = $this->user->companies;
+			$createdCompanies = $this->user->createdCompanies;
         } else {
             $companies = $this->user->companies
-				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-				->sortBy('designation');
+				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			$createdCompanies = $this->user->createdCompanies
+				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 
-		return CompanyResource::collection($companies);
+		// Combine the two collections
+		$companies = $companies->concat($createdCompanies);
+
+		return CompanyResource::collection($companies->sortBy('designation'));
 	}
 
 	/**
@@ -301,9 +306,6 @@ class CompanyController extends Controller
 				$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
 			}
 		}
-
-		// Store the respective role
-		$this->user->companies()->attach($company->id, ['role_id' => 1]);
 
 		return new CompanyResource($company);
 	}
@@ -720,7 +722,7 @@ class CompanyController extends Controller
 	public function image(Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the company
-		$this->authorize('viewImage', $company);
+		$this->authorize('view', $company);
 
 		return new ImageResource($company->image);
 	}
@@ -795,7 +797,7 @@ class CompanyController extends Controller
 	public function users(Company $company)
 	{
 		// Check if the user is authorized to view the users of the company
-		$this->authorize('viewUsers', $company);
+		$this->authorize('view', $company);
 
 		return CompanyUserRoleResource::collection(
 			CompanyUserRole::where("company_id", $company->id)

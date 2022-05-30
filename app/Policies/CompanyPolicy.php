@@ -18,7 +18,7 @@ class CompanyPolicy
      * | id | designation
      * |----|----------------------
      * | 1  | Manager
-     * | 2  | Developer
+     * | 2  | Team
      * | 3  | Client (e.g. Customer)
     */
 
@@ -56,6 +56,10 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         return $user->companies()->find($company) != NULL;
     }
 
@@ -79,18 +83,18 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
         }
 
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
@@ -109,22 +113,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        return $company->user_id == $user->id;
     }
 
     /**
@@ -160,7 +149,7 @@ class CompanyPolicy
      */
     public function viewImage(User $user, Company $company)
     {
-        return $user->companies()->find($company) != NULL;
+        //
     }
 
     /**
@@ -172,31 +161,7 @@ class CompanyPolicy
      */
     public function viewUsers(User $user, Company $company)
     {
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+        //
     }
 
     /**
@@ -208,18 +173,18 @@ class CompanyPolicy
      */
     public function removeUser(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
 
@@ -238,24 +203,18 @@ class CompanyPolicy
      */
     public function viewInvitations(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
-                return true;
-                break;
-            case 3:
-                return true;
-                break;
-            case 4:
                 return true;
                 break;
             
@@ -274,18 +233,18 @@ class CompanyPolicy
      */
     public function invite(User $user, Company $company)
     {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
         $company = $user->companies()->find($company);
         if ($company == NULL) {
             return false;
         }
         
         $role = $company->pivot->role_id;
-
         switch ($role) {
             case 1:
-                return true;
-                break;
-            case 2:
                 return true;
                 break;
             
