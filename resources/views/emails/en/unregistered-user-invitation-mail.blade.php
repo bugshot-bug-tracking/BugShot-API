@@ -1,33 +1,20 @@
-@extends('emails.layout')
-
-@section('header')
-    <div>
-        <h1>Invitation</h1>
-    </div>
-@endsection
-
-@section('main')
+@component('mail::message')
     <p>Hello there,</p>
     <p>
         {{ $entryMessage }}<br /><br />
-        To accept the invitation you have to register at BugShot with this email address.<br />
+        To accept the invitation you have to register at {{ config('app.projectname') }} with this email address.<br />
         In order to do that, just click on the following button:
     </p>
-    <a href="{{ config('app.webpanel_url') . '/auth/register' }}" type="button" class="action-button">Register now</a>
+    @component('mail::button', ['url' => config('app.webpanel_url') . '/auth/register'])
+        Register now
+    @endcomponent
     <p>
         If that doesn't work, you can also just copy the following URL into your browser:
     </p>
-    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a>
+    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a><br /><br />
     <p>
         Error-free Greetings,
         <br />
-        your BugShot team
+        your {{ config('app.projectname') }} team
     </p>
-@endsection
-
-@section('footer')
-    <div>
-        <p>By using BugShot, you are agreeing to our <a href="{{ config('app.proposal_url') . '/terms-and-conditions' }}">terms and conditions</a>.</p>
-        <a href="{{ config('app.proposal_url') }}">{{ config('app.proposal_url') }}</a>
-    </div>
-@endsection
+@endcomponent
