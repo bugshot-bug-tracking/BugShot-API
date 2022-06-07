@@ -74,6 +74,7 @@ class ProjectController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -164,8 +165,7 @@ class ProjectController extends Controller
 
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
-
-		$userIsPriviliegated = $this->user->isPriviliegated('projects', $company);
+		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 		
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
@@ -230,6 +230,7 @@ class ProjectController extends Controller
 	 *
 	 *	 @OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -322,7 +323,7 @@ class ProjectController extends Controller
 			"user_id" => Auth::user()->id,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
-			"url" => $request->url
+			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
 		// Check if the project comes with an image (or a color)
@@ -342,13 +343,14 @@ class ProjectController extends Controller
 
 		// Create the default statuses for the new project
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
+        
 		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
 				"order_number" => $key++,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 3 ? ($key > 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
+				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
 			]);
 		}
 
@@ -388,6 +390,7 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -397,6 +400,7 @@ class ProjectController extends Controller
 	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -520,14 +524,17 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -625,7 +632,8 @@ class ProjectController extends Controller
 		$project->update($request->all());
 		$project->update([
 			"company_id" => $company->id,
-			"color_hex" => $color_hex
+			"color_hex" => $color_hex,
+            "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
 		return new ProjectResource($project);
@@ -663,14 +671,17 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="company_id",
+     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -743,9 +754,10 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -783,7 +795,7 @@ class ProjectController extends Controller
 	public function image(Project $project, ImageService $imageService)
 	{
 		// Check if the user is authorized to view the image of the project
-		$this->authorize('viewImage', $project);
+		$this->authorize('view', $project);
 
 		return new ImageResource($project->image);
 	}
@@ -821,6 +833,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -937,6 +950,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1019,9 +1033,9 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1059,7 +1073,7 @@ class ProjectController extends Controller
 	public function users(Project $project)
 	{
 		// Check if the user is authorized to view the users of the project
-		$this->authorize('viewUsers', $project);
+		$this->authorize('view', $project);
 
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)
@@ -1100,8 +1114,10 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1110,6 +1126,7 @@ class ProjectController extends Controller
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="user_id",
+     *      example=1,
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1183,6 +1200,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1252,6 +1270,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
+     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
