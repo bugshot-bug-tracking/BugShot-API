@@ -1834,6 +1834,17 @@
                                     "content": {
                                         "description": "The message",
                                         "type": "string"
+                                    },
+                                    "tagged": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
