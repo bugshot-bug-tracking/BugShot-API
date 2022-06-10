@@ -104,8 +104,18 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -389,8 +399,18 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),

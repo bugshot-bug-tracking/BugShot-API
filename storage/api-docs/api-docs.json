@@ -2179,7 +2179,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -2411,7 +2421,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -4912,6 +4932,11 @@
                         "required": false
                     },
                     {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-image",
                         "in": "header",
                         "required": false
@@ -5145,6 +5170,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -5504,6 +5534,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
