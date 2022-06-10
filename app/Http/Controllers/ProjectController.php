@@ -120,6 +120,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-project-image",
 	 *		required=false,
@@ -439,6 +444,11 @@ class ProjectController extends Controller
 	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -862,6 +872,11 @@ class ProjectController extends Controller
 	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),

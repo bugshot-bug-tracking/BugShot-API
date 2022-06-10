@@ -1834,6 +1834,17 @@
                                     "content": {
                                         "description": "The message",
                                         "type": "string"
+                                    },
+                                    "tagged": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -2179,7 +2190,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -2411,7 +2432,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -4912,6 +4943,11 @@
                         "required": false
                     },
                     {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-image",
                         "in": "header",
                         "required": false
@@ -5145,6 +5181,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -5504,6 +5545,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
