@@ -49,7 +49,7 @@ class TaggedInComment extends Mailable
 		$this->readableContent = $this->comment->content;
 
 		preg_match_all(
-            '/(?:<1\$(.*?)>)/',
+            '/(?:<([0-9]+)\$(.*?)>)/',
             $this->readableContent,
             $matches
         );

@@ -659,8 +659,16 @@ class UserController extends Controller
 		// Check if the user is authorized to view the image of a user
 		$this->authorize('checkProject', $user);
 
+		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
+		
+		// Check if the request includes a timestamp and query the projects accordingly
 		$projects = $user->projects->where('url', $request->url);
+		$createdProjects = $user->createdProjects->where('url', $request->url);
+		// Combine the two collections
+		$projects = $projects->concat($createdProjects);
 
+		// $projects = $user->projects->where('url', $request->url);
+		
 		return ProjectResource::collection($projects);
 	}
 }
