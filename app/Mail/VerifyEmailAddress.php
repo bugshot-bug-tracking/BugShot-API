@@ -44,9 +44,6 @@ class VerifyEmailAddress extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
         return $this->from(config('mail.noreply'))
-                ->markdown('emails.' . App::currentLocale() . '.verify-email-address-mail', [
-                    'user' => $this->user,
-                    'url' => $this->url,
-                ]);
+                ->markdown('emails.' . App::currentLocale() . '.verify-email-address-mail');
     }
 }

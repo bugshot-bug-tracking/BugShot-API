@@ -17,7 +17,7 @@ class ProjectResource extends JsonResource
 	 * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
 	 */
 	public function toArray($request)
-	{
+	{	
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();

@@ -20,6 +20,7 @@ return [
     'invitation-received' => 'Invitation received',
     'password-reset-link' => 'Password Reset Link',
     'password-reset-successful' => 'Passwortzurücksetzung erfolgreich',
-    'verify-email' => 'Email Verification'
+    'verify-email' => 'Email Verification',
+    'tagged-in-comment' => 'You were mentioned'
 
 ];
