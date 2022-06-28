@@ -14,8 +14,8 @@ class VerifyEmailAddress extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $user;
-    private $url;
+    public $user;
+    public $url;
 
     /**
      * Create a new message instance.
