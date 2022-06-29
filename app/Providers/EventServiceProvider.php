@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\AssignedToBug;
+use App\Listeners\SendAssignedToBugNotification;
 use App\Events\TaggedInComment;
 use App\Listeners\SendTaggedInCommentNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -17,6 +19,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         TaggedInComment::class => [
             SendTaggedInCommentNotification::class,
+        ],
+        AssignedToBug::class => [
+            SendAssignedToBugNotification::class,
         ],
     ];
 
