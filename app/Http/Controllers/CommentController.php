@@ -220,8 +220,8 @@ class CommentController extends Controller
 
 		// Notify the tagged users
 		foreach($request->tagged as $tagged) {
-			$user = User::find($tagged['user_id']);
-			// TaggedInComment::dispatch($user, $comment);
+			$user = User::find($tagged);
+			TaggedInComment::dispatch($user, $comment);
 		}
 
 		// CommentSent::dispatch($this->user, $comment);
