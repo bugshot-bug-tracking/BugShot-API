@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
 	public function boot()
 	{
 		Schema::defaultStringLength(255);
+		\Tinify\setKey(config('app.tinypng_api_key'));
 	}
 }

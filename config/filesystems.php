@@ -68,9 +68,9 @@ return [
 
 	'links' => [
 		public_path('storage') => storage_path('app/public'),
-		public_path('images') => storage_path('app/uploads/images'),
-		public_path('screenshots') => storage_path('app/uploads/screenshots'),
-		public_path('attachments') => storage_path('app/uploads/attachments'),
+		public_path('images') => storage_path('app/public/uploads/images'),
+		public_path('screenshots') => storage_path('app/public/uploads/screenshots'),
+		public_path('attachments') => storage_path('app/public/uploads/attachments'),
 	],
 
 ];
