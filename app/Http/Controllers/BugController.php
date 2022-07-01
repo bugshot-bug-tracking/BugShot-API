@@ -27,6 +27,9 @@ use App\Models\BugUserRole;
 use App\Http\Requests\BugStoreRequest;
 use App\Http\Requests\BugUpdateRequest;
 
+// Events
+use App\Events\AssignedToBug;
+
 
 /**
  * @OA\Tag(
@@ -52,12 +55,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -163,12 +168,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -356,9 +363,6 @@ class BugController extends Controller
 				$attachmentService->store($bug, $attachment);
 			}
 		}
-		
-		// Store the respective role
-		Auth::user()->bugs()->attach($bug->id, ['role_id' => 1]);
 
 		return new BugResource($bug);
 	}
@@ -379,12 +383,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -489,12 +495,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -668,12 +676,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -760,12 +770,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -824,7 +836,9 @@ class BugController extends Controller
 		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
 		$targetUser = User::find($request->user_id);
-		$targetUser->bugs()->attach($bug->id, ['role_id' => 4]);
+		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
+
+		AssignedToBug::dispatch($targetUser, $bug);
 
 		return response()->json("", 204);
 	}
@@ -845,12 +859,14 @@ class BugController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -898,7 +914,7 @@ class BugController extends Controller
 	public function users(Bug $bug)
 	{
 		// Check if the user is authorized to view the users of the bug
-		$this->authorize('viewUsers', [Bug::class, $bug->project]);
+		$this->authorize('view', [Bug::class, $bug->project]);
 		
 		return BugUserRoleResource::collection(
 			BugUserRole::where("bug_id", $bug->id)

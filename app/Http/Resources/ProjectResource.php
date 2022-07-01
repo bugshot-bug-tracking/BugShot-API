@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Company;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
 
 class ProjectResource extends JsonResource
 {
@@ -15,7 +17,7 @@ class ProjectResource extends JsonResource
 	 * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
 	 */
 	public function toArray($request)
-	{
+	{	
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();
@@ -63,6 +65,20 @@ class ProjectResource extends JsonResource
 		if(array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
 			$image = $this->image;
 			$project['attributes']['image'] = new ImageResource($image);
+		}
+
+		// Check if the response should contain the respective user role within this project
+		if(array_key_exists('include-project-role', $header) && $header['include-project-role'][0] == "true") {
+			$userProject = Auth::user()->projects()->find($this->id);
+
+			if($userProject == NULL) {
+				$userProject = Auth::user()->createdProjects()->find($this->id);
+				$role =  Role::find(1); // Owner
+			} else {
+				$role = Role::find($userProject->pivot->role_id);
+			}
+
+			$project['attributes']['role'] = new RoleResource($role);
 		}
 		
 		return $project;

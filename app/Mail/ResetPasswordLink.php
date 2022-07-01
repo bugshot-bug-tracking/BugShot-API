@@ -35,6 +35,8 @@ class ResetPasswordLink extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.reset-password-link-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.reset-password-link-mail');
+        return $this->from(config('mail.noreply'))
+        ->markdown('emails.' . App::currentLocale() . '.reset-password-link-mail');
     }
 }

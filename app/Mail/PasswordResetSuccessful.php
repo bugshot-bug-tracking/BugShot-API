@@ -33,6 +33,8 @@ class PasswordResetSuccessful extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.password-reset-successful-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.password-reset-successful-mail');
+        return $this->from(config('mail.noreply'))
+        ->markdown('emails.' . App::currentLocale() . '.password-reset-successful-mail');
     }
 }

@@ -46,12 +46,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -110,12 +112,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -195,12 +199,13 @@ class UserController extends Controller
 			'password' => Hash::make($request->password)
 		]);
 
-		// Create the corresponding Stripe customer
-		$response = Http::post(config('app.payment_url') . '/users', [
-            'user' => $user
-		]);
-		
-		$response->throw();
+		// TODO: Stripe update
+		// Update the corresponding Stripe customer
+		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
+		// 	'user' => $user
+		// ]);
+
+		// $response->throw();
 
         return new UserResource($user);
     }
@@ -221,12 +226,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -293,12 +300,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -403,16 +412,19 @@ class UserController extends Controller
 
 		// Update the user
 		$user->update($request->all());
-		$user->update([
-			'password' => $request->password ? Hash::make($request->password) : null
-		]);
+		if($request->has('password')) {
+			$user->update([
+				'password' => $request->password ? Hash::make($request->password) : null
+			]);
+		}
 
+		// TODO: Stripe update
 		// Update the corresponding Stripe customer
-		$response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
-			'user' => $user
-		]);
+		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
+		// 	'user' => $user
+		// ]);
 
-		$response->throw();
+		// $response->throw();
 
 		return new UserResource($user);
     }
@@ -433,12 +445,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -504,12 +518,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -576,12 +592,14 @@ class UserController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -641,8 +659,16 @@ class UserController extends Controller
 		// Check if the user is authorized to view the image of a user
 		$this->authorize('checkProject', $user);
 
+		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
+		
+		// Check if the request includes a timestamp and query the projects accordingly
 		$projects = $user->projects->where('url', $request->url);
+		$createdProjects = $user->createdProjects->where('url', $request->url);
+		// Combine the two collections
+		$projects = $projects->concat($createdProjects);
 
+		// $projects = $user->projects->where('url', $request->url);
+		
 		return ProjectResource::collection($projects);
 	}
 }

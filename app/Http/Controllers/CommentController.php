@@ -17,6 +17,7 @@ use App\Services\CommentService;
 // Models
 use App\Models\Comment;
 use App\Models\Bug;
+use App\Models\User;
 
 // Requests
 use App\Http\Requests\CommentStoreRequest;
@@ -24,6 +25,7 @@ use App\Http\Requests\CommentUpdateRequest;
 
 // Events
 use App\Events\CommentSent;
+use App\Events\TaggedInComment;
 
 /**
  * @OA\Tag(
@@ -47,12 +49,14 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -120,12 +124,14 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -150,6 +156,16 @@ class CommentController extends Controller
 	 *                  description="The message",
 	 *                  property="content",
 	 *                  type="string",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="tagged",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="user_id",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
 	 *              ),
 	 *              required={"bug_id","content"}
 	 *          )
@@ -182,7 +198,7 @@ class CommentController extends Controller
 	 * )
 	 **/
 	public function store(CommentStoreRequest $request, Bug $bug)
-	{
+	{	
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
@@ -202,7 +218,13 @@ class CommentController extends Controller
 			'user_id' => Auth::id()
 		]);
 
-		CommentSent::dispatch($comment);
+		// Notify the tagged users
+		foreach($request->tagged as $tagged) {
+			$user = User::find($tagged);
+			TaggedInComment::dispatch($user, $comment);
+		}
+
+		// CommentSent::dispatch($this->user, $comment);
 
 		return new CommentResource($comment);
 	}
@@ -223,12 +245,14 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -302,12 +326,14 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -409,12 +435,14 @@ class CommentController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",

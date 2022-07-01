@@ -47,12 +47,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -98,14 +100,19 @@ class OrganizationController extends Controller
 
 		// Check if the request includes a timestamp and query the organizations accordingly
         if($timestamp == NULL) {
-            $organizations = $this->user->organizations->sortBy('designation');
+            $organizations = $this->user->organizations;
+			$createdOrganizations = $this->user->createdOrganizations;
         } else {
             $organizations = $this->user->organizations
-				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-				->sortBy('designation');
+				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			$createdOrganizations = $this->user->createdOrganizations
+				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 
-		return OrganizationResource::collection($organizations);
+		// Combine the two collections
+		$organizations = $organizations->concat($createdOrganizations);
+
+		return OrganizationResource::collection($organizations->sortBy('designation'));
 	}
 
 	/**
@@ -124,12 +131,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -190,9 +199,6 @@ class OrganizationController extends Controller
 			"designation" => $request->designation
 		]);
 
-		// Add the organization_id to the user
-		$organization->users()->attach($this->user->id, ['role_id' => 1]);
-
 		return new OrganizationResource($organization);
 	}
 
@@ -212,12 +218,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -283,12 +291,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -383,12 +393,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -451,12 +463,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -530,12 +544,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -602,12 +618,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -669,12 +687,14 @@ class OrganizationController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",

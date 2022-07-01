@@ -36,6 +36,8 @@ class InvitationReceivedUnregisteredUser extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.' . App::currentLocale() . '.unregistered-user-invitation-mail');
+        // return $this->view('emails.' . App::currentLocale() . '.unregistered-user-invitation-mail');
+        return $this->from(config('mail.noreply'))
+        ->markdown('emails.' . App::currentLocale() . '.unregistered-user-invitation-mail');
     }
 }

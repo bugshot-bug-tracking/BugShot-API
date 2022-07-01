@@ -29,12 +29,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -100,12 +102,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -185,12 +189,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -254,12 +260,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -362,12 +370,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -426,12 +436,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -482,12 +494,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -566,12 +580,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -590,10 +606,12 @@
                                 ],
                                 "properties": {
                                     "email": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "john@mail.de"
                                     },
                                     "password": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "password1"
                                     }
                                 },
                                 "type": "object"
@@ -638,12 +656,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -681,12 +701,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -736,12 +758,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -788,12 +812,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -941,12 +967,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1035,12 +1063,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1122,9 +1152,6 @@
                                                 "web_position_y": {
                                                     "type": "integer",
                                                     "format": "int32"
-                                                },
-                                                "selector": {
-                                                    "type": "string"
                                                 }
                                             },
                                             "type": "object"
@@ -1192,12 +1219,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1291,12 +1320,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1440,12 +1471,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1504,12 +1537,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1580,12 +1615,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1695,12 +1732,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1759,12 +1798,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1793,6 +1834,17 @@
                                     "content": {
                                         "description": "The message",
                                         "type": "string"
+                                    },
+                                    "tagged": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1842,12 +1894,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -1911,12 +1965,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2013,12 +2069,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2077,12 +2135,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2130,7 +2190,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -2198,12 +2268,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2297,12 +2369,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2358,7 +2432,17 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -2423,12 +2507,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2523,12 +2609,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2579,12 +2667,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2645,12 +2735,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2711,12 +2803,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2775,12 +2869,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2841,12 +2937,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -2935,12 +3033,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3001,12 +3101,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3070,12 +3172,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3134,12 +3238,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3208,12 +3314,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3275,12 +3383,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3339,12 +3449,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3472,12 +3584,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3541,12 +3655,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3689,12 +3805,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3760,12 +3878,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3821,12 +3941,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3895,12 +4017,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -3956,12 +4080,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4048,12 +4174,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4104,12 +4232,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4170,12 +4300,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4234,12 +4366,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4300,12 +4434,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4394,12 +4530,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4450,12 +4588,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4524,12 +4664,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4585,12 +4727,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4677,12 +4821,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4733,12 +4879,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4751,7 +4899,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "timestamp",
@@ -4790,6 +4939,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -4847,12 +5001,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4865,7 +5021,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "requestBody": {
@@ -4960,12 +5117,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -4978,7 +5137,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -4986,7 +5146,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "include-statuses",
@@ -5020,6 +5181,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -5079,12 +5245,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5097,7 +5265,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -5105,7 +5274,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "_method",
@@ -5193,12 +5363,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5211,7 +5383,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "project_id",
@@ -5219,7 +5392,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5257,12 +5431,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5275,7 +5451,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5323,12 +5500,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5341,7 +5520,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "include-screenshots",
@@ -5365,6 +5545,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -5424,12 +5609,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5442,7 +5629,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "url",
@@ -5498,12 +5686,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5516,7 +5706,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5564,12 +5755,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5582,7 +5775,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     },
                     {
                         "name": "user_id",
@@ -5590,7 +5784,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/User/properties/id"
-                        }
+                        },
+                        "example": 1
                     }
                 ],
                 "responses": {
@@ -5628,12 +5823,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5646,7 +5843,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "responses": {
@@ -5694,12 +5892,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5712,7 +5912,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Project/properties/id"
-                        }
+                        },
+                        "example": "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC"
                     }
                 ],
                 "requestBody": {
@@ -5785,12 +5986,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5843,12 +6046,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5917,12 +6122,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -5978,12 +6185,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6070,12 +6279,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6126,12 +6337,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6195,12 +6408,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6240,9 +6455,6 @@
                                     "web_position_y": {
                                         "type": "integer",
                                         "format": "int32"
-                                    },
-                                    "selector": {
-                                        "type": "string"
                                     },
                                     "base64": {
                                         "type": "string"
@@ -6360,12 +6572,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6434,12 +6648,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6499,9 +6715,6 @@
                                         "type": "integer",
                                         "format": "int32"
                                     },
-                                    "selector": {
-                                        "type": "string"
-                                    },
                                     "base64": {
                                         "type": "string"
                                     }
@@ -6554,12 +6767,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6618,12 +6833,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6717,12 +6934,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6744,17 +6963,12 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "designation",
-                                    "order_number"
+                                    "designation"
                                 ],
                                 "properties": {
                                     "designation": {
                                         "description": "The message",
                                         "type": "string"
-                                    },
-                                    "order_number": {
-                                        "type": "integer",
-                                        "format": "int64"
                                     }
                                 },
                                 "type": "object"
@@ -6804,12 +7018,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -6908,15 +7124,22 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "move",
                         "in": "header",
                         "required": false
                     },
@@ -6970,12 +7193,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7077,12 +7302,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7133,12 +7360,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7222,12 +7451,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7283,12 +7514,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7395,12 +7628,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7451,12 +7686,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -7517,12 +7754,14 @@
                     {
                         "name": "clientId",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1"
                     },
                     {
                         "name": "version",
                         "in": "header",
-                        "required": true
+                        "required": true,
+                        "example": "1.0.0"
                     },
                     {
                         "name": "locale",
@@ -8280,11 +8519,6 @@
                         "format": "int32",
                         "nullable": true
                     },
-                    "selector": {
-                        "description": "The selector of the marker.",
-                        "type": "string",
-                        "maxLength": 255
-                    },
                     "created_at": {
                         "description": "The creation date.",
                         "type": "string",
@@ -8325,7 +8559,9 @@
                         "maxLength": 255
                     },
                     "permanent": {
-                        "type": "boolean"
+                        "description": "The definition of the status being done or in backlog.",
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -8447,8 +8683,5 @@
         {
             "name": "User"
         }
-    ],
-    "security": [
-        []
     ]
 }

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\User;
+use App\Models\Role;
 
 class CompanyResource extends JsonResource
 {
@@ -33,6 +34,9 @@ class CompanyResource extends JsonResource
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
 			$projects = Auth::user()->projects->where('company_id', $this->id);
+			$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
+			$projects = $projects->concat($createdProjects);
+
 			$company['attributes']['projects'] = ProjectResource::collection($projects);
 		}
 		
@@ -46,6 +50,20 @@ class CompanyResource extends JsonResource
 		if(array_key_exists('include-company-image', $header) && $header['include-company-image'][0] == "true") {
 			$image = $this->image;
 			$company['attributes']['image'] = new ImageResource($image);
+		}
+
+		// Check if the response should contain the respective user role within this company
+		if(array_key_exists('include-company-role', $header) && $header['include-company-role'][0] == "true") {
+			$userCompany = Auth::user()->companies()->find($this->id);
+
+			if($userCompany == NULL) {
+				$userCompany = Auth::user()->createdCompanies()->find($this->id);
+				$role =  Role::find(1); // Owner
+			} else {
+				$role = Role::find($userCompany->pivot->role_id);
+			}
+
+			$company['attributes']['role'] = new RoleResource($role);
 		}
 
 		return $company;

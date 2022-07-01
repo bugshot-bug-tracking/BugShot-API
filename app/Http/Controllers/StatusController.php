@@ -42,12 +42,14 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -154,12 +156,14 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -185,12 +189,7 @@ class StatusController extends Controller
 	 *                  property="designation",
 	 *                  type="string",
 	 *              ),
-	 * 	 	  		@OA\Property(
-	 *                  property="order_number",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *              required={"designation", "order_number"}
+	 *              required={"designation"}
 	 *          )
 	 *      )
 	 *  ),
@@ -229,7 +228,8 @@ class StatusController extends Controller
 		$id = $this->setId($request);
 
 		// Get the max order number in this project and increase it by one
-		$order_number = $project->statuses->max('order_number') + 1;
+		$order_number = $project->statuses->max('order_number');
+		$project->statuses->last()->update(['order_number' => $order_number + 1]);
 
 		// Store the new status in the database
 		$status = $project->statuses()->create([
@@ -257,12 +257,14 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -371,12 +373,14 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -492,15 +496,22 @@ class StatusController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="version",
 	 *		required=true,
-	 *		in="header"
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="move",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -542,13 +553,18 @@ class StatusController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(Project $project, Status $status)
+	public function destroy(Request $request, Project $project, Status $status)
 	{
 		// Check if the user is authorized to delete the status
 		$this->authorize('delete', [Status::class, $project]);
+		
+		// Move the bugs into a new status 
+		if($request->header('move') != NULL) {
+			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
+		}
 
 		$val = $status->delete();
-
+	
 		return response($val, 204);
 	}
 
@@ -570,6 +586,20 @@ class StatusController extends Controller
 		foreach($statuses as $status) {
 			$status->update([
 				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
+			]);
+		}
+	}
+
+	// Synchronize the order numbers of all the bugs within a status that is to be deleted
+	private function moveBugsIntoNewStatus($bugs, $status_id)
+	{
+		$status = Status::find($status_id);
+		$orderNumber = $status->bugs->max('order_number') + 1;
+
+		foreach($bugs as $bug) {
+			$bug->update([
+				'status_id' => $status->id,
+				'order_number' => $orderNumber++
 			]);
 		}
 	}

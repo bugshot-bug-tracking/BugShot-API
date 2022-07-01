@@ -17,6 +17,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Project Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of your project.
+    |
+    */
+
+    'projectname' => env('PROJECT_NAME', 'Laravel'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
@@ -94,6 +105,15 @@ return [
     'sendinblue_v2_api_url' => env('SENDINBLUE_V2_API_URL', null),
     'sendinblue_v3_api_key' => env('SENDINBLUE_V3_API_KEY', null),
     'sendinblue_v3_api_url' => env('SENDINBLUE_V3_API_URL', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | TinyPNG
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'tinypng_api_key' => env('TINYPNG_API_KEY', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -210,7 +230,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
