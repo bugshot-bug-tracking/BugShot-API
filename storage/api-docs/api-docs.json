@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://api.bugshot.de/api/v1"
+            "url": "http://api.test/api/v1"
         }
     ],
     "paths": {
@@ -8533,6 +8533,41 @@
                         "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SettingUserValue": {
+                "properties": {
+                    "setting_id": {
+                        "description": "The id of the setting.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "user_id": {
+                        "description": "The id of the user.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "value_id": {
+                        "description": "The id of the value.",
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "type": "object"
+            },
+            "SettingUserValueSubValue": {
+                "properties": {
+                    "setting_user_value_id": {
+                        "description": "The id of the setting-user-value pivot model.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "sub_value_id": {
+                        "description": "The id of the sub value.",
+                        "type": "integer",
+                        "format": "int64"
                     }
                 },
                 "type": "object"

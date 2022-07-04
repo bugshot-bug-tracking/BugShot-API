@@ -33,7 +33,7 @@ class ScreenshotService
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-        $this->compressImage("storage" . $filePath);
+        // $this->compressImage("storage" . $filePath);
 
         // Create a new screenshot
 		$screenshot = $bug->screenshots()->create([

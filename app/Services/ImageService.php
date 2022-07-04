@@ -31,6 +31,7 @@ class ImageService
 
         // Get the mime_type of the image to build the filename with file extension
         $decodedBase64 = base64_decode($base64);
+        dd($base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
         $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
@@ -41,7 +42,7 @@ class ImageService
         // Store the image in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-        $this->compressImage("storage" . $filePath);
+        // $this->compressImage("storage" . $filePath);
 
         // Create a new image model
         $image = new Image([
