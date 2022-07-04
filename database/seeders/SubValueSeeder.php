@@ -14,7 +14,7 @@ class SubValueSeeder extends Seeder
 	 */
 	public function run()
 	{
-		SubValue::createMany([
+		$subValues = [
 			['designation' => 'show_secondary_view_all_projects_button'],
 			['designation' => 'show_edit_priority_button'],
 			['designation' => 'show_edit_deadline_button'],
@@ -26,6 +26,8 @@ class SubValueSeeder extends Seeder
 			['designation' => 'assignation_to_client_project_task'],
 			['designation' => 'new_comments_and_replies'],
 			['designation' => 'new_tag_in_comment']
-		]);
+		];
+
+		SubValue::insert($subValues);
 	}
 }
