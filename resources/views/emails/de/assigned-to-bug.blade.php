@@ -1,11 +1,10 @@
 @component('mail::message')
     <p>Hallo {{ $user->first_name }},</p>
     <p>
-        {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} hat dich soeben in einem Kommentar erwähnt.<br /><br />
+        {{ $initiator->first_name . ' ' . $initiator->last_name }} hat dich soeben einem Bug zugwiesen.<br /><br />
         <strong>Projekt</strong>: {{ $project->designation }}<br />
-        <strong>Bug</strong>: {{ $bug->designation }} (ID: {{ $bug->ai_id }})<br />
-        <strong>Kommentar</strong>: {{ $readableContent }}<br /><br />
-        Um auf den Kommentar zu antworten kannst Du einfach den entsprechenden Bug im Webpanel aufsuchen.<br />
+        <strong>Bug</strong>: {{ $bug->designation }} (ID: {{ $bug->ai_id }})<br /><br />
+        Um die den Bug anzeigen zu lassen, kannst Du einfach das entsprechende Projekt im Webpanel aufsuchen.<br />
         Über den folgenden Button gelangst du ins Webpanel:
     </p>
     @component('mail::button', ['url' => config('app.webpanel_url')])

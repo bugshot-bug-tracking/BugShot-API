@@ -24,31 +24,40 @@ class DatabaseSeeder extends Seeder
         // Adds versions
 		$this->call(VersionSeeder::class);
 
-		// // for bug priorities
+		// for bug priorities
 		$this->call(PrioritySeeder::class);
 
-		// // for company/project user roles
+		// for company/project user roles
 		$this->call(RoleSeeder::class);
 
-		// // for invitation statuses like pending or accepted
+		// for invitation statuses like pending or accepted
 		$this->call(InvitationStatusSeeder::class);
 
-        // // Adds a default user
+        // Adds a default user
 		$this->call(UserSeeder::class);
 
-        // // Adds a default organization
+        // Adds a default organization
 		$this->call(OrganizationSeeder::class);
 
-        // // Adds a default company
+        // Adds a default company
 		$this->call(CompanySeeder::class);
 
-        // // Adds a default project
+        // Adds a default project
 		$this->call(ProjectSeeder::class);
 
-        // // Adds a default project
+        // Adds a default project
 		$this->call(StatusSeeder::class);
 
-        // // Adds a default bug
+        // Adds a default bug
 		$this->call(BugSeeder::class);
+
+		// Adds settings
+		$this->call(SettingSeeder::class);
+				
+		// Adds values
+		$this->call(ValueSeeder::class);
+
+		// Adds sub values
+		$this->call(SubValueSeeder::class);
 	}
 }

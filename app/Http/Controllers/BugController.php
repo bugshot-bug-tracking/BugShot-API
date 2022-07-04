@@ -27,6 +27,9 @@ use App\Models\BugUserRole;
 use App\Http\Requests\BugStoreRequest;
 use App\Http\Requests\BugUpdateRequest;
 
+// Events
+use App\Events\AssignedToBug;
+
 
 /**
  * @OA\Tag(
@@ -834,6 +837,8 @@ class BugController extends Controller
 
 		$targetUser = User::find($request->user_id);
 		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
+
+		AssignedToBug::dispatch($targetUser, $bug);
 
 		return response()->json("", 204);
 	}

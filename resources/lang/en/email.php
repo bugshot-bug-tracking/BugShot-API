@@ -21,6 +21,7 @@ return [
     'password-reset-link' => 'Password Reset Link',
     'password-reset-successful' => 'Passwortzurücksetzung erfolgreich',
     'verify-email' => 'Email Verification',
-    'tagged-in-comment' => 'You were mentioned'
+    'tagged-in-comment' => 'You were mentioned in a comment',
+    'assigned-to-bug' => 'You were assigned to a bug'
 
 ];

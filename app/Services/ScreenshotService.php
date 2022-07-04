@@ -11,8 +11,16 @@ class ScreenshotService
     // Store a newly created screenshot on the server.
     public function store($bug, $screenshot)
     {
+        $base64 = $screenshot->base64;
+
+        // If the base64 string contains a prefix, remove it
+        if(str_contains($base64, 'base64')) {
+            $explodedBase64 = explode(',', $base64);
+            $base64 = $explodedBase64[1];
+        }
+
         // Get the mime_type of the screenshot to build the filename with file extension
-        $decodedBase64 = base64_decode($screenshot->base64);
+        $decodedBase64 = base64_decode($base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
         $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
@@ -24,6 +32,8 @@ class ScreenshotService
 
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
+
+        // $this->compressImage("storage" . $filePath);
 
         // Create a new screenshot
 		$screenshot = $bug->screenshots()->create([
@@ -43,5 +53,11 @@ class ScreenshotService
         $val = $screenshot->delete();
 
         return $val;
+    }
+
+    // Compress the image via tinypng
+    public function compressImage($filePath) {  
+        $source = \Tinify\fromFile($filePath);
+        $source->toFile($filePath);
     }
 }
