@@ -30,10 +30,10 @@ class ImageService
         }
 
         // Get the mime_type of the image to build the filename with file extension
-        $decodedBase64 = base64_decode($base64);
-
+        $decodedBase64 = base64_decode(base64_decode($base64));
+       
         $f = finfo_open();
-        $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
+        $mime_type = finfo_buffer($f, $base64, FILEINFO_MIME_TYPE);
         $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
 
         // Complete building the path where the image will be stored
