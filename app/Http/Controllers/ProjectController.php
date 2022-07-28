@@ -1174,8 +1174,10 @@ class ProjectController extends Controller
 	 **/
 	public function removeUser(Project $project, User $user)
 	{
-		// Check if the user is authorized to view the users of the project
-		$this->authorize('removeUser', $project);
+		// replace with approval request procedure
+		if((Auth::id()!==$user->id))
+			// Check if the user is authorized to view the users of the project
+			$this->authorize('removeUser', $project);
 
 		$val = $project->users()->detach($user);
 	

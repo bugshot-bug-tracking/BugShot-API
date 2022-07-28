@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -900,8 +901,10 @@ class CompanyController extends Controller
 	 **/
 	public function removeUser(Company $company, User $user)
 	{
-		// Check if the user is authorized to view the users of the company
-		$this->authorize('removeUser', $company);
+		// replace with approval request procedure
+		if((Auth::id()!==$user->id))
+			// Check if the user is authorized to view the users of the company
+			$this->authorize('removeUser', $company);
 
 		$val = $company->users()->detach($user);
 	
