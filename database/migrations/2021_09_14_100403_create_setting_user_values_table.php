@@ -17,7 +17,7 @@ class CreateSettingUserValuesTable extends Migration
 			$table->id();
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('setting_id');
-			$table->unsignedBigInteger('value_id');
+			$table->unsignedBigInteger('value_id')->nullable();
 
 			$table->foreign('setting_id')->references('id')->on('settings')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
- * @property string $designation
+ * @OA\Schema()
  */
 class Setting extends Model
 {
@@ -17,9 +16,19 @@ class Setting extends Model
      */
     protected $keyType = 'integer';
 
-    /**
-     * @var array
-     */
+	/**
+	 * @OA\Property(
+	 * 	property="id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="designation",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * )
+	 */
     protected $fillable = ['designation'];
 
     public $timestamps = false;
@@ -29,6 +38,6 @@ class Setting extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'user_setting_values')->withPivot('value_id');
+        return $this->belongsToMany(User::class, 'setting_user_values')->withPivot('value_id');
     }
 }

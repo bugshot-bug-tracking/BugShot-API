@@ -35,6 +35,13 @@ class ValueSeeder extends Seeder
 			['designation' => 'show_all'],
 			['designation' => 'show_basic'],
 			['designation' => 'show_custom'],
+			['designation' => 'receive_notifications_everywhere'],
+			['designation' => 'receive_notifications_in_custom'],
+			['designation' => 'every_notification'],
+			['designation' => 'custom_notifications'],
+			['designation' => 'light_mode'],
+			['designation' => 'dark_mode'],
+			['designation' => 'system']
 		];
 
 		Value::insert($values);

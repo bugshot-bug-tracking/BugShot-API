@@ -6822,6 +6822,448 @@
                 ]
             }
         },
+        "/settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Show all settings.",
+                "operationId": "showSettings",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Setting"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Store one setting.",
+                "operationId": "storeSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "first_name",
+                                    "last_name",
+                                    "email",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "first_name": {
+                                        "type": "string"
+                                    },
+                                    "last_name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Setting"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/settings/{invitation_id}": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Show one setting.",
+                "operationId": "showSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Setting/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Setting"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Delete a setting.",
+                "operationId": "deleteSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Setting/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/settings/{invitation_id}/accept": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Accept one setting.",
+                "operationId": "acceptSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Setting/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Setting"
+                                }
+                            }
+                        }
+                    },
+                    "288": {
+                        "description": "Request already processed."
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/settings/{invitation_id}/decline": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Decline one setting.",
+                "operationId": "declineSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "invitation_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Setting/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "288": {
+                        "description": "Request already processed."
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/projects/{project_id}/statuses": {
             "get": {
                 "tags": [
@@ -7828,6 +8270,184 @@
                     }
                 ]
             }
+        },
+        "/users/{user_id}/settings": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "All user settings.",
+                "operationId": "allUserSettings",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SettingUserValue"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/settings/{setting}": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update a users setting.",
+                "operationId": "updateUserSetting",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "setting_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Setting/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "value_id"
+                                ],
+                                "properties": {
+                                    "value_id": {
+                                        "description": "The selected value for the setting.",
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "subvalues": {
+                                        "description": "An optional set of subvalues",
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "sub_value_id": {
+                                                    "description": "The invited user email.",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SettingUserValue"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -8537,8 +9157,25 @@
                 },
                 "type": "object"
             },
+            "Setting": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
+            },
             "SettingUserValue": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
                     "setting_id": {
                         "description": "The id of the setting.",
                         "type": "string",
@@ -8616,6 +9253,19 @@
                 },
                 "type": "object"
             },
+            "SubValue": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "properties": {
                     "id": {
@@ -8667,6 +9317,19 @@
                     }
                 },
                 "type": "object"
+            },
+            "Value": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "designation": {
+                        "type": "string",
+                        "maxLength": 255
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -8711,6 +9374,9 @@
         },
         {
             "name": "Screenshot"
+        },
+        {
+            "name": "Setting"
         },
         {
             "name": "Status"
