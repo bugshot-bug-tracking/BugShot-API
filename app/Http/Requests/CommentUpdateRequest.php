@@ -28,7 +28,7 @@ class CommentUpdateRequest extends FormRequest
             return [];
         } else {
             return [
-                "content" => ["required", "string", "max:255"]
+                "content" => ["required", "string", "max:1500"]
             ];
         }
     }
