@@ -1352,7 +1352,7 @@ class ProjectController extends Controller
 		// Check if the user has already been invited to the project or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($project->invitations->contains('target_email', $recipient_mail) || $project->users->contains($recipient)) {
+		if($project->invitations->contains('target_email', $recipient_mail) && $project->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.project-user-already-invited')
 			]], 409);
