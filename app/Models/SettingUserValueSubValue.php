@@ -28,7 +28,6 @@ class SettingUserValueSubValue extends Model
 	 * )
 	 *
 	 */
-
 	protected $fillable = ["setting_user_value_id", "sub_value_id"];
 
 	public $timestamps = false;

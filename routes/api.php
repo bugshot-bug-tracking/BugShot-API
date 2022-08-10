@@ -19,6 +19,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SendinblueController;
+use App\Http\Controllers\SettingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -159,6 +160,12 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("user.invitation.destroy");
 			Route::get("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
 			Route::get("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
+		});
+
+		// Setting prefixed routes
+		Route::prefix('settings')->group(function () {
+			Route::get("/", [UserController::class, "settings"])->name("user.setting.index");
+			Route::put("/{invitation}", [UserController::class, "updateSetting"])->name("user.setting.update");
 		});
 	});
 

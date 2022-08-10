@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
- * @property string $designation
+ * @OA\Schema()
  */
 class SubValue extends Model
 {
@@ -20,6 +19,19 @@ class SubValue extends Model
      */
     protected $keyType = 'integer';
 
+    /**
+	 * @OA\Property(
+	 * 	property="id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="designation",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * )
+	 */
 	protected $fillable = ["designation"];
 
 	public $timestamps = false;
@@ -29,6 +41,6 @@ class SubValue extends Model
      */
     public function settingUserValues()
     {
-        return $this->belongsToMany(SettingUserValue::class, 'setting_user_values');
+        return $this->belongsToMany(SettingUserValue::class, 'setting_user_value_sub_values');
     }
 }

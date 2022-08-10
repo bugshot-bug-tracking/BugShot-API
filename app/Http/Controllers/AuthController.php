@@ -28,6 +28,7 @@ use App\Services\SendinblueService;
 
 // Models
 use App\Models\User;
+use App\Models\SettingUserValue;
 
 // Requests
 use App\Http\Requests\CustomEmailVerificationRequest;
@@ -130,6 +131,8 @@ class AuthController extends Controller
 			"email" => $request->email,
 			"password" => Hash::make($request->password),
 		]);
+
+		$this->addDefaultSettings($user);
 
         $url = URL::temporarySignedRoute(
             'verification.verify',
@@ -656,5 +659,35 @@ class AuthController extends Controller
 	
 		return response(__('auth.verification-link-sent'), 200);
 	}
+
+	public function addDefaultSettings($user)
+	{
+		$user->settings()->attach([
+			1 => ['value_id' => 1], // company_filter_alphabetical: az
+			2 => ['value_id' => 3], // company_filter_creation: newest_first
+			3 => ['value_id' => 6], // company_filter_last_updated: ascending
+			4 => ['value_id' => 1], // project_filter_alphabetical:az
+			5 => ['value_id' => 3], // project_filter_creation: newest_first
+			6 => ['value_id' => 6], // project_filter_last_updated: ascending
+			7 => ['value_id' => 1], // bug_filter_alphabetical: az
+			8 => ['value_id' => 3], // bug_filter_creation: newest_first
+			9 => ['value_id' => 7], // bug_filter_priority: critical_first
+			10 => ['value_id' => 9], // bug_filter_deadline: ending_first
+			11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
+			12 => ['value_id' => 13], // user_settings_interface_language: en
+			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
+			14 => ['value_id' => 21], // user_settings_receive_mail_notifications: receive_notifications_everywhere
+			15 => ['value_id' => 23], // user_settings_select_notifications: every_notification
+			16 => ['value_id' => 25] // user_settings_darkmode: light_mode
+		]);
+	}
+
+	// public function addSubValues($userId, $settingId, $subValueArray)
+	// {
+	// 	$settingUserValue = SettingUserValue::where('user_id', $userId)->where('setting_id', $settingId)->first();
+	// 	foreach($subValueArray as $subValue) {
+	// 		$settingUserValue->subValues()->attach($subValue);
+	// 	}
+	// }
 }
 	

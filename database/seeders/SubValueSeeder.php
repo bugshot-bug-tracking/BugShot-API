@@ -25,7 +25,9 @@ class SubValueSeeder extends Seeder
 			['designation' => 'report_finished'],
 			['designation' => 'assignation_to_client_project_task'],
 			['designation' => 'new_comments_and_replies'],
-			['designation' => 'new_tag_in_comment']
+			['designation' => 'new_tag_in_comment'],
+			['designation' => 'in_app'],
+			['designation' => 'in_mail']
 		];
 
 		SubValue::insert($subValues);

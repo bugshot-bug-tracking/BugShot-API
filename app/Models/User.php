@@ -190,6 +190,14 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function settings()
+    {
+        return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
+    }
+
+	/**
 	 * Send a password reset notification to the user.
 	 *
 	 * @param  string  $token

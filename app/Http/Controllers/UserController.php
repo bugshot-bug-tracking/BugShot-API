@@ -13,16 +13,20 @@ use Illuminate\Support\Facades\Http;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ImageResource;
+use App\Http\Resources\SettingUserValueResource;
 
 // Services
 use App\Services\ImageService;
 
 // Models
 use App\Models\User;
+use App\Models\Setting;
+use App\Models\SettingUserValue;
 
 // Requests
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\SettingRequest;
 
 /**
  * @OA\Tag(
@@ -670,5 +674,205 @@ class UserController extends Controller
 		// $projects = $user->projects->where('url', $request->url);
 		
 		return ProjectResource::collection($projects);
+	}
+
+	/**
+	 * Display a list of users that belongs to the company.
+	 *
+	 * @param  Company  $company
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/users/{user_id}/settings",
+	 *	tags={"User"},
+	 *	summary="All user settings.",
+	 *	operationId="allUserSettings",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/SettingUserValue")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function settings(User $user)
+	{
+		// Check if the user is authorized to view the settings of the given user
+		// $this->authorize('view', $company);
+
+		return SettingUserValueResource::collection(
+			SettingUserValue::where("user_id", $user->id)
+				->with('user')
+				->with('setting')
+				->with('value')
+				->get()
+		);
+	}
+
+	/**
+     * Store a new setting of the user.
+     *
+     * @param  UserSettingUpdateRequest  $request
+     * @return Response
+     */
+	/**
+	 * @OA\Put(
+	 *	path="/users/{user_id}/settings/{setting}",
+	 *	tags={"User"},
+	 *	summary="Update a users setting.",
+	 *	operationId="updateUserSetting",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="setting_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Setting/properties/id"
+	 *		)
+	 *	),
+	 *
+	 * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The selected value for the setting.",
+	 *                  property="value_id",
+	 *                  type="integer",
+	 *                  format="int64"
+	 *              ),
+	 *    			@OA\Property(
+	 * 					description="An optional set of subvalues",
+	 *                  property="subvalues",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The invited user email.",
+	 *              		    property="sub_value_id",
+	 *							type="integer",
+	 *                  		format="int64"
+	 *              		)
+	 * 					)
+	 *              ),
+	 *              required={"value_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/SettingUserValue")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	**/
+	public function updateSetting(SettingRequest $request, User $user, Setting $setting)
+	{
+		// Check if the user is authorized to update the setting of the given user
+		// $this->authorize('update', $project);
+
+		// Update the project
+		$userSetting = $user->settings->where('setting_id', $setting->id)->firstOrFail();
+		dd($userSetting);
+		// $userSetting->update([
+		// 	"value_id" => $company->id,
+		// 	"color_hex" => $color_hex,
+        //     "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
+		// ]);
+
+		// return new ProjectResource($project);
 	}
 }

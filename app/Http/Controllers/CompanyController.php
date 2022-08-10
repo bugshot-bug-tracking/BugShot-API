@@ -1080,7 +1080,7 @@ class CompanyController extends Controller
 		// Check if the user has already been invited to the company or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($company->invitations->contains('target_email', $recipient_mail) || $company->users->contains($recipient)) {
+		if($company->invitations->contains('target_email', $recipient_mail) && $company->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.company-user-already-invited')
 			]], 409);
