@@ -240,6 +240,11 @@ class AuthController extends Controller
 				'last_active_at' => date('Y-m-d H:i:s'),
 				'login_counter' => $userClient->first()->pivot->login_counter + 1
 			]);
+
+			// If the user has no settings yet, set them
+			if($user->settings->isEmpty()) {
+				$user->settings()->attach($this->getDefaultSettings());
+			}
         } else {
             $user->clients()->attach($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
@@ -247,25 +252,7 @@ class AuthController extends Controller
 			]);  
 
 			// Create default set of settings for the user when first logged in
-			$user->settings()->attach([
-				1 => ['value_id' => 1], // company_filter_alphabetical: az
-				2 => ['value_id' => 3], // company_filter_creation: newest_first
-				3 => ['value_id' => 6], // company_filter_last_updated: ascending
-				4 => ['value_id' => 1], // project_filter_alphabetical:az
-				5 => ['value_id' => 3], // project_filter_creation: newest_first
-				6 => ['value_id' => 6], // project_filter_last_updated: ascending
-				7 => ['value_id' => 1], // bug_filter_alphabetical: az
-				8 => ['value_id' => 3], // bug_filter_creation: newest_first
-				9 => ['value_id' => 7], // bug_filter_priority: critical_first
-				10 => ['value_id' => 9], // bug_filter_deadline: ending_first
-				11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
-				12 => ['value_id' => 13], // user_settings_interface_language: en
-				13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
-				14 => ['value_id' => 25], // user_settings_receive_mail_notifications: receive_notifications_via_app
-				14 => ['value_id' => 26], // user_settings_receive_mail_notifications: receive_notifications_via_mail
-				15 => ['value_id' => 27], // user_settings_select_notifications: every_notification
-				16 => ['value_id' => 36] // user_settings_darkmode: light_mode
-			]);
+			$user->settings()->attach($this->getDefaultSettings());
         }
 		
 		return response()->json([
@@ -281,6 +268,31 @@ class AuthController extends Controller
 				"token" => $token->plainTextToken
 			]
 		], 200);
+	}
+
+	// Returns a set of default settings with their default values
+	private function getDefaultSettings() {
+		$defaultSettings = [
+			1 => ['value_id' => 1], // company_filter_alphabetical: az
+			2 => ['value_id' => 3], // company_filter_creation: newest_first
+			3 => ['value_id' => 6], // company_filter_last_updated: ascending
+			4 => ['value_id' => 1], // project_filter_alphabetical:az
+			5 => ['value_id' => 3], // project_filter_creation: newest_first
+			6 => ['value_id' => 6], // project_filter_last_updated: ascending
+			7 => ['value_id' => 1], // bug_filter_alphabetical: az
+			8 => ['value_id' => 3], // bug_filter_creation: newest_first
+			9 => ['value_id' => 7], // bug_filter_priority: critical_first
+			10 => ['value_id' => 9], // bug_filter_deadline: ending_first
+			11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
+			12 => ['value_id' => 13], // user_settings_interface_language: en
+			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
+			14 => ['value_id' => 25], // user_settings_receive_mail_notifications: receive_notifications_via_app
+			14 => ['value_id' => 26], // user_settings_receive_mail_notifications: receive_notifications_via_mail
+			15 => ['value_id' => 27], // user_settings_select_notifications: every_notification
+			16 => ['value_id' => 36] // user_settings_darkmode: light_mode
+		];
+
+		return $defaultSettings;
 	}
 
 

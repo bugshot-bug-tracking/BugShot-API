@@ -906,12 +906,16 @@ class CompanyController extends Controller
 			// Check if the user is authorized to view the users of the company
 			$this->authorize('removeUser', $company);
 
-		// $val = $company->users()->detach($user);
-		// $projects = $user->projects->where('company_id', $company->id)->get();
-		dd($user->projects->where('company_id', $company->id)->get());
+		$val = $company->users()->detach($user);
+
+		// Also remove the user from the related project
+		// Commented out right now because we want that the user can stay in the projects while beeing removed from the company
+		// $projects = $user->projects()->where('company_id', $company->id)->get();
+		// foreach($projects as $project) {
+		// 	$project->users()->detach($user);
+		// }
 	
-		return response('test', 204);
-		// return response($val, 204);
+		return response($val, 204);
 	}
 
 	/**

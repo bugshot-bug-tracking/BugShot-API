@@ -9194,21 +9194,6 @@
                 },
                 "type": "object"
             },
-            "SettingUserValueSubValue": {
-                "properties": {
-                    "setting_user_value_id": {
-                        "description": "The id of the setting-user-value pivot model.",
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "sub_value_id": {
-                        "description": "The id of the sub value.",
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                },
-                "type": "object"
-            },
             "Status": {
                 "properties": {
                     "id": {
@@ -9249,19 +9234,6 @@
                         "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "SubValue": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "designation": {
-                        "type": "string",
-                        "maxLength": 255
                     }
                 },
                 "type": "object"
