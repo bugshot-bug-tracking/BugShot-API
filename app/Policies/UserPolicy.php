@@ -10,15 +10,6 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
-     * Roles:
-     * | id | designation
-     * |----|----------------------
-     * | 1  | Manager
-     * | 2  | Team
-     * | 3  | Client (e.g. Customer)
-     */
-
-    /**
      * Perform pre-authorization checks.
      *
      * @param  \App\Models\User  $user
@@ -116,6 +107,42 @@ class UserPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function checkProject(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can show the balance of the user.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function showBalance(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can retrieve the setup intent form.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function showSetupIntentForm(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can create a new subscription
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createSubscription(User $user, User $requestedUser)
     {
         return $user->id == $requestedUser->id;
     }

@@ -18,8 +18,10 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SendinblueController;
 use App\Http\Controllers\SettingController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -152,6 +154,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	Route::prefix('/users/{user}')->group(function () {
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
+		Route::get('/balance', [StripeController::class, "showBalance"])->name("user.show-balance");
+		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.show-setup-intent-form");
+		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.create-subscription");
 
 		// Invitation prefixed routes
 		Route::prefix('invitations')->group(function () {

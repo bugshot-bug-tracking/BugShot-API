@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Tinify\Tinify;
+use Laravel\Cashier\Cashier;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,5 +28,6 @@ class AppServiceProvider extends ServiceProvider
 	{
 		Schema::defaultStringLength(255);
 		Tinify::setKey(config('app.tinypng_api_key'));
+		Cashier::calculateTaxes();
 	}
 }

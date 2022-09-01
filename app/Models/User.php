@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Cashier\Billable;
 
 /**
  * @OA\Schema()
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
 	/**
 	 * @OA\Property(

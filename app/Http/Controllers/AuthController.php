@@ -133,8 +133,6 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-		// $this->addDefaultSettings($user);
-
         $url = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
@@ -643,6 +641,9 @@ class AuthController extends Controller
 				)
 			);
 		}
+
+		// Create the corresponding stripe customer
+		$user->createOrGetStripeCustomer(['name' => $user->first_name . ' ' . $user->last_name]);
 
 		$user = User::find($id);
 		$user->notify(new VerificationSuccessfulNotification());

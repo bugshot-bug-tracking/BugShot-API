@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 use Illuminate\Http\Response;
 use App\Http\Requests\CheckProjectRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
 
 // Resources
 use App\Http\Resources\ProjectResource;
@@ -203,13 +201,8 @@ class UserController extends Controller
 			'password' => Hash::make($request->password)
 		]);
 
-		// TODO: Stripe update
-		// Update the corresponding Stripe customer
-		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
-		// 	'user' => $user
-		// ]);
-
-		// $response->throw();
+		// Create the corresponding stripe customer
+		$user->createOrGetStripeCustomer(['name' => $user->first_name . ' ' . $user->last_name]);
 
         return new UserResource($user);
     }
@@ -422,13 +415,11 @@ class UserController extends Controller
 			]);
 		}
 
-		// TODO: Stripe update
-		// Update the corresponding Stripe customer
-		// $response = Http::put(config('app.payment_url') . '/users/' . $user->id, [
-		// 	'user' => $user
-		// ]);
-
-		// $response->throw();
+		// Update the corresponding stripe customer 
+		$user->updateStripeCustomer([
+			'name' => $user->first_name . ' ' . $user->last_name,
+			'email' => $user->email
+		]);
 
 		return new UserResource($user);
     }
