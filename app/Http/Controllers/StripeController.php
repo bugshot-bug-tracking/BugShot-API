@@ -220,7 +220,12 @@ class StripeController extends Controller
 	 *                  property="payment_method_id",
 	 *                  type="string",
 	 *              ),
-	 *              required={"payment_method_id"}
+	 *              @OA\Property(
+	 *                  description="The amount of subscriptions that shall be created",
+	 *                  property="quantity",
+	 *                  type="integer",
+	 *              ),
+	 *              required={"payment_method_id", "quantity"}
 	 *          )
 	 *      )
 	 *  ),
@@ -254,7 +259,7 @@ class StripeController extends Controller
        
         $subscription = $user->newSubscription(
             'default', 'price_1LdBwAGDzmJ5MOfXt0icF1JN'
-        )->quantity(5)
+        )->quantity($request->quantity)
         ->create($request->payment_method_id);
 
         return new SubscriptionResource($subscription);
