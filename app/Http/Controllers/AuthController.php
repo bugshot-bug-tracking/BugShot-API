@@ -22,6 +22,7 @@ use App\Notifications\PasswordResetSuccessfulNotification;
 
 // Resources
 use App\Http\Resources\UserResource;
+use App\Http\Resources\SettingUserValueResource;
 
 // Services
 use App\Services\SendinblueService;
@@ -132,7 +133,7 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-		$this->addDefaultSettings($user);
+		// $this->addDefaultSettings($user);
 
         $url = URL::temporarySignedRoute(
             'verification.verify',
@@ -244,11 +245,39 @@ class AuthController extends Controller
 				'last_active_at' => date('Y-m-d H:i:s'),
 				'login_counter' => 1
 			]);  
+
+			// Create default set of settings for the user when first logged in
+			$user->settings()->attach([
+				1 => ['value_id' => 1], // company_filter_alphabetical: az
+				2 => ['value_id' => 3], // company_filter_creation: newest_first
+				3 => ['value_id' => 6], // company_filter_last_updated: ascending
+				4 => ['value_id' => 1], // project_filter_alphabetical:az
+				5 => ['value_id' => 3], // project_filter_creation: newest_first
+				6 => ['value_id' => 6], // project_filter_last_updated: ascending
+				7 => ['value_id' => 1], // bug_filter_alphabetical: az
+				8 => ['value_id' => 3], // bug_filter_creation: newest_first
+				9 => ['value_id' => 7], // bug_filter_priority: critical_first
+				10 => ['value_id' => 9], // bug_filter_deadline: ending_first
+				11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
+				12 => ['value_id' => 13], // user_settings_interface_language: en
+				13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
+				14 => ['value_id' => 25], // user_settings_receive_mail_notifications: receive_notifications_via_app
+				14 => ['value_id' => 26], // user_settings_receive_mail_notifications: receive_notifications_via_mail
+				15 => ['value_id' => 27], // user_settings_select_notifications: every_notification
+				16 => ['value_id' => 36] // user_settings_darkmode: light_mode
+			]);
         }
 		
 		return response()->json([
 			"data" => [
 				"user" => new UserResource($user),
+				"settings" => SettingUserValueResource::collection(
+					SettingUserValue::where("user_id", $user->id)
+						->with('user')
+						->with('setting')
+						->with('value')
+						->get()
+				),
 				"token" => $token->plainTextToken
 			]
 		], 200);
@@ -662,6 +691,7 @@ class AuthController extends Controller
 
 	public function addDefaultSettings($user)
 	{
+		// TODO: St settings on one value
 		$user->settings()->attach([
 			1 => ['value_id' => 1], // company_filter_alphabetical: az
 			2 => ['value_id' => 3], // company_filter_creation: newest_first

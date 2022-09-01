@@ -56,8 +56,5 @@ class DatabaseSeeder extends Seeder
 				
 		// Adds values
 		$this->call(ValueSeeder::class);
-
-		// Adds sub values
-		$this->call(SubValueSeeder::class);
 	}
 }
