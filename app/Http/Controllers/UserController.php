@@ -815,19 +815,6 @@ class UserController extends Controller
 	 *                  type="integer",
 	 *                  format="int64"
 	 *              ),
-	 *    			@OA\Property(
-	 * 					description="An optional set of subvalues",
-	 *                  property="subvalues",
-	 *                  type="array",
-	 * 					@OA\Items(
-	 *              		@OA\Property(
-	 *              		    description="The invited user email.",
-	 *              		    property="sub_value_id",
-	 *							type="integer",
-	 *                  		format="int64"
-	 *              		)
-	 * 					)
-	 *              ),
 	 *              required={"value_id"}
 	 *          )
 	 *      )
