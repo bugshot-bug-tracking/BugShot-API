@@ -84,7 +84,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
-			Route::post('/user', [AuthController::class, "user"])->name("user");
+			Route::get('/user', [AuthController::class, "user"])->name("user");
 		});
 	}
 );
@@ -149,7 +149,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User resource routes
 	Route::apiResource('/users', UserController::class);
-	Route::get('auth-user', [UserController::class, "showAuthUser"])->name("user.auth-user");
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
