@@ -956,6 +956,248 @@
                 }
             }
         },
+        "/billing-addresses/{type}/{id}": {
+            "post": {
+                "tags": [
+                    "BillingAddress"
+                ],
+                "summary": "Store a billing address for a given model",
+                "operationId": "storeBillingAddress",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "street",
+                                    "housenumber",
+                                    "city",
+                                    "state",
+                                    "zip",
+                                    "country",
+                                    "tax_id"
+                                ],
+                                "properties": {
+                                    "street": {
+                                        "description": "The billing address street",
+                                        "type": "string"
+                                    },
+                                    "housenumber": {
+                                        "description": "The billing address housenumber",
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "description": "The billing address city",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "The billing address state",
+                                        "type": "string"
+                                    },
+                                    "zip": {
+                                        "description": "The billing address zip",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The billing address country",
+                                        "type": "string"
+                                    },
+                                    "tax_id": {
+                                        "description": "The billing address tax_id",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillingAddress"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing_address_id}": {
+            "put": {
+                "tags": [
+                    "BillingAddress"
+                ],
+                "summary": "Update a billing address.",
+                "operationId": "updateBillingAddress",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "street",
+                                    "housenumber",
+                                    "city",
+                                    "state",
+                                    "zip",
+                                    "country",
+                                    "tax_id"
+                                ],
+                                "properties": {
+                                    "street": {
+                                        "description": "The billing address street",
+                                        "type": "string"
+                                    },
+                                    "housenumber": {
+                                        "description": "The billing address housenumber",
+                                        "type": "string"
+                                    },
+                                    "city": {
+                                        "description": "The billing address city",
+                                        "type": "string"
+                                    },
+                                    "state": {
+                                        "description": "The billing address state",
+                                        "type": "string"
+                                    },
+                                    "zip": {
+                                        "description": "The billing address zip",
+                                        "type": "string"
+                                    },
+                                    "country": {
+                                        "description": "The billing address country",
+                                        "type": "string"
+                                    },
+                                    "tax_id": {
+                                        "description": "The billing address tax_id",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BillingAddress"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/statuses/{status_id}/bugs": {
             "get": {
                 "tags": [
@@ -7733,6 +7975,499 @@
                 ]
             }
         },
+        "/billing-addresses/{billing-address}/stripe/customer": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Create a new stripe customer",
+                "operationId": "createStripeCustomer",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing-address}/stripe/customer/{stripe_customer_id}": {
+            "get": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Get the billable model",
+                "operationId": "getStripeCustomer",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    },
+                    {
+                        "name": "stripe_customer_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing_address_id}/stripe/balance": {
+            "get": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Show stripe balance of billing address.",
+                "operationId": "showStripeBalance",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing-address}/stripe/setup-intent-form": {
+            "get": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Show the setup intent form for the billing address",
+                "operationId": "showSetupIntent",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing-address}/stripe/payment-methods": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Retrieve a collection of payment methods",
+                "operationId": "getUsersPaymentMethods",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "description": "Specifies the type of payment method that shall be retrieved",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing-address}/stripe/subscription": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Create a new subscription for the billing address",
+                "operationId": "createNewSubscription",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "subscription_name",
+                                    "price_api_id",
+                                    "payment_method_id",
+                                    "quantity"
+                                ],
+                                "properties": {
+                                    "subscription_name": {
+                                        "description": "The name of the selected subscription (only for internal use)",
+                                        "type": "string"
+                                    },
+                                    "price_api_id": {
+                                        "description": "The api id of the price",
+                                        "type": "string"
+                                    },
+                                    "payment_method_id": {
+                                        "description": "The Id of the selected payment method",
+                                        "type": "string"
+                                    },
+                                    "quantity": {
+                                        "description": "The amount of subscriptions that shall be created",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing-address}/stripe/subscription/{subscription_id)/change-quantity": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Change the quanitity of the given subscription",
+                "operationId": "changeSubscriptionQuantity",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    },
+                    {
+                        "name": "subscription_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "subscription_name": {
+                                        "description": "The name of the subscription that needs to be adjusted",
+                                        "type": "string",
+                                        "example": "default"
+                                    },
+                                    "type": {
+                                        "description": "Specifies if the quantity is an increment or decrement",
+                                        "type": "string",
+                                        "example": "increment"
+                                    },
+                                    "quantity": {
+                                        "description": "Specifies the quantity that shall be added/removed from the subscription",
+                                        "type": "integer",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -8117,6 +8852,63 @@
                 ]
             }
         },
+        "/auth-user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Show the authenticated user.",
+                "operationId": "showAuthUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/users/{user_id}/image": {
             "get": {
                 "tags": [
@@ -8394,20 +9186,6 @@
                                         "description": "The selected value for the setting.",
                                         "type": "integer",
                                         "format": "int64"
-                                    },
-                                    "subvalues": {
-                                        "description": "An optional set of subvalues",
-                                        "type": "array",
-                                        "items": {
-                                            "properties": {
-                                                "sub_value_id": {
-                                                    "description": "The invited user email.",
-                                                    "type": "integer",
-                                                    "format": "int64"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
                                     }
                                 },
                                 "type": "object"
@@ -8478,6 +9256,70 @@
                     "url": {
                         "description": "The lacal path where the file is stored.",
                         "type": "string"
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "BillingAddress": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "billing_addressable_id": {
+                        "description": "The id of the billing_addressable resource.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "billing_addressable_type": {
+                        "description": "The type of the billing_addressable resource.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "street": {
+                        "description": "The billing_addressable street.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "housenumber": {
+                        "description": "The billing_addressable housenumber.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "state": {
+                        "description": "The billing_addressable state.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "zip": {
+                        "description": "The billing_addressable zip.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "country": {
+                        "description": "The billing_addressable country.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "tax_id": {
+                        "description": "The billing_addressable tax_id.",
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "created_at": {
                         "description": "The creation date.",
@@ -9194,21 +10036,6 @@
                 },
                 "type": "object"
             },
-            "SettingUserValueSubValue": {
-                "properties": {
-                    "setting_user_value_id": {
-                        "description": "The id of the setting-user-value pivot model.",
-                        "type": "string",
-                        "maxLength": 255
-                    },
-                    "sub_value_id": {
-                        "description": "The id of the sub value.",
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                },
-                "type": "object"
-            },
             "Status": {
                 "properties": {
                     "id": {
@@ -9249,19 +10076,6 @@
                         "description": "The deletion date.",
                         "type": "string",
                         "format": "date-time"
-                    }
-                },
-                "type": "object"
-            },
-            "SubValue": {
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    "designation": {
-                        "type": "string",
-                        "maxLength": 255
                     }
                 },
                 "type": "object"
@@ -9349,6 +10163,9 @@
             "name": "Auth"
         },
         {
+            "name": "BillingAddress"
+        },
+        {
             "name": "Bug"
         },
         {
@@ -9380,6 +10197,9 @@
         },
         {
             "name": "Status"
+        },
+        {
+            "name": "Stripe"
         },
         {
             "name": "User"

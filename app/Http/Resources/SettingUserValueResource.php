@@ -14,7 +14,6 @@ class SettingUserValueResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$user = $this->user;
 		$setting = $this->setting;
 		$value = $this->value;
 
@@ -22,7 +21,6 @@ class SettingUserValueResource extends JsonResource
 			"id" => $this->id,
 			"type" => "SettingUserValue",
 			"attributes" => [
-				"user" => new UserResource($user),
 				"setting" => new SettingResource($setting),
 				"value" => new ValueResource($value)
 			]

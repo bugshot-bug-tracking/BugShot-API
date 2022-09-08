@@ -60,12 +60,4 @@ class SettingUserValue extends Model
 	{
 		return $this->belongsTo(Value::class);
 	}
-
-	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function subValues()
-    {
-        return $this->belongsToMany(SubValue::class, 'setting_user_value_sub_values');
-    }
 }
