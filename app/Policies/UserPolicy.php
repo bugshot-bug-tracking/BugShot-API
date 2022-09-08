@@ -57,6 +57,28 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can store a billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can update a billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
@@ -136,6 +158,18 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can get the payment methods
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function getPaymentMethods(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
      * Determine whether the user can create a new subscription
      *
      * @param  \App\Models\User  $user
@@ -143,6 +177,42 @@ class UserPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function createSubscription(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can create a new stripe customer
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createStripeCustomer(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can retrieve a stripe customer
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function getStripeCustomer(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can change the quantity of the subscription
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function changeSubscriptionQuantity(User $user, User $requestedUser)
     {
         return $user->id == $requestedUser->id;
     }

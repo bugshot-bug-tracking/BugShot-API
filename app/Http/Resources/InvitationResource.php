@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\Organization;
 use App\Models\Company;
 use App\Models\Project;
+use App\Models\Bug;
 
 class InvitationResource extends JsonResource
 {

@@ -20,7 +20,7 @@ use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SendinblueController;
-use App\Http\Controllers\SettingController;
+use App\Http\Controllers\BillingAddressController;
 use Illuminate\Http\Request;
 
 /*
@@ -149,14 +149,12 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User resource routes
 	Route::apiResource('/users', UserController::class);
+	Route::get('auth-user', [UserController::class, "showAuthUser"])->name("user.auth-user");
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
-		Route::get('/balance', [StripeController::class, "showBalance"])->name("user.show-balance");
-		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.show-setup-intent-form");
-		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.create-subscription");
 
 		// Invitation prefixed routes
 		Route::prefix('invitations')->group(function () {
@@ -174,6 +172,32 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		});
 	});
 
+	// Stripe prefixed routes
+	Route::prefix('stripe')->group(function () {
+		Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("user.stripe.get-stripe-customer");
+		Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("user.stripe.create-stripe-customer");
+		Route::get('/balance', [StripeController::class, "showBalance"])->name("user.stripe.show-balance");
+		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.stripe.show-setup-intent-form");
+		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
+		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
+		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
+	});
+
+	// Billing address routes
+	Route::prefix('billing-addresses')->group(function () {
+		Route::post("/{type}/{id}", [BillingAddressController::class, "store"])->name("billing-address.store");
+		Route::put("/{billing_address}", [BillingAddressController::class, "update"])->name("billing-address.update");
+
+		Route::prefix('/{billing_address}/stripe')->group(function () {
+			Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("billing-address.stripe.get-stripe-customer");
+			Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("billing-address.stripe.create-stripe-customer");
+			Route::get('/balance', [StripeController::class, "showBalance"])->name("billing-address.stripe.show-balance");
+			Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("billing-address.stripe.show-setup-intent-form");
+			Route::post('/subscription', [StripeController::class, "createSubscription"])->name("billing-address.stripe.create-subscription");
+			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
+			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
+		});
+	});
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes

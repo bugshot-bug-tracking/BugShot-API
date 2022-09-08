@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use App\Http\Requests\CheckProjectRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 // Resources
 use App\Http\Resources\ProjectResource;
@@ -25,6 +26,7 @@ use App\Models\SettingUserValue;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\SettingRequest;
+use App\Http\Requests\UserBillingAddressStoreRequest;
 
 /**
  * @OA\Tag(
@@ -278,6 +280,66 @@ class UserController extends Controller
 		$this->authorize('view', $user);
 
 		return new UserResource($user);
+    }
+
+	/**
+     * Display the specified resource.
+     *
+     * @return Response
+     */
+	/**
+	 * @OA\Get(
+	 *	path="/auth-user",
+	 *	tags={"User"},
+	 *	summary="Show the authenticated user.",
+	 *	operationId="showAuthUser",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+    public function showAuthUser()
+    {
+		return new UserResource(Auth::user());
     }
 
     /**

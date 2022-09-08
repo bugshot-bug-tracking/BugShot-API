@@ -642,9 +642,6 @@ class AuthController extends Controller
 			);
 		}
 
-		// Create the corresponding stripe customer
-		$user->createOrGetStripeCustomer(['name' => $user->first_name . ' ' . $user->last_name]);
-
 		$user = User::find($id);
 		$user->notify(new VerificationSuccessfulNotification());
 
