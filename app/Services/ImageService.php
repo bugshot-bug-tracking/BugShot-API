@@ -36,6 +36,7 @@ class ImageService
         // Store the image in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
+        // TODO: Compbine ScreenshotService, AttachmentService and this service at some point
         // $this->compressImage("storage" . $filePath, $decodedBase64); // Deactivated because of max requests per month
 
         // Create a new image model

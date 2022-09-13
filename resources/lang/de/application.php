@@ -21,5 +21,6 @@ return [
     'already-part-of-the-organization' => 'Du bist bereits Teil dieser :organization',
     'already-part-of-the-company' => 'Du bist bereits Teil dieser :company',
     'already-part-of-the-project' => 'Du bist bereits Teil von diesem :project',
-    'to-dashboard' => 'Zum Dashboard'
+    'to-dashboard' => 'Zum Dashboard',
+    'feedback-sent-successfully' => 'Feedback erfolgreich gesendet'
 ];
