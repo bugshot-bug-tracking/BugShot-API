@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
 		Relation::enforceMorphMap([
 			'organization' => 'App\Models\Organization',
 			'user' => 'App\Models\User',
+			'company' => 'App\Models\Company'
 		]);
 
 		Tinify::setKey(config('app.tinypng_api_key'));

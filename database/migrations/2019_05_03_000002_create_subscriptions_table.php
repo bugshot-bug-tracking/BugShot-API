@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('organization_id');
+            $table->string('billing_address_id');
+            // $table->string('organization_id');
             $table->string('name');
             $table->string('stripe_id')->unique();
             $table->string('stripe_status');
@@ -26,8 +26,7 @@ return new class extends Migration
             $table->timestamp('ends_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('organization_id')->references('id')->on('organizations')->onDelete('cascade');
-            $table->index(['user_id', 'stripe_status']);
+            $table->index(['billing_address_id', 'stripe_status']);
         });
     }
 

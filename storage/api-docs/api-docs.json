@@ -7975,7 +7975,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/customer": {
+        "/billing-addresses/{billing_address_id}/stripe/customer": {
             "post": {
                 "tags": [
                     "Stripe"
@@ -8033,7 +8033,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/customer/{stripe_customer_id}": {
+        "/billing-addresses/{billing_address_id}/stripe/customer/{stripe_customer_id}": {
             "get": {
                 "tags": [
                     "Stripe"
@@ -8154,7 +8154,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/setup-intent-form": {
+        "/billing-addresses/{billing_address_id}/stripe/setup-intent-form": {
             "get": {
                 "tags": [
                     "Stripe"
@@ -8212,7 +8212,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/payment-methods": {
+        "/billing-addresses/{billing_address_id}/stripe/payment-methods": {
             "post": {
                 "tags": [
                     "Stripe"
@@ -8286,7 +8286,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/subscription": {
+        "/billing-addresses/{billing_address_id}/stripe/subscription": {
             "post": {
                 "tags": [
                     "Stripe"
@@ -8378,7 +8378,7 @@
                 ]
             }
         },
-        "/billing-addresses/{billing-address}/stripe/subscription/{subscription_id)/change-quantity": {
+        "/billing-addresses/{billing_address_id}/stripe/subscription/{subscription_id)/change-quantity": {
             "post": {
                 "tags": [
                     "Stripe"
