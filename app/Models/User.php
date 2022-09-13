@@ -119,6 +119,14 @@ class User extends Authenticatable implements MustVerifyEmail
 	];
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function billingAddress()
+	{
+		return $this->morphOne(BillingAddress::class, "billing_addressable");
+	}
+
+	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function organizations()

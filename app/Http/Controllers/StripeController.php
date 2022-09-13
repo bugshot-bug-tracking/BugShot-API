@@ -40,7 +40,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing-address}/stripe/customer",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/customer",
 	 *	tags={"Stripe"},
 	 *	summary="Create a new stripe customer",
 	 *	operationId="createStripeCustomer",
@@ -114,7 +114,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/billing-addresses/{billing-address}/stripe/customer/{stripe_customer_id}",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/customer/{stripe_customer_id}",
 	 *	tags={"Stripe"},
 	 *	summary="Get the billable model",
 	 *	operationId="getStripeCustomer",
@@ -267,7 +267,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/billing-addresses/{billing-address}/stripe/setup-intent-form",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/setup-intent-form",
 	 *	tags={"Stripe"},
 	 *	summary="Show the setup intent form for the billing address",
 	 *	operationId="showSetupIntent",
@@ -341,7 +341,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing-address}/stripe/payment-methods",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/payment-methods",
 	 *	tags={"Stripe"},
 	 *	summary="Retrieve a collection of payment methods",
 	 *	operationId="getUsersPaymentMethods",
@@ -427,7 +427,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing-address}/stripe/subscription",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscription",
 	 *	tags={"Stripe"},
 	 *	summary="Create a new subscription for the billing address",
 	 *	operationId="createNewSubscription",
@@ -531,7 +531,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing-address}/stripe/subscription/{subscription_id)/change-quantity",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscription/{subscription_id)/change-quantity",
 	 *	tags={"Stripe"},
 	 *	summary="Change the quanitity of the given subscription",
 	 *	operationId="changeSubscriptionQuantity",
