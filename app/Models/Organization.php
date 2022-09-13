@@ -80,7 +80,7 @@ class Organization extends Model
      */
 	public function creator()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
     /**
@@ -97,5 +97,13 @@ class Organization extends Model
 	public function invitations()
 	{
 		return $this->morphMany(Invitation::class, "invitable");
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function billingAddress()
+	{
+		return $this->morphOne(BillingAddress::class, "billing_addressable");
 	}
 }

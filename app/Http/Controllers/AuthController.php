@@ -133,8 +133,6 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-		// $this->addDefaultSettings($user);
-
         $url = URL::temporarySignedRoute(
             'verification.verify',
             Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
@@ -349,7 +347,7 @@ class AuthController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Get(
 	 *	path="/auth/user",
 	 *	tags={"Auth"},
 	 *	summary="Show current user.",

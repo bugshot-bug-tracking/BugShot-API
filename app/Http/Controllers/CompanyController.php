@@ -464,7 +464,7 @@ class CompanyController extends Controller
 	{
 		// Check if the user is authorized to view the company
 		$this->authorize('view', $company);
-
+	
 		return new CompanyResource($company);
 	}
 
