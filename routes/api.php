@@ -21,6 +21,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SendinblueController;
 use App\Http\Controllers\BillingAddressController;
+use App\Http\Controllers\FeedbackController;
 use Illuminate\Http\Request;
 
 /*
@@ -74,6 +75,9 @@ Route::prefix('auth')->group(function () {
 Route::prefix('sendinblue')->group(function () {
 	Route::post("/contact/number-of-bugs", [SendinblueController::class, "getNumberOfBugs"])->name("sendinblue.number-of-bugs");
 });
+
+// Feedback Routes
+Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('check.version')->name("feedback.store");
 
 /*
 |--------------------------------------------------------------------------
