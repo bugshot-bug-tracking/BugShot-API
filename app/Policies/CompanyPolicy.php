@@ -165,6 +165,36 @@ class CompanyPolicy
     }
 
     /**
+     * Determine whether the user is authorized to update the users role in the given company
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateUserRole(User $user, Company $company)
+    {
+        if($company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($company);
+        if ($company == NULL) {
+            return false;
+        }
+        
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
      * Determine whether the user can remove a user from the model.
      *
      * @param  \App\Models\User  $user
