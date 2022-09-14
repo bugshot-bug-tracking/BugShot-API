@@ -8678,16 +8678,11 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "url",
-                                    "primary"
+                                    "url"
                                 ],
                                 "properties": {
                                     "url": {
                                         "description": "The url",
-                                        "type": "string"
-                                    },
-                                    "primary": {
-                                        "description": "Send true if the url is supposed to be the primary url for this project. Else send false",
                                         "type": "string"
                                     }
                                 },
@@ -8777,7 +8772,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/Project"
+                                    "$ref": "#/components/schemas/Url"
                                 }
                             }
                         }
@@ -8859,16 +8854,11 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "url",
-                                    "primary"
+                                    "url"
                                 ],
                                 "properties": {
                                     "url": {
                                         "description": "The url",
-                                        "type": "string"
-                                    },
-                                    "primary": {
-                                        "description": "Send true if the url is supposed to be the primary url for this project. Else send false",
                                         "type": "string"
                                     }
                                 },
@@ -10547,11 +10537,6 @@
                         "description": "The url.",
                         "type": "string",
                         "maxLength": 255
-                    },
-                    "primary": {
-                        "description": "Send true if the url is supposed to be the primary url for this project. Else send false",
-                        "type": "integer",
-                        "format": "int64"
                     },
                     "created_at": {
                         "description": "The creation date.",

@@ -18,8 +18,7 @@ class UrlResource extends JsonResource
 			"id" => $this->id,
 			"type" => "Url",
 			"attributes" => [
-				"url" => $this->url,
-				"primary" => $this->primary
+				"url" => $this->url
 			]
 		];
 	}

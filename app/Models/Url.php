@@ -42,13 +42,6 @@ class Url extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="primary",
-	 * 	type="integer",
-	 *  format="int64",
-	 * 	description="Send true if the url is supposed to be the primary url for this project. Else send false"
-	 * )
-	 *
-	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -69,7 +62,7 @@ class Url extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "url", "primary"];
+	protected $fillable = ["id", "url"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

@@ -429,16 +429,162 @@ class ProjectPolicy
             return true;
         }
 
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
             return false;
         }
 
-        $role = $company->pivot->role_id;
+        $role = $project->pivot->role_id;
+
         switch ($role) {
             case 1:
                 return true;
                 break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUrl(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewAnyUrls(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can store an url for the project
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateUrl(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteUrl(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
         }
 
         // Check project role

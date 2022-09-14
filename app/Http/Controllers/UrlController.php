@@ -31,6 +31,7 @@ class UrlController extends Controller
 	/**
 	 * Display a listing of the resource.
 	 *
+	 * @param Request $request
 	 * @return Response
 	 */
 	/**
@@ -96,18 +97,25 @@ class UrlController extends Controller
 	 *)
 	 *
 	 **/
-	public function index(Request $request, Project $project)
+	public function index(Request $request, $type, $id)
 	{
-		// Check if the user is authorized to list the urls of the given project
-		$this->authorize('viewAny', $project);
+		// Check if the user is authorized to list the urls of the given model
+		$class = Relation::getMorphedModel($type);
+		if($class == Project::class) {
+			$model = Project::find($id);
+			// Check if the user is authorized to store a url for the given project
+			$this->authorize('viewAnyUrls', $model);
+		} else {
+			//
+		}
 
-		return UrlResource::collection($project->urls);
+		return UrlResource::collection($model->urls);
 	}
 
 	/**
 	 * Store a newly created resource in storage.
 	 *
-	 * @param  ProjectStoreRequest  $request
+	 * @param  UrlStoreRequest  $request
 	 * @return Response
 	 */
 	/**
@@ -156,12 +164,7 @@ class UrlController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Send true if the url is supposed to be the primary url for this project. Else send false",
-	 *                  property="primary",
-	 *                  type="string",
-	 *              ),
-	 *              required={"url","primary"}
+	 *              required={"url"}
 	 *          )
 	 *      )
 	 *  ),
@@ -198,7 +201,7 @@ class UrlController extends Controller
 		if($class == Project::class) {
 			$model = Project::find($id);
 			// Check if the user is authorized to store a url for the given project
-			$this->authorize('createUrl', [Project::class]);
+			$this->authorize('createUrl', $model);
 		} else {
 			//
 		}
@@ -206,8 +209,7 @@ class UrlController extends Controller
         // Create the url
         $url = $model->urls()->create([
             "id" => (string) Str::uuid(),
-			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url, // Check if the given url has "/" as last char and if so, store url without it,
-			"primary" => $request->primary
+			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it,
 		]);
 
 		return new UrlResource($url);
@@ -216,6 +218,7 @@ class UrlController extends Controller
 	/**
 	 * Display the specified resource.
 	 *
+	 * @param Request $request
 	 * @return Response
 	 */
 	/**
@@ -265,7 +268,7 @@ class UrlController extends Controller
 	 *		response=200,
 	 *		description="Success",
 	 *		@OA\JsonContent(
-	 *			ref="#/components/schemas/Project"
+	 *			ref="#/components/schemas/Url"
 	 *		)
 	 *	),
 	 *	@OA\Response(
@@ -286,12 +289,19 @@ class UrlController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(Project $project, Url $projectUrl)
+	public function show(Request $request, $type, $id, Url $url)
 	{
 		// Check if the user is authorized to view the url
-		$this->authorize('view', $project);
+		$class = Relation::getMorphedModel($type);
+		if($class == Project::class) {
+			$model = Project::find($id);
+			// Check if the user is authorized to store a url for the given project
+			$this->authorize('viewUrl', $model);
+		} else {
+			//
+		}
 
-		return new UrlResource($projectUrl);
+		return new UrlResource($url);
 	}
 
 	/**
@@ -362,12 +372,7 @@ class UrlController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="Send true if the url is supposed to be the primary url for this project. Else send false",
-	 *                  property="primary",
-	 *                  type="string",
-	 *              ),
-	 *              required={"url","primary"}
+	 *              required={"url"}
 	 *          )
 	 *      )
 	 *  ),
@@ -401,18 +406,25 @@ class UrlController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(UrlUpdateRequest $request, Project $project, Url $projectUrl)
+	public function update(UrlUpdateRequest $request, $type, $id, Url $url)
 	{
 		// Check if the user is authorized to update the url
-		$this->authorize('update', $project);
+		$class = Relation::getMorphedModel($type);
+		if($class == Project::class) {
+			$model = Project::find($id);
+			// Check if the user is authorized to store a url for the given project
+			$this->authorize('updateUrl', $model);
+		} else {
+			//
+		}
 
-		// Update the project
-		$projectUrl->update($request->all());
-		$projectUrl->update([
+		// Update the url
+		$url->update($request->all());
+		$url->update([
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
-		return new UrlResource($projectUrl);
+		return new UrlResource($url);
 	}
 
 	/**
@@ -484,13 +496,20 @@ class UrlController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(Project $project, Url $projectUrl)
+	public function destroy($type, $id, Url $url)
 	{
 		// Check if the user is authorized to delete the url
-		$this->authorize('delete', $project);
+		$class = Relation::getMorphedModel($type);
+		if($class == Project::class) {
+			$model = Project::find($id);
+			// Check if the user is authorized to store a url for the given project
+			$this->authorize('deleteUrl', $model);
+		} else {
+			//
+		}
 
 		// Softdelete the url
-		$val = $projectUrl->delete();
+		$val = $url->delete();
 
 		return response($val, 204);
 	}
