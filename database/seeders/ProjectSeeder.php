@@ -18,14 +18,14 @@ class ProjectSeeder extends Seeder
 	 */
 	public function run()
 	{
-		// Project::create([
-        //     'id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-        //     'user_id' => 1, // Testuser John Doe
-        //     'company_id' => 'BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB',
-		// 	'designation' => 'Awesome project',
-        //     'color_hex' => '#ffffff',
-        //     'url' => 'https://www.mydealz.de'
-		// ]);
+		Project::create([
+            'id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+            'user_id' => 1, // Testuser John Doe
+            'company_id' => 'BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB',
+			'designation' => 'Awesome project',
+            'color_hex' => '#ffffff',
+            'url' => 'https://www.mydealz.de'
+		]);
 
 		Project::create([
             'id' => 'Feedback-0000-0000-0000-000000000000',
@@ -47,7 +47,7 @@ class ProjectSeeder extends Seeder
 		}
 
         // Add Testuser Jane Doe as a teammember
-		// User::find(2)->projects()->attach('CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC', ['role_id' => 2]);
+		User::find(2)->projects()->attach('CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC', ['role_id' => 2]);
 	}
 }
 

@@ -155,4 +155,12 @@ class Project extends Model
 	{
 		return $this->morphMany(Invitation::class, "invitable");
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+	public function urls()
+	{
+		return $this->morphMany(Url::class, 'urlable');
+	}
 }
