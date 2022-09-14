@@ -633,4 +633,79 @@ class StripeController extends Controller
 
         // return PaymentMethodResource::collection($paymentMethods);
 	}
+
+	/** ##################################################################
+	 * #################### PRODUCT SPECIFIC METHODS ####################
+	*/##################################################################
+
+	/**
+	 * Retrieve a collection of products
+	 *
+	 * @param  Request  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/stripe/products",
+	 *	tags={"Stripe"},
+	 *	summary="Get a list of the stripe products",
+	 *	operationId="listProducts",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function listProducts()
+	{
+		// Check if the user is authorized to change the billing addresses subscription quantity
+		abort(401);
+       
+		// $quantity = $request->quantity;
+		// $subscriptionName = $request->subscription_name;
+		// if($request->type == 'increment') {
+		// 	// Add $quantity to the subscription's current quantity
+		// 	$billingAddress->subscription($subscriptionName)->incrementQuantity($quantity);
+		// } else {
+		// 	// Subtract $quantity from the subscription's current quantity
+		// 	$billingAddress->subscription($subscriptionName)->decrementQuantity($quantity);
+		// }
+
+        // return PaymentMethodResource::collection($paymentMethods);
+	}
 }
