@@ -167,7 +167,7 @@ class UrlController extends Controller
 	 *              @OA\Property(
 	 *                  description="Determines if the the domain is https or not",
 	 *                  property="https",
-	 *                  type="string",
+	 *                  type="integer",
 	 *              ),
 	 *              required={"url"}
 	 *          )
@@ -381,7 +381,7 @@ class UrlController extends Controller
 	 *              @OA\Property(
 	 *                  description="Determines if the the domain is https or not",
 	 *                  property="https",
-	 *                  type="string",
+	 *                  type="integer",
 	 *              ),
 	 *              required={"url"}
 	 *          )
