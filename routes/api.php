@@ -188,6 +188,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
 		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
+		// Product prefixed routes
+		Route::prefix('/products')->group(function () {
+			Route::get('/', [StripeController::class, "listPoducts"])->name("stripe.products.list");
+		});
 	});
 
 	// Polymorphic Url routes
