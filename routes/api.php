@@ -22,7 +22,9 @@ use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SendinblueController;
 use App\Http\Controllers\BillingAddressController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\UrlController;
 use Illuminate\Http\Request;
+use App\Models\Url;
 
 /*
 |--------------------------------------------------------------------------
@@ -184,6 +186,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
 		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
+	});
+
+	// Polymorphic Url routes
+	Route::prefix('{type}/{id}')->group(function () {
+		Route::apiResource('/urls', UrlController::class);
 	});
 
 	// Billing address routes

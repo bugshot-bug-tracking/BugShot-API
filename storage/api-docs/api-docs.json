@@ -2432,6 +2432,11 @@
                         "required": false
                     },
                     {
+                        "name": "include-company-users-roles",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-company-role",
                         "in": "header",
                         "required": false
@@ -5271,6 +5276,11 @@
                     },
                     {
                         "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users-roles",
                         "in": "header",
                         "required": false
                     },
@@ -8558,6 +8568,413 @@
                 ]
             }
         },
+        "/{type}/{id}/urls": {
+            "get": {
+                "tags": [
+                    "Url"
+                ],
+                "summary": "All urls of the given resource.",
+                "operationId": "allUrls",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Url"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Url"
+                ],
+                "summary": "Store one url.",
+                "operationId": "storeUrl",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "description": "The url",
+                                        "type": "string"
+                                    },
+                                    "https": {
+                                        "description": "Determines if the the domain is https or not",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Url"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/{type}/{id}/urls/{url_id}": {
+            "get": {
+                "tags": [
+                    "Url"
+                ],
+                "summary": "Show one url.",
+                "operationId": "showUrl",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "url_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Url/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Url"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Url"
+                ],
+                "summary": "Update a url.",
+                "operationId": "updateUrl",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "url_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Url/properties/id"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "description": "The url",
+                                        "type": "string"
+                                    },
+                                    "https": {
+                                        "description": "Determines if the the domain is https or not",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Url"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Url"
+                ],
+                "summary": "Delete a url.",
+                "operationId": "deleteUrl",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "url_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Url/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/users": {
             "get": {
                 "tags": [
@@ -10118,6 +10535,38 @@
                 },
                 "type": "object"
             },
+            "Url": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "https": {
+                        "type": "boolean"
+                    },
+                    "url": {
+                        "description": "The url.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
+                    "created_at": {
+                        "description": "The creation date.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "description": "The last date when the resource was changed.",
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "deleted_at": {
+                        "description": "The deletion date.",
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "properties": {
                     "id": {
@@ -10241,6 +10690,9 @@
         },
         {
             "name": "Stripe"
+        },
+        {
+            "name": "Url"
         },
         {
             "name": "User"
