@@ -164,6 +164,11 @@ class UrlController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="Determines if the the domain is https or not",
+	 *                  property="https",
+	 *                  type="string",
+	 *              ),
 	 *              required={"url"}
 	 *          )
 	 *      )
@@ -209,6 +214,7 @@ class UrlController extends Controller
         // Create the url
         $url = $model->urls()->create([
             "id" => (string) Str::uuid(),
+			"https" => $request->https,
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it,
 		]);
 
@@ -370,6 +376,11 @@ class UrlController extends Controller
 	 *              @OA\Property(
 	 *                  description="The url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="Determines if the the domain is https or not",
+	 *                  property="https",
 	 *                  type="string",
 	 *              ),
 	 *              required={"url"}

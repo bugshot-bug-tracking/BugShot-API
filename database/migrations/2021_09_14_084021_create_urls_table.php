@@ -16,6 +16,7 @@ class CreateUrlsTable extends Migration
 		Schema::create('urls', function (Blueprint $table) {
 			$table->uuid('id')->primary();
 
+			$table->boolean('https');
 			$table->string("urlable_id");
 			$table->string("urlable_type");
 
