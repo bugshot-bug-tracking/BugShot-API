@@ -120,6 +120,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-role",
 	 *		required=false,

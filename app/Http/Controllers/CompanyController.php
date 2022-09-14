@@ -106,6 +106,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-company-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-company-role",
 	 *		required=false,
 	 *		in="header"

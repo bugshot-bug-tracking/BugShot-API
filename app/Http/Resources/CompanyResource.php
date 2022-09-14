@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\CompanyUserRole;
 
 class CompanyResource extends JsonResource
 {
@@ -42,8 +43,22 @@ class CompanyResource extends JsonResource
 		
 		// Check if the response should contain the respective company users
 		if(array_key_exists('include-company-users', $header) && $header['include-company-users'][0] == "true") {
-			$users = $this->users;
-			$company['attributes']['users'] = UserResource::collection($users);
+			if(array_key_exists('include-company-users-roles', $header) && $header['include-company-users'][0] == "true") {
+				$companyUserRoles = CompanyUserRole::where("company_id", $this->id)
+				->with('user')
+				->with('role')
+				->get();
+				
+				$company['attributes']['users'] = $companyUserRoles->map(function ($item, $key) {
+					return [
+						'user' => $item->user,
+						'role' => $item->role
+					];
+				});
+			} else {
+				$users = $this->users;
+				$company['attributes']['users'] = UserResource::collection($users);
+			}
 		}
 
 		// Check if the response should contain the respective company image

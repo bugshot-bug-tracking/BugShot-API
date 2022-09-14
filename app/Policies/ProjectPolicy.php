@@ -370,10 +370,59 @@ class ProjectPolicy
      * Determine whether the user can view the invitations of the the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $company
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function invite(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        $company = $user->companies()->find($project->company);
+        if ($company == NULL) {
+            return false;
+        }
+
+        $role = $company->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can store an url for the project
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createUrl(User $user, Project $project)
     {
         // Check company role
         if($project->company->user_id == $user->id) {

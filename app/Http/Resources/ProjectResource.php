@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
+use App\Models\ProjectUserRole;
 
 class ProjectResource extends JsonResource
 {
@@ -57,8 +58,22 @@ class ProjectResource extends JsonResource
 
 		// Check if the response should contain the respective project users
 		if(array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
-			$users = $this->users;
-			$project['attributes']['users'] = UserResource::collection($users);
+			if(array_key_exists('include-project-users-roles', $header) && $header['include-project-users'][0] == "true") {
+				$projectUserRoles = ProjectUserRole::where("project_id", $this->id)
+				->with('user')
+				->with('role')
+				->get();
+				
+				$project['attributes']['users'] = $projectUserRoles->map(function ($item, $key) {
+					return [
+						'user' => $item->user,
+						'role' => $item->role
+					];
+				});
+			} else {
+				$users = $this->users;
+				$project['attributes']['users'] = UserResource::collection($users);
+			}
 		}
 
 		// Check if the response should contain the respective project image
