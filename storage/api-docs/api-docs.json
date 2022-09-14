@@ -8684,6 +8684,10 @@
                                     "url": {
                                         "description": "The url",
                                         "type": "string"
+                                    },
+                                    "https": {
+                                        "description": "Determines if the the domain is https or not",
+                                        "type": "string"
                                     }
                                 },
                                 "type": "object"
@@ -8859,6 +8863,10 @@
                                 "properties": {
                                     "url": {
                                         "description": "The url",
+                                        "type": "string"
+                                    },
+                                    "https": {
+                                        "description": "Determines if the the domain is https or not",
                                         "type": "string"
                                     }
                                 },
@@ -10532,6 +10540,9 @@
                     "id": {
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "https": {
+                        "type": "boolean"
                     },
                     "url": {
                         "description": "The url.",

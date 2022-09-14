@@ -33,6 +33,11 @@ class Url extends Model
 	 * 	type="string",
 	 *  maxLength=255,
 	 * ) 
+	 * 
+	 * @OA\Property(
+	 * 	property="https",
+	 * 	type="boolean"
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="url",
@@ -62,7 +67,7 @@ class Url extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "url"];
+	protected $fillable = ["id", "https", "url"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
