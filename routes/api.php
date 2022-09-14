@@ -118,6 +118,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
+		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
 	});
 
@@ -130,6 +131,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
+		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
 

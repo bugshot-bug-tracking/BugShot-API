@@ -464,11 +464,11 @@ class SettingController extends Controller
 		$invitable = $setting->invitable;
 
 		switch ($setting->invitable_type) {
-			case Company::class:
+			case 'company':
 				return $this->acceptCompany($user, $setting, $invitable);
 				break;
 
-			case Project::class:
+			case 'project':
 				return $this->acceptProject($user, $setting, $invitable);
 				break;
 		}

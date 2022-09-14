@@ -32,6 +32,7 @@ use App\Models\Status;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Requests\ProjectUserRoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -1105,6 +1106,120 @@ class ProjectController extends Controller
 	}
 
 	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  ProjectUserRoleUpdateRequest  $request
+	 * @param  Project  $project
+	 * @param  User  $user
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/projects/{project_id}/users/{user_id}",
+	 *	tags={"Project"},
+	 *	summary="Update a users role in a given project.",
+	 *	operationId="updateProjectUserRole",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new role",
+	 *                  property="role_id",
+	 *                  type="integer",
+	 *              ),
+	 *              required={"role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/ProjectUserRole"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function updateUserRole(ProjectUserRoleUpdateRequest $request, Project $project, User $user)
+	{
+		// Check if the user is authorized to update the users role in the given project
+		$this->authorize('updateUserRole', $project);
+
+		// Update the companies user role
+		$project->users()->updateExistingPivot($user->id, [
+			'role_id' => $request->role_id
+		]);
+		
+		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->where('user_id', $user->id)->first());
+	}
+
+	/**
 	 * Remove a user from the project
 	 *
 	 * @param  Project  $project
@@ -1357,7 +1472,7 @@ class ProjectController extends Controller
 		// Check if the user has already been invited to the project or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($project->invitations->contains('target_email', $recipient_mail) && $project->users->contains($recipient)) {
+		if(!$project->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $project->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.project-user-already-invited')
 			]], 409);

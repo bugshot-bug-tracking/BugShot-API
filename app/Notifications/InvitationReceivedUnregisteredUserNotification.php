@@ -56,17 +56,17 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
     {
         // Check the model type of the invitation
         switch ($this->invitation->invitable_type) {
-            case Company::class:
+            case 'company':
                 $this->resource = new CompanyResource($this->invitation->invitable);
                 $this->message = __('email.invited_to_company', ['company' => __('data.company'), 'companyDesignation' => $this->resource->designation]);
                 break;
 
-            case Project::class:
+            case 'project':
                 $this->resource = new ProjectResource($this->invitation->invitable);
                 $this->message = __('email.invited_to_project', ['project' => __('data.project'), 'projectDesignation' => $this->resource->designation]);
                 break;
 
-            case Bug::class:
+            case 'bug':
                 $this->resource = new BugResource($this->invitation->invitable);
                 $this->message = __('email.invited_to_bug', ['bug' => __('data.bug'), 'bugDesignation' => $this->resource->designation]);
                 break;

@@ -358,11 +358,11 @@ class InvitationController extends Controller
 		$invitable = $invitation->invitable;
 
 		switch ($invitation->invitable_type) {
-			case Company::class:
+			case 'company':
 				return $this->acceptCompany($user, $invitation, $invitable);
 				break;
 
-			case Project::class:
+			case 'project':
 				return $this->acceptProject($user, $invitation, $invitable);
 				break;
 		}
