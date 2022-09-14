@@ -51,8 +51,14 @@ class CompanyResource extends JsonResource
 				
 				$company['attributes']['users'] = $companyUserRoles->map(function ($item, $key) {
 					return [
-						'user' => $item->user,
-						'role' => $item->role
+						'id' => $item->user->id,
+						'type' => 'User',
+						'attributes' => [
+							"first_name" => $item->user->first_name,
+							"last_name" => $item->user->last_name,
+							"email" => $item->user->email,
+						],
+						'role' => new RoleResource($item->role)
 					];
 				});
 			} else {
