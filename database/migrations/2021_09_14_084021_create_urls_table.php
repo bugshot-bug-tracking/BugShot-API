@@ -20,7 +20,6 @@ class CreateUrlsTable extends Migration
 			$table->string("urlable_type");
 
 			$table->string('url');
-			$table->boolean('primary')->default(0);
 
 			$table->timestamps();
 			$table->softDeletes();

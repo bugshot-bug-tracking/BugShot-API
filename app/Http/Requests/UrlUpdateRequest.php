@@ -29,11 +29,7 @@ class UrlUpdateRequest extends FormRequest
             return [];
         } else {
             return [
-                "url" => ["required", "string", "min:1", "max:255"],
-                "primary" => [
-                    'required',
-                    Rule::in([0, 1]),
-                ]
+                "url" => ["required", "string", "min:1", "max:255"]
             ];
         }
     }
