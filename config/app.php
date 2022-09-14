@@ -87,6 +87,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Stripe
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'stripe_api_url' => env('STRIPE_API_URL', 'https://api.stripe.com/v1'),
+    'stripe_api_key' => env('STRIPE_KEY', NULL),
+    'stripe_api_secret' => env('STRIPE_SECRET', NULL),
+    'stripe_webhook_secret' => env('STRIPE_WEBHOOK_SECRET', NULL),
+    'cashier_currency' => env('CASHIER_CURRENCY', 'eur'),
+    'cashier_logger' => env('CASHIER_LOGGER', 'stack'),
+    'cashier_currency_locale' => env('CASHIER_CURRENCY_LOCALE', 'de_DE'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Proposal URL
     |--------------------------------------------------------------------------
     |

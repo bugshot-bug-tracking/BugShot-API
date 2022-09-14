@@ -6,11 +6,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Cashier;
+use Illuminate\Support\Facades\Http;
 
 // Resources
 use App\Http\Resources\SubscriptionResource;
 use App\Http\Resources\StripeCustomerResource;
 use App\Http\Resources\PaymentMethodResource;
+use App\Http\Resources\ProductResource;
 
 // Services
 use App\Services\StripeService;
@@ -691,21 +693,15 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function listProducts()
+	public function listProducts(Request $request)
 	{
-		// Check if the user is authorized to change the billing addresses subscription quantity
-		abort(401);
-       
-		// $quantity = $request->quantity;
-		// $subscriptionName = $request->subscription_name;
-		// if($request->type == 'increment') {
-		// 	// Add $quantity to the subscription's current quantity
-		// 	$billingAddress->subscription($subscriptionName)->incrementQuantity($quantity);
-		// } else {
-		// 	// Subtract $quantity from the subscription's current quantity
-		// 	$billingAddress->subscription($subscriptionName)->decrementQuantity($quantity);
-		// }
+		// Check if the user is authorized to list the products
+		if(!$request->user()->isAdministrator()) {
+			abort(401);
+		}	
 
-        // return PaymentMethodResource::collection($paymentMethods);
+		$response = Http::withToken(config('app.stripe_api_secret'))->get(config('app.stripe_api_url') . '/products');
+		// dd($response->object()->data);
+        return ProductResource::collection($response->object()->data);
 	}
 }

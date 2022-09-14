@@ -1334,6 +1334,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="status-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
@@ -1372,12 +1377,20 @@ class ProjectController extends Controller
 	 *)
 	 *
 	 **/
-	public function invitations(Project $project)
+	public function invitations(Request $request, Project $project)
 	{
 		// Check if the user is authorized to view the invitations of the project
 		$this->authorize('viewInvitations', $project);
+
+		// Check if the request contains a status_id so only those invitations are returned
+		$header = $request->header();
+		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
+			$invitations = $project->invitations()->where('status_id', $header['status-id'][0])->get();
+		} else {
+			$invitations = $project->invitations;
+		}
 		
-		return InvitationResource::collection($project->invitations);
+		return InvitationResource::collection($invitations);
 	}
 
 	/**
