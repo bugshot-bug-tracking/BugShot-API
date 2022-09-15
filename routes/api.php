@@ -212,6 +212,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscription', [StripeController::class, "createSubscription"])->name("billing-address.stripe.create-subscription");
 			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
 			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
+			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
 		});
 	});
 	/*
