@@ -3233,6 +3233,11 @@
                         "required": false
                     },
                     {
+                        "name": "status-id",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -6380,6 +6385,11 @@
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "status-id",
                         "in": "header",
                         "required": false
                     },
