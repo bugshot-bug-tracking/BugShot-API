@@ -693,7 +693,7 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function listProducts()
+	public function listProducts(Request $request)
 	{
 		// Check if the user is authorized to change the billing addresses subscription quantity
 		if(!$request->user()->isAdministrator()) {
@@ -701,7 +701,83 @@ class StripeController extends Controller
 		}	
 
 		$response = Http::withToken(config('app.stripe_api_secret'))->get(config('app.stripe_api_url') . '/products');
-		// dd($response->object()->data);
+
         return ProductResource::collection($response->object()->data);
+	}
+
+
+	/**
+	 * Retrieve a collection of subscriptions
+	 *
+	 * @param  Request  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions",
+	 *	tags={"Stripe"},
+	 *	summary="Get a list of the stripe subscriptions of a specific user",
+	 *	operationId="listSubscriptions",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function listSubscriptions(Request $request, BillingAddress $billingAddress)
+	{
+		// Check if the user is authorized to change the billing addresses subscription quantity
+		// if(!$request->user()->isAdministrator()) {
+		// 	abort(401);
+		// }	
+		dd(config('app.stripe_api_url') . '/subscriptions');
+		$response = Http::withToken(config('app.stripe_api_secret'))->withHeaders([
+			'customer' => $billingAddress->stripe_id
+		])->get(config('app.stripe_api_url') . '/subscriptions');
+		
+        return SubscriptionResource::collection($response->object()->data);
 	}
 }

@@ -190,7 +190,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
 		// Product prefixed routes
 		Route::prefix('/products')->group(function () {
-			Route::get('/', [StripeController::class, "listPoducts"])->name("stripe.products.list");
+			Route::get('/', [StripeController::class, "listProducts"])->name("stripe.products.list");
 		});
 	});
 
@@ -212,6 +212,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscription', [StripeController::class, "createSubscription"])->name("billing-address.stripe.create-subscription");
 			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
 			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
+			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
 		});
 	});
 	/*
