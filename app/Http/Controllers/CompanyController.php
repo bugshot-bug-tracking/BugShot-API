@@ -1069,6 +1069,11 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="status-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -1106,12 +1111,20 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	public function invitations(Company $company)
+	public function invitations(Request $request, Company $company)
 	{
 		// Check if the user is authorized to view the invitations of the company
 		$this->authorize('viewInvitations', $company);
 		
-		return InvitationResource::collection($company->invitations);
+		// Check if the request contains a status_id so only those invitations are returned
+		$header = $request->header();
+		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
+			$invitations = $company->invitations()->where('status_id', $header['status-id'][0])->get();
+		} else {
+			$invitations = $company->invitations;
+		}
+
+		return InvitationResource::collection($invitations);
 	}
 
 	/**

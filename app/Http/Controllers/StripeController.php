@@ -695,7 +695,7 @@ class StripeController extends Controller
 	 **/
 	public function listProducts(Request $request)
 	{
-		// Check if the user is authorized to change the billing addresses subscription quantity
+		// Check if the user is authorized to list the products
 		if(!$request->user()->isAdministrator()) {
 			abort(401);
 		}	
