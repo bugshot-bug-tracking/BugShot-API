@@ -15,12 +15,12 @@ class SubscriptionResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		if($this->owner->billing_addressable_type == 'user') {
-			$model = new UserResource($this->owner->billingAddressable());
-		} else {
-			$model = new OrganizationResource($this->owner->billingAddressable());
-		}
-		
+		// if($this->owner->billing_addressable_type == 'user') {
+		// 	$model = new UserResource($this->owner->billingAddressable());
+		// } else {
+		// 	$model = new OrganizationResource($this->owner->billingAddressable());
+		// }
+		dd($this);
 		return [
 			'id' => $this->id,
 			'type' => 'Subscription',
@@ -28,7 +28,7 @@ class SubscriptionResource extends JsonResource
 				'name' => $this->name,
 				'owner' => [
 					'id' => $this->owner->id,
-					'billable' => $model,
+					'billable' => new BillingAddressResource($this->owner->billingAddressable()),
 					// 'first_name' => $this->owner->first_name,
 					// 'last_name' => $this->owner->last_name,
 					// 'stripe_id' => $this->owner->stripe_id,

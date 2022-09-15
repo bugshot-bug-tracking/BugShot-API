@@ -773,11 +773,16 @@ class StripeController extends Controller
 		// if(!$request->user()->isAdministrator()) {
 		// 	abort(401);
 		// }	
-		dd(config('app.stripe_api_url') . '/subscriptions');
+
 		$response = Http::withToken(config('app.stripe_api_secret'))->withHeaders([
 			'customer' => $billingAddress->stripe_id
 		])->get(config('app.stripe_api_url') . '/subscriptions');
-		
-        return SubscriptionResource::collection($response->object()->data);
+
+		// $subscriptionModels = [];
+		// foreach($response->object()->data as $subscriptionArray) {
+		// 	array_push($subscriptionModels, new SubscriptionResource($subscriptionArray));
+		// }
+
+        return SubscriptionResource::collection(collect($response->object()->data));
 	}
 }
