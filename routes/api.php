@@ -202,6 +202,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// Billing address routes
 	Route::prefix('billing-addresses')->group(function () {
 		Route::post("/{type}/{id}", [BillingAddressController::class, "store"])->name("billing-address.store");
+		Route::get("/{type}/{id}", [BillingAddressController::class, "getBillingAddress"])->name("billing-address.get");
 		Route::put("/{billing_address}", [BillingAddressController::class, "update"])->name("billing-address.update");
 
 		Route::prefix('/{billing_address}/stripe')->group(function () {
@@ -213,6 +214,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
 			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
 			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
+			Route::delete('/subscriptions/{subscription}', [StripeController::class, "cancelSubscription"])->name("billing-address.stripe.cancel-subscription");
+			Route::post('/subscriptions/{subscription}', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
 		});
 	});
 	/*

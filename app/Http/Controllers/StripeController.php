@@ -7,18 +7,21 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Http;
+use Stripe\StripeClient;
 
 // Resources
 use App\Http\Resources\SubscriptionResource;
 use App\Http\Resources\StripeCustomerResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\StripeSubscriptionResource;
 
 // Services
 use App\Services\StripeService;
 
 // Models
 use App\Models\BillingAddress;
+use Laravel\Cashier\Subscription;
 
 // Requests
 use App\Http\Requests\SubscriptionStoreRequest;
@@ -33,80 +36,6 @@ use App\Http\Requests\SubscriptionChangeQuantityRequest;
  */
 class StripeController extends Controller
 {
-    /**
-	 * Create a new stripe customer
-	 *
-	 * @param  Request  $request
-     * @param  BillingAddress $billingAddress
-	 * @return Response
-	 */
-	/**
-	 * @OA\Post(
-	 *	path="/billing-addresses/{billing_address_id}/stripe/customer",
-	 *	tags={"Stripe"},
-	 *	summary="Create a new stripe customer",
-	 *	operationId="createStripeCustomer",
-	 *	security={ {"sanctum": {} }},
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="locale",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="billing_address_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/BillingAddress/properties/id"
-	 *		)
-	 *	),
-     * 
-	 *	@OA\Response(
-	 *		response=201,
-	 *		description="Success"
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=422,
-	 *		description="Unprocessable Entity"
-	 *	),
-	 * )
-	 **/
-	public function createStripeCustomer(StripeCustomerStoreRequest $request, BillingAddress $billingAddress, StripeService $stripeService)
-	{
-		// Check if the user is authorized to create a new stripe customer
-		$this->authorize('createStripeCustomer', $billingAddress);
-       
-		// Create the corresponding stripe customer
-		$stripeCustomer = $stripeService->createStripeCustomer($billingAddress);
-		// $stripeCustomer = $billingAddress->createOrGetStripeCustomer(['name' => $billingAddress->first_name . ' ' . $billingAddress->last_name]);
-
-        return new StripeCustomerResource($stripeCustomer);
-	}
-
 	/**
 	 * Retrieve a stripe customer
 	 *
@@ -118,7 +47,7 @@ class StripeController extends Controller
 	 * @OA\Get(
 	 *	path="/billing-addresses/{billing_address_id}/stripe/customer/{stripe_customer_id}",
 	 *	tags={"Stripe"},
-	 *	summary="Get the billable model",
+	 *	summary="Get the stripe customer",
 	 *	operationId="getStripeCustomer",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
@@ -533,9 +462,9 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing_address_id}/stripe/subscription/{subscription_id)/change-quantity",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscription/{subscription_id}/change-quantity",
 	 *	tags={"Stripe"},
-	 *	summary="Change the quanitity of the given subscription",
+	 *	summary="Change the quantity of the given subscription",
 	 *	operationId="changeSubscriptionQuantity",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
@@ -575,12 +504,6 @@ class StripeController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
-	 *                  description="The name of the subscription that needs to be adjusted",
-	 *                  property="subscription_name",
-	 * 					example="default",
-	 *                  type="string"
-	 *              ),
-	 *              @OA\Property(
 	 *                  description="Specifies if the quantity is an increment or decrement",
 	 *                  property="type",
 	 * 					example="increment",
@@ -618,27 +541,23 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function changeSubscriptionQuantity(SubscriptionChangeQuantityRequest $request, BillingAddress $billingAddress)
+	public function changeSubscriptionQuantity(SubscriptionChangeQuantityRequest $request, BillingAddress $billingAddress, $subscriptionId)
 	{
 		// Check if the user is authorized to change the billing addresses subscription quantity
 		$this->authorize('changeSubscriptionQuantity', $billingAddress);
-       
+	
 		$quantity = $request->quantity;
-		$subscriptionName = $request->subscription_name;
+		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
 		if($request->type == 'increment') {
 			// Add $quantity to the subscription's current quantity
-			$billingAddress->subscription($subscriptionName)->incrementQuantity($quantity);
+			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity);
 		} else {
 			// Subtract $quantity from the subscription's current quantity
-			$billingAddress->subscription($subscriptionName)->decrementQuantity($quantity);
+			$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity);
 		}
-
-        // return PaymentMethodResource::collection($paymentMethods);
+	
+        return new SubscriptionResource($subscription);
 	}
-
-	/** ##################################################################
-	 * #################### PRODUCT SPECIFIC METHODS ####################
-	*/##################################################################
 
 	/**
 	 * Retrieve a collection of products
@@ -700,16 +619,16 @@ class StripeController extends Controller
 			abort(401);
 		}	
 
-		$response = Http::withToken(config('app.stripe_api_secret'))->get(config('app.stripe_api_url') . '/products');
+		$stripe = new StripeClient(config('app.stripe_api_secret'));
+		$response = $stripe->products->all();
 
-        return ProductResource::collection($response->object()->data);
+        return ProductResource::collection($response->data);
 	}
 
 
 	/**
 	 * Retrieve a collection of subscriptions
 	 *
-	 * @param  Request  $request
 	 * @return Response
 	 */
 	/**
@@ -767,17 +686,182 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function listSubscriptions(Request $request, BillingAddress $billingAddress)
+	public function listSubscriptions(BillingAddress $billingAddress)
 	{
-		// Check if the user is authorized to change the billing addresses subscription quantity
-		// if(!$request->user()->isAdministrator()) {
-		// 	abort(401);
-		// }	
-		dd(config('app.stripe_api_url') . '/subscriptions');
-		$response = Http::withToken(config('app.stripe_api_secret'))->withHeaders([
-			'customer' => $billingAddress->stripe_id
-		])->get(config('app.stripe_api_url') . '/subscriptions');
-		
-        return SubscriptionResource::collection($response->object()->data);
+		// Check if the user is authorized to list the subscriptions
+		$this->authorize('listSubscriptions', $billingAddress);
+
+		$stripe = new StripeClient(config('app.stripe_api_secret'));
+		$response = $stripe->subscriptions->all(['customer' => $billingAddress->stripe_id]);
+
+        return StripeSubscriptionResource::collection($response->data);
 	}
+
+	/**
+	 * Cancel a specific subscription
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Delete(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/{subscription_id}",
+	 *	tags={"Stripe"},
+	 *	summary="Cancel a specific subscription",
+	 *	operationId="cancelSubscription",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="subscription_id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function cancelSubscription(BillingAddress $billingAddress, $subscriptionId)
+	{
+		// Check if the user is authorized to list the subscriptions
+		$this->authorize('cancelSubscription', $billingAddress);
+
+		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		$val = $billingAddress->subscription($subscription->name)->cancel();
+
+		return response($val, 204);
+	}
+
+	// TODO: Assign subscriptions to users via the intermediate role table
+	/**
+	 * Assign subscription to a user 
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/{subscription_id}",
+	 *	tags={"Stripe"},
+	 *	summary="Assign a subscription to a user",
+	 *	operationId="assignSubscription",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="subscription_id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 * 
+     * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the user the subscription shall be assigned to",
+	 *                  property="type",
+	 *                  type="integer"
+	 *              )
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function assignSubscription(BillingAddress $billingAddress, $subscriptionId)
+	{
+		// Check if the user is authorized to assign a subscription to a user
+		$this->authorize('assignSubscription', $billingAddress);
+
+		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		dd($subscription);
+
+		// return response($val, 204);
+	}
+
 }

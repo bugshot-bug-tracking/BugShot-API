@@ -16,9 +16,10 @@ class CreateBillingAddressesTable extends Migration
 		Schema::create('billing_addresses', function (Blueprint $table) {
 			$table->uuid('id')->primary();
 
-			$table->string('billing_addressable_id');
+			$table->string('billing_addressable_id')->unique();
 			$table->string('billing_addressable_type');
 
+			$table->string('stripe_id')->nullable();
 			$table->string('street');
 			$table->string('housenumber');
 			$table->string('city');

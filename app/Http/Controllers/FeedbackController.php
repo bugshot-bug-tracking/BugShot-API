@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 use Illuminate\Http\Response;
 
+// Services
+use App\Services\AttachmentService;
+
 // Models
 use App\Models\Status;
 
@@ -85,6 +88,20 @@ class FeedbackController extends Controller
 	 *                  property="resolution",
 	 *                  type="string",
 	 *              ),
+	 *   			@OA\Property(
+	 *                  property="attachments",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="designation",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
+	 *              ),
 	 *              required={"designation","url"}
 	 *          )
 	 *      )
@@ -112,7 +129,7 @@ class FeedbackController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(FeedbackStoreRequest $request)
+	public function store(FeedbackStoreRequest $request, AttachmentService $attachmentService)
 	{  
 		// Get the default status for the feedback backlog
 		$status = Status::find('Backlog0-0000-0000-0000-000000000000'); // ID of Backlog status
@@ -129,7 +146,7 @@ class FeedbackController extends Controller
 		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
 		
 		// Store the new bug in the database
-		$status->bugs()->create([
+		$feedback = $status->bugs()->create([
 			"id" => $id,
 			"project_id" => $status->project_id,
 			"priority_id" => 2,
@@ -143,6 +160,15 @@ class FeedbackController extends Controller
 			"order_number" => $order_number,
 			"ai_id" => $ai_id
 		]);
+
+		// Check if the feedback comes with an attachment (or multiple) and if so, store it/them
+		$attachments = $request->attachments;
+		if($attachments != NULL) {
+			foreach($attachments as $attachment) {
+				$attachment = (object) $attachment;
+				$attachmentService->store($feedback, $attachment);
+			}
+		}
 
         return response()->json(["message" => __('application.feedback-sent-successfully')], 200);
 	}

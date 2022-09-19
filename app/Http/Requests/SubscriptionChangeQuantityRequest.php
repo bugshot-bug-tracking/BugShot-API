@@ -25,14 +25,6 @@ class SubscriptionChangeQuantityRequest extends FormRequest
     public function rules()
     {
         return [
-            'subscription_name' => [
-                'required', 
-                'string', 
-                Rule::in([ 
-                    'default', 
-                    // Add all the different subscriptions here
-                ]), 
-            ],
 			'type' => [
                 'string',
                 'required',
