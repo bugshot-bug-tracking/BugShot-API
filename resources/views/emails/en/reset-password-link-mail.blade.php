@@ -7,9 +7,9 @@
     @component('mail::button', ['url' => $url])
         Reset Password
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         If that doesn't work, you can also just copy the following URL into your browser:
-    </p>
+    @endcomponent
     <a href="{{ $url }}">{{ $url }}</a><br /><br />
     <p>
         Error-free Greetings,

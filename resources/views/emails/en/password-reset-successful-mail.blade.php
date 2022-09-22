@@ -8,9 +8,9 @@
     @component('mail::button', ['url' => config('app.webpanel_url')])
         Go to Dashboard
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         If that doesn't work, you can also just copy the following URL into your browser:
-    </p>
+    @endcomponent
     <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a><br /><br />
     <p>
         Error-free Greetings,
