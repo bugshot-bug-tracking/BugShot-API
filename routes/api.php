@@ -90,7 +90,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
-			Route::get('/user', [AuthController::class, "user"])->name("user");
+			Route::post('/user', [AuthController::class, "user"])->name("user");
 		});
 	}
 );
