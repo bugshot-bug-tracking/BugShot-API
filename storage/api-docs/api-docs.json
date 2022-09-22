@@ -3687,7 +3687,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/invitations/{invitation_id}": {
             "delete": {
                 "tags": [
                     "Invitation"
@@ -3711,14 +3713,6 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     },
                     {
                         "name": "invitation_id",

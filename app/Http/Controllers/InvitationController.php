@@ -192,7 +192,7 @@ class InvitationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/users/{user_id}/invitations/{invitation_id}",
+	 *	path="/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
@@ -213,14 +213,6 @@ class InvitationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *
 	 *	@OA\Parameter(
@@ -253,7 +245,7 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(User $user, Invitation $invitation)
+	public function destroy(Invitation $invitation)
 	{
 		// Check if the user is authorized to delete the invitation
 		$this->authorize('delete', $invitation);
