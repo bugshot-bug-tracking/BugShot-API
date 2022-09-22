@@ -17,11 +17,13 @@ class OrganizationUserRoleResource extends JsonResource
 		$organization = $this->organization;
 		$user = $this->user;
 		$role = $this->role;
+		$subscription = $this->subscription;
 
 		return [
 			"organization" => new OrganizationResource($organization),
 			"user" => new UserResource($user),
 			"role" => new RoleResource($role),
+			"subscription" => new SubscriptionResource($subscription)
 		];
 	}
 }

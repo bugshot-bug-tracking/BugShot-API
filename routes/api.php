@@ -217,7 +217,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
 			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
 			Route::delete('/subscriptions/{subscription}', [StripeController::class, "cancelSubscription"])->name("billing-address.stripe.cancel-subscription");
-			Route::post('/subscriptions/{subscription}', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
+			Route::post('/subscriptions/{subscription}/assign', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
 		});
 	});
 	/*

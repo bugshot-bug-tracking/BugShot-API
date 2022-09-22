@@ -230,11 +230,11 @@ class BillingAddressController extends Controller
 		if($class == User::class) {
 			$model = User::find($id);
 			// Check if the user is authorized to store a billing address for the given user
-			$this->authorize('createBillingAddress', [User::class]);
+			$this->authorize('createBillingAddress', [User::class, $model]);
 		} else {
 			$model = Organization::find($id);
 			// Check if the user is authorized to store a billing address for the given organization
-			$this->authorize('createBillingAddress', [Organization::class]);
+			$this->authorize('createBillingAddress', [Organization::class, $model]);
 		}
 
         // Create the billing address

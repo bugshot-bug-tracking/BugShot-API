@@ -3503,6 +3503,20 @@
                                     },
                                     "resolution": {
                                         "type": "string"
+                                    },
+                                    "attachments": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
+                                                },
+                                                "designation": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -6451,11 +6465,6 @@
                         "required": false
                     },
                     {
-                        "name": "status-id",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
                         "name": "project_id",
                         "in": "path",
                         "required": true,
@@ -8351,6 +8360,64 @@
                 ]
             }
         },
+        "/billing-addresses/{billing_address_id}/stripe/customer": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Create a new stripe customer",
+                "operationId": "createStripeCustomer",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/billing-addresses/{billing_address_id}/stripe/customer/{stripe_customer_id}": {
             "get": {
                 "tags": [
@@ -8890,6 +8957,69 @@
             }
         },
         "/billing-addresses/{billing_address_id}/stripe/subscriptions/{subscription_id}": {
+            "delete": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Cancel a specific subscription",
+                "operationId": "cancelSubscription",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    },
+                    {
+                        "name": "subscription_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing_address_id}/stripe/subscriptions/{subscription_id}/assign": {
             "post": {
                 "tags": [
                     "Stripe"
@@ -8934,7 +9064,11 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "type": {
+                                    "restricted_subscription_usage": {
+                                        "description": "Defines if the user is only allowed to use this subscription within the ",
+                                        "type": "boolean"
+                                    },
+                                    "user_id": {
                                         "description": "The id of the user the subscription shall be assigned to",
                                         "type": "integer"
                                     }
@@ -8944,67 +9078,6 @@
                         }
                     }
                 },
-                "responses": {
-                    "201": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Stripe"
-                ],
-                "summary": "Cancel a specific subscription",
-                "operationId": "cancelSubscription",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "billing_address_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/BillingAddress/properties/id"
-                        }
-                    },
-                    {
-                        "name": "subscription_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "201": {
                         "description": "Success"
@@ -11061,6 +11134,11 @@
                     },
                     "is_admin": {
                         "type": "boolean"
+                    },
+                    "subscription_id": {
+                        "description": "The id of the subscription, if the user has been given one.",
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "created_at": {
                         "description": "The creation date.",
