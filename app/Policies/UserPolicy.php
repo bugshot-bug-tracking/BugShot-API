@@ -68,6 +68,17 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can retrieve the billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function getBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
      * Determine whether the user can update a billing address for the given user
      *
      * @param  \App\Models\User  $user

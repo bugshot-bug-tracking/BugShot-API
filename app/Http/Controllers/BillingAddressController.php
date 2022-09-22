@@ -26,6 +26,92 @@ use App\Http\Requests\BillingAddressUpdateRequest;
  */
 class BillingAddressController extends Controller
 {
+	/**
+	 * Get the billing address of a specific model
+	 *
+	 * @param  User  $billingAddress
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/billing-addresses/{type}/{id}",
+	 *	tags={"BillingAddress"},
+	 *	summary="Get the billing address of a specific model",
+	 *	operationId="getBillingAddress",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="type",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/BillingAddress"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function getBillingAddress($type, $id)
+	{
+		// Check if the given type is a user or an organization
+		if($type == 'user') {
+			// Check if the user is authorized to get the billing address for the given user
+			$this->authorize('getBillingAddress', User::findOrFail($id));
+		} else {
+			// Check if the user is authorized to get the billing address for the given organization
+			$this->authorize('getBillingAddress', Organization::findOrFail($id));
+		}
+
+		$billingAddress = BillingAddress::where('billing_addressable_id', $id)->firstOrFail();
+	
+		return new BillingAddressResource($billingAddress);
+	}
+
    	/**
      * Store the billing address that belongs to the given model
      *
@@ -144,11 +230,11 @@ class BillingAddressController extends Controller
 		if($class == User::class) {
 			$model = User::find($id);
 			// Check if the user is authorized to store a billing address for the given user
-			$this->authorize('createBillingAddress', [User::class]);
+			$this->authorize('createBillingAddress', [User::class, $model]);
 		} else {
 			$model = Organization::find($id);
 			// Check if the user is authorized to store a billing address for the given organization
-			$this->authorize('createBillingAddress', [Organization::class]);
+			$this->authorize('createBillingAddress', [Organization::class, $model]);
 		}
 
         // Create the billing address
@@ -301,10 +387,10 @@ class BillingAddressController extends Controller
 		// Check if the given type is a user or an organization
 		if($billingAddress->billing_addressable_type == 'user') {
 			// Check if the user is authorized to store a billing address for the given user
-			$this->authorize('updateBillingAddress', [User::class, $billingAddress->billingAddressable()]);
+			$this->authorize('updateBillingAddress', [User::class, $billingAddress->billingAddressable]);
 		} else {
 			// Check if the user is authorized to store a billing address for the given organization
-			$this->authorize('updateBillingAddress', [Organization::class, $billingAddress->billingAddressable()]);
+			$this->authorize('updateBillingAddress', [Organization::class, $billingAddress->billingAddressable]);
 		}
 
 		// Update the billing address

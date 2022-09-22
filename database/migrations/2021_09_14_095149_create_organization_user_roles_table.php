@@ -17,14 +17,12 @@ class CreateOrganizationUserRolesTable extends Migration
 			$table->string('organization_id');
 			$table->unsignedBigInteger('user_id');
 			$table->unsignedBigInteger('role_id');
-			$table->unsignedBigInteger('subscription_id')->nullable();
 
 			$table->primary(['organization_id', 'user_id']);
 
 			$table->foreign('organization_id')->references('id')->on('organizations')->onDelete('cascade');
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 			$table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-			$table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('set null');
 		});
 	}
 

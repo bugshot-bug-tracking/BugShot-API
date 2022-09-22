@@ -70,6 +70,13 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="subscription_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the subscription, if the user has been given one."
+	 * )
+	 * 
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -97,6 +104,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'email',
 		'password',
 		'email_verified_at',
+		'subscription_id'
 	];
 
 	/**
@@ -205,6 +213,14 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
     }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function subscription()
+	{
+		return $this->belongsTo(Subscription::class);
+	}
 
 	/**
 	 * Send a password reset notification to the user.

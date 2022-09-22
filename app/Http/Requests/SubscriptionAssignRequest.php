@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class SubscriptionChangeQuantityRequest extends FormRequest
+class SubscriptionAssignRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,16 +23,8 @@ class SubscriptionChangeQuantityRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-			'type' => [
-                'string',
-                'required',
-                Rule::in([
-                    'increment',
-                    'decrement'
-                ]), 
-            ],
-            'quantity' => ['required', 'integer', 'min:1', 'max:99'],
-        ];
+		return [
+            "user_id" => ["required", "integer", "exists:users,id"]
+		];
     }
 }
