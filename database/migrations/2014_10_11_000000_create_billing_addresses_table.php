@@ -19,7 +19,6 @@ class CreateBillingAddressesTable extends Migration
 			$table->string('billing_addressable_id')->unique();
 			$table->string('billing_addressable_type');
 
-			$table->string('stripe_id')->nullable();
 			$table->string('street');
 			$table->string('housenumber');
 			$table->string('city');

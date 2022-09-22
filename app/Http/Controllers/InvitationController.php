@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 // Resources
+use App\Http\Resources\OrganizationUserRoleResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\InvitationStatusResource;
 use App\Http\Resources\ProjectUserRoleResource;
 
 // Models
+use App\Models\Organization;
+use App\Models\OrganizationUserRole;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use App\Models\Invitation;
@@ -358,6 +361,10 @@ class InvitationController extends Controller
 		$invitable = $invitation->invitable;
 
 		switch ($invitation->invitable_type) {
+			case 'organization':
+				return $this->acceptOrganization($user, $invitation, $invitable);
+				break;
+
 			case 'company':
 				return $this->acceptCompany($user, $invitation, $invitable);
 				break;
@@ -468,6 +475,30 @@ class InvitationController extends Controller
 
 		$invitation->update(["status_id" => 3]);
 		return response()->json("", 204);
+	}
+
+	/**
+	 * Generate the link between user, organization and role.
+	 *
+	 * @param  \App\Models\User  $user
+	 * @param  \App\Models\Invitation  $invitation
+	 * @param  \App\Models\Organization  $organization
+	 * @return \App\Http\Resources\OrganizationUserRoleResource
+	 */
+	private function acceptOrganization(User $user, Invitation $invitation, Organization $organization)
+	{
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($organization) !== NULL) {
+			$invitation->update(["status_id" => 5]);
+			return response()->json(["data" => [
+				"message" => __('application.already-part-of-the-organization')
+			]], 288);
+		}
+
+		$user->organizations()->attach($organization->id, ['role_id' => $invitation->role_id]);
+		$invitation->update(["status_id" => 2]);
+
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->first());
 	}
 
 	/**

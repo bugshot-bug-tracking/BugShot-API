@@ -22,5 +22,7 @@ return [
     'already-part-of-the-company' => 'Du bist bereits Teil dieser :company',
     'already-part-of-the-project' => 'Du bist bereits Teil von diesem :project',
     'to-dashboard' => 'Zum Dashboard',
-    'feedback-sent-successfully' => 'Feedback erfolgreich gesendet'
+    'feedback-sent-successfully' => 'Feedback erfolgreich gesendet',
+    'subscription-quantity-not-sufficient' => 'Die Anzahl dieses Abonnements ist nicht ausreichend. Bitte erhöhen Sie die Anzahl, um es dem angegebenen Benutzer zuweisen zu können.',
+    'user-not-part-of-organization' => 'Der angegebene Benutzer scheint nicht zu der :organization zu gehören, in der das Abonnement dem Benutzer zugewiesen werden soll.'
 ];
