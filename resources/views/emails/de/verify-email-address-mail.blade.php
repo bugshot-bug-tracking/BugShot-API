@@ -11,9 +11,9 @@
     @component('mail::button', ['url' => $url])
         Jetzt verifizieren
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
-    </p>
+    @endcomponent
     <a href="{{ $url }}">{{ $url }}</a><br /><br />
     <p>
         Fehlerfreie Grüße,

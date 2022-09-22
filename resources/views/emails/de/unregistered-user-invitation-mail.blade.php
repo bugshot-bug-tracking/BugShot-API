@@ -8,9 +8,9 @@
     @component('mail::button', ['url' => config('app.webpanel_url') . '/auth/register'])
         Jetzt registrieren
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
-    </p>
+    @endcomponent
     <a href="{{ config('app.webpanel_url') . '/auth/register' }}">{{ config('app.webpanel_url') . '/auth/register' }}</a><br /><br />
     <p>
         Fehlerfreie Grüße,
