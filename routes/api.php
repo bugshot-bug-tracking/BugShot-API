@@ -218,7 +218,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
 			Route::delete('/subscriptions/{subscription}', [StripeController::class, "cancelSubscription"])->name("billing-address.stripe.cancel-subscription");
 			Route::post('/subscriptions/{subscription}/assign', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
-			Route::post('/subscriptions/{subscription}/revoke', [StripeController::class, "revokeSubscription"])->name("billing-address.stripe.revoke-subscription");
+			Route::post('/subscriptions/revoke', [StripeController::class, "revokeSubscription"])->name("billing-address.stripe.revoke-subscription");
+			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
 		});
 	});
 	/*
