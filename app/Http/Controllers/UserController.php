@@ -400,6 +400,8 @@ class UserController extends Controller
     {
 		// Check if the user is authorized to update the user
 		$this->authorize('update', $user);
+
+		$email = $user->email;
 		
         // Check if the request comes with an image and if so, store it
 		$image = $user->image;
@@ -417,10 +419,21 @@ class UserController extends Controller
 		}
 
 		// Update the corresponding stripe customer 
-		$user->updateStripeCustomer([
+		$user->billingAddress->updateStripeCustomer([
 			'name' => $user->first_name . ' ' . $user->last_name,
 			'email' => $user->email
 		]);
+
+		// Check if the email of the user changed and if so, update the email addresses of all organizations the user created
+		if($email != $user->email) {
+			foreach($user->createdOrganizations as $organization) {
+				if($organization->billingAddress) {
+					$organization->billingAddress->updateStripeCustomer([
+						'email' => $user->email
+					]);
+				}
+			}
+		}
 
 		return new UserResource($user);
     }
