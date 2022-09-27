@@ -701,7 +701,6 @@ class AuthController extends Controller
 
 	public function addDefaultSettings($user)
 	{
-		// TODO: St settings on one value
 		$user->settings()->attach([
 			1 => ['value_id' => 1], // company_filter_alphabetical: az
 			2 => ['value_id' => 3], // company_filter_creation: newest_first

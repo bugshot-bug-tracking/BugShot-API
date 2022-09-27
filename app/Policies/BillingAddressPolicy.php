@@ -65,6 +65,84 @@ class BillingAddressPolicy
     }
 
     /**
+     * Determine whether the user can show the invoices of the user.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\BillingAddress  $billingAddress
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function listInvoices(User $user, BillingAddress $billingAddress)
+    {
+        if($billingAddress->billing_addressable_type == 'organization') {
+            $organization = $billingAddress->billingAddressable;
+  
+            // The user is the creator of the organization
+            if($organization->user_id == $user->id) {
+                return true;
+            }
+    
+            // The user isn't part of the organization
+            $organization = $user->organizations()->find($organization);
+            if ($organization == NULL) {
+                return false;
+            }
+    
+            $role = $organization->pivot->role_id;
+    
+            switch ($role) {
+                case 1:
+                    return true;
+                    break;
+                
+                default:
+                    return false;
+                    break;
+            }
+        }
+  
+        return $user->id == $billingAddress->billing_addressable_id;
+    }
+
+    /**
+     * Determine whether the user can show a specific invoice of the user.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\BillingAddress  $billingAddress
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function showInvoice(User $user, BillingAddress $billingAddress)
+    {
+        if($billingAddress->billing_addressable_type == 'organization') {
+            $organization = $billingAddress->billingAddressable;
+  
+            // The user is the creator of the organization
+            if($organization->user_id == $user->id) {
+                return true;
+            }
+    
+            // The user isn't part of the organization
+            $organization = $user->organizations()->find($organization);
+            if ($organization == NULL) {
+                return false;
+            }
+    
+            $role = $organization->pivot->role_id;
+    
+            switch ($role) {
+                case 1:
+                    return true;
+                    break;
+                
+                default:
+                    return false;
+                    break;
+            }
+        }
+  
+        return $user->id == $billingAddress->billing_addressable_id;
+    }
+
+    /**
      * Determine whether the user can retrieve the setup intent form.
      *
      * @param  \App\Models\User  $user
