@@ -414,4 +414,82 @@ class BillingAddressPolicy
   
         return $user->id == $billingAddress->billing_addressable_id;
     }
+
+    /**
+     * Determine whether the user can revoke a subscription from a user
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\BillingAddress  $billingAddress
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function revokeSubscription(User $user, BillingAddress $billingAddress)
+    {
+        if($billingAddress->billing_addressable_type == 'organization') {
+            $organization = $billingAddress->billingAddressable;
+  
+            // The user is the creator of the organization
+            if($organization->user_id == $user->id) {
+                return true;
+            }
+    
+            // The user isn't part of the organization
+            $organization = $user->organizations()->find($organization);
+            if ($organization == NULL) {
+                return false;
+            }
+    
+            $role = $organization->pivot->role_id;
+    
+            switch ($role) {
+                case 1:
+                    return true;
+                    break;
+                
+                default:
+                    return false;
+                    break;
+            }
+        }
+  
+        return $user->id == $billingAddress->billing_addressable_id;
+    }
+
+    /**
+     * Determine whether the user change restriction of a subscription of the given user
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\BillingAddress  $billingAddress
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function changeRestrictionOfSubscription(User $user, BillingAddress $billingAddress)
+    {
+        if($billingAddress->billing_addressable_type == 'organization') {
+            $organization = $billingAddress->billingAddressable;
+  
+            // The user is the creator of the organization
+            if($organization->user_id == $user->id) {
+                return true;
+            }
+    
+            // The user isn't part of the organization
+            $organization = $user->organizations()->find($organization);
+            if ($organization == NULL) {
+                return false;
+            }
+    
+            $role = $organization->pivot->role_id;
+    
+            switch ($role) {
+                case 1:
+                    return true;
+                    break;
+                
+                default:
+                    return false;
+                    break;
+            }
+        }
+  
+        return $user->id == $billingAddress->billing_addressable_id;
+    }
 }

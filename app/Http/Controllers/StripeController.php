@@ -24,6 +24,8 @@ use App\Models\BillingAddress;
 use Laravel\Cashier\Subscription;
 
 // Requests
+use App\Http\Requests\SubscriptionChangeRestrictionRequest;
+use App\Http\Requests\SubscriptionRevokeRequest;
 use App\Http\Requests\SubscriptionAssignRequest;
 use App\Http\Requests\SubscriptionStoreRequest;
 use App\Http\Requests\StripeCustomerStoreRequest;
@@ -846,7 +848,6 @@ class StripeController extends Controller
 		return response($val, 204);
 	}
 
-	// TODO: Assign subscriptions to users via the intermediate role table
 	/**
 	 * Assign subscription to a user 
 	 *
@@ -982,4 +983,224 @@ class StripeController extends Controller
 		}
 	}
 
+	/**
+	 * Revoke subscription from a user
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/revoke",
+	 *	tags={"Stripe"},
+	 *	summary="Revoke a subscription to a user",
+	 *	operationId="revokeSubscription",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *
+     * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the user the subscription is assigned to",
+	 *                  property="user_id",
+	 *                  type="integer"
+	 *              )
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function revokeSubscription(SubscriptionRevokeRequest $request, BillingAddress $billingAddress)
+	{
+		// Check if the user is authorized to revoke a subscription from a user
+		$this->authorize('revokeSubscription', $billingAddress);
+
+		/** 
+		 * Check if the billing address which is assigning the subscription is a personal user or organization account.
+		 * If it is a personal user account, assign the subscription to himself
+		**/
+		if($billingAddress->billing_addressable_type == 'user') {
+			$user = $billingAddress->billingAddressable;
+			$user->update([
+				'subscription_id' => NULL
+			]);
+
+			return new UserResource($user);
+		} else {
+			$organization = $billingAddress->billingAddressable;
+
+			// Check if the user that the subscription shall be revoked from is part of the organization
+			$user = User::find($request->user_id);
+			$organization = $user->organizations->find($organization);
+			if ($organization == NULL && $organization->user_id != $user->id) {
+				return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
+			}
+			
+			// Update the pivot model
+			$user->organizations()->updateExistingPivot($organization->id, [
+				'subscription_id' => NULL,
+				'restricted_subscription_usage' => NULL
+			]);
+
+			return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+			->with('organization')
+			->with('user')
+			->with('role')
+			->with('subscription')
+			->first());
+		}
+	}
+
+	/**
+	 * Change restriction of a subscription of a user
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/change-restriction",
+	 *	tags={"Stripe"},
+	 *	summary="Change restriction of a subscription of a user",
+	 *	operationId="changeRestrictionOfSubscription",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *
+     * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *             @OA\Property(
+	 *                 description="The id of the user the subscription is assigned to",
+	 *                 property="user_id",
+	 *                 type="integer"
+	 *             ),
+	 *             @OA\Property(
+	 *                  description="Defines if the user is only allowed to use this subscription within the ",
+	 *                  property="restricted_subscription_usage",
+	 *                  type="boolean"
+	 *              )
+	 *          )
+	 *      )
+	 *  ),
+	 * 
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function changeRestrictionOfSubscription(SubscriptionChangeRestrictionRequest $request, BillingAddress $billingAddress)
+	{
+		// Check if the user is authorized to change the restriction of a subscription from a user
+		$this->authorize('changeRestrictionOfSubscription', $billingAddress);
+
+		$organization = $billingAddress->billingAddressable;
+
+		// Check if the user that the restriction shall be changed from is part of the organization
+		$user = User::find($request->user_id);
+		$organization = $user->organizations->find($organization);
+		if ($organization == NULL && $organization->user_id != $user->id) {
+			return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
+		}
+			
+		// Update the pivot model
+		$user->organizations()->updateExistingPivot($organization->id, [
+			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
+		]);
+
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+			->with('organization')
+			->with('user')
+			->with('role')
+			->with('subscription')
+			->first());
+	}
 }

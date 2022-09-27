@@ -691,7 +691,7 @@
             }
         },
         "/auth/user": {
-            "get": {
+            "post": {
                 "tags": [
                     "Auth"
                 ],
@@ -9071,6 +9071,158 @@
                                     "user_id": {
                                         "description": "The id of the user the subscription shall be assigned to",
                                         "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing_address_id}/stripe/subscriptions/revoke": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Revoke a subscription to a user",
+                "operationId": "revokeSubscription",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The id of the user the subscription is assigned to",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/billing-addresses/{billing_address_id}/stripe/subscriptions/change-restriction": {
+            "post": {
+                "tags": [
+                    "Stripe"
+                ],
+                "summary": "Change restriction of a subscription of a user",
+                "operationId": "changeRestrictionOfSubscription",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "billing_address_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/BillingAddress/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "user_id": {
+                                        "description": "The id of the user the subscription is assigned to",
+                                        "type": "integer"
+                                    },
+                                    "restricted_subscription_usage": {
+                                        "description": "Defines if the user is only allowed to use this subscription within the ",
+                                        "type": "boolean"
                                     }
                                 },
                                 "type": "object"

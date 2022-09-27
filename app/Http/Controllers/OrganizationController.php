@@ -380,6 +380,11 @@ class OrganizationController extends Controller
 
 		// Update the organization
 		$organization->update($request->all());
+
+		// Update the corresponding stripe customer 
+		$organization->billingAddress->updateStripeCustomer([
+			'name' => $organization->designation
+		]);
 		
 		return new OrganizationResource($organization);
 	}

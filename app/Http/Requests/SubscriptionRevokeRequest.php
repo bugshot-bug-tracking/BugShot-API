@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SubscriptionAssignRequest extends FormRequest
+class SubscriptionRevokeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,6 @@ class SubscriptionAssignRequest extends FormRequest
     public function rules()
     {
 		return [
-            "restricted_subscription_usage" => ["boolean"],
             "user_id" => ["required", "integer", "exists:users,id"]
 		];
     }
