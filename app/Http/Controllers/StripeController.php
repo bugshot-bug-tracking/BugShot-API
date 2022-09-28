@@ -16,6 +16,7 @@ use App\Http\Resources\StripeCustomerResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\StripeSubscriptionResource;
+use App\Http\Resources\InvoiceResource;
 
 // Models
 use App\Models\OrganizationUserRole;
@@ -262,6 +263,160 @@ class StripeController extends Controller
 
         return response()->json(["data" => [
             "balance" => $balance
+        ]], 200);
+	}
+
+	/**
+	 * Retrieve the invoices of a specific billing address
+	 *
+	 * @param  Request  $request
+     * @param  BillingAddress $billingAddress
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/invoices",
+	 *	tags={"Stripe"},
+	 *	summary="List stripe invoices of billing address.",
+	 *	operationId="listStripeInvoices",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function listInvoices(BillingAddress $billingAddress)
+	{
+		// Check if the user is authorized to make this request
+		$this->authorize('listInvoices', $billingAddress);
+
+        $invoices = $billingAddress->invoicesIncludingPending();
+
+        return response()->json(["data" => [
+            "invoices" => $invoices
+        ]], 200);
+	}
+
+	/**
+	 * Retrieve a specific invoice of a specific billing address
+	 *
+	 * @param  Request  $request
+     * @param  BillingAddress $billingAddress
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/invoices/{invoice_id}",
+	 *	tags={"Stripe"},
+	 *	summary="Show a specific stripe invoice of a billing address.",
+	 *	operationId="showStripeInvoice",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="invoice_id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function showInvoice(BillingAddress $billingAddress, $invoiceId)
+	{
+		// Check if the user is authorized to make this request
+		$this->authorize('showInvoice', $billingAddress);
+
+        $invoice = $billingAddress->findInvoice($invoiceId);
+
+		return new InvoiceResource($invoice);
+        return response()->json(["data" => [
+            "invoice" => $invoice
         ]], 200);
 	}
 

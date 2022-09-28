@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\User;
-use App\Models\Comment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,33 +10,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CommentSent implements ShouldBroadcast
+class TestEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * User that sent the comment
-     *
-     * @var \App\Models\User
+     * Testdata
      */
-    public $user;
-
-    /**
-     * Comment details
-     *
-     * @var \App\Models\Comment
-     */
-    public $comment;
+    public $test;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, $comment)
+    public function __construct($test)
     {
-        $this->user = $user;
-        $this->comment = $comment;
+        $this->test = $test;
     }
 
     /**
@@ -48,8 +36,7 @@ class CommentSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments');
-        return new PrivateChannel('comments.' . 'someid');
+        return new PrivateChannel('test');
     }
 
 }
