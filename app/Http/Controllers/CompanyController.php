@@ -29,7 +29,6 @@ use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\CompanyUserRoleUpdateRequest;
 
-
 /**
  * @OA\Tag(
  *     name="Company",
@@ -194,7 +193,7 @@ class CompanyController extends Controller
 
 		// Combine the two collections
 		$companies = $companies->concat($createdCompanies);
-
+		
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}
 

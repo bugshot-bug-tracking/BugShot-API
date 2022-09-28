@@ -26,6 +26,9 @@ use App\Http\Controllers\UrlController;
 use Illuminate\Http\Request;
 use App\Models\Url;
 
+// Events
+use App\Events\TestEvent;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -36,6 +39,17 @@ use App\Models\Url;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+/*
+|--------------------------------------------------------------------------
+| Debug API Route for Sentry
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/broadcast/test', function () {
+    TestEvent::dispatch("Test");
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -211,6 +225,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("billing-address.stripe.get-stripe-customer");
 			Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("billing-address.stripe.create-stripe-customer");
 			Route::get('/balance', [StripeController::class, "showBalance"])->name("billing-address.stripe.show-balance");
+			Route::get('/invoices', [StripeController::class, "listInvoices"])->name("billing-address.stripe.list-invoices");
+			Route::get('/invoices/{invoice}', [StripeController::class, "showInvoice"])->name("billing-address.stripe.show-invoice");
 			Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("billing-address.stripe.show-setup-intent-form");
 			Route::post('/subscription', [StripeController::class, "createSubscription"])->name("billing-address.stripe.create-subscription");
 			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
