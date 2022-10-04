@@ -48,8 +48,7 @@ class CommentSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments');
-        return new PrivateChannel('comments.' . 'someid');
+        return new PrivateChannel('projects.' . $this->comment->bug->project_id);
     }
 
 }
