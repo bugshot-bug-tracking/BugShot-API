@@ -993,14 +993,37 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function cancelSubscription(BillingAddress $billingAddress, Subscription $subscription)
-	{
+	public function cancelSubscription(BillingAddress $billingAddress, $subscriptionId)
+	{	
+		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+
 		// Check if the user is authorized to list the subscriptions
 		$this->authorize('cancelSubscription', $billingAddress);
 
-		$val = $billingAddress->subscription($subscription->name)->cancel();
+		// $val = $billingAddress->subscription($subscription->name)->cancel();
 
-		return response($val, 204);
+		// Also remove all assigned subscriptions, if there are any
+		$assignments = $this->getAmountOfAssignments($subscription->stripe_id);
+		if($assignments > 0) {
+			$users = User::where('subscription_id', $subscriptionId)->get();
+			if($users) {
+				foreach($users as $user) {
+					$user->update([
+						'subscription_id' => NULL
+					]);
+				}
+			}
+			$organizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->get();
+			if($organizationUsers) {
+				foreach($organizationUsers as $organizationUser) {
+					$organizationUser->update([
+						'subscription_id' => NULL
+					]);
+				}
+			}
+		}
+
+		// return response($val, 204);
 	}
 
 	/**
@@ -1095,10 +1118,9 @@ class StripeController extends Controller
 
 		// Check if the provided subscription has a sufficient quantity
 		$quantity = Subscription::where('stripe_id', $subscriptionId)->first()->quantity;
-		$amountOfUsers = User::where('subscription_id', $subscriptionId)->count(); // Amount of personal user accounts this subscription has been assigned to
-		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->count(); // Amount of organization user accounts this subscription has been assigned to
-		
-		if(($amountOfUsers + $amountOfOrganizationUsers) == $quantity) {
+		$assignments = $this->getAmountOfAssignments($subscriptionId);
+
+		if($assignments == $quantity) {
 			return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
 		}
 
@@ -1357,5 +1379,14 @@ class StripeController extends Controller
 			->with('role')
 			->with('subscription')
 			->first());
+	}
+
+	// Get the total amount of users that the given subscription was assigned to
+	public function getAmountOfAssignments($subscriptionId)
+	{
+		$amountOfUsers = User::where('subscription_id', $subscriptionId)->count(); // Amount of personal user accounts this subscription has been assigned to
+		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->count(); // Amount of organization user accounts this subscription has been assigned to
+		
+		return $amountOfUsers + $amountOfOrganizationUsers;
 	}
 }

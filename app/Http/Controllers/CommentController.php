@@ -72,7 +72,7 @@ class CommentController extends Controller
 	 *			ref="#/components/schemas/Bug/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -198,13 +198,13 @@ class CommentController extends Controller
 	 * )
 	 **/
 	public function store(CommentStoreRequest $request, Bug $bug)
-	{	
+	{
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
 		// Check if the the request already contains a UUID for the comment
 		$id = $this->setId($request);
-		
+
         preg_match(
             '/(?<=@)[\p{L}\p{N}]+/',
             $request->content,
@@ -224,7 +224,7 @@ class CommentController extends Controller
 			TaggedInComment::dispatch($user, $comment);
 		}
 
-		// CommentSent::dispatch($this->user, $comment);
+		CommentSent::dispatch($this->user, $comment);
 
 		return new CommentResource($comment);
 	}
