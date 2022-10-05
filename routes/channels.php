@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Comment;
-use App\Models\Project;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -20,6 +19,7 @@ Broadcast::channel('test', function () {
     return true;
 });
 
-Broadcast::channel('projects.{projectId}', function ($user, $projectId) {
-    return $this->authorize('view', [Comment::class, Project::find($projectId)]);
+Broadcast::channel('comments.{commentId}', function ($user, $commentId) {
+	$comment = Comment::findOrFail($commentId);
+    return $this->authorize('view', [Comment::class, $comment->bug->project]);
 });
