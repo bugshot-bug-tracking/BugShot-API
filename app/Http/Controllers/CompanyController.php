@@ -22,6 +22,7 @@ use App\Services\InvitationService;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\CompanyUserRole;
+use App\Models\SettingUserValue;
 
 // Requests
 use App\Http\Requests\CompanyStoreRequest;
@@ -65,7 +66,7 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 * 	@OA\Parameter(
 	 *		name="include-projects",
 	 *		required=false,
@@ -146,7 +147,7 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -193,7 +194,7 @@ class CompanyController extends Controller
 
 		// Combine the two collections
 		$companies = $companies->concat($createdCompanies);
-		
+
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}
 
@@ -297,7 +298,7 @@ class CompanyController extends Controller
 	 * )
 	 **/
 	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
-	{	
+	{
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
 
@@ -308,7 +309,7 @@ class CompanyController extends Controller
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 		]);
-		
+
 		// Check if the company comes with an image (or a color)
 		$image = NULL;
 		if($request->base64 != NULL) {
@@ -470,7 +471,7 @@ class CompanyController extends Controller
 	{
 		// Check if the user is authorized to view the company
 		$this->authorize('view', $company);
-	
+
 		return new CompanyResource($company);
 	}
 
@@ -593,7 +594,7 @@ class CompanyController extends Controller
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
-	
+
 		// Apply default color if color_hex is null
 		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
@@ -602,7 +603,7 @@ class CompanyController extends Controller
 		$company->update([
 			'color_hex' => $color_hex
 		]);
-		
+
 		return new CompanyResource($company);
 	}
 
@@ -672,7 +673,7 @@ class CompanyController extends Controller
 		$this->authorize('delete', $company);
 
 		$val = $company->delete();
-		
+
 		// Delete the respective image if present
 		$imageService->delete($company->image);
 
@@ -945,7 +946,7 @@ class CompanyController extends Controller
 		$company->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
-		
+
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->where('user_id', $user->id)->first());
 	}
 
@@ -1034,7 +1035,7 @@ class CompanyController extends Controller
 		// foreach($projects as $project) {
 		// 	$project->users()->detach($user);
 		// }
-	
+
 		return response($val, 204);
 	}
 
@@ -1114,7 +1115,7 @@ class CompanyController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the company
 		$this->authorize('viewInvitations', $company);
-		
+
 		// Check if the request contains a status_id so only those invitations are returned
 		$header = $request->header();
 		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {

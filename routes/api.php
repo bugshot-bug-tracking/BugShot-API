@@ -23,8 +23,6 @@ use App\Http\Controllers\SendinblueController;
 use App\Http\Controllers\BillingAddressController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
-use Illuminate\Http\Request;
-use App\Models\Url;
 
 // Events
 use App\Events\TestEvent;

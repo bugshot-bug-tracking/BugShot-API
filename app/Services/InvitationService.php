@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Notification;
 class InvitationService
 {
     // Send the invitation to the for the respective model
-    public function send($request, $model, $id, $recipient_mail) 
+    public function send($request, $model, $id, $recipient_mail)
     {
         $invitation = $model->invitations()->create([
 			"id" => $id,
@@ -20,16 +20,16 @@ class InvitationService
 			"sender_id" => Auth::id(),
 			"status_id" => 1, // Pending
         ]);
-        
-        $user = User::where('email', $recipient_mail)->first();
-        
+
+		// Check if the recipient is a registered user or not
+		$user = User::where('email', $recipient_mail)->first();
         if($user != null) {
             $user->notify(new InvitationReceivedNotification($invitation));
         } else {
             Notification::route('email', $recipient_mail)
                 ->notify(new InvitationReceivedUnregisteredUserNotification($invitation));
         }
-        
+
         return $invitation;
     }
 }

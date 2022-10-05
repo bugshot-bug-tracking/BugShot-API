@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\InvitationReceived as InvitationReceivedMailable;
+use Illuminate\Support\Facades\App;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
@@ -20,6 +21,9 @@ use App\Models\Organization;
 use App\Models\Company;
 use App\Models\Bug;
 use App\Models\Project;
+
+// Services
+use App\Services\GetUserLocaleService;
 
 class InvitationReceivedNotification extends Notification
 {
@@ -56,6 +60,10 @@ class InvitationReceivedNotification extends Notification
      */
     public function toMail($notifiable)
     {
+		// Change the locale for a short amount of time in order to use the recipients language
+		$recipientLocale = GetUserLocaleService::getLocale($notifiable);
+		App::setLocale($recipientLocale);
+
         // Check the model type of the invitation
         switch ($this->invitation->invitable_type) {
             case 'organization':
