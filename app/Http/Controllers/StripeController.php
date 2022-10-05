@@ -786,9 +786,9 @@ class StripeController extends Controller
 			$totalAssignments = $this->getAmountOfAssignments($subscription->stripe_id);
 
 			// If all quantities of this subscription are assigned to users, it cannot be decreased
-			if($totalAssignments == $subscription->quantity) {
+			if($totalAssignments > $subscription->quantity - $quantity) {
 				return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
-			} {
+			} else {
 				// Subtract $quantity from the subscription's current quantity
 				$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity);
 			}
