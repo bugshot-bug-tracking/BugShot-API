@@ -71,7 +71,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
@@ -141,7 +141,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -177,7 +177,7 @@ class ProjectController extends Controller
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
-		
+
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
 			if($userIsPriviliegated) {
@@ -195,7 +195,7 @@ class ProjectController extends Controller
 				$projects = Auth::user()->projects
 					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
 					->where('company_id', $company->id);
-				$createdProjects = $this->user->createdProjects					
+				$createdProjects = $this->user->createdProjects
 					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
 					->where('company_id', $company->id);
 
@@ -327,7 +327,7 @@ class ProjectController extends Controller
 
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
-		
+
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
@@ -344,7 +344,7 @@ class ProjectController extends Controller
 			$project->image()->save($image);
 		}
 
-		// Send the invitations 
+		// Send the invitations
 		$invitations = $request->invitations;
 		if($invitations != NULL) {
 			foreach($request->invitations as $invitation) {
@@ -354,7 +354,7 @@ class ProjectController extends Controller
 
 		// Create the default statuses for the new project
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
-        
+
 		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
@@ -408,7 +408,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -547,7 +547,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -694,7 +694,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -770,7 +770,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -934,7 +934,7 @@ class ProjectController extends Controller
         } else {
             $bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
         }
-		
+
 		return BugResource::collection($bugs);
 	}
 
@@ -1017,9 +1017,9 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
-		
+
 		// Get the bugs that belong to the given url
-		$bugs = $project->bugs->where("url", "=", $request->url);
+		$bugs = $project->bugs()->where("url", "=", $request->url)->has('screenshots.markers')->get();
 
 		return ProjectMarkerResource::collection($bugs);
 	}
@@ -1215,7 +1215,7 @@ class ProjectController extends Controller
 		$project->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
-		
+
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->where('user_id', $user->id)->first());
 	}
 
@@ -1249,7 +1249,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -1300,7 +1300,7 @@ class ProjectController extends Controller
 			$this->authorize('removeUser', $project);
 
 		$val = $project->users()->detach($user);
-	
+
 		return response($val, 204);
 	}
 
@@ -1376,7 +1376,7 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the project
 		$this->authorize('viewInvitations', $project);
-		
+
 		return InvitationResource::collection($project->invitations);
 	}
 
@@ -1468,7 +1468,7 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to invite users to the project
 		$this->authorize('invite', $project);
-		
+
 		// Check if the user has already been invited to the project or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
