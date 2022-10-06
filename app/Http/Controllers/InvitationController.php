@@ -141,7 +141,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -293,7 +293,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -411,7 +411,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,

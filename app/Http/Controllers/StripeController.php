@@ -80,7 +80,7 @@ class StripeController extends Controller
 	 *			ref="#/components/schemas/BillingAddress/properties/id"
 	 *		)
 	 *	),
-     * 
+     *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -107,7 +107,7 @@ class StripeController extends Controller
 	{
 		// Check if the user is authorized to create a new stripe customer
 		$this->authorize('createStripeCustomer', $billingAddress);
-       
+
 		// Create the corresponding stripe customer
 		$stripeCustomer = $billingAddress->createOrGetStripeCustomer(['name' => $billingAddress->first_name . ' ' . $billingAddress->last_name]);
 
@@ -158,7 +158,7 @@ class StripeController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-     * 
+     *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -185,7 +185,7 @@ class StripeController extends Controller
 	{
 		// Check if the user is authorized to create a new subscription for the billing address
 		$this->authorize('getStripeCustomer', $billingAddress);
-	
+
 		// Retrieve the corresponding stripe customer
 		$stripeCustomer = Cashier::findBillable($stripeCustomerId);
 
@@ -533,7 +533,7 @@ class StripeController extends Controller
 	 *			ref="#/components/schemas/BillingAddress/properties/id"
 	 *		)
 	 *	),
-     * 
+     *
      * 	@OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -547,7 +547,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -574,7 +574,7 @@ class StripeController extends Controller
 	{
 		// Check if the user is authorized to get the billing addresses payment methods
 		$this->authorize('getPaymentMethods', $billingAddress);
-       
+
         $paymentMethods = $request->type ? $billingAddress->paymentMethods($request->type) : $billingAddress->paymentMethods();
 
         return PaymentMethodResource::collection($paymentMethods);
@@ -649,7 +649,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-     * 
+     *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -676,7 +676,7 @@ class StripeController extends Controller
 	{
 		// Check if the user is authorized to create a new subscription for the billing address
 		$this->authorize('createSubscription', $billingAddress);
-       
+
         $subscription = $billingAddress->newSubscription($request->subscription_name, $request->price_api_id)
 			->quantity($request->quantity)
 			->create($request->payment_method_id);
@@ -728,7 +728,7 @@ class StripeController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-     * 
+     *
      * 	@OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -749,7 +749,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -776,17 +776,24 @@ class StripeController extends Controller
 	{
 		// Check if the user is authorized to change the billing addresses subscription quantity
 		$this->authorize('changeSubscriptionQuantity', $billingAddress);
-	
+
 		$quantity = $request->quantity;
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
 		if($request->type == 'increment') {
 			// Add $quantity to the subscription's current quantity
 			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity);
 		} else {
-			// Subtract $quantity from the subscription's current quantity
-			$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity);
+			$totalAssignments = $this->getAmountOfAssignments($subscription->stripe_id);
+
+			// If all quantities of this subscription are assigned to users, it cannot be decreased
+			if($totalAssignments > $subscription->quantity - $quantity) {
+				return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
+			} else {
+				// Subtract $quantity from the subscription's current quantity
+				$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity);
+			}
 		}
-	
+
         return new SubscriptionResource($subscription);
 	}
 
@@ -820,7 +827,7 @@ class StripeController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -848,7 +855,7 @@ class StripeController extends Controller
 		// Check if the user is authorized to list the products
 		if(!$request->user()->isAdministrator()) {
 			abort(401);
-		}	
+		}
 
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
 		$response = $stripe->products->all();
@@ -894,7 +901,7 @@ class StripeController extends Controller
 	 *			ref="#/components/schemas/BillingAddress/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -970,7 +977,7 @@ class StripeController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -994,13 +1001,13 @@ class StripeController extends Controller
 	 * )
 	 **/
 	public function cancelSubscription(BillingAddress $billingAddress, $subscriptionId)
-	{	
+	{
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
 
 		// Check if the user is authorized to list the subscriptions
 		$this->authorize('cancelSubscription', $billingAddress);
 
-		// $val = $billingAddress->subscription($subscription->name)->cancel();
+		$val = $billingAddress->subscription($subscription->name)->cancel();
 
 		// Also remove all assigned subscriptions, if there are any
 		$assignments = $this->getAmountOfAssignments($subscription->stripe_id);
@@ -1016,18 +1023,19 @@ class StripeController extends Controller
 			$organizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->get();
 			if($organizationUsers) {
 				foreach($organizationUsers as $organizationUser) {
-					$organizationUser->update([
-						'subscription_id' => NULL
+					User::find($organizationUser->user_id)->organizations()->updateExistingPivot($organizationUser->organization_id, [
+						'subscription_id' => NULL,
+						'restricted_subscription_usage' => NULL
 					]);
 				}
 			}
 		}
 
-		// return response($val, 204);
+		return response($val, 204);
 	}
 
 	/**
-	 * Assign subscription to a user 
+	 * Assign subscription to a user
 	 *
 	 * @return Response
 	 */
@@ -1068,7 +1076,7 @@ class StripeController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-	 * 
+	 *
      * 	@OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -1087,7 +1095,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -1112,7 +1120,7 @@ class StripeController extends Controller
 	 **/
 	public function assignSubscription(SubscriptionAssignRequest $request, BillingAddress $billingAddress, $subscriptionId)
 	{
-		
+
 		// Check if the user is authorized to assign a subscription to a user
 		$this->authorize('assignSubscription', $billingAddress);
 
@@ -1124,7 +1132,7 @@ class StripeController extends Controller
 			return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
 		}
 
-		/** 
+		/**
 		 * Check if the billing address which is assigning the subscription is a personal user or organization account.
 		 * If it is a personal user account, assign the subscription to himself
 		**/
@@ -1144,7 +1152,7 @@ class StripeController extends Controller
 			if ($organization == NULL && $organization->user_id != $user->id) {
 				return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
 			}
-			
+
 			// Update the pivot model
 			$user->organizations()->updateExistingPivot($organization->id, [
 				'subscription_id' => $subscriptionId,
@@ -1211,7 +1219,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -1239,7 +1247,7 @@ class StripeController extends Controller
 		// Check if the user is authorized to revoke a subscription from a user
 		$this->authorize('revokeSubscription', $billingAddress);
 
-		/** 
+		/**
 		 * Check if the billing address which is assigning the subscription is a personal user or organization account.
 		 * If it is a personal user account, assign the subscription to himself
 		**/
@@ -1259,7 +1267,7 @@ class StripeController extends Controller
 			if ($organization == NULL && $organization->user_id != $user->id) {
 				return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
 			}
-			
+
 			// Update the pivot model
 			$user->organizations()->updateExistingPivot($organization->id, [
 				'subscription_id' => NULL,
@@ -1331,7 +1339,7 @@ class StripeController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=201,
 	 *		description="Success"
@@ -1367,7 +1375,7 @@ class StripeController extends Controller
 		if ($organization == NULL && $organization->user_id != $user->id) {
 			return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
 		}
-			
+
 		// Update the pivot model
 		$user->organizations()->updateExistingPivot($organization->id, [
 			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
@@ -1386,7 +1394,7 @@ class StripeController extends Controller
 	{
 		$amountOfUsers = User::where('subscription_id', $subscriptionId)->count(); // Amount of personal user accounts this subscription has been assigned to
 		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->count(); // Amount of organization user accounts this subscription has been assigned to
-		
+
 		return $amountOfUsers + $amountOfOrganizationUsers;
 	}
 }

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use App\Services\GetUserLocaleService;
 
 use App\Models\User;
 use App\Models\Invitation;
@@ -38,8 +39,13 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        // return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
-        return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.invitation-mail');
+        $status = $this->from(config('mail.noreply'))
+        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.invitation-mail');
+
+		// Change the locale back to the auth users language
+		$locale = GetUserLocaleService::getLocale(request()->user());
+		App::setLocale($locale);
+
+		return $status;
     }
 }

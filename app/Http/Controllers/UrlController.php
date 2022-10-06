@@ -58,7 +58,7 @@ class UrlController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="type",
 	 *		required=true,
@@ -69,7 +69,7 @@ class UrlController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -210,7 +210,7 @@ class UrlController extends Controller
 		} else {
 			//
 		}
-		
+
         // Create the url
         $url = $model->urls()->create([
             "id" => (string) Str::uuid(),
@@ -261,7 +261,7 @@ class UrlController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="url_id",
 	 *		required=true,
@@ -350,7 +350,7 @@ class UrlController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="url_id",
 	 *		required=true,

@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
+use App\Services\GetUserLocaleService;
 
 class VerifyEmailAddress extends Mailable
 {
@@ -23,7 +24,7 @@ class VerifyEmailAddress extends Mailable
      * @return void
      */
     public function __construct(User $notifiable, $url)
-    {   
+    {
         // Gets the token of the generated url
         preg_match(
             '/[^\/]*$/',
@@ -44,6 +45,6 @@ class VerifyEmailAddress extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
         return $this->from(config('mail.noreply'))
-                ->markdown('emails.' . App::currentLocale() . '.verify-email-address-mail');
+                ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.verify-email-address-mail');
     }
 }
