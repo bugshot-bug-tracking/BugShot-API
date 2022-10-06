@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Bug;
 use App\Models\Project;
+use App\Services\GetUserLocaleService;
 
 class AssignedToBug extends Mailable
 {
@@ -43,6 +44,6 @@ class AssignedToBug extends Mailable
     public function build()
     {
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.assigned-to-bug');
+        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.assigned-to-bug');
     }
 }

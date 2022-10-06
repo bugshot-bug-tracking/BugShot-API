@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
+use App\Services\GetUserLocaleService;
 
 class VerificationSuccessful extends Mailable
 {
@@ -24,7 +25,7 @@ class VerificationSuccessful extends Mailable
      * @return void
      */
     public function __construct(User $notifiable)
-    {   
+    {
         $this->user = $notifiable;
         $this->url = config('app.webpanel_url');
         $this->policyUrl = config('app.webpanel_url') . '/terms-and-conditions';
@@ -39,6 +40,6 @@ class VerificationSuccessful extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.verification-successful-mail');
+        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.verification-successful-mail');
     }
 }

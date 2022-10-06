@@ -18,7 +18,7 @@ class SetLocalization
     public function handle(Request $request, Closure $next)
     {
         $locale = $request->header('locale');
-        
+
         // Sets the localization for this request if a locale is supplied
         if (in_array($locale, ['en', 'de'])) {
             App::setLocale($locale);

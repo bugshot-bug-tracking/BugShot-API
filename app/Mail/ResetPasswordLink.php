@@ -9,6 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
+use App\Services\GetUserLocaleService;
 
 class ResetPasswordLink extends Mailable
 {
@@ -37,6 +38,6 @@ class ResetPasswordLink extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.reset-password-link-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.reset-password-link-mail');
+        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.reset-password-link-mail');
     }
 }
