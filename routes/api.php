@@ -186,7 +186,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		// Setting prefixed routes
 		Route::prefix('settings')->group(function () {
 			Route::get("/", [UserController::class, "settings"])->name("user.setting.index");
-			Route::put("/{invitation}", [UserController::class, "updateSetting"])->name("user.setting.update");
+			Route::put("/{setting}", [UserController::class, "updateSetting"])->name("user.setting.update");
 		});
 	});
 

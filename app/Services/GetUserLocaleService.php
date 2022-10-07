@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\SettingUserValue;
+use Illuminate\Support\Facades\App;
 
 class GetUserLocaleService
 {
@@ -14,6 +15,6 @@ class GetUserLocaleService
 			return $query->where('designation', '=', 'user_settings_interface_language');
 		})->first();
 
-        return $setting->value->designation;
+        return $setting ? $setting->value->designation : App::currentLocale();
     }
 }

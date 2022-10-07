@@ -63,7 +63,7 @@ class UserController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -402,7 +402,7 @@ class UserController extends Controller
 		$this->authorize('update', $user);
 
 		$email = $user->email;
-		
+
         // Check if the request comes with an image and if so, store it
 		$image = $user->image;
 		if($request->base64 != NULL) {
@@ -418,7 +418,7 @@ class UserController extends Controller
 			]);
 		}
 
-		// Update the corresponding stripe customer 
+		// Update the corresponding stripe customer
 		$user->billingAddress->updateStripeCustomer([
 			'name' => $user->first_name . ' ' . $user->last_name,
 			'email' => $user->email
@@ -501,10 +501,10 @@ class UserController extends Controller
     public function destroy(User $user, ImageService $imageService)
     {
 		// Check if the user is authorized to delete the user
-		$this->authorize('delete', $user);    
-	
+		$this->authorize('delete', $user);
+
 		$val = $user->delete();
-		
+
 		// Delete the respective image if present
 		$imageService->delete($user->image);
 
@@ -669,7 +669,7 @@ class UserController extends Controller
 		$this->authorize('checkProject', $user);
 
 		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
-		
+
 		// Check if the request includes a timestamp and query the projects accordingly
 		$projects = $user->projects->where('url', $request->url);
 		$createdProjects = $user->createdProjects->where('url', $request->url);
@@ -677,7 +677,7 @@ class UserController extends Controller
 		$projects = $projects->concat($createdProjects);
 
 		// $projects = $user->projects->where('url', $request->url);
-		
+
 		return ProjectResource::collection($projects);
 	}
 
@@ -751,7 +751,7 @@ class UserController extends Controller
 	public function settings(User $user)
 	{
 		// Check if the user is authorized to view the settings of the given user
-		// $this->authorize('view', $company);
+		$this->authorize('viewSettings', $user);
 
 		return SettingUserValueResource::collection(
 			SettingUserValue::where("user_id", $user->id)
@@ -770,7 +770,7 @@ class UserController extends Controller
      */
 	/**
 	 * @OA\Put(
-	 *	path="/users/{user_id}/settings/{setting}",
+	 *	path="/users/{user_id}/settings/{setting_id}",
 	 *	tags={"User"},
 	 *	summary="Update a users setting.",
 	 *	operationId="updateUserSetting",
@@ -824,7 +824,7 @@ class UserController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -854,17 +854,11 @@ class UserController extends Controller
 	public function updateSetting(SettingRequest $request, User $user, Setting $setting)
 	{
 		// Check if the user is authorized to update the setting of the given user
-		// $this->authorize('update', $project);
+		$this->authorize('updateSetting', $user);
 
-		// Update the project
-		$userSetting = $user->settings->where('setting_id', $setting->id)->firstOrFail();
-		dd($userSetting);
-		// $userSetting->update([
-		// 	"value_id" => $company->id,
-		// 	"color_hex" => $color_hex,
-        //     "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
-		// ]);
+		// Update the users setting
+		$user->settings()->updateExistingPivot($setting, array('value_id' => $request->value_id), false);
 
-		// return new ProjectResource($project);
+		return new SettingUserValueResource(SettingUserValue::where('setting_id', $setting->id)->where('user_id', $user->id)->first());
 	}
 }

@@ -10388,7 +10388,7 @@
                 ]
             }
         },
-        "/users/{user_id}/settings/{setting}": {
+        "/users/{user_id}/settings/{setting_id}": {
             "put": {
                 "tags": [
                     "User"
