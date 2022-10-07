@@ -108,7 +108,7 @@ class UserPolicy
      */
     public function delete(User $user, User $requestedUser)
     {
-        return $user->id == $requestedUser->id;    
+        return $user->id == $requestedUser->id;
     }
 
     /**
@@ -144,86 +144,26 @@ class UserPolicy
         return $user->id == $requestedUser->id;
     }
 
-    /**
-     * Determine whether the user can show the balance of the user.
+	/**
+     * Determine whether the user can retrieve the settings of the given user
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $requestedUser
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function showBalance(User $user, User $requestedUser)
+    public function viewSettings(User $user, User $requestedUser)
     {
         return $user->id == $requestedUser->id;
     }
 
-    /**
-     * Determine whether the user can retrieve the setup intent form.
+	/**
+     * Determine whether the user can retrieve the settings of the given user
      *
      * @param  \App\Models\User  $user
      * @param  \App\Models\User  $requestedUser
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function showSetupIntentForm(User $user, User $requestedUser)
-    {
-        return $user->id == $requestedUser->id;
-    }
-
-    /**
-     * Determine whether the user can get the payment methods
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $requestedUser
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function getPaymentMethods(User $user, User $requestedUser)
-    {
-        return $user->id == $requestedUser->id;
-    }
-
-    /**
-     * Determine whether the user can create a new subscription
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $requestedUser
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function createSubscription(User $user, User $requestedUser)
-    {
-        return $user->id == $requestedUser->id;
-    }
-
-    /**
-     * Determine whether the user can create a new stripe customer
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $requestedUser
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function createStripeCustomer(User $user, User $requestedUser)
-    {
-        return $user->id == $requestedUser->id;
-    }
-
-    /**
-     * Determine whether the user can retrieve a stripe customer
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $requestedUser
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function getStripeCustomer(User $user, User $requestedUser)
-    {
-        return $user->id == $requestedUser->id;
-    }
-
-    /**
-     * Determine whether the user can change the quantity of the subscription
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\User  $requestedUser
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function changeSubscriptionQuantity(User $user, User $requestedUser)
+    public function updateSetting(User $user, User $requestedUser)
     {
         return $user->id == $requestedUser->id;
     }
