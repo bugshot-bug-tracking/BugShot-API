@@ -638,21 +638,28 @@ class StripeController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *              @OA\Property(
-	 *                  description="The api id of the price",
-	 *                  property="price_api_id",
-	 *                  type="string",
-	 *              ),
-	 *              @OA\Property(
 	 *                  description="The Id of the selected payment method",
 	 *                  property="payment_method_id",
 	 *                  type="string",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="The amount of subscriptions that shall be created",
-	 *                  property="quantity",
-	 *                  type="integer",
+	 *   			@OA\Property(
+	 *                  property="products",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 * 							description="The api id of the price",
+	 *              		    property="price_api_id",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 * 							description="The amount of this subscription that shall be created",
+	 *              		    property="quantity",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 * 					)
 	 *              ),
-	 *              required={"subscription_name", "price_api_id", "payment_method_id", "quantity"}
+	 *              required={"subscription_name", "payment_method_id", "products"}
 	 *          )
 	 *      )
 	 *  ),
@@ -681,22 +688,46 @@ class StripeController extends Controller
 	 **/
 	public function createSubscription(SubscriptionStoreRequest $request, BillingAddress $billingAddress)
 	{
+		$class = $billingAddress->billing_addressable_type;
+		// Additional validation to check if the billingAddressable is a normal user. If so, restrict the quantity to only 1
+		if($class == 'user') {
+			if($request->quantity > 1) {
+				return response()->json(["message" => __('validation.quantity-not-allowed')], 400);
+			}
+		}
+
 		// Check if the user is authorized to create a new subscription for the billing address
 		$this->authorize('createSubscription', $billingAddress);
 
-        $subscription = $billingAddress->newSubscription($request->subscription_name, $request->price_api_id)
-			->quantity($request->quantity)
-			->create($request->payment_method_id);
+        $subscriptionCreationQuery = $billingAddress->newSubscription($request->subscription_name, array_column($request->products, 'price_api_id'));
+		foreach($request->products as $product) {
+			if(array_key_exists('quantity', $product)) {
+				$subscriptionCreationQuery = $subscriptionCreationQuery->quantity($product['quantity'], $product['price_api_id']);
+			}
+		}
 
-		if($billingAddress->billing_addressable_type == 'user') {
+		$subscription = $subscriptionCreationQuery->create($request->payment_method_id);
+
+		if($class == 'user') {
 			$notifiable = $billingAddress->billingAddressable;
+
+			// If the billingAddressable is a normal user, assign the subscription to himself
+			$notifiable->update([
+				'subscription_id' => $subscription->id
+			]);
 		} else {
 			$notifiable = $billingAddress->billingAddressable->creator;
 		}
 
 		$notifiable->notify((new SubscriptionStartedNotification($subscription))->locale(GetUserLocaleService::getLocale($notifiable)));
 
-        return new SubscriptionResource($subscription);
+		$stripe = new StripeClient(config('app.stripe_api_secret'));
+		$subscription = $stripe->subscriptions->retrieve(
+			$subscription->stripe_id,
+			[]
+		);
+
+        return new StripeSubscriptionResource($subscription);
 	}
 
 	/**
@@ -1158,29 +1189,39 @@ class StripeController extends Controller
 			]);
 
 			return new UserResource($user);
-		} else {
-			$organization = $billingAddress->billingAddressable;
+		}
 
-			// Check if the user that shall receive the subscription is part of the organization
-			$user = User::find($request->user_id);
-			$organization = $user->organizations->find($organization);
-			if ($organization == NULL && $organization->user_id != $user->id) {
-				return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
-			}
 
-			// Update the pivot model
-			$user->organizations()->updateExistingPivot($organization->id, [
-				'subscription_id' => $subscriptionId,
-				'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
+		$organization = $billingAddress->billingAddressable;
+
+		// Check if the user the subscription shall be assigned to is also the owner of the organization
+		if($organization->user_id == $request->user_id) {
+			$organization->creator->update([
+				'subscription_id' => $subscriptionId
 			]);
 
-			return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+			return new UserResource($organization->creator);
+		}
+
+		// Check if the user that shall receive the subscription is part of the organization
+		$user = User::find($request->user_id);
+		$organization = $user->organizations->find($organization);
+		if ($organization == NULL && $organization->user_id != $user->id) {
+			return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
+		}
+
+		// Update the pivot model
+		$user->organizations()->updateExistingPivot($organization->id, [
+			'subscription_id' => $subscriptionId,
+			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
+		]);
+
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
 			->with('organization')
 			->with('user')
 			->with('role')
 			->with('subscription')
-			->first());
-		}
+		->first());
 	}
 
 	/**

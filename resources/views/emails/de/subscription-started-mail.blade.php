@@ -5,10 +5,13 @@
 		Du kannst jetzt die volle Leistung Deines Abonnements nutzen.<br /><br />
 		Folgend findest Du eine kurze Zusammenfassung deines gebuchten Abonnements. Sollte etwas mit Deinem Abonnement nicht in Ordnung sein, kannst Du uns jederzeit kontaktieren.<br /><br />
 		Dein neues Abonnement:<br />
-		Name: {{ $product->name }}<br />
-		Menge: {{ $subscription->quantity }}<br />
-		Preis (pro Einheit): {{ sprintf('%.2f', ($price->unit_amount_decimal / 100)) . ' €'}}<br />
-		Gesamtpreis: {{ sprintf('%.2f', ($price->unit_amount_decimal * $subscription->quantity / 100)) . ' €'}}<br />
+		@foreach($products as $product)
+		Name: {{ $product->parent_product->name }}<br />
+		Menge: {{ $product->quantity }}<br />
+		Preis (pro Einheit): {{ sprintf('%.2f', ($product->plan->amount / 100)) . ' €'}}<br />
+		Gesamtpreis: {{ sprintf('%.2f', ($product->plan->amount * $product->quantity / 100)) . ' €'}}<br /><br />
+		@endforeach
+		Gesamtpreis (Abonnement): {{ sprintf('%.2f', ($totalSubscriptionPrice / 100)) . ' €'}}<br />
 		Beginn des Abonnements: {{ date("d.m.Y", $subscription->start_date) }}<br />
 		Ende des aktuellen Zyklus: {{ date("d.m.Y", $subscription->current_period_end) }}<br />
 		Automatische Erneuerung: {{ $subscription->cancel_at_period_end ? 'Nein' : 'Ja' }}<br /><br />

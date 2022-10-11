@@ -8392,26 +8392,34 @@
                             "schema": {
                                 "required": [
                                     "subscription_name",
-                                    "price_api_id",
                                     "payment_method_id",
-                                    "quantity"
+                                    "products"
                                 ],
                                 "properties": {
                                     "subscription_name": {
                                         "description": "The name of the selected subscription (only for internal use)",
                                         "type": "string"
                                     },
-                                    "price_api_id": {
-                                        "description": "The api id of the price",
-                                        "type": "string"
-                                    },
                                     "payment_method_id": {
                                         "description": "The Id of the selected payment method",
                                         "type": "string"
                                     },
-                                    "quantity": {
-                                        "description": "The amount of subscriptions that shall be created",
-                                        "type": "integer"
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "price_api_id": {
+                                                    "description": "The api id of the price",
+                                                    "type": "string"
+                                                },
+                                                "quantity": {
+                                                    "description": "The amount of this subscription that shall be created",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"

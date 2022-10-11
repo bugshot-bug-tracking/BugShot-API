@@ -5,10 +5,13 @@
         You can now make use of the full power of your subscription.<br /><br />
 		Below you can see an overview of your booked subscription. If there is anything wrong with your subscription, feel free to contact us any time.<br /><br />
 		Your new subscription:<br />
-		Name: {{ $product->name }}<br />
-		Quantity: {{ $subscription->quantity }}<br />
-		Price (per unit): {{ sprintf('%.2f', ($price->unit_amount_decimal / 100)) . ' €'}}<br />
-		Total price: {{ sprintf('%.2f', ($price->unit_amount_decimal * $subscription->quantity / 100)) . ' €'}}<br />
+		@foreach($products as $product)
+		Name: {{ $product->parent_product->name }}<br />
+		Quantity: {{ $product->quantity }}<br />
+		Price (per unit): {{ sprintf('%.2f', ($product->plan->amount / 100)) . ' €'}}<br />
+		Total price: {{ sprintf('%.2f', ($product->plan->amount * $product->quantity / 100)) . ' €'}}<br /><br />
+		@endforeach
+		Total price (Subscription): {{ sprintf('%.2f', ($totalSubscriptionPrice / 100)) . ' €'}}<br />
 		Start of subscription: {{ date("d.m.Y", $subscription->start_date) }}<br />
 		End of current cycle: {{ date("d.m.Y", $subscription->current_period_end) }}<br />
 		Automatic renewel: {{ $subscription->cancel_at_period_end ? 'no' : 'yes' }}<br /><br />

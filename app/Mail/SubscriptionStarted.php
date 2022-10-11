@@ -15,22 +15,22 @@ class SubscriptionStarted extends Mailable
 
     public $user;
 	public $locale;
-	public $product;
-	public $price;
+	public $products;
 	public $subscription;
+	public $totalSubscriptionPrice;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale, $product, $price, $subscription)
+    public function __construct(User $notifiable, $locale, $products, $subscription, $totalSubscriptionPrice)
     {
 		$this->locale = $locale;
         $this->user = $notifiable;
-		$this->product = $product;
-		$this->price = $price;
+		$this->products = $products;
 		$this->subscription = $subscription;
+		$this->totalSubscriptionPrice = $totalSubscriptionPrice;
     }
 
     /**

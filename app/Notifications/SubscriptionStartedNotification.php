@@ -13,14 +13,14 @@ class SubscriptionStartedNotification extends Notification
 {
     use Queueable;
 
-	// The newly booked product
-	public $product;
-
-	// The price the product was booked for
-	public $price;
+	// The newly booked products
+	public $products;
 
 	// The subscription itself
 	public $subscription;
+
+	// The calculated total price of the subscription
+	public $totalSubscriptionPrice;
 
     /**
      * Create a new notification instance.
@@ -31,23 +31,26 @@ class SubscriptionStartedNotification extends Notification
     {
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
 
-		// Retrieve the price the product was booked for
-		$this->price = $stripe->prices->retrieve(
-			$subscription->stripe_price,
-			[]
-		);
+		// Retrieve the corresponding products
+		$subscriptionItems = $stripe->subscriptionItems->all(['subscription' => $subscription->stripe_id])->data;
+		foreach($subscriptionItems as $subscriptionItem) {
+			$subscriptionItem->parent_product = $stripe->products->retrieve(
+				$subscriptionItem->plan->product,
+				[]
+			);
+		}
+		$this->products = $subscriptionItems;
 
-		// Retrieve the corresponding product
-		$this->product = $stripe->products->retrieve(
-			$this->price->product,
-			[]
-		);
-
-		// Retrieve the subscription
+		// Retrieve the corresponding stripe subscription
 		$this->subscription = $stripe->subscriptions->retrieve(
 			$subscription->stripe_id,
 			[]
 		);
+
+		$this->totalSubscriptionPrice = 0;
+		foreach($this->products as $product) {
+			$this->totalSubscriptionPrice = $this->totalSubscriptionPrice + $product->plan->amount * $product->quantity;
+		}
     }
 
     /**
@@ -69,7 +72,7 @@ class SubscriptionStartedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new SubscriptionStartedMailable($notifiable, $this->locale, $this->product, $this->price, $this->subscription))
+        return (new SubscriptionStartedMailable($notifiable, $this->locale, $this->products, $this->subscription, $this->totalSubscriptionPrice))
         ->subject('BugShot - ' . __('email.subscription-started', [], $this->locale))
         ->to($notifiable->email);
     }
