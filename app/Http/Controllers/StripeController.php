@@ -18,6 +18,12 @@ use App\Http\Resources\ProductResource;
 use App\Http\Resources\StripeSubscriptionResource;
 use App\Http\Resources\InvoiceResource;
 
+// Services
+use App\Services\GetUserLocaleService;
+
+// Notifications
+use App\Notifications\SubscriptionStartedNotification;
+
 // Models
 use App\Models\OrganizationUserRole;
 use App\Models\User;
@@ -542,7 +548,8 @@ class StripeController extends Controller
 	 *              @OA\Property(
 	 *                  description="Specifies the type of payment method that shall be retrieved",
 	 *                  property="type",
-	 *                  type="string"
+	 *                  type="string",
+	 * 					example="card"
 	 *              )
 	 *          )
 	 *      )
@@ -680,6 +687,14 @@ class StripeController extends Controller
         $subscription = $billingAddress->newSubscription($request->subscription_name, $request->price_api_id)
 			->quantity($request->quantity)
 			->create($request->payment_method_id);
+
+		if($billingAddress->billing_addressable_type == 'user') {
+			$notifiable = $billingAddress->billingAddressable;
+		} else {
+			$notifiable = $billingAddress->billingAddressable->creator;
+		}
+
+		$notifiable->notify((new SubscriptionStartedNotification($subscription))->locale(GetUserLocaleService::getLocale($notifiable)));
 
         return new SubscriptionResource($subscription);
 	}

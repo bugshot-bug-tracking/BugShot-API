@@ -1,4 +1,4 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hallo {{ $user->first_name }},</p>
     <p>
         {{ $initiator->first_name . ' ' . $initiator->last_name }} hat dich soeben einem Bug zugwiesen.<br /><br />

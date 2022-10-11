@@ -22,6 +22,7 @@ return [
     'password-reset-successful' => 'Passwortzurücksetzung erfolgreich',
     'verify-email' => 'E-Mail Verifizierung',
     'tagged-in-comment' => 'Du wurdest in einem Kommentar erwähnt',
-    'assigned-to-bug' => 'Du wurdest einem Bug zugewiesen'
+    'assigned-to-bug' => 'Du wurdest einem Bug zugewiesen',
+	'subscription-started' => 'Dein neues Abonnement'
 
 ];

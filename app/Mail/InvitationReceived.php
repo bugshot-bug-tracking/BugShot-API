@@ -17,6 +17,7 @@ class InvitationReceived extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $invitation;
     public $entryMessage;
 
@@ -25,8 +26,9 @@ class InvitationReceived extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Invitation $invitation, $message)
+    public function __construct(User $notifiable, $locale, Invitation $invitation, $message)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->invitation = $invitation;
         $this->entryMessage = $message;
@@ -40,11 +42,7 @@ class InvitationReceived extends Mailable
     public function build()
     {
         $status = $this->from(config('mail.noreply'))
-        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.invitation-mail');
-
-		// Change the locale back to the auth users language
-		$locale = GetUserLocaleService::getLocale(request()->user());
-		App::setLocale($locale);
+        ->markdown('emails.' . $this->locale . '.invitation-mail');
 
 		return $status;
     }

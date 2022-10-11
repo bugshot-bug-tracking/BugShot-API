@@ -60,10 +60,6 @@ class InvitationReceivedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-		// Change the locale for a short amount of time in order to use the recipients language
-		$recipientLocale = GetUserLocaleService::getLocale($notifiable);
-		App::setLocale($recipientLocale);
-
         // Check the model type of the invitation
         switch ($this->invitation->invitable_type) {
             case 'organization':
@@ -87,8 +83,8 @@ class InvitationReceivedNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceivedMailable($notifiable, $this->invitation, $this->message))
-        ->subject('BugShot - ' . __('email.invitation-received'))
+        return (new InvitationReceivedMailable($notifiable, $this->locale, $this->invitation, $this->message))
+        ->subject('BugShot - ' . __('email.invitation-received', [], $this->locale))
         ->to($notifiable->email);
     }
 

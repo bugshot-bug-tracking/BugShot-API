@@ -6,6 +6,7 @@ use App\Events\AssignedToBug;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\AssignedToBugNotification;
+use App\Services\GetUserLocaleService;
 
 class SendAssignedToBugNotification
 {
@@ -17,6 +18,6 @@ class SendAssignedToBugNotification
      */
     public function handle(AssignedToBug $event)
     {
-        $event->user->notify(new AssignedToBugNotification($event->bug));
+        $event->user->notify((new AssignedToBugNotification($event->bug))->locale(GetUserLocaleService::getLocale($event->user)));
     }
 }

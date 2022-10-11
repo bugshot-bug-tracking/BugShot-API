@@ -16,6 +16,7 @@ class VerificationSuccessful extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $url;
     public $policyUrl;
 
@@ -24,8 +25,9 @@ class VerificationSuccessful extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable)
+    public function __construct(User $notifiable, $locale)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->url = config('app.webpanel_url');
         $this->policyUrl = config('app.webpanel_url') . '/terms-and-conditions';
@@ -40,6 +42,6 @@ class VerificationSuccessful extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.verification-successful-mail');
+        ->markdown('emails.' . $this->locale . '.verification-successful-mail');
     }
 }

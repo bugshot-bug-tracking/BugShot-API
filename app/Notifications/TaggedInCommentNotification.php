@@ -42,8 +42,8 @@ class TaggedInCommentNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new TaggedInCommentMailable($notifiable, $this->comment))
-        ->subject('BugShot - ' . __('email.tagged-in-comment'))
+        return (new TaggedInCommentMailable($notifiable, $this->locale, $this->comment))
+        ->subject('BugShot - ' . __('email.tagged-in-comment', [], $this->locale))
         ->to($notifiable->email);
     }
 
