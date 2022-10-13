@@ -8496,6 +8496,10 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "price_api_id": {
+                                        "description": "Specifies the exact product of the susbcriptions of which the quantitiy shall be changed",
+                                        "type": "string"
+                                    },
                                     "type": {
                                         "description": "Specifies if the quantity is an increment or decrement",
                                         "type": "string",
@@ -8752,8 +8756,12 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "subscription_item_id": {
+                                        "description": "The id of the exact subscription item that should be assigned to the user",
+                                        "type": "string"
+                                    },
                                     "restricted_subscription_usage": {
-                                        "description": "Defines if the user is only allowed to use this subscription within the ",
+                                        "description": "Defines if the user is only allowed to use this subscription within the organization",
                                         "type": "boolean"
                                     },
                                     "user_id": {

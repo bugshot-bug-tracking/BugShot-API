@@ -24,6 +24,7 @@ class SubscriptionAssignRequest extends FormRequest
     public function rules()
     {
 		return [
+			"subscription_item_id" => ["required", "string", "max:30"],
             "restricted_subscription_usage" => ["boolean"],
             "user_id" => ["required", "integer", "exists:users,id"]
 		];

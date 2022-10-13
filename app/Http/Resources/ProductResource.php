@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Models\User;
+use Stripe\StripeClient;
 
 class ProductResource extends JsonResource
 {
@@ -15,6 +15,10 @@ class ProductResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		// Get the corresponding prices of the selected product
+		$stripe = new StripeClient(config('app.stripe_api_secret'));
+	  	$prices = $stripe->prices->all(['product' => $this->id])->data;
+
 		return [
 			'id' => $this->id,
 			'type' => 'Product',
@@ -35,7 +39,8 @@ class ProductResource extends JsonResource
 				'type' => $this->type,
 				'unit_label' => $this->unit_label,
 				'updated' => $this->updated,
-				'url' => $this->url
+				'url' => $this->url,
+				'prices' => PriceResource::collection($prices)
 			]
 		];
 	}

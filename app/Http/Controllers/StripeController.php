@@ -781,6 +781,11 @@ class StripeController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *              @OA\Property(
+	 *                  description="Specifies the exact product of the susbcriptions of which the quantitiy shall be changed",
+	 *                  property="price_api_id",
+	 *                  type="string"
+	 *              ),
+	 *              @OA\Property(
 	 *                  description="Specifies if the quantity is an increment or decrement",
 	 *                  property="type",
 	 * 					example="increment",
@@ -827,8 +832,10 @@ class StripeController extends Controller
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
 		if($request->type == 'increment') {
 			// Add $quantity to the subscription's current quantity
-			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity);
+			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity, $request->price_api_id);
 		} else {
+			dd($subscription);
+			// TODO: assignements need to be corresponding to the product, not the subscription
 			$totalAssignments = $this->getAmountOfAssignments($subscription->stripe_id);
 
 			// If all quantities of this subscription are assigned to users, it cannot be decreased
@@ -836,7 +843,7 @@ class StripeController extends Controller
 				return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
 			} else {
 				// Subtract $quantity from the subscription's current quantity
-				$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity);
+				$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity, $request->price_api_id);
 			}
 		}
 
@@ -898,11 +905,6 @@ class StripeController extends Controller
 	 **/
 	public function listProducts(Request $request)
 	{
-		// Check if the user is authorized to list the products
-		if(!$request->user()->isAdministrator()) {
-			abort(401);
-		}
-
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
 		$response = $stripe->products->all();
 
@@ -1129,7 +1131,12 @@ class StripeController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *             @OA\Property(
-	 *                  description="Defines if the user is only allowed to use this subscription within the ",
+	 *                  description="The id of the exact subscription item that should be assigned to the user",
+	 *                  property="subscription_item_id",
+	 *                  type="string"
+	 *              ),
+	 *             @OA\Property(
+	 *                  description="Defines if the user is only allowed to use this subscription within the organization",
 	 *                  property="restricted_subscription_usage",
 	 *                  type="boolean"
 	 *              ),
@@ -1171,12 +1178,13 @@ class StripeController extends Controller
 		$this->authorize('assignSubscription', $billingAddress);
 
 		// Check if the provided subscription has a sufficient quantity
-		$quantity = Subscription::where('stripe_id', $subscriptionId)->first()->quantity;
+		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		dd($subscription->items()->where('stripe_id', $request->subscriptionItemId));
 		$assignments = $this->getAmountOfAssignments($subscriptionId);
 
-		if($assignments == $quantity) {
-			return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
-		}
+		// if($assignments == $quantity) {
+		// 	return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
+		// }
 
 		/**
 		 * Check if the billing address which is assigning the subscription is a personal user or organization account.
