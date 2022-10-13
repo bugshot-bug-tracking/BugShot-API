@@ -7449,448 +7449,6 @@
                 ]
             }
         },
-        "/settings": {
-            "get": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Show all settings.",
-                "operationId": "showSettings",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Setting"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Store one setting.",
-                "operationId": "storeSetting",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "first_name",
-                                    "last_name",
-                                    "email",
-                                    "password",
-                                    "password_confirmation"
-                                ],
-                                "properties": {
-                                    "first_name": {
-                                        "type": "string"
-                                    },
-                                    "last_name": {
-                                        "type": "string"
-                                    },
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
-                                    },
-                                    "password_confirmation": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Setting"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/settings/{invitation_id}": {
-            "get": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Show one setting.",
-                "operationId": "showSetting",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
-                        "name": "invitation_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Setting/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Setting"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Delete a setting.",
-                "operationId": "deleteSetting",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
-                        "name": "invitation_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Setting/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/settings/{invitation_id}/accept": {
-            "get": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Accept one setting.",
-                "operationId": "acceptSetting",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
-                        "name": "invitation_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Setting/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/Setting"
-                                }
-                            }
-                        }
-                    },
-                    "288": {
-                        "description": "Request already processed."
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/settings/{invitation_id}/decline": {
-            "get": {
-                "tags": [
-                    "Setting"
-                ],
-                "summary": "Decline one setting.",
-                "operationId": "declineSetting",
-                "parameters": [
-                    {
-                        "name": "clientId",
-                        "in": "header",
-                        "required": true,
-                        "example": "1"
-                    },
-                    {
-                        "name": "version",
-                        "in": "header",
-                        "required": true,
-                        "example": "1.0.0"
-                    },
-                    {
-                        "name": "locale",
-                        "in": "header",
-                        "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
-                        "name": "invitation_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/Setting/properties/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Success"
-                    },
-                    "288": {
-                        "description": "Request already processed."
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "Not Found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
         "/projects/{project_id}/statuses": {
             "get": {
                 "tags": [
@@ -8760,7 +8318,8 @@
                                 "properties": {
                                     "type": {
                                         "description": "Specifies the type of payment method that shall be retrieved",
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "card"
                                     }
                                 },
                                 "type": "object"
@@ -8833,26 +8392,34 @@
                             "schema": {
                                 "required": [
                                     "subscription_name",
-                                    "price_api_id",
                                     "payment_method_id",
-                                    "quantity"
+                                    "products"
                                 ],
                                 "properties": {
                                     "subscription_name": {
                                         "description": "The name of the selected subscription (only for internal use)",
                                         "type": "string"
                                     },
-                                    "price_api_id": {
-                                        "description": "The api id of the price",
-                                        "type": "string"
-                                    },
                                     "payment_method_id": {
                                         "description": "The Id of the selected payment method",
                                         "type": "string"
                                     },
-                                    "quantity": {
-                                        "description": "The amount of subscriptions that shall be created",
-                                        "type": "integer"
+                                    "products": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "price_api_id": {
+                                                    "description": "The api id of the price",
+                                                    "type": "string"
+                                                },
+                                                "quantity": {
+                                                    "description": "The amount of this subscription that shall be created",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -8929,6 +8496,10 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "price_api_id": {
+                                        "description": "Specifies the exact product of the susbcriptions of which the quantitiy shall be changed",
+                                        "type": "string"
+                                    },
                                     "type": {
                                         "description": "Specifies if the quantity is an increment or decrement",
                                         "type": "string",
@@ -9185,8 +8756,12 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
+                                    "subscription_item_id": {
+                                        "description": "The id of the exact subscription item that should be assigned to the user",
+                                        "type": "string"
+                                    },
                                     "restricted_subscription_usage": {
-                                        "description": "Defines if the user is only allowed to use this subscription within the ",
+                                        "description": "Defines if the user is only allowed to use this subscription within the organization",
                                         "type": "boolean"
                                     },
                                     "user_id": {

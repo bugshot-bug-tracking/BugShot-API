@@ -32,11 +32,11 @@
             <![endif]-->
     </td>
     <td class="content-cell" align="right">
-        @if(App::getLocale() == 'en')
+        @if($locale == 'en')
             By using BugShot, you are agreeing to our <a href="{{ config('app.proposal_url') . '/terms-and-conditions' }}">terms and conditions</a>.<br />
             More infos at: <a href="{{ config('app.proposal_url') }}">{{ config('app.proposal_url') }}</a><br />
             <strong>© {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')</strong>
-        @elseif(App::getLocale() == 'de')
+        @elseif($locale == 'de')
             Indem du BugShot nutzt, stimmst du unseren <a href="{{ config('app.proposal_url') . '/terms-and-conditions' }}">Bedingungen und Konditionen</a> zu.<br />
             Mehr Infos unter: <a href="{{ config('app.proposal_url') }}">{{ config('app.proposal_url') }}</a><br /><br />
             <strong>© {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')</strong>

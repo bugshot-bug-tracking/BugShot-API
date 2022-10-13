@@ -1,7 +1,7 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hello {{ $user->first_name }},</p>
     <p>
-        thank you for your verification!<br /><br />
+        Thank you for your verification!<br /><br />
         You are now a member of the {{ config('app.projectname') }} family. Together we make the digital world bug-free!<br /><br />
         Best you first look around a bit. In order to do that, just click on the following button:
     </p>

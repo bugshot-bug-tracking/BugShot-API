@@ -41,8 +41,8 @@ class VerificationSuccessfulNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new VerificationSuccessfulMailable($notifiable))
-        ->subject('BugShot - ' . __('email.verification-successful'))
+        return (new VerificationSuccessfulMailable($notifiable, $this->locale))
+        ->subject('BugShot - ' . __('email.verification-successful', [], $this->locale))
         ->to($notifiable->email);
     }
 

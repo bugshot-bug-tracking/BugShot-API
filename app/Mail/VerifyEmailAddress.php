@@ -16,6 +16,7 @@ class VerifyEmailAddress extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $url;
 
     /**
@@ -23,7 +24,7 @@ class VerifyEmailAddress extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, $url)
+    public function __construct(User $notifiable, $locale, $url)
     {
         // Gets the token of the generated url
         preg_match(
@@ -32,6 +33,7 @@ class VerifyEmailAddress extends Mailable
             $matches
         );
 
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->url = config('app.webpanel_url') . '/auth/verify/' . $notifiable->id . '/' . $matches[0];
     }
@@ -45,6 +47,6 @@ class VerifyEmailAddress extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.verify-email-address-mail');
         return $this->from(config('mail.noreply'))
-                ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.verify-email-address-mail');
+                ->markdown('emails.' . $this->locale . '.verify-email-address-mail');
     }
 }

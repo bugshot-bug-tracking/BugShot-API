@@ -25,13 +25,14 @@ class SubscriptionChangeQuantityRequest extends FormRequest
     public function rules()
     {
         return [
+			'price_api_id' => ['required', 'string', 'max:30'],
 			'type' => [
                 'string',
                 'required',
                 Rule::in([
                     'increment',
                     'decrement'
-                ]), 
+                ]),
             ],
             'quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ];

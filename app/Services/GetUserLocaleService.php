@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\App;
 
 class GetUserLocaleService
 {
-    // Store a newly created attachment on the server.
+    // Retrieve the locale setting of a user, if it exists
     public static function getLocale(User $user)
     {
 		$setting = SettingUserValue::where('user_id', $user->id)->whereHas('setting', function ($query) {

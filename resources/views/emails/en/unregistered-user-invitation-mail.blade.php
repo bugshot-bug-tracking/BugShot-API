@@ -1,4 +1,4 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hello there,</p>
     <p>
         {{ $entryMessage }}<br /><br />

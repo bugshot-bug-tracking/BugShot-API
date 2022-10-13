@@ -6,6 +6,7 @@ use App\Events\TaggedInComment;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\TaggedInCommentNotification;
+use App\Services\GetUserLocaleService;
 
 class SendTaggedInCommentNotification
 {
@@ -17,6 +18,6 @@ class SendTaggedInCommentNotification
      */
     public function handle(TaggedInComment $event)
     {
-        $event->user->notify(new TaggedInCommentNotification($event->comment));
+        $event->user->notify((new TaggedInCommentNotification($event->comment))->locale(GetUserLocaleService::getLocale($event->user)));
     }
 }

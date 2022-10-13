@@ -5,6 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+
 class OldPasswordConfirmed implements Rule
 {
     private $user;

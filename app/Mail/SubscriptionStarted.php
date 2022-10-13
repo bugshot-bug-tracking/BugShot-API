@@ -7,35 +7,30 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-
 use App\Models\User;
-use App\Models\Bug;
-use App\Models\Project;
-use App\Services\GetUserLocaleService;
 
-class AssignedToBug extends Mailable
+class SubscriptionStarted extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
 	public $locale;
-    public $bug;
-    public $project;
-    public $initiator;
+	public $products;
+	public $subscription;
+	public $totalSubscriptionPrice;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale, Bug $bug)
+    public function __construct(User $notifiable, $locale, $products, $subscription, $totalSubscriptionPrice)
     {
-        $this->locale = $locale;
+		$this->locale = $locale;
         $this->user = $notifiable;
-        $this->bug = $bug;
-        $this->initiator = Auth::user();
-        $this->project = Project::find($this->bug->project_id);
+		$this->products = $products;
+		$this->subscription = $subscription;
+		$this->totalSubscriptionPrice = $totalSubscriptionPrice;
     }
 
     /**
@@ -46,6 +41,6 @@ class AssignedToBug extends Mailable
     public function build()
     {
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . $this->locale . '.assigned-to-bug');
+        ->markdown('emails.' . $this->locale . '.subscription-started-mail');
     }
 }

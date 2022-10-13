@@ -26,6 +26,7 @@ use App\Http\Resources\SettingUserValueResource;
 
 // Services
 use App\Services\SendinblueService;
+use App\Services\GetUserLocaleService;
 
 // Models
 use App\Models\User;
@@ -142,7 +143,7 @@ class AuthController extends Controller
             ]
         );
 
-		$user->notify(new VerifyEmailAddressNotification($url));
+		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
 		return new UserResource($user);
 	}
@@ -231,8 +232,8 @@ class AuthController extends Controller
 
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
-	
-        // Check if the intermediate entry already exists and create/update it 
+
+        // Check if the intermediate entry already exists and create/update it
         if($userClient->exists()) {
             $user->clients()->updateExistingPivot($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
@@ -247,12 +248,12 @@ class AuthController extends Controller
             $user->clients()->attach($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
 				'login_counter' => 1
-			]);  
+			]);
 
 			// Create default set of settings for the user when first logged in
 			$user->settings()->attach($this->getDefaultSettings());
         }
-		
+
 		return response()->json([
 			"data" => [
 				"user" => new UserResource($user),
@@ -437,7 +438,7 @@ class AuthController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=250,
 	 *		description="Requested mail action okay, completed"
@@ -514,7 +515,7 @@ class AuthController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success"
@@ -545,9 +546,9 @@ class AuthController extends Controller
 				$user->forceFill([
 					'password' => Hash::make($password)
 				])->setRememberToken(Str::random(60));
-	
+
 				$user->save();
-	
+
 				event(new PasswordReset($user));
 			}
 		);
@@ -556,7 +557,7 @@ class AuthController extends Controller
 
 		if($status === PasswordFacade::PASSWORD_RESET) {
 			// Send password reset success mail
-			$user->notify(new PasswordResetSuccessfulNotification());
+			$user->notify((new PasswordResetSuccessfulNotification())->locale(GetUserLocaleService::getLocale($user)));
 
 			return response(__($status), 200);
 		} else {
@@ -585,7 +586,7 @@ class AuthController extends Controller
 	 *		required=true,
 	 *		in="path",
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success"
@@ -612,10 +613,10 @@ class AuthController extends Controller
 	public function verifyEmail(CustomEmailVerificationRequest $request, $id, SendinblueService $sendinblueService) {
 		$request->fulfill();
 		$user = User::find($id);
-		
+
 		// Create the corresponding contact in sendinblue
 		$response = $sendinblueService->createContact(
-			$user, 
+			$user,
 			array(
 				'VORNAME' => $user->first_name,
 				'NACHNAME' => $user->last_name
@@ -623,18 +624,18 @@ class AuthController extends Controller
 			false,
 			false,
 			array(
-				4, 
+				4,
 				5
 			),
 			true,
 			array()
 		);
-		
+
 		// Trigger the corresponding sendinblue event if the contact creation was successful
 		if($response->successful()) {
 			$response = $sendinblueService->triggerEvent(
-				'registered_for_betatest', 
-				$user, 
+				'registered_for_betatest',
+				$user,
 				array(
 					'firstname' => $user->first_name,
 					'lastname' => $user->last_name
@@ -643,7 +644,7 @@ class AuthController extends Controller
 		}
 
 		$user = User::find($id);
-		$user->notify(new VerificationSuccessfulNotification());
+		$user->notify((new VerificationSuccessfulNotification())->locale(GetUserLocaleService::getLocale($user)));
 
 		return response()->json( __('auth.email-verified-successfully'), 204);
 	}
@@ -668,7 +669,7 @@ class AuthController extends Controller
 	 *          )
 	 *      )
 	 *  ),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success"
@@ -695,7 +696,7 @@ class AuthController extends Controller
 	public function resendVerificationMail(Request $request) {
 		$user = User::find($request->user_id);
 		$user->sendEmailVerificationNotification();
-	
+
 		return response(__('auth.verification-link-sent'), 200);
 	}
 
@@ -729,4 +730,3 @@ class AuthController extends Controller
 	// 	}
 	// }
 }
-	

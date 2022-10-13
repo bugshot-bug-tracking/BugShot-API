@@ -1,4 +1,4 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hello {{ $user->first_name }},</p>
     <p>
         {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} has just mentioned you in a comment.<br /><br />

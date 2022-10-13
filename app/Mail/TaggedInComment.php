@@ -19,6 +19,7 @@ class TaggedInComment extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $comment;
     public $commentCreator;
     public $bug;
@@ -30,8 +31,9 @@ class TaggedInComment extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Comment $comment)
+    public function __construct(User $notifiable, $locale, Comment $comment)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->comment = $comment;
         $this->commentCreator = User::find($comment->user_id);
@@ -60,6 +62,6 @@ class TaggedInComment extends Mailable
 		}
 
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . GetUserLocaleService::getLocale($this->user) . '.tagged-in-comment');
+        ->markdown('emails.' . $this->locale . '.tagged-in-comment');
     }
 }
