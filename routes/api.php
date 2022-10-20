@@ -195,6 +195,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Stripe prefixed routes
 	Route::prefix('stripe')->group(function () {
+
+		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
+
 		Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("user.stripe.get-stripe-customer");
 		Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("user.stripe.create-stripe-customer");
 		Route::get('/balance', [StripeController::class, "showBalance"])->name("user.stripe.show-balance");

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
+use Stripe\Checkout\Session;
 
 // Resources
 use App\Http\Resources\OrganizationUserRoleResource;
@@ -47,6 +48,82 @@ use App\Http\Resources\UserResource;
  */
 class StripeController extends Controller
 {
+
+    /**
+	 * Create a new stripe session
+	 *
+	 * @param  Request  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/stripe/checkout/create-session",
+	 *	tags={"Stripe"},
+	 *	summary="Create a new stripe session",
+	 *	operationId="createStripeSession",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+     *
+     * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 * 				type="object",
+	 *   			@OA\AdditionalProperties(
+	 *                  type="string"
+	 *              ),
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function createSession(Request $request)
+	{
+		new StripeClient(config('app.stripe_api_secret'));
+
+		$checkout_session = Session::create($request->json()->all());
+
+        return response()->json(["checkout_session" => $checkout_session], 200);
+	}
+
     /**
 	 * Create a new stripe customer
 	 *
