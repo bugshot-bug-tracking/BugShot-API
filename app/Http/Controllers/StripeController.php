@@ -9,6 +9,7 @@ use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
 use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 // Resources
 use App\Http\Resources\OrganizationUserRoleResource;
@@ -117,7 +118,7 @@ class StripeController extends Controller
 	 **/
 	public function createSession(Request $request)
 	{
-		new StripeClient(config('app.stripe_api_secret'));
+		Stripe::setApiKey(config('app.stripe_api_secret'));
 
 		$checkout_session = Session::create($request->json()->all());
 
