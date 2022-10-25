@@ -108,7 +108,7 @@ class BillingAddressController extends Controller
 		}
 
 		$billingAddress = BillingAddress::where('billing_addressable_id', $id)->firstOrFail();
-	
+
 		return new BillingAddressResource($billingAddress);
 	}
 
@@ -395,7 +395,7 @@ class BillingAddressController extends Controller
 
 		// Update the billing address
 		$billingAddress->update($request->all());
-				
+
 		return new BillingAddressResource($billingAddress);
 	}
 }

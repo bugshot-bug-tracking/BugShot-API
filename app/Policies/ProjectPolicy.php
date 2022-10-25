@@ -103,7 +103,7 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -134,7 +134,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -183,7 +183,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -305,7 +305,7 @@ class ProjectPolicy
         if ($project == NULL) {
             return false;
         }
-        
+
         $role = $project->pivot->role_id;
         switch ($role) {
             case 1:
@@ -326,7 +326,7 @@ class ProjectPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function removeUser(User $user, Project $project)
-    {        
+    {
         // Check company role
         if($project->company->user_id == $user->id) {
             return true;
@@ -353,7 +353,7 @@ class ProjectPolicy
         if ($project == NULL) {
             return false;
         }
-        
+
         $role = $project->pivot->role_id;
         switch ($role) {
             case 1:
@@ -407,7 +407,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -456,7 +456,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -493,7 +493,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -535,7 +535,7 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -577,7 +577,7 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -614,7 +614,7 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -651,7 +651,154 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewAnyApiTokens(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+	/**
+     * Determine whether the user can create an api token
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createApiToken(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+	/**
+     * Determine whether the user can update an api token
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateApiToken(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+
+            default:
+                return false;
+                break;
+        }
+    }
+
+	/**
+     * Determine whether the user can delete the api token.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteApiToken(User $user, Project $project)
+    {
+        // Check company role
+        if($project->company->user_id == $user->id) {
+            return true;
+        }
+
+        // Check project role
+        if($project->user_id == $user->id) {
+            return true;
+        }
+
+        $project = $user->projects()->find($project);
+        if ($project == NULL) {
+            return false;
+        }
+
+        $role = $project->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+
             default:
                 return false;
                 break;
