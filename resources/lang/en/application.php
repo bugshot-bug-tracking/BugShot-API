@@ -25,4 +25,5 @@ return [
     'feedback-sent-successfully' => 'Feedback sent successfully',
     'subscription-quantity-not-sufficient' => 'The quantity of this subscription is not sufficient. Please increase it in order to be able to assign it to the provided user or revoke the subscription from any user it is assigned to.',
     'user-not-part-of-organization' => 'The provided user appears to not be part of the :organization, in which the subscription is supposed to be assigned to the user.',
+	'api-token-already-exists' => 'The selected resource already has an api token'
 ];

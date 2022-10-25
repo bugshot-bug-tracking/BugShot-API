@@ -23,6 +23,7 @@ use App\Http\Controllers\SendinblueController;
 use App\Http\Controllers\BillingAddressController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
+use App\Http\Controllers\ApiTokenController;
 
 // Events
 use App\Events\TestEvent;
@@ -209,6 +210,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::prefix('/products')->group(function () {
 			Route::get('/', [StripeController::class, "listProducts"])->name("stripe.products.list");
 		});
+	});
+
+	// Polymorphic ApiToken routes
+	Route::prefix('{type}/{id}')->group(function () {
+		Route::apiResource('/api-tokens', ApiTokenController::class);
 	});
 
 	// Polymorphic Url routes
