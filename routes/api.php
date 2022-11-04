@@ -46,7 +46,7 @@ use App\Events\TestEvent;
 */
 
 Route::get('/broadcast/test', function () {
-    TestEvent::dispatch("Test");
+	TestEvent::dispatch("Test");
 });
 
 
@@ -57,7 +57,7 @@ Route::get('/broadcast/test', function () {
 */
 
 Route::get('/debug-sentry', function () {
-    throw new Exception('My first Sentry error!');
+	throw new Exception('My first Sentry error!');
 });
 
 /*
@@ -67,9 +67,9 @@ Route::get('/debug-sentry', function () {
 */
 
 Route::get('/mail', function () {
-    $user = App\Models\User::find(1);
+	$user = App\Models\User::find(1);
 	$url = config('app.webpanel_url') . '/auth/verify/' . $user->id . '/token';
-    return new App\Mail\VerifyEmailAddress($user, $url);
+	return new App\Mail\VerifyEmailAddress($user, $url);
 });
 
 Route::prefix('auth')->group(function () {
@@ -99,7 +99,8 @@ Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('che
 | Private API Routes
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth:sanctum', 'check.version'])->group(
+
+Route::middleware(['auth:sanctum'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
@@ -259,3 +260,19 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		);
 	});
 });
+
+/*
+|--------------------------------------------------------------------------
+| ApiToken API Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth.apitoken', 'check.version'])->group(
+	function () {
+		Route::prefix("interface")->group(function () {
+			Route::get('/test', [BugController::class, 'test'])->name('test.interface');
+			Route::post('/bug', [BugController::class, "storeViaApiKey"])->name("apitoken.create.bug");
+			Route::post('/bug/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
+		});
+	}
+);

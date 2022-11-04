@@ -17,7 +17,9 @@ use App\Models\ApiToken;
 
 // Requests
 use App\Http\Requests\ApiTokenStoreRequest;
-use App\Http\Requests\ApiTokenUpdateRequest;
+use App\Http\Requests\BugStoreRequest;
+use App\Services\BugService;
+use App\Models\Status;
 
 /**
  * @OA\Tag(
@@ -99,7 +101,7 @@ class ApiTokenController extends Controller
 	{
 		// Check if the user is authorized to list the urls of the given model
 		$class = Relation::getMorphedModel($type);
-		if($class == Project::class) {
+		if ($class == Project::class) {
 			$model = Project::find($id);
 			// Check if the user is authorized to store a url for the given project
 		} else {
@@ -193,7 +195,7 @@ class ApiTokenController extends Controller
 	{
 		// Check if the user is authorized to create an api token for this resource
 		$class = Relation::getMorphedModel($type);
-		if($class == Project::class) {
+		if ($class == Project::class) {
 			$model = Project::find($id);
 		} else {
 			//
@@ -202,7 +204,7 @@ class ApiTokenController extends Controller
 		$this->authorize('createApiToken', $model);
 
 		// Check if the resource already has an api token
-		if($model->apiToken != NULL) {
+		if ($model->apiToken != NULL) {
 			return response()->json(["data" => [
 				"message" => __('application.api-token-already-exists')
 			]], 409);
@@ -210,8 +212,8 @@ class ApiTokenController extends Controller
 
 		// Create the api token
 		$apiToken = $model->apiTokens()->create([
-            "token" => $request->token == '' ? (string) Str::uuid() : $request->token
-        ]);
+			"token" => $request->token == '' ? (string) Str::uuid() : $request->token
+		]);
 
 		return new ApiTokenResource($apiToken);
 	}
@@ -306,7 +308,7 @@ class ApiTokenController extends Controller
 	{
 		// Check if the user is authorized to create an api token for this resource
 		$class = Relation::getMorphedModel($type);
-		if($class == Project::class) {
+		if ($class == Project::class) {
 			$model = Project::find($id);
 		} else {
 			//
@@ -314,10 +316,10 @@ class ApiTokenController extends Controller
 
 		$this->authorize('updateApiToken', $model);
 
-        // Update the api token
+		// Update the api token
 		$apiToken->update([
-            "token" => $request->token == '' ? (string) Str::uuid() : $request->token
-        ]);
+			"token" => $request->token == '' ? (string) Str::uuid() : $request->token
+		]);
 
 		return new ApiTokenResource($apiToken);
 	}
@@ -403,7 +405,7 @@ class ApiTokenController extends Controller
 	{
 		// Check if the user is authorized to delete the url
 		$class = Relation::getMorphedModel($type);
-		if($class == Project::class) {
+		if ($class == Project::class) {
 			$model = Project::find($id);
 		} else {
 			//

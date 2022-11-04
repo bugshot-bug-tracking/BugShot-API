@@ -39,6 +39,9 @@ class CreateBugsTable extends Migration
 			$table->smallInteger('order_number')->default(0);
 			$table->smallInteger('ai_id'); // Auto-Incremeting Id
 
+			$table->bigInteger('client_id')->unsigned();
+			$table->foreign('client_id')->references('id')->on('clients');
+
 			$table->timestamps();
 			$table->softDeletes();
 		});

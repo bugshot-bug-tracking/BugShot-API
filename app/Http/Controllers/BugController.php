@@ -30,6 +30,8 @@ use App\Http\Requests\BugUpdateRequest;
 // Events
 use App\Events\AssignedToBug;
 
+use App\Services\BugService;
+
 
 /**
  * @OA\Tag(
@@ -39,7 +41,7 @@ use App\Events\AssignedToBug;
 class BugController extends Controller
 {
 
-		
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -143,12 +145,12 @@ class BugController extends Controller
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if($timestamp == NULL) {
-            $bugs = $status->bugs;
-        } else {
-            $bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-        }
-		
+		if ($timestamp == NULL) {
+			$bugs = $status->bugs;
+		} else {
+			$bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+		}
+
 		return BugResource::collection($bugs);
 	}
 
@@ -319,52 +321,21 @@ class BugController extends Controller
 
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
-		
-		// Get the max order number in this status and increase it by one
-		$order_number = $status->bugs->isEmpty() ? 0 : $status->bugs->max('order_number') + 1;
 
-		// Determine the number of bugs in the project to generate the $ai_id
-		$allBugsQuery = $status->project->bugs()->withTrashed();
-		$numberOfBugs = $allBugsQuery->count();
-		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
-		
-		// Store the new bug in the database
-		$bug = $status->bugs()->create([
-			"id" => $id,
-			"project_id" => $status->project_id,
-			"user_id" => Auth::user()->id,
-			"priority_id" => $request->priority_id,
-			"designation" => $request->designation,
-			"description" => $request->description,
-			"url" => $request->url,
-			"operating_system" => $request->operating_system,
-			"browser" => $request->browser,
-			"selector" => $request->selector,
-			"resolution" => $request->resolution,
-			"deadline" => $request->deadline == NULL ? null : new Carbon($request->deadline),
-			"order_number" => $order_number,
-			"ai_id" => $ai_id
-		]);
+		return (new BugService)->store($request, $status, $id, $screenshotService, $attachmentService);
+	}
 
-		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
-		$screenshots = $request->screenshots;
-		if($screenshots != NULL) {
-			foreach($screenshots as $screenshot) {
-				$screenshot = (object) $screenshot;
-				$screenshotService->store($bug, $screenshot);
-			}
-		}
+	public function storeViaApiKey(BugStoreRequest $request, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	{
+		//get backlog of sent project (api key)
+		$tempProject = $request->get('project');
+		$statuses = $tempProject->statuses;
+		$returnStatus = $statuses[0];
 
-		// Check if the bug comes with a attachment (or multiple) and if so, store it/them
-		$attachments = $request->attachments;
-		if($attachments != NULL) {
-			foreach($attachments as $attachment) {
-				$attachment = (object) $attachment;
-				$attachmentService->store($bug, $attachment);
-			}
-		}
+		// Check if the the request already contains a UUID for the bug
+		$id = $this->setId($request);
 
-		return new BugResource($bug);
+		return (new BugService)->store($request, $returnStatus, $id, $screenshotService, $attachmentService);
 	}
 
 	/**
@@ -645,19 +616,26 @@ class BugController extends Controller
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
-		// Check if the order of the bugs or the status has to be synchronized
-		if(($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
-			$this->synchronizeBugOrder($request, $bug, $status);
+		return (new BugService)->update($request, $this, $status, $bug);
+	}
+
+	public function updateViaApiKey(BugUpdateRequest $request, Bug $bug)
+	{
+		//Find  bug in project and get status
+		$tempProject = $request->get('project');
+		foreach ($tempProject->statuses as $status) {
+			foreach ($status->bugs as $searchbug) {
+				if ($bug->id == $searchbug->id) {
+					return (new BugService)->update($request, $this, $status, $bug);
+				}
+			}
 		}
+		$response = [
+            'success' => false,
+            'message' => 'The bug was not found or is not available to the user!',
+        ];
 
-		// Update the bug
-		$bug->update($request->all());
-		$bug->update([
-			"project_id" => $status->project_id,
-			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
-		]);
-
-		return new BugResource($bug);
+        return response()->json($response, 404);
 	}
 
 	/**
@@ -734,24 +712,26 @@ class BugController extends Controller
 		// Check if the user is authorized to delete the bug
 		$this->authorize('delete', [Bug::class, $status->project]);
 
-		$val = $bug->delete();
+		return (new BugService)->destroy($status, $bug, $screenshotService, $commentService, $attachmentService);
+	}
 
-		// Delete the respective screenshots
-		foreach($bug->screenshots as $screenshot) {
-			$screenshotService->delete($screenshot);
+	public function destroyViaApiKey(Request $request, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
+	{
+		//Find bug in project
+		$tempProject = $request->get('project');
+		foreach ($tempProject->statuses as $status) {
+			foreach ($status->bugs as $searchbug) {
+				if ($bug->id == $searchbug->id) {
+					return (new BugService)->destroy($status, $bug, $screenshotService, $commentService, $attachmentService);
+				}
+			}
 		}
+		$response = [
+            'success' => false,
+            'message' => 'The bug was not found or is not available to the user!',
+        ];
 
-		// Delete the respective comments
-		foreach($bug->comments as $comment) {
-			$commentService->delete($comment);
-		}
-
-		// Delete the respective attachments
-		foreach($bug->attachments as $attachment) {
-			$attachmentService->delete($attachment);
-		}
-
-		return response($val, 204);
+        return response()->json($response, 404);
 	}
 
 	/**
@@ -831,7 +811,7 @@ class BugController extends Controller
 	 **/
 
 	public function assignUser(Request $request, Bug $bug)
-	{ 
+	{
 		// Check if the user is authorized to assign a user to the bug
 		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
@@ -915,7 +895,7 @@ class BugController extends Controller
 	{
 		// Check if the user is authorized to view the users of the bug
 		$this->authorize('view', [Bug::class, $bug->project]);
-		
+
 		return BugUserRoleResource::collection(
 			BugUserRole::where("bug_id", $bug->id)
 				->with('bug')
@@ -985,7 +965,7 @@ class BugController extends Controller
 		$this->authorize('removeUser', [Bug::class, $bug->project]);
 
 		$val = $bug->users()->detach($user);
-	
+
 		return response($val, 204);
 	}
 
@@ -994,13 +974,13 @@ class BugController extends Controller
 	{
 		$originalOrderNumber = $bug->getOriginal('order_number');
 		$newOrderNumber = $request->order_number;
-		
+
 		// Check if the bug also changed it's status
-		if($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
+		if ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
 			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
 
 			// Descrease all the order numbers that were greater than the original bug order number
-			foreach($originalStatusBugs as $originalStatusBug) {
+			foreach ($originalStatusBugs as $originalStatusBug) {
 				$originalStatusBug->update([
 					"order_number" => $originalStatusBug->order_number - 1
 				]);
@@ -1010,25 +990,30 @@ class BugController extends Controller
 			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
 
 			// Increase all the order numbers that are greater than the original bug order number
-			foreach($newStatusBugs as $newStatusBug) {
+			foreach ($newStatusBugs as $newStatusBug) {
 				$newStatusBug->update([
 					"order_number" => $newStatusBug->order_number + 1
 				]);
 			}
 		} else {
 			// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
-			if($originalOrderNumber < $newOrderNumber) {
+			if ($originalOrderNumber < $newOrderNumber) {
 				$statusBugs = $status->bugs->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
 			} else {
 				$statusBugs = $status->bugs->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 			}
 
 			// Change the order number of all affected bugs
-			foreach($statusBugs as $statusBug) {
+			foreach ($statusBugs as $statusBug) {
 				$statusBug->update([
 					"order_number" => $originalOrderNumber < $newOrderNumber ? $statusBug->order_number - 1 : $statusBug->order_number + 1
 				]);
 			}
 		}
+	}
+
+	public function test()
+	{
+		return "success";
 	}
 }

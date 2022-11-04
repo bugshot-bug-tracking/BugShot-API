@@ -46,5 +46,9 @@ class ClientSeeder extends Seeder
         Client::create([
 			'designation' => 'flyer_creator'
 		]);
+
+		Client::create([
+			'designation' => 'interface'
+		]);
 	}
 }
