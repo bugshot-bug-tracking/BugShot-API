@@ -34,12 +34,12 @@ use App\Http\Requests\UserBillingAddressStoreRequest;
  */
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    /**
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
 	 * @OA\Get(
 	 *	path="/users",
 	 *	tags={"User"},
@@ -91,20 +91,20 @@ class UserController extends Controller
 	 *)
 	 *
 	 **/
-    public function index()
-    {
-        // Check if the user is authorized to retrieve a list of users
+	public function index()
+	{
+		// Check if the user is authorized to retrieve a list of users
 		$this->authorize('viewAny', [User::class]);
 
-        return UserResource::collection(User::all());
-    }
+		return UserResource::collection(User::all());
+	}
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  UserStoreRequest  $request
-     * @return Response
-     */
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  UserStoreRequest  $request
+	 * @return Response
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/users",
@@ -184,18 +184,18 @@ class UserController extends Controller
 	 *		description="Unprocessable Entity"
 	 *	),
 	 * )
-	**/
-    public function store(UserStoreRequest $request)
-    {
-        // Check if the user is authorized to create a new user
+	 **/
+	public function store(UserStoreRequest $request)
+	{
+		// Check if the user is authorized to create a new user
 		$this->authorize('create', [User::class]);
 
-        // Check if the the request already contains a UUID for the user
+		// Check if the the request already contains a UUID for the user
 		$id = $this->setId($request);
 
-        // Create the user
-        $user = User::create([
-            'id' => $id,
+		// Create the user
+		$user = User::create([
+			'id' => $id,
 			'first_name' => $request->first_name,
 			'last_name' => $request->last_name,
 			'email' => $request->email,
@@ -205,15 +205,15 @@ class UserController extends Controller
 		// Create the corresponding stripe customer
 		$user->createOrGetStripeCustomer(['name' => $user->first_name . ' ' . $user->last_name]);
 
-        return new UserResource($user);
-    }
+		return new UserResource($user);
+	}
 
-    /**
-     * Display the specified resource.
-     *
+	/**
+	 * Display the specified resource.
+	 *
 	 * @param  User  $user
-     * @return Response
-     */
+	 * @return Response
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}",
@@ -273,21 +273,21 @@ class UserController extends Controller
 	 *	),
 	 * )
 	 **/
-    public function show(User $user)
-    {
+	public function show(User $user)
+	{
 		// Check if the user is authorized to view the user
 		$this->authorize('view', $user);
 
 		return new UserResource($user);
-    }
+	}
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  UserUpdateRequest  $request
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  UserUpdateRequest  $request
 	 * @param  User  $user
-     * @return Response
-     */
+	 * @return Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/users/{user_id}",
@@ -395,24 +395,24 @@ class UserController extends Controller
 	 *		description="Unprocessable Entity"
 	 *	),
 	 * )
-	**/
-    public function update(UserUpdateRequest $request, User $user, ImageService $imageService)
-    {
+	 **/
+	public function update(UserUpdateRequest $request, User $user, ImageService $imageService)
+	{
 		// Check if the user is authorized to update the user
 		$this->authorize('update', $user);
 
 		$email = $user->email;
 
-        // Check if the request comes with an image and if so, store it
+		// Check if the request comes with an image and if so, store it
 		$image = $user->image;
-		if($request->base64 != NULL) {
+		if ($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$this->user->image()->save($image);
 		}
 
 		// Update the user
 		$user->update($request->all());
-		if($request->has('password')) {
+		if ($request->has('password')) {
 			$user->update([
 				'password' => $request->password ? Hash::make($request->password) : null
 			]);
@@ -425,9 +425,9 @@ class UserController extends Controller
 		]);
 
 		// Check if the email of the user changed and if so, update the email addresses of all organizations the user created
-		if($email != $user->email) {
-			foreach($user->createdOrganizations as $organization) {
-				if($organization->billingAddress) {
+		if ($email != $user->email) {
+			foreach ($user->createdOrganizations as $organization) {
+				if ($organization->billingAddress) {
 					$organization->billingAddress->updateStripeCustomer([
 						'email' => $user->email
 					]);
@@ -436,14 +436,14 @@ class UserController extends Controller
 		}
 
 		return new UserResource($user);
-    }
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     *
+	/**
+	 * Remove the specified resource from storage.
+	 *
 	 * @param  User  $user
-     * @return Response
-     */
+	 * @return Response
+	 */
 	/**
 	 * @OA\Delete(
 	 *	path="/users/{user_id}",
@@ -497,9 +497,9 @@ class UserController extends Controller
 	 *		description="Not Found"
 	 *	),
 	 * )
-	**/
-    public function destroy(User $user, ImageService $imageService)
-    {
+	 **/
+	public function destroy(User $user, ImageService $imageService)
+	{
 		// Check if the user is authorized to delete the user
 		$this->authorize('delete', $user);
 
@@ -516,7 +516,7 @@ class UserController extends Controller
 	 *
 	 * @param  User  $user
 	 * @return Response
-	*/
+	 */
 	/**
 	 * @OA\Get(
 	 *	path="/users/{user_id}/image",
@@ -590,7 +590,7 @@ class UserController extends Controller
 	 *
 	 * @param  User  $user
 	 * @return Response
-	*/
+	 */
 	/**
 	 * @OA\Post(
 	 *	path="/users/{user_id}/check-project",
@@ -670,15 +670,48 @@ class UserController extends Controller
 
 		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
-		// Check if the request includes a timestamp and query the projects accordingly
-		$projects = $user->projects->where('url', $request->url);
-		$createdProjects = $user->createdProjects->where('url', $request->url);
-		// Combine the two collections
-		$projects = $projects->concat($createdProjects);
+		//Get all Projects that have the same url where the user is involved in / has created
+		$additionalProjects = collect();
+		foreach ($user->projects as $tempProject) {
+			if ($tempProject->url == $request->url) {
+				$additionalProjects[] = $tempProject;
+			} else {
+				foreach ($tempProject->urls() as $url) {
+					if ($url == $request->url) {
+						$additionalProjects[] = $tempProject;
+						break;
+					}
+				}
+			}
+		}
+		foreach ($user->createdProjects as $tempProject) {
+			if ($tempProject->url == $request->url) {
+				$additionalProjects[] = $tempProject;
+			} else {
+				foreach ($tempProject->urls() as $url) {
+					if ($url == $request->url) {
+						$additionalProjects[] = $tempProject;
+						break;
+					}
+				}
+			}
+		}
 
-		// $projects = $user->projects->where('url', $request->url);
+		//redundancy check
+		// $returnProjects = collect();
+		// foreach ($additionalProjects as $tempProject) {
+		// 	$exists = false;
+		// 	foreach ($returnProjects as $existProject) {
+		// 		if ($existProject->id == $tempProject->id) {
+		// 			$exists = true;
+		// 		}
+		// 	}
+		// 	if (!$exists) {
+		// 		$returnProjects[] = $tempProject;
+		// 	}
+		// }
 
-		return ProjectResource::collection($projects);
+		return ProjectResource::collection($returnProjects);
 	}
 
 	/**
@@ -763,11 +796,11 @@ class UserController extends Controller
 	}
 
 	/**
-     * Store a new setting of the user.
-     *
-     * @param  UserSettingUpdateRequest  $request
-     * @return Response
-     */
+	 * Store a new setting of the user.
+	 *
+	 * @param  UserSettingUpdateRequest  $request
+	 * @return Response
+	 */
 	/**
 	 * @OA\Put(
 	 *	path="/users/{user_id}/settings/{setting_id}",
@@ -850,7 +883,7 @@ class UserController extends Controller
 	 *		description="Not Found"
 	 *	),
 	 * )
-	**/
+	 **/
 	public function updateSetting(SettingRequest $request, User $user, Setting $setting)
 	{
 		// Check if the user is authorized to update the setting of the given user

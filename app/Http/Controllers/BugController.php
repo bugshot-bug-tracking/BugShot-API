@@ -16,6 +16,7 @@ use App\Http\Resources\BugUserRoleResource;
 use App\Services\ScreenshotService;
 use App\Services\AttachmentService;
 use App\Services\CommentService;
+use App\Services\BugService;
 
 // Models
 use App\Models\Bug;
@@ -30,7 +31,6 @@ use App\Http\Requests\BugUpdateRequest;
 // Events
 use App\Events\AssignedToBug;
 
-use App\Services\BugService;
 
 
 /**
@@ -322,10 +322,165 @@ class BugController extends Controller
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
 
-		return (new BugService)->store($request, $status, $id, $screenshotService, $attachmentService);
+		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService);
 	}
 
-	public function storeViaApiKey(BugStoreRequest $request, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  BugStoreRequest  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/interface/bugs",
+	 *	tags={"Interface"},
+	 *	summary="Store one bug.",
+	 *	operationId="storeBug",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The bug name",
+	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug description",
+	 *                  property="description",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug url",
+	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="priority_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="operating_system",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="browser",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="selector",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="resolution",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="deadline",
+	 *                  type="string",
+	 * 					format="date-time",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="screenshots",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_x",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_x",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 * 					)
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="attachments",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="designation",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
+	 *              ),
+	 *              required={"designation","url","priority_id",}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function storeViaApiKey(BugStoreRequest $request, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService)
 	{
 		//get backlog of sent project (api key)
 		$tempProject = $request->get('project');
@@ -335,7 +490,7 @@ class BugController extends Controller
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
 
-		return (new BugService)->store($request, $returnStatus, $id, $screenshotService, $attachmentService);
+		return $bugService->store($request, $returnStatus, $id, $screenshotService, $attachmentService);
 	}
 
 	/**
@@ -611,22 +766,180 @@ class BugController extends Controller
 	 * )
 	 **/
 
-	public function update(BugUpdateRequest $request, Status $status, Bug $bug)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug, BugService $bugService)
 	{
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
-		return (new BugService)->update($request, $this, $status, $bug);
+		return $bugService->update($request, $this, $status, $bug);
 	}
 
-	public function updateViaApiKey(BugUpdateRequest $request, Bug $bug)
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  BugUpdateRequest  $request
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/interface/bugs/{bug_id}",
+	 *	tags={"Interface"},
+	 *	summary="Update a bug.",
+	 *	operationId="updateBug",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="user_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="project_id",
+	 * 					type="string",
+	 *  				maxLength=255,
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug name",
+	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug description",
+	 *                  property="description",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug url",
+	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="status_id",
+	 *                  type="string",
+	 *              ),
+	 * 	 	  		@OA\Property(
+	 *                  property="order_number",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="priority_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="operating_system",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="browser",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="selector",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="resolution",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="ai_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="deadline",
+	 *                  type="string",
+	 * 					format="date-time",
+	 *              ),
+	 *              required={"designation","priority_id",}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function updateViaApiKey(BugUpdateRequest $request, Bug $bug, BugService $bugService)
 	{
 		//Find  bug in project and get status
 		$tempProject = $request->get('project');
 		foreach ($tempProject->statuses as $status) {
 			foreach ($status->bugs as $searchbug) {
 				if ($bug->id == $searchbug->id) {
-					return (new BugService)->update($request, $this, $status, $bug);
+					return $bugService->update($request, $this, $status, $searchbug);
 				}
 			}
 		}
@@ -707,22 +1020,87 @@ class BugController extends Controller
 	 * )
 	 **/
 
-	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
+	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService, BugService $bugService)
 	{
 		// Check if the user is authorized to delete the bug
 		$this->authorize('delete', [Bug::class, $status->project]);
 
-		return (new BugService)->destroy($status, $bug, $screenshotService, $commentService, $attachmentService);
+		return $bugService->destroy($status, $bug, $screenshotService, $commentService, $attachmentService);
 	}
 
-	public function destroyViaApiKey(Request $request, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Delete(
+	 *	path="/interface/bugs/{bug_id}",
+	 *	tags={"Interface"},
+	 *	summary="Delete a bug.",
+	 *	operationId="deleteBug",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Success",
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function destroyViaApiKey(Request $request, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService, BugService $bugService)
 	{
 		//Find bug in project
 		$tempProject = $request->get('project');
 		foreach ($tempProject->statuses as $status) {
 			foreach ($status->bugs as $searchbug) {
 				if ($bug->id == $searchbug->id) {
-					return (new BugService)->destroy($status, $bug, $screenshotService, $commentService, $attachmentService);
+					return $bugService->destroy($status, $searchbug, $screenshotService, $commentService, $attachmentService);
 				}
 			}
 		}
@@ -1010,10 +1388,5 @@ class BugController extends Controller
 				]);
 			}
 		}
-	}
-
-	public function test()
-	{
-		return "success";
 	}
 }

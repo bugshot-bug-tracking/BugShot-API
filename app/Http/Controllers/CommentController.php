@@ -109,6 +109,99 @@ class CommentController extends Controller
 	}
 
 	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/bugs/{bug_id}/comments",
+	 *	tags={"Comment"},
+	 *	summary="All comments.",
+	 *	operationId="allComments",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Comment")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function indexViaApiKey(Request $request, Bug $bug)
+	{
+		//Find  bug in project and get status
+		$tempProject = $request->get('project');
+		foreach ($tempProject->statuses as $status) {
+			foreach ($status->bugs as $searchbug) {
+				if ($bug->id == $searchbug->id) {
+					return CommentResource::collection($searchbug->comments);
+				}
+			}
+		}
+		$response = [
+            'success' => false,
+            'message' => 'The bug was not found or is not available to the user!',
+        ];
+
+        return response()->json($response, 404);
+
+		return CommentResource::collection($bug->comments);
+	}
+
+
+	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  CommentStoreRequest  $request
@@ -197,37 +290,115 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CommentStoreRequest $request, Bug $bug)
+	public function store(CommentStoreRequest $request, Bug $bug, CommentService $commentService)
 	{
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
-		// Check if the the request already contains a UUID for the comment
-		$id = $this->setId($request);
+		return $commentService->store($request,$bug, Auth::id(), $this);
+	}
+	
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  CommentStoreRequest  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/interface/bugs/{bug_id}/comments",
+	 *	tags={"Comment"},
+	 *	summary="Store one comment.",
+	 *	operationId="storeComment",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *
+	 *	 @OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The message",
+	 *                  property="content",
+	 *                  type="string",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="tagged",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="user_id",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
+	 *              ),
+	 *              required={"bug_id","content"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Comment"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function storeViaApiKey(CommentStoreRequest $request, Bug $bug, CommentService $commentService)
+	{
+		// Get user information if a api key was used
+		$tempProject = $request->get('project');
+		$creator_id = $tempProject->user_id;
 
-        preg_match(
-            '/(?<=@)[\p{L}\p{N}]+/',
-            $request->content,
-            $matches
-        );
-
-		// Store the new comment in the database
-		$comment = $bug->comments()->create([
-			'id' => $id,
-			'content' => $request->content,
-			'user_id' => Auth::id()
-		]);
-
-		// Notify the tagged users
-		foreach($request->tagged as $tagged) {
-			$user = User::find($tagged['user_id']);
-			$user ? TaggedInComment::dispatch($user, $comment) : true;
-		}
-
-		// Broadcast the event
-		broadcast(new CommentSent($this->user, $comment, $request->tagged))->toOthers();
-
-		return new CommentResource($comment);
+		return $commentService->store($request,$bug, $creator_id, $this);
 	}
 
 	/**

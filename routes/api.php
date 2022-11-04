@@ -270,9 +270,18 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 Route::middleware(['auth.apitoken', 'check.version'])->group(
 	function () {
 		Route::prefix("interface")->group(function () {
-			Route::get('/test', [BugController::class, 'test'])->name('test.interface');
-			Route::post('/bug', [BugController::class, "storeViaApiKey"])->name("apitoken.create.bug");
-			Route::post('/bug/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
+			Route::get('/test', [ApiTokenController::class, 'test'])->name('test.interface');
+			Route::post('/bugs', [BugController::class, "storeViaApiKey"])->name("apitoken.create.bug");
+			Route::put('/bugs/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
+			Route::delete('/bugs/{bug}', [BugController::class, "destroyViaApiKey"])->name("apitoken.delete.bug");
+			Route::get('/bugs/{bug}/comments', [CommentController::class, "indexViaApiKey"])->name("apitoken.get.comments");
+			Route::post('/bugs/{bug}/comments', [CommentController::class, "storeViaApiKey"])->name("apitoken.post.comments");
+			Route::get('/statuses', [StatusController::class, "indexViaApiKey"])->name("apitoken.getall.status");
+			Route::get('/statuses/{status_id}', [StatusController::class, "showViaApiKey"])->name("apitoken.get.status");
+			Route::get('/projects', [ProjectController::class, "showViaApiKey"])->name("apitoken.get.project");
+			Route::put('/projects', [ProjectController::class, "updateViaApiKey"])->name("apitoken.update.project");
+			Route::get('/projects/users', [ProjectController::class, "usersViaApiKey"])->name("apitoken.getusers.project");
+			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.inviteusers.project");
 		});
 	}
 );
