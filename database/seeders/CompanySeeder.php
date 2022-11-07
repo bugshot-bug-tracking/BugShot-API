@@ -23,6 +23,11 @@ class CompanySeeder extends Seeder
             'color_hex' => '#ffffff'
 		]);
 
+		Company::create([
+            'id' => 'Feedback-0000-0000-0000-000000000000',
+			'designation' => 'BugShot Feedback'
+		]);
+
         // Add Testuser Jane Doe as a teammember
 		User::find(2)->companies()->attach('BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB', ['role_id' => 2]);
 	}

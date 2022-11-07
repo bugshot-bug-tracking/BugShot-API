@@ -71,6 +71,98 @@ class OrganizationPolicy
     }
 
     /**
+     * Determine whether the user can store a billing address for the given organization
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createBillingAddress(User $user, Organization $organization)
+    {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
+        $organization = $user->organizations()->find($organization);
+        if ($organization == NULL) {
+            return false;
+        }
+
+        $role = $organization->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can retrieve the billing address for the given organization
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function getBillingAddress(User $user, Organization $organization)
+    {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
+        $organization = $user->organizations()->find($organization);
+        if ($organization == NULL) {
+            return false;
+        }
+
+        $role = $organization->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
+     * Determine whether the user can update a billing address for the given organization
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateBillingAddress(User $user, Organization $organization)
+    {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
+        $organization = $user->organizations()->find($organization);
+        if ($organization == NULL) {
+            return false;
+        }
+
+        $role = $organization->pivot->role_id;
+
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+            
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user

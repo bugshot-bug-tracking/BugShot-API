@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
+use App\Services\GetUserLocaleService;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Cashier\Billable;
 
 /**
  * @OA\Schema()
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -62,10 +64,17 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * 	type="string",
 	 * 	nullable=true,
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="is_admin",
 	 * 	type="boolean"
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="subscription_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the subscription, if the user has been given one."
 	 * )
 	 *
 	 * @OA\Property(
@@ -88,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 *  format="date-time",
 	 * 	description="The deletion date."
 	 * )
-	 * 
+	 *
 	 */
 	protected $fillable = [
 		'first_name',
@@ -96,6 +105,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'email',
 		'password',
 		'email_verified_at',
+		'subscription_id'
 	];
 
 	/**
@@ -116,6 +126,14 @@ class User extends Authenticatable implements MustVerifyEmail
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function billingAddress()
+	{
+		return $this->morphOne(BillingAddress::class, "billing_addressable");
+	}
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -190,6 +208,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function settings()
+    {
+        return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function subscription()
+	{
+		return $this->belongsTo(Subscription::class);
+	}
+
+	/**
 	 * Send a password reset notification to the user.
 	 *
 	 * @param  string  $token
@@ -197,7 +231,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-	    $this->notify(new ResetPasswordLinkNotification($this->email, $token));
+	    $this->notify((new ResetPasswordLinkNotification($this->email, $token))->locale(GetUserLocaleService::getLocale($this)));
 	}
 
 	/**
@@ -213,7 +247,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * that company, eventhough he isn't part of all projects
 	 */
 	public function isPriviliegated($resourceType, $resource) {
-    
+
 		/**
 		 * Roles:
 		 * | id | designation
@@ -232,7 +266,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		if($resource->user_id == $this->id) {
 			return true;
 		}
-     
+
 		// Check if the user has a sufficient role within the given resource
         if($resourceType == 'companies') {
 			// Get users resource role
@@ -242,7 +276,7 @@ class User extends Authenticatable implements MustVerifyEmail
 				case 1:
 					return true;
 					break;
-				
+
 				default:
 					return false;
 					break;
@@ -255,7 +289,7 @@ class User extends Authenticatable implements MustVerifyEmail
 				case 1:
 					return true;
 					break;
-				
+
 				default:
 					return false;
 					break;
@@ -268,7 +302,7 @@ class User extends Authenticatable implements MustVerifyEmail
 				case 1:
 					return true;
 					break;
-				
+
 				default:
 					return false;
 					break;

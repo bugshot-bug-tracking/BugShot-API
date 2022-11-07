@@ -47,8 +47,8 @@ class TaggedInComment
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    // public function broadcastOn()
-    // {
-    //     return new PrivateChannel('comments');
-    // }
+    public function broadcastOn()
+    {
+        return new PrivateChannel('comments');
+    }
 }

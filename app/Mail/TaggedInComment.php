@@ -12,12 +12,14 @@ use App\Models\User;
 use App\Models\Bug;
 use App\Models\Project;
 use App\Models\Comment;
+use App\Services\GetUserLocaleService;
 
 class TaggedInComment extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $comment;
     public $commentCreator;
     public $bug;
@@ -29,8 +31,9 @@ class TaggedInComment extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Comment $comment)
+    public function __construct(User $notifiable, $locale, Comment $comment)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->comment = $comment;
         $this->commentCreator = User::find($comment->user_id);
@@ -53,12 +56,12 @@ class TaggedInComment extends Mailable
             $this->readableContent,
             $matches
         );
-		
+
 		foreach($matches[0] as $key=>$match) {
 			$this->readableContent = str_replace($match, substr_replace($matches[1][$key], "", -1), $this->readableContent);
 		}
- 
+
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.tagged-in-comment');
+        ->markdown('emails.' . $this->locale . '.tagged-in-comment');
     }
 }

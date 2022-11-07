@@ -98,6 +98,7 @@ return [
     'numeric' => 'The :attribute must be a number.',
     'password' => 'The password is incorrect.',
     'present' => 'The :attribute field must be present.',
+	'quantity-not-allowed' => 'As a normal user you are allowed to buy only one unit of a subscription. Please create an organization to be able to buy multiple units of a subscription.',
     'regex' => 'The :attribute format is invalid.',
     'required' => 'The :attribute field is required.',
     'required_if' => 'The :attribute field is required when :other is :value.',

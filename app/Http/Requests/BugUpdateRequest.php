@@ -29,7 +29,7 @@ class BugUpdateRequest extends FormRequest
         } else {
             return [
                 "designation" => ["string", "min:1", "max:255"],
-                "description" => ["min:1", "max:255", "string", "nullable"],
+                "description" => ["min:1", "max:1500", "string", "nullable"],
                 "url" => ["string", "max:65535", "nullable"],
                 "priority_id" => ["integer", "exists:App\Models\Priority,id"],
                 "operating_system" => ["max:255", "string", "nullable"],

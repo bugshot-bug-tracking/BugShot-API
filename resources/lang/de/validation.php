@@ -98,6 +98,7 @@ return [
     'numeric'              => ':attribute muss eine Zahl sein.',
     'password'             => 'Das Passwort ist nicht korrekt.',
     'present'              => ':attribute muss vorhanden sein.',
+	'quantity-not-allowed' => 'Als normaler Nutzer dürfen Sie nur eine Einheit eines Abonnements kaufen. Bitte erstelle eine Organisation, um mehrere Einheiten eines Abonnements kaufen zu können.',
     'regex'                => 'Das :attribute-Format ist inkorrekt.',
     'required'             => ':attribute field wird ben&ouml;tigt.',
     'required_if'          => ':attribute field wird ben&ouml;tigt wenn :other einen Wert von :value hat.',

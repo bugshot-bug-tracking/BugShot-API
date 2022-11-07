@@ -14,6 +14,12 @@ class SettingUserValue extends Model
 
 	/**
 	 * @OA\Property(
+	 * 	property="id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * )
+	 * 
+	 * @OA\Property(
 	 * 	property="setting_id",
 	 * 	type="string",
 	 *  maxLength=255,
@@ -54,12 +60,4 @@ class SettingUserValue extends Model
 	{
 		return $this->belongsTo(Value::class);
 	}
-
-	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function subValues()
-    {
-        return $this->belongsToMany(SubValue::class, 'sub_values');
-    }
 }

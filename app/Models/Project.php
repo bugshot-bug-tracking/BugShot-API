@@ -16,14 +16,14 @@ class Project extends Model
 
 	/**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     * 
+     *
      * @var bool
      */
     public $incrementing = false;
@@ -34,7 +34,7 @@ class Project extends Model
 	 * 	type="string",
 	 *  maxLength=255,
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="user_id",
 	 * 	type="integer",
@@ -98,14 +98,14 @@ class Project extends Model
 	protected $touches = ['company'];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image'];
+	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
 	public function creator()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
     /**
@@ -155,4 +155,20 @@ class Project extends Model
 	{
 		return $this->morphMany(Invitation::class, "invitable");
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+	public function urls()
+	{
+		return $this->morphMany(Url::class, 'urlable');
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function apiTokens()
+    {
+        return $this->morphMany(ApiToken::class, 'api_tokenable');
+    }
 }

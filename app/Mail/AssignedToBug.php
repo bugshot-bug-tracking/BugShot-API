@@ -12,12 +12,14 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Bug;
 use App\Models\Project;
+use App\Services\GetUserLocaleService;
 
 class AssignedToBug extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $bug;
     public $project;
     public $initiator;
@@ -27,8 +29,9 @@ class AssignedToBug extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Bug $bug)
+    public function __construct(User $notifiable, $locale, Bug $bug)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->bug = $bug;
         $this->initiator = Auth::user();
@@ -43,6 +46,6 @@ class AssignedToBug extends Mailable
     public function build()
     {
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.assigned-to-bug');
+        ->markdown('emails.' . $this->locale . '.assigned-to-bug');
     }
 }

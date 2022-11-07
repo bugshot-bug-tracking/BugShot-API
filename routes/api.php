@@ -18,7 +18,15 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\MarkerController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SendinblueController;
+use App\Http\Controllers\BillingAddressController;
+use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\UrlController;
+use App\Http\Controllers\ApiTokenController;
+
+// Events
+use App\Events\TestEvent;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +38,17 @@ use App\Http\Controllers\SendinblueController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+/*
+|--------------------------------------------------------------------------
+| Debug API Route for Sentry
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/broadcast/test', function () {
+    TestEvent::dispatch("Test");
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -72,6 +91,9 @@ Route::prefix('sendinblue')->group(function () {
 	Route::post("/contact/number-of-bugs", [SendinblueController::class, "getNumberOfBugs"])->name("sendinblue.number-of-bugs");
 });
 
+// Feedback Routes
+Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('check.version')->name("feedback.store");
+
 /*
 |--------------------------------------------------------------------------
 | Private API Routes
@@ -109,6 +131,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
 		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
+		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
 	});
 
@@ -121,6 +144,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
+		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
 
@@ -156,12 +180,71 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::prefix('invitations')->group(function () {
 			Route::get("/", [InvitationController::class, "index"])->name("user.invitation.index");
 			Route::get("/{invitation}", [InvitationController::class, "show"])->name("user.invitation.show");
-			Route::delete("/{invitation}", [InvitationController::class, "destroy"])->name("user.invitation.destroy");
 			Route::get("/{invitation}/accept", [InvitationController::class, "accept"])->name("user.invitation.accept");
 			Route::get("/{invitation}/decline", [InvitationController::class, "decline"])->name("user.invitation.decline");
 		});
+
+		// Setting prefixed routes
+		Route::prefix('settings')->group(function () {
+			Route::get("/", [UserController::class, "settings"])->name("user.setting.index");
+			Route::put("/{setting}", [UserController::class, "updateSetting"])->name("user.setting.update");
+		});
 	});
 
+	// Invitation Delete Route
+	Route::delete("/invitations/{invitation}", [InvitationController::class, "destroy"])->name("invitation.destroy");
+
+	// Stripe prefixed routes
+	Route::prefix('stripe')->group(function () {
+
+		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
+
+		Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("user.stripe.get-stripe-customer");
+		Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("user.stripe.create-stripe-customer");
+		Route::get('/balance', [StripeController::class, "showBalance"])->name("user.stripe.show-balance");
+		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.stripe.show-setup-intent-form");
+		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
+		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
+		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
+		// Product prefixed routes
+		Route::prefix('/products')->group(function () {
+			Route::get('/', [StripeController::class, "listProducts"])->name("stripe.products.list");
+		});
+	});
+
+	// Polymorphic ApiToken routes
+	Route::prefix('{type}/{id}')->group(function () {
+		Route::apiResource('/api-tokens', ApiTokenController::class);
+	});
+
+	// Polymorphic Url routes
+	Route::prefix('{type}/{id}')->group(function () {
+		Route::apiResource('/urls', UrlController::class);
+	});
+
+	// Billing address routes
+	Route::prefix('billing-addresses')->group(function () {
+		Route::post("/{type}/{id}", [BillingAddressController::class, "store"])->name("billing-address.store");
+		Route::get("/{type}/{id}", [BillingAddressController::class, "getBillingAddress"])->name("billing-address.get");
+		Route::put("/{billing_address}", [BillingAddressController::class, "update"])->name("billing-address.update");
+
+		Route::prefix('/{billing_address}/stripe')->group(function () {
+			Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("billing-address.stripe.get-stripe-customer");
+			Route::post('/customer', [StripeController::class, "createStripeCustomer"])->name("billing-address.stripe.create-stripe-customer");
+			Route::get('/balance', [StripeController::class, "showBalance"])->name("billing-address.stripe.show-balance");
+			Route::get('/invoices', [StripeController::class, "listInvoices"])->name("billing-address.stripe.list-invoices");
+			Route::get('/invoices/{invoice}', [StripeController::class, "showInvoice"])->name("billing-address.stripe.show-invoice");
+			Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("billing-address.stripe.show-setup-intent-form");
+			Route::post('/subscription', [StripeController::class, "createSubscription"])->name("billing-address.stripe.create-subscription");
+			Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("billing-address.stripe.subscription.change-quantity");
+			Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("billing-address.stripe.get-payment-methods");
+			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
+			Route::delete('/subscriptions/{subscription}', [StripeController::class, "cancelSubscription"])->name("billing-address.stripe.cancel-subscription");
+			Route::post('/subscriptions/{subscription}/assign', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
+			Route::post('/subscriptions/revoke', [StripeController::class, "revokeSubscription"])->name("billing-address.stripe.revoke-subscription");
+			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
+		});
+	});
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes

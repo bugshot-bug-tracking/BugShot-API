@@ -1,4 +1,4 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hello {{ $user->first_name }},</p>
     <p>
         You have requested a password reset.<br /><br />
@@ -7,9 +7,9 @@
     @component('mail::button', ['url' => $url])
         Reset Password
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         If that doesn't work, you can also just copy the following URL into your browser:
-    </p>
+    @endcomponent
     <a href="{{ $url }}">{{ $url }}</a><br /><br />
     <p>
         Error-free Greetings,

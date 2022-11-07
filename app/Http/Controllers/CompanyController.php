@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 
 // Resources
 use App\Http\Resources\CompanyResource;
@@ -21,11 +22,13 @@ use App\Services\InvitationService;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\CompanyUserRole;
+use App\Models\SettingUserValue;
 
 // Requests
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\InvitationRequest;
+use App\Http\Requests\CompanyUserRoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -63,7 +66,7 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 * 	@OA\Parameter(
 	 *		name="include-projects",
 	 *		required=false,
@@ -105,6 +108,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-company-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-company-role",
 	 *		required=false,
 	 *		in="header"
@@ -139,7 +147,7 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -290,7 +298,7 @@ class CompanyController extends Controller
 	 * )
 	 **/
 	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
-	{	
+	{
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
 
@@ -301,7 +309,7 @@ class CompanyController extends Controller
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 		]);
-		
+
 		// Check if the company comes with an image (or a color)
 		$image = NULL;
 		if($request->base64 != NULL) {
@@ -586,7 +594,7 @@ class CompanyController extends Controller
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
-	
+
 		// Apply default color if color_hex is null
 		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
@@ -595,7 +603,7 @@ class CompanyController extends Controller
 		$company->update([
 			'color_hex' => $color_hex
 		]);
-		
+
 		return new CompanyResource($company);
 	}
 
@@ -665,7 +673,7 @@ class CompanyController extends Controller
 		$this->authorize('delete', $company);
 
 		$val = $company->delete();
-		
+
 		// Delete the respective image if present
 		$imageService->delete($company->image);
 
@@ -829,6 +837,120 @@ class CompanyController extends Controller
 	}
 
 	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  CompanyUserRoleUpdateRequest  $request
+	 * @param  Company  $company
+	 * @param  User  $user
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/companies/{company_id}/users/{user_id}",
+	 *	tags={"Company"},
+	 *	summary="Update a users role in a given company.",
+	 *	operationId="updateCompanyUserRole",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new role",
+	 *                  property="role_id",
+	 *                  type="integer",
+	 *              ),
+	 *              required={"role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/CompanyUserRole"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function updateUserRole(CompanyUserRoleUpdateRequest $request, Company $company, User $user)
+	{
+		// Check if the user is authorized to update the users role in the given company
+		$this->authorize('updateUserRole', $company);
+
+		// Update the companies user role
+		$company->users()->updateExistingPivot($user->id, [
+			'role_id' => $request->role_id
+		]);
+
+		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->where('user_id', $user->id)->first());
+	}
+
+	/**
 	 * Remove a user from the company
 	 *
 	 * @param  Company  $company
@@ -900,11 +1022,20 @@ class CompanyController extends Controller
 	 **/
 	public function removeUser(Company $company, User $user)
 	{
-		// Check if the user is authorized to view the users of the company
-		$this->authorize('removeUser', $company);
+		// replace with approval request procedure
+		if((Auth::id()!==$user->id))
+			// Check if the user is authorized to view the users of the company
+			$this->authorize('removeUser', $company);
 
 		$val = $company->users()->detach($user);
-	
+
+		// Also remove the user from the related project
+		// Commented out right now because we want that the user can stay in the projects while beeing removed from the company
+		// $projects = $user->projects()->where('company_id', $company->id)->get();
+		// foreach($projects as $project) {
+		// 	$project->users()->detach($user);
+		// }
+
 		return response($val, 204);
 	}
 
@@ -935,6 +1066,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="status-id",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -975,12 +1111,20 @@ class CompanyController extends Controller
 	 *)
 	 *
 	 **/
-	public function invitations(Company $company)
+	public function invitations(Request $request, Company $company)
 	{
 		// Check if the user is authorized to view the invitations of the company
 		$this->authorize('viewInvitations', $company);
-		
-		return InvitationResource::collection($company->invitations);
+
+		// Check if the request contains a status_id so only those invitations are returned
+		$header = $request->header();
+		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
+			$invitations = $company->invitations()->where('status_id', $header['status-id'][0])->get();
+		} else {
+			$invitations = $company->invitations;
+		}
+
+		return InvitationResource::collection($invitations);
 	}
 
 	/**
@@ -1077,7 +1221,7 @@ class CompanyController extends Controller
 		// Check if the user has already been invited to the company or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($company->invitations->contains('target_email', $recipient_mail) || $company->users->contains($recipient)) {
+		if(!$company->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $company->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.company-user-already-invited')
 			]], 409);

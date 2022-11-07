@@ -9,20 +9,23 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
+use App\Services\GetUserLocaleService;
 
 class PasswordResetSuccessful extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable)
+    public function __construct(User $notifiable, $locale)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
     }
 
@@ -35,6 +38,6 @@ class PasswordResetSuccessful extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.password-reset-successful-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.password-reset-successful-mail');
+        ->markdown('emails.' . $this->locale . '.password-reset-successful-mail');
     }
 }

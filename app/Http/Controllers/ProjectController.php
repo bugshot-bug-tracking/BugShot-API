@@ -32,6 +32,7 @@ use App\Models\Status;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Requests\ProjectUserRoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -70,7 +71,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
@@ -120,6 +121,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *  @OA\Parameter(
 	 *		name="include-project-role",
 	 *		required=false,
@@ -135,7 +141,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -171,7 +177,7 @@ class ProjectController extends Controller
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
-		
+
 		// Check if the request includes a timestamp and query the projects accordingly
 		if($timestamp == NULL) {
 			if($userIsPriviliegated) {
@@ -189,7 +195,7 @@ class ProjectController extends Controller
 				$projects = Auth::user()->projects
 					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
 					->where('company_id', $company->id);
-				$createdProjects = $this->user->createdProjects					
+				$createdProjects = $this->user->createdProjects
 					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
 					->where('company_id', $company->id);
 
@@ -321,7 +327,7 @@ class ProjectController extends Controller
 
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
-		
+
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
@@ -338,7 +344,7 @@ class ProjectController extends Controller
 			$project->image()->save($image);
 		}
 
-		// Send the invitations 
+		// Send the invitations
 		$invitations = $request->invitations;
 		if($invitations != NULL) {
 			foreach($request->invitations as $invitation) {
@@ -348,7 +354,7 @@ class ProjectController extends Controller
 
 		// Create the default statuses for the new project
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
-        
+
 		foreach ($defaultStatuses as $key => $status) {
 			Status::create([
 				"id" => (string) Str::uuid(),
@@ -402,7 +408,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -541,7 +547,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -688,7 +694,7 @@ class ProjectController extends Controller
 	 *			ref="#/components/schemas/Company/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -764,7 +770,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -928,7 +934,7 @@ class ProjectController extends Controller
         } else {
             $bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
         }
-		
+
 		return BugResource::collection($bugs);
 	}
 
@@ -1011,9 +1017,9 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
-		
+
 		// Get the bugs that belong to the given url
-		$bugs = $project->bugs->where("url", "=", $request->url);
+		$bugs = $project->bugs()->where("url", "=", $request->url)->has('screenshots.markers')->get();
 
 		return ProjectMarkerResource::collection($bugs);
 	}
@@ -1100,6 +1106,120 @@ class ProjectController extends Controller
 	}
 
 	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  ProjectUserRoleUpdateRequest  $request
+	 * @param  Project  $project
+	 * @param  User  $user
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/projects/{project_id}/users/{user_id}",
+	 *	tags={"Project"},
+	 *	summary="Update a users role in a given project.",
+	 *	operationId="updateProjectUserRole",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new role",
+	 *                  property="role_id",
+	 *                  type="integer",
+	 *              ),
+	 *              required={"role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/ProjectUserRole"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function updateUserRole(ProjectUserRoleUpdateRequest $request, Project $project, User $user)
+	{
+		// Check if the user is authorized to update the users role in the given project
+		$this->authorize('updateUserRole', $project);
+
+		// Update the companies user role
+		$project->users()->updateExistingPivot($user->id, [
+			'role_id' => $request->role_id
+		]);
+
+		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->where('user_id', $user->id)->first());
+	}
+
+	/**
 	 * Remove a user from the project
 	 *
 	 * @param  Project  $project
@@ -1129,7 +1249,7 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
      *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
@@ -1174,11 +1294,13 @@ class ProjectController extends Controller
 	 **/
 	public function removeUser(Project $project, User $user)
 	{
-		// Check if the user is authorized to view the users of the project
-		$this->authorize('removeUser', $project);
+		// replace with approval request procedure
+		if((Auth::id()!==$user->id))
+			// Check if the user is authorized to view the users of the project
+			$this->authorize('removeUser', $project);
 
 		$val = $project->users()->detach($user);
-	
+
 		return response($val, 204);
 	}
 
@@ -1254,7 +1376,7 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the project
 		$this->authorize('viewInvitations', $project);
-		
+
 		return InvitationResource::collection($project->invitations);
 	}
 
@@ -1346,11 +1468,11 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to invite users to the project
 		$this->authorize('invite', $project);
-		
+
 		// Check if the user has already been invited to the project or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($project->invitations->contains('target_email', $recipient_mail) || $project->users->contains($recipient)) {
+		if(!$project->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $project->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.project-user-already-invited')
 			]], 409);

@@ -1,4 +1,4 @@
-@component('mail::message')
+@component('mail::message', ['locale' => $locale])
     <p>Hallo {{ $user->first_name }},</p>
     <p>
         Du hast eine Passwortzurücksetzung angefordert.<br /><br />
@@ -7,9 +7,9 @@
     @component('mail::button', ['url' => $url])
         Passwort zurücksetzen
     @endcomponent
-    <p>
+    @component('mail::paragraph')
         Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
-    </p>
+    @endcomponent
     <a href="{{ $url }}">{{ $url }}</a><br /><br />
     <p>
         Fehlerfreie Grüße,

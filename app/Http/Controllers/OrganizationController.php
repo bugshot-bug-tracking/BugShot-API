@@ -196,7 +196,14 @@ class OrganizationController extends Controller
         $organization = Organization::create([
 			"id" => $id,
 			"user_id" => $this->user->id,
-			"designation" => $request->designation
+			"designation" => $request->designation,
+			// "street" => $request->street,
+			// "housenumber" => $request->housenumber,
+			// "state" => $request->state,
+			// "city" => $request->city,
+			// "zip" => $request->zip,
+			// "country" => $request->country,
+			// "tax_id" => $request->tax_id
 		]);
 
 		return new OrganizationResource($organization);
@@ -373,6 +380,11 @@ class OrganizationController extends Controller
 
 		// Update the organization
 		$organization->update($request->all());
+
+		// Update the corresponding stripe customer 
+		$organization->billingAddress->updateStripeCustomer([
+			'name' => $organization->designation
+		]);
 		
 		return new OrganizationResource($organization);
 	}
