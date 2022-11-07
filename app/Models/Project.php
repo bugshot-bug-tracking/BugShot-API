@@ -98,7 +98,7 @@ class Project extends Model
 	protected $touches = ['company'];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiToken'];
+	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
