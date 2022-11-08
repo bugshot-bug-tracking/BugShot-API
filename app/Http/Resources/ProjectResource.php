@@ -18,13 +18,13 @@ class ProjectResource extends JsonResource
 	 * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
 	 */
 	public function toArray($request)
-	{	
+	{
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();
 		$bugsTotal = $this->bugs->count();
 		$company = Company::find($this->company_id);
-		
+
 		$project = array(
 			"id" => $this->id,
 			"type" => "Project",
@@ -48,7 +48,7 @@ class ProjectResource extends JsonResource
 				"updated_at" => $this->updated_at
 			]
 		);
-		
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective statuses
@@ -63,7 +63,7 @@ class ProjectResource extends JsonResource
 				->with('user')
 				->with('role')
 				->get();
-				
+
 				$project['attributes']['users'] = $projectUserRoles->map(function ($item, $key) {
 					return [
 						'id' => $item->user->id,
@@ -101,7 +101,7 @@ class ProjectResource extends JsonResource
 
 			$project['attributes']['role'] = new RoleResource($role);
 		}
-		
+
 		return $project;
 	}
 }
