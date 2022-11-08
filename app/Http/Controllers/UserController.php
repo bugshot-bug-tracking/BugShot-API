@@ -419,10 +419,12 @@ class UserController extends Controller
 		}
 
 		// Update the corresponding stripe customer
-		$user->billingAddress->updateStripeCustomer([
-			'name' => $user->first_name . ' ' . $user->last_name,
-			'email' => $user->email
-		]);
+		if($user->billingAddress) {
+			$user->billingAddress->updateStripeCustomer([
+				'name' => $user->first_name . ' ' . $user->last_name,
+				'email' => $user->email
+			]);
+		}
 
 		// Check if the email of the user changed and if so, update the email addresses of all organizations the user created
 		if($email != $user->email) {
