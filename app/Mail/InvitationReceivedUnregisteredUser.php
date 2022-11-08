@@ -15,6 +15,7 @@ class InvitationReceivedUnregisteredUser extends Mailable
 {
     use Queueable, SerializesModels;
 
+	public $locale;
     public $invitation;
     public $entryMessage;
 
@@ -23,8 +24,9 @@ class InvitationReceivedUnregisteredUser extends Mailable
      *
      * @return void
      */
-    public function __construct(Invitation $invitation, $message)
+    public function __construct($locale, Invitation $invitation, $message)
     {
+		$this->locale = $locale;
         $this->invitation = $invitation;
         $this->entryMessage = $message;
     }
@@ -36,8 +38,7 @@ class InvitationReceivedUnregisteredUser extends Mailable
      */
     public function build()
     {
-        // return $this->view('emails.' . App::currentLocale() . '.unregistered-user-invitation-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.unregistered-user-invitation-mail');
+        ->markdown('emails.' . $this->locale . '.unregistered-user-invitation-mail');
     }
 }
