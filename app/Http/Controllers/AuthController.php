@@ -134,14 +134,7 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-        $url = URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ]
-        );
+		$url = $this->createVerificationUrl($user);
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
@@ -467,6 +460,19 @@ class AuthController extends Controller
 		}
 	}
 
+	public function createVerificationUrl(User $user) {
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+
+		return $url;
+	}
+
 	/**
 	 * @OA\Post(
 	 *	path="/auth/reset-password",
@@ -695,7 +701,9 @@ class AuthController extends Controller
 	 **/
 	public function resendVerificationMail(Request $request) {
 		$user = User::find($request->user_id);
-		$user->sendEmailVerificationNotification();
+		$url = $this->createVerificationUrl($user);
+
+		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
 		return response(__('auth.verification-link-sent'), 200);
 	}
