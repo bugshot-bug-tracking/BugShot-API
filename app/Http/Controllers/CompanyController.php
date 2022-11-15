@@ -232,7 +232,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/companies",
+	 *	path="/organizations/{organization_id}/companies",
 	 *	tags={"Company"},
 	 *	summary="Store one company.",
 	 *	operationId="storeCompany",
@@ -254,7 +254,15 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
@@ -323,13 +331,16 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
+	public function store(CompanyStoreRequest $request, Organization $organization, ImageService $imageService, InvitationService $invitationService)
 	{
+		// Check if the user is authorized to create the company
+		$this->authorize('create', [Company::class, $organization]);
+
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
 
 		// Store the new company in the database
-		$company = Company::create([
+		$company = $organization->companies()->create([
 			"id" => $id,
 			"user_id" => $this->user->id,
 			"designation" => $request->designation,

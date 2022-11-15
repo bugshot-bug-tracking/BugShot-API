@@ -2790,7 +2790,7 @@
                         "schema": {
                             "$ref": "#/components/schemas/Organization/properties/id"
                         },
-                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
                     },
                     {
                         "name": "include-projects",
@@ -2905,9 +2905,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/companies": {
+            },
             "post": {
                 "tags": [
                     "Company"
@@ -2931,6 +2929,15 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
                     }
                 ],
                 "requestBody": {
