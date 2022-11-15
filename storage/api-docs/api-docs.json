@@ -2758,7 +2758,7 @@
                 ]
             }
         },
-        "/companies": {
+        "/organizations/{organization_id}/companies": {
             "get": {
                 "tags": [
                     "Company"
@@ -2782,6 +2782,15 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "include-projects",
@@ -2896,7 +2905,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/companies": {
             "post": {
                 "tags": [
                     "Company"
@@ -10791,6 +10802,11 @@
                         "description": "The id of the user that created the object.",
                         "type": "integer",
                         "format": "int64"
+                    },
+                    "organization_id": {
+                        "description": "The id of the organization to which the object belongs.",
+                        "type": "string",
+                        "maxLength": 255
                     },
                     "designation": {
                         "description": "The company name.",

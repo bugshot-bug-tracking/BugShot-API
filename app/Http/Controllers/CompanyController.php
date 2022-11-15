@@ -19,6 +19,7 @@ use App\Services\ImageService;
 use App\Services\InvitationService;
 
 // Models
+use App\Models\Organization;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\CompanyUserRole;
@@ -44,7 +45,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/companies",
+	 *	path="/organizations/{organization_id}/companies",
 	 *	tags={"Company"},
 	 *	summary="All companies.",
 	 *	operationId="allCompanies",
@@ -65,6 +66,15 @@ class CompanyController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
 	 *	),
 	 *
 	 * 	@OA\Parameter(
@@ -176,24 +186,40 @@ class CompanyController extends Controller
 	 *
 	 **/
 
-	public function index(Request $request)
+	public function index(Request $request, Organization $organization)
 	{
+		// Check if the user is authorized to list the companies of the organization
+		$this->authorize('viewAny', [Company::class, $organization]);
+
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
+		$userIsPriviliegated = $this->user->isPriviliegated('organizations', $organization);
 
 		// Check if the request includes a timestamp and query the companies accordingly
-        if($timestamp == NULL) {
-            $companies = $this->user->companies;
-			$createdCompanies = $this->user->createdCompanies;
+		if($timestamp == NULL) {
+			if($userIsPriviliegated) {
+				$companies = $organization->companies;
+			} else {
+				$companies = Auth::user()->companies->where('organization_id', $organization->id);
+				$createdCompanies = $this->user->createdCompanies->where('organization_id', $organization->id);
+				// Combine the two collections
+				$companies = $companies->concat($createdCompanies);
+			}
         } else {
-            $companies = $this->user->companies
-				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdCompanies = $this->user->createdCompanies
-				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-        }
+			if($userIsPriviliegated) {
+				$companies = $organization->companies->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			} else {
+				$companies = Auth::user()->companies
+					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('organization_id', $organization->id);
+				$createdCompanies = $this->user->createdCompanies
+					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('organization_id', $organization->id);
 
-		// Combine the two collections
-		$companies = $companies->concat($createdCompanies);
+				// Combine the two collections
+				$companies = $companies->concat($createdCompanies);
+			}
+        }
 
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}

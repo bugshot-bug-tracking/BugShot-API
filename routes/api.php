@@ -115,6 +115,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Organization prefixed routes
 	Route::prefix('organizations/{organization}')->group(function () {
+		Route::apiResource('/companies', CompanyController::class);
 		Route::get("/invitations", [OrganizationController::class, "invitations"])->name("organization.invitations");
 		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
 		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
@@ -122,7 +123,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	});
 
 	// Company resource routes
-	Route::apiResource('/companies', CompanyController::class);
+	// Route::apiResource('/companies', CompanyController::class);
 
 	// Company prefixed routes
 	Route::prefix('companies/{company}')->group(function () {

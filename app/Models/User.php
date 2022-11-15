@@ -258,17 +258,30 @@ class User extends Authenticatable implements MustVerifyEmail
 		 */
 
 		// Check if the user is an admin
-		if($this->isAdministrator()) {
+		if ($this->isAdministrator()) {
 			return true;
 		}
 
 		// Check if the user is the creator of the resource
-		if($resource->user_id == $this->id) {
+		if ($resource->user_id == $this->id) {
 			return true;
 		}
 
 		// Check if the user has a sufficient role within the given resource
-        if($resourceType == 'companies') {
+	 	if ($resourceType == 'organizations') {
+			// Get users resource role
+			$userOrganizationRoleId = $this->organizations->find($resource)->pivot->role_id;
+
+			switch ($userOrganizationRoleId) {
+				case 1:
+					return true;
+					break;
+
+				default:
+					return false;
+					break;
+			}
+		} else if ($resourceType == 'companies') {
 			// Get users resource role
 			$userCompanyRoleId = $this->companies->find($resource)->pivot->role_id;
 
@@ -294,7 +307,7 @@ class User extends Authenticatable implements MustVerifyEmail
 					return false;
 					break;
 			}
-		} else if($resourceType == 'bugs') {
+		} else if ($resourceType == 'bugs') {
 			// Get users resource role
 			$userBugRoleId = $this->bugs->find($resource)->pivot->role_id;
 
