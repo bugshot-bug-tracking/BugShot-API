@@ -373,7 +373,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Show one company.",
 	 *	operationId="showCompany",
@@ -395,10 +395,20 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -504,7 +514,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(Company $company)
+	public function show(Organization $organization, Company $company)
 	{
 		// Check if the user is authorized to view the company
 		$this->authorize('view', $company);
@@ -521,7 +531,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Put(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Update a company.",
 	 *	operationId="updateCompany",
@@ -543,10 +553,19 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -615,7 +634,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(CompanyUpdateRequest $request, Company $company, ImageService $imageService)
+	public function update(CompanyUpdateRequest $request, Organization $organization, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
@@ -626,14 +645,14 @@ class CompanyController extends Controller
 		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $company->image()->save($image) : true;
-			$color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
+			$color_hex = $company->color_hex; // Color stays the same
 		} else {
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
 
 		// Apply default color if color_hex is null
-		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
+		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
 		$company->update($request->all());

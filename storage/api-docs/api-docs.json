@@ -3015,7 +3015,7 @@
                 ]
             }
         },
-        "/companies/{company_id}": {
+        "/organizations/{organization_id}/companies/{company_id}": {
             "get": {
                 "tags": [
                     "Company"
@@ -3041,12 +3041,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "include-projects",
@@ -3179,12 +3189,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "_method",
@@ -3255,7 +3275,9 @@
                         "sanctum": []
                     }
                 ]
-            },
+            }
+        },
+        "/companies/{company_id}": {
             "delete": {
                 "tags": [
                     "Company"

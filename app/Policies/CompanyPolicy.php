@@ -150,44 +150,13 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
-        // Check company role
-        if($company->company->user_id == $user->id) {
-            return true;
-        }
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
-        $company = $user->companies()->find($company->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**

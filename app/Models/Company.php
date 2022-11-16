@@ -101,6 +101,14 @@ class Company extends Model
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function organization()
+	{
+		return $this->belongsTo(Organization::class);
+	}
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */

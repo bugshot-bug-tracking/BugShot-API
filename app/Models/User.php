@@ -267,6 +267,11 @@ class User extends Authenticatable implements MustVerifyEmail
 			return true;
 		}
 
+		// Check if the resource contains the user
+		if ($resource->users->doesntContain($this)) {
+			return false;
+		}
+
 		// Check if the user has a sufficient role within the given resource
 	 	if ($resourceType == 'organizations') {
 			// Get users resource role
