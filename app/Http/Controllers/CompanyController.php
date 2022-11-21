@@ -671,7 +671,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Delete a company.",
 	 *	operationId="deleteCompany",
@@ -693,9 +693,19 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -723,7 +733,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(Company $company, ImageService $imageService)
+	public function destroy(Organization $organization, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the company
 		$this->authorize('delete', $company);
@@ -766,10 +776,10 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"

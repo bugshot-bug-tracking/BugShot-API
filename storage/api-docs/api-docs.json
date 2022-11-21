@@ -3275,9 +3275,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/companies/{company_id}": {
+            },
             "delete": {
                 "tags": [
                     "Company"
@@ -3303,12 +3301,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "responses": {
@@ -3366,7 +3374,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "responses": {

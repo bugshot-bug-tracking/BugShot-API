@@ -46,57 +46,73 @@ class CompanyResource extends JsonResource
 
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
-			$projects = Auth::user()->projects->where('company_id', $this->id);
-			$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
-			$projects = $projects->concat($createdProjects);
+			$projects = NULL;
+			/**
+			 * Check if the user is a manager or owner in the organization or the company.
+			 * If so, show him all the projects.
+			 * If not, only show him the ones he is part of in any way
+			*/
+			if(Auth::user()->isPriviliegated('companies', $this->resource) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+				$projects = $this->projects;
+			} else {
+				$projects = Auth::user()->projects->where('company_id', $this->id);
+				$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
+				$projects = $projects->concat($createdProjects);
+			};
 
 			$company['attributes']['projects'] = ProjectResource::collection($projects);
 		}
 
 		// Check if the response should contain the respective company users
 		if(array_key_exists('include-company-users', $header) && $header['include-company-users'][0] == "true") {
-			if(array_key_exists('include-company-users-roles', $header) && $header['include-company-users'][0] == "true") {
-				$companyUserRoles = CompanyUserRole::where("company_id", $this->id)
-				->with('user')
-				->with('role')
-				->get();
+			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+				if(array_key_exists('include-company-users-roles', $header) && $header['include-company-users'][0] == "true") {
+					$companyUserRoles = CompanyUserRole::where("company_id", $this->id)
+					->with('user')
+					->with('role')
+					->get();
 
-				$company['attributes']['users'] = $companyUserRoles->map(function ($item, $key) {
-					return [
-						'id' => $item->user->id,
-						'type' => 'User',
-						'attributes' => [
-							"first_name" => $item->user->first_name,
-							"last_name" => $item->user->last_name,
-							"email" => $item->user->email,
-						],
-						'role' => new RoleResource($item->role)
-					];
-				});
-			} else {
-				$users = $this->users;
-				$company['attributes']['users'] = UserResource::collection($users);
+					$company['attributes']['users'] = $companyUserRoles->map(function ($item, $key) {
+						return [
+							'id' => $item->user->id,
+							'type' => 'User',
+							'attributes' => [
+								"first_name" => $item->user->first_name,
+								"last_name" => $item->user->last_name,
+								"email" => $item->user->email,
+							],
+							'role' => new RoleResource($item->role)
+						];
+					});
+				} else {
+					$users = $this->users;
+					$company['attributes']['users'] = UserResource::collection($users);
+				}
 			}
 		}
 
 		// Check if the response should contain the respective company image
 		if(array_key_exists('include-company-image', $header) && $header['include-company-image'][0] == "true") {
-			$image = $this->image;
-			$company['attributes']['image'] = new ImageResource($image);
+			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+				$image = $this->image;
+				$company['attributes']['image'] = new ImageResource($image);
+			}
 		}
 
 		// Check if the response should contain the respective user role within this company
 		if(array_key_exists('include-company-role', $header) && $header['include-company-role'][0] == "true") {
-			$userCompany = Auth::user()->companies()->find($this->id);
+            if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+                $userCompany = Auth::user()->companies()->find($this->id);
 
-			if($userCompany == NULL) {
-				$userCompany = Auth::user()->createdCompanies()->find($this->id);
-				$role =  Role::find(1); // Owner
-			} else {
-				$role = Role::find($userCompany->pivot->role_id);
-			}
+                if($userCompany == NULL) {
+                    $userCompany = Auth::user()->createdCompanies()->find($this->id);
+                    $role =  Role::find(1); // Owner
+                } else {
+                    $role = Role::find($userCompany->pivot->role_id);
+                }
 
-			$company['attributes']['role'] = new RoleResource($role);
+                $company['attributes']['role'] = new RoleResource($role);
+            }
 		}
 
 		return $company;

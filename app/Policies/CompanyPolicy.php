@@ -65,23 +65,6 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
-		// Check company role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->companies()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
         // Check company role
         if($company->user_id == $user->id) {
             return true;
@@ -108,6 +91,25 @@ class CompanyPolicy
                 return false;
                 break;
         }
+
+		// Check company role
+        if($company->organization->user_id == $user->id) {
+            return true;
+        }
+
+        $organization = $user->companies()->find($company->organization);
+        if ($organization == NULL) {
+            return false;
+        }
+
+        $role = $organization->pivot->role_id;
+        switch ($role) {
+            case 1:
+                return true;
+                break;
+        }
+
+
     }
 
     /**
@@ -119,26 +121,10 @@ class CompanyPolicy
      */
     public function create(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**
@@ -150,10 +136,12 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company)
     {
+		// Check if user is the manager or owner of the company
 		if($user->isPriviliegated('companies', $company)) {
 			return true;
 		};
 
+		// Check if user is the manager or owner of the parent organization
 		if($user->isPriviliegated('organizations', $company->organization)) {
 			return true;
 		};
@@ -168,27 +156,15 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        // Check organization role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
+        // Check if user is the owner
         if($company->user_id == $user->id) {
             return true;
         }
+
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**
@@ -248,43 +224,15 @@ class CompanyPolicy
      */
     public function updateUserRole(User $user, Company $company)
     {
-        // Check organization role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
-        $organization = $user->organizations()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**
@@ -296,43 +244,15 @@ class CompanyPolicy
      */
     public function removeUser(User $user, Company $company)
     {
-        // Check organization role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
-        $organization = $user->organizations()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**
@@ -344,43 +264,15 @@ class CompanyPolicy
      */
     public function viewInvitations(User $user, Company $company)
     {
-        // Check organization role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
-        $organization = $user->organizations()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->company()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 
     /**
@@ -392,43 +284,14 @@ class CompanyPolicy
      */
     public function invite(User $user, Company $company)
     {
-        // Check organization role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
-        $organization = $user->organizations()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $company->organization)) {
+			return true;
+		};
     }
 }
