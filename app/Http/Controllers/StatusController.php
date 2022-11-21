@@ -152,18 +152,6 @@ class StatusController extends Controller
 	 *	summary="All statuses.",
 	 *	operationId="allStatuses",
 	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
@@ -471,18 +459,6 @@ class StatusController extends Controller
 	 *	tags={"Interface"},
 	 *	summary="Show one status.",
 	 *	operationId="showStatus",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,

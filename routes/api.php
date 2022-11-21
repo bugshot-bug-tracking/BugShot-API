@@ -272,6 +272,7 @@ Route::middleware(['auth.apitoken'])->group(
 		Route::prefix("interface")->group(function () {
 			Route::get('/test', [ApiTokenController::class, 'test'])->name('test.interface');
 			Route::post('/bugs', [BugController::class, "storeViaApiKey"])->name("apitoken.create.bug");
+			Route::get('/bugs/{bug}', [BugController::class, "showViaApiKey"])->name("apitoken.getSpecific.bug");
 			Route::put('/bugs/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
 			Route::delete('/bugs/{bug}', [BugController::class, "destroyViaApiKey"])->name("apitoken.delete.bug");
 			Route::get('/bugs/{bug}/comments', [CommentController::class, "indexViaApiKey"])->name("apitoken.get.comments");

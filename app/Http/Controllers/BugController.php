@@ -338,18 +338,6 @@ class BugController extends Controller
 	 *	summary="Store one bug.",
 	 *	operationId="storeBug",
 	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
@@ -605,6 +593,98 @@ class BugController extends Controller
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/bugs/{bug}",
+	 *	tags={"Interface"},
+	 *	summary="Show one bug.",
+	 *	operationId="showBug",
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function showViaApiKey(Bug $bug)
+	{
+		return new BugResource($bug);
+	}
+
+	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  BugUpdateRequest  $request
@@ -787,18 +867,6 @@ class BugController extends Controller
 	 *	tags={"Interface"},
 	 *	summary="Update a bug.",
 	 *	operationId="updateBug",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -1040,18 +1108,6 @@ class BugController extends Controller
 	 *	tags={"Interface"},
 	 *	summary="Delete a bug.",
 	 *	operationId="deleteBug",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="api-key",
 	 *		required=true,

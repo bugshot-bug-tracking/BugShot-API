@@ -120,18 +120,6 @@ class CommentController extends Controller
 	 *	summary="All comments.",
 	 *	operationId="allComments",
 	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
@@ -310,18 +298,6 @@ class CommentController extends Controller
 	 *	tags={"Comment"},
 	 *	summary="Store one comment.",
 	 *	operationId="storeComment",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,

@@ -520,18 +520,6 @@ class ProjectController extends Controller
 	 *	summary="Show one project.",
 	 *	operationId="showProject",
 	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
@@ -768,18 +756,6 @@ class ProjectController extends Controller
 	 *	tags={"Project"},
 	 *	summary="Update a project.",
 	 *	operationId="updateProject",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -1324,18 +1300,6 @@ class ProjectController extends Controller
 	 *	summary="All project users.",
 	 *	operationId="allProjectsUsers",
 	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
@@ -1754,18 +1718,6 @@ class ProjectController extends Controller
 	 *	tags={"Interface"},
 	 *	summary="Invite a user to the project and asign it a role",
 	 *	operationId="inviteProject",
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
