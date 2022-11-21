@@ -275,6 +275,7 @@ Route::middleware(['auth.apitoken'])->group(
 			Route::get('/bugs/{bug}', [BugController::class, "showViaApiKey"])->name("apitoken.getSpecific.bug");
 			Route::put('/bugs/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
 			Route::delete('/bugs/{bug}', [BugController::class, "destroyViaApiKey"])->name("apitoken.delete.bug");
+			Route::post('/bugs/{bug}/screenshots', [ScreenshotController::class, "storeViaApiKey"])->name("apitoken.addSc.bug");
 			Route::get('/bugs/{bug}/comments', [CommentController::class, "indexViaApiKey"])->name("apitoken.get.comments");
 			Route::post('/bugs/{bug}/comments', [CommentController::class, "storeViaApiKey"])->name("apitoken.post.comments");
 			Route::get('/statuses', [StatusController::class, "indexViaApiKey"])->name("apitoken.getall.status");
