@@ -267,7 +267,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth.apitoken'])->group(
+Route::middleware(['auth.apitoken', 'check.version'])->group(
 	function () {
 		Route::prefix("interface")->group(function () {
 			Route::get('/test', [ApiTokenController::class, 'test'])->name('test.interface');
