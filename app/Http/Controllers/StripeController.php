@@ -31,6 +31,7 @@ use App\Models\OrganizationUserRole;
 use App\Models\User;
 use App\Models\BillingAddress;
 use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
 
 // Requests
 use App\Http\Requests\SubscriptionChangeRestrictionRequest;
@@ -791,10 +792,17 @@ class StripeController extends Controller
 
 			// If the billingAddressable is a normal user, assign the subscription to himself
 			$notifiable->update([
-				'subscription_id' => $subscription->id
+				'subscription_item_id' => $subscription->id
 			]);
 		} else {
 			// Check if the creator of the organization ist the only member in it. If so, assign the subscription to him.
+			if($billingAddress->billingAddressable->users->isEmpty()) {
+				$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
+				$creator = $billingAddress->billingAddressable->creator;
+				$creator->update([
+					'subscription_item_id' => $subscriptionItem->stripe_id
+				]);
+			}
 
 			$notifiable = $billingAddress->billingAddressable->creator;
 		}
@@ -1273,7 +1281,7 @@ class StripeController extends Controller
 		if($billingAddress->billing_addressable_type == 'user') {
 			$user = $billingAddress->billingAddressable;
 			$user->update([
-				'subscription_id' => $subscriptionItemId
+				'subscription_item_id' => $subscriptionItemId
 			]);
 
 			return new UserResource($user);
@@ -1285,7 +1293,7 @@ class StripeController extends Controller
 		// Check if the user the subscription shall be assigned to is also the owner of the organization
 		if($organization->user_id == $request->user_id) {
 			$organization->creator->update([
-				'subscription_id' => $subscriptionItemId
+				'subscription_item_id' => $subscriptionItemId
 			]);
 
 			return new UserResource($organization->creator);
@@ -1300,7 +1308,7 @@ class StripeController extends Controller
 
 		// Update the pivot model
 		$user->organizations()->updateExistingPivot($organization->id, [
-			'subscription_id' => $subscriptionItemId,
+			'subscription_item_id' => $subscriptionItemId,
 			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 		]);
 
