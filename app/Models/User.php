@@ -220,7 +220,16 @@ class User extends Authenticatable implements MustVerifyEmail
      */
 	public function subscription()
 	{
-		return $this->belongsTo(Subscription::class);
+		return $this->hasOneThrough(Subscription::class, SubscriptionItem::class);
+		// return $this->belongsTo(Subscription::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function subscriptionItem()
+	{
+		return $this->belongsTo(SubscriptionItem::class);
 	}
 
 	/**
