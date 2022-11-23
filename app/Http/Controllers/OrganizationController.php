@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
@@ -24,6 +25,7 @@ use App\Models\OrganizationUserRole;
 use App\Http\Requests\OrganizationStoreRequest;
 use App\Http\Requests\OrganizationUpdateRequest;
 use App\Http\Requests\InvitationRequest;
+use App\Http\Requests\OrganizationUserRoleUpdateRequest;
 
 /**
  * @OA\Tag(
@@ -302,7 +304,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(OrganizationStoreRequest $request)
+	public function store(OrganizationStoreRequest $request, InvitationService $invitationService)
 	{
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
@@ -313,6 +315,14 @@ class OrganizationController extends Controller
 			"user_id" => $this->user->id,
 			"designation" => $request->designation
 		]);
+
+		// Send the invitations
+		$invitations = $request->invitations;
+		if($invitations != NULL) {
+			foreach($invitations as $invitation) {
+				$invitationService->send((object) $invitation, $organization, (string) Str::uuid(), $invitation['target_email']);
+			}
+		}
 
 		return new OrganizationResource($organization);
 	}
@@ -362,6 +372,106 @@ class OrganizationController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-companies",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *	@OA\Response(
 	 *		response=200,
@@ -759,6 +869,120 @@ class OrganizationController extends Controller
 	}
 
 	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  OrganizationUserRoleUpdateRequest  $request
+	 * @param  Organization  $organization
+	 * @param  User  $user
+	 * @return Response
+	 */
+	/**
+	 * @OA\Put(
+	 *	path="/organizations/{organization_id}/users/{user_id}",
+	 *	tags={"Organization"},
+	 *	summary="Update a users role in a given organization.",
+	 *	operationId="updateOrganizationUserRole",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="_method",
+	 *		required=true,
+	 *		in="query",
+	 *		@OA\Schema(
+	 *			type="string",
+	 *			default="PUT"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new role",
+	 *                  property="role_id",
+	 *                  type="integer",
+	 *              ),
+	 *              required={"role_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/OrganizationUserRole"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function updateUserRole(OrganizationUserRoleUpdateRequest $request, Organization $organization, User $user)
+	{
+		// Check if the user is authorized to update the users role in the given organization
+		$this->authorize('updateUserRole', $organization);
+
+		// Update the organizations user role
+		$organization->users()->updateExistingPivot($user->id, [
+			'role_id' => $request->role_id
+		]);
+
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)->first());
+	}
+
+	/**
 	 * Remove a user from the organization
 	 *
 	 * @param  Organization  $organization
@@ -870,6 +1094,11 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="status-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -907,12 +1136,20 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	public function invitations(Organization $organization)
+	public function invitations(Request $request, Organization $organization)
 	{
 		// Check if the user is authorized to view the invitations of the organization
 		$this->authorize('viewInvitations', $organization);
 
-		return InvitationResource::collection($organization->invitations);
+		// Check if the request contains a status_id so only those invitations are returned
+		$header = $request->header();
+		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
+			$invitations = $organization->invitations()->where('status_id', $header['status-id'][0])->get();
+		} else {
+			$invitations = $organization->invitations;
+		}
+
+		return InvitationResource::collection($invitations);
 	}
 
 	/**
