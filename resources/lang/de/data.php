@@ -19,5 +19,6 @@ return [
     'backlog' => 'Backlog',
     'todo' => 'ToDo',
     'doing' => 'In Arbeit',
-    'done' => 'Erledigt'
+    'done' => 'Erledigt',
+	'my-organization' => 'Meine Organisation'
 ];

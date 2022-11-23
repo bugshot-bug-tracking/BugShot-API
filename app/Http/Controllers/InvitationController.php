@@ -488,6 +488,7 @@ class InvitationController extends Controller
 		}
 
 		$user->organizations()->attach($organization->id, ['role_id' => $invitation->role_id]);
+
 		$invitation->update(["status_id" => 2]);
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->first());
@@ -512,6 +513,12 @@ class InvitationController extends Controller
 		}
 
 		$user->companies()->attach($company->id, ['role_id' => $invitation->role_id]);
+
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($company->organization) == NULL) {
+			$user->organizations()->attach($company->organization->id, ['role_id' => 2]); // Team
+		}
+
 		$invitation->update(["status_id" => 2]);
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->first());
@@ -539,7 +546,12 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this company
 		if ($user->companies->find($project->company) == NULL) {
-			$user->companies()->attach($project->company->id, ['role_id' => $invitation->role_id]);
+			$user->companies()->attach($project->company->id, ['role_id' => 2]); // Team
+		}
+
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($project->company->organization) == NULL) {
+			$user->organizations()->attach($project->company->organization->id, ['role_id' => 2]); // Team
 		}
 
 		$invitation->update(["status_id" => 2]);

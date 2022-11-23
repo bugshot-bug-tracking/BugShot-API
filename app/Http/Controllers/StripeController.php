@@ -31,6 +31,7 @@ use App\Models\OrganizationUserRole;
 use App\Models\User;
 use App\Models\BillingAddress;
 use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
 
 // Requests
 use App\Http\Requests\SubscriptionChangeRestrictionRequest;
@@ -791,9 +792,18 @@ class StripeController extends Controller
 
 			// If the billingAddressable is a normal user, assign the subscription to himself
 			$notifiable->update([
-				'subscription_id' => $subscription->id
+				'subscription_item_id' => $subscription->id
 			]);
 		} else {
+			// Check if the creator of the organization ist the only member in it. If so, assign the subscription to him.
+			if($billingAddress->billingAddressable->users->isEmpty()) {
+				$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
+				$creator = $billingAddress->billingAddressable->creator;
+				$creator->update([
+					'subscription_item_id' => $subscriptionItem->stripe_id
+				]);
+			}
+
 			$notifiable = $billingAddress->billingAddressable->creator;
 		}
 
@@ -863,6 +873,11 @@ class StripeController extends Controller
 	 *                  property="price_api_id",
 	 *                  type="string"
 	 *              ),
+	 *             @OA\Property(
+	 *                  description="The id of the exact subscription item that should be assigned to the user",
+	 *                  property="subscription_item_id",
+	 *                  type="string"
+	 *              ),
 	 *              @OA\Property(
 	 *                  description="Specifies if the quantity is an increment or decrement",
 	 *                  property="type",
@@ -906,18 +921,18 @@ class StripeController extends Controller
 		// Check if the user is authorized to change the billing addresses subscription quantity
 		$this->authorize('changeSubscriptionQuantity', $billingAddress);
 
+		$subscriptionItemId = $request->subscription_item_id;
 		$quantity = $request->quantity;
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		$subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
 		if($request->type == 'increment') {
 			// Add $quantity to the subscription's current quantity
 			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity, $request->price_api_id);
 		} else {
-			dd($subscription);
-			// TODO: assignements need to be corresponding to the product, not the subscription
-			$totalAssignments = $this->getAmountOfAssignments($subscription->stripe_id);
+			$totalAssignments = $this->getAmountOfAssignments($subscriptionItemId);
 
 			// If all quantities of this subscription are assigned to users, it cannot be decreased
-			if($totalAssignments > $subscription->quantity - $quantity) {
+			if($totalAssignments > $subscriptionItem->quantity - $quantity) {
 				return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
 			} else {
 				// Subtract $quantity from the subscription's current quantity
@@ -1129,32 +1144,26 @@ class StripeController extends Controller
 	public function cancelSubscription(BillingAddress $billingAddress, $subscriptionId)
 	{
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		$subscriptionItems = $subscription->items;
 
 		// Check if the user is authorized to list the subscriptions
 		$this->authorize('cancelSubscription', $billingAddress);
 
 		$val = $billingAddress->subscription($subscription->name)->cancel();
 
-		// Also remove all assigned subscriptions, if there are any
-		$assignments = $this->getAmountOfAssignments($subscription->stripe_id);
-		if($assignments > 0) {
-			$users = User::where('subscription_id', $subscriptionId)->get();
-			if($users) {
-				foreach($users as $user) {
-					$user->update([
-						'subscription_id' => NULL
-					]);
-				}
-			}
-			$organizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->get();
-			if($organizationUsers) {
-				foreach($organizationUsers as $organizationUser) {
-					User::find($organizationUser->user_id)->organizations()->updateExistingPivot($organizationUser->organization_id, [
-						'subscription_id' => NULL,
-						'restricted_subscription_usage' => NULL
-					]);
-				}
-			}
+		// Remove sub itemes from users
+		foreach($subscriptionItems as $subscriptionItem) {
+			User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
+				'subscription_item_id' => NULL
+			]);
+		}
+
+		// Remove sub itemes from organization users
+		foreach($subscriptionItems as $subscriptionItem) {
+			OrganizationUserRole::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
+				'subscription_item_id' => NULL,
+				'restricted_subscription_usage' => NULL
+			]);
 		}
 
 		return response($val, 204);
@@ -1256,13 +1265,14 @@ class StripeController extends Controller
 		$this->authorize('assignSubscription', $billingAddress);
 
 		// Check if the provided subscription has a sufficient quantity
+		$subscriptionItemId = $request->subscription_item_id;
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
-		dd($subscription->items()->where('stripe_id', $request->subscriptionItemId));
-		$assignments = $this->getAmountOfAssignments($subscriptionId);
+		$subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
+		$assignments = $this->getAmountOfAssignments($subscriptionItemId);
 
-		// if($assignments == $quantity) {
-		// 	return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
-		// }
+		if($assignments >= $subscriptionItem->quantity) {
+			return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
+		}
 
 		/**
 		 * Check if the billing address which is assigning the subscription is a personal user or organization account.
@@ -1271,7 +1281,7 @@ class StripeController extends Controller
 		if($billingAddress->billing_addressable_type == 'user') {
 			$user = $billingAddress->billingAddressable;
 			$user->update([
-				'subscription_id' => $subscriptionId
+				'subscription_item_id' => $subscriptionItemId
 			]);
 
 			return new UserResource($user);
@@ -1283,7 +1293,7 @@ class StripeController extends Controller
 		// Check if the user the subscription shall be assigned to is also the owner of the organization
 		if($organization->user_id == $request->user_id) {
 			$organization->creator->update([
-				'subscription_id' => $subscriptionId
+				'subscription_item_id' => $subscriptionItemId
 			]);
 
 			return new UserResource($organization->creator);
@@ -1298,7 +1308,7 @@ class StripeController extends Controller
 
 		// Update the pivot model
 		$user->organizations()->updateExistingPivot($organization->id, [
-			'subscription_id' => $subscriptionId,
+			'subscription_item_id' => $subscriptionItemId,
 			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 		]);
 
@@ -1396,12 +1406,21 @@ class StripeController extends Controller
 		if($billingAddress->billing_addressable_type == 'user') {
 			$user = $billingAddress->billingAddressable;
 			$user->update([
-				'subscription_id' => NULL
+				'subscription_item_id' => NULL
 			]);
 
 			return new UserResource($user);
 		} else {
 			$organization = $billingAddress->billingAddressable;
+
+			// Check if the user the subscription shall be assigned to is also the owner of the organization
+			if($organization->user_id == $request->user_id) {
+				$organization->creator->update([
+					'subscription_item_id' => NULL
+				]);
+
+				return new UserResource($organization->creator);
+			}
 
 			// Check if the user that the subscription shall be revoked from is part of the organization
 			$user = User::find($request->user_id);
@@ -1412,7 +1431,7 @@ class StripeController extends Controller
 
 			// Update the pivot model
 			$user->organizations()->updateExistingPivot($organization->id, [
-				'subscription_id' => NULL,
+				'subscription_item_id' => NULL,
 				'restricted_subscription_usage' => NULL
 			]);
 
@@ -1532,10 +1551,10 @@ class StripeController extends Controller
 	}
 
 	// Get the total amount of users that the given subscription was assigned to
-	public function getAmountOfAssignments($subscriptionId)
+	public function getAmountOfAssignments($subscriptionItemId)
 	{
-		$amountOfUsers = User::where('subscription_id', $subscriptionId)->count(); // Amount of personal user accounts this subscription has been assigned to
-		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_id', $subscriptionId)->count(); // Amount of organization user accounts this subscription has been assigned to
+		$amountOfUsers = User::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of personal user accounts this subscription has been assigned to
+		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of organization user accounts this subscription has been assigned to
 
 		return $amountOfUsers + $amountOfOrganizationUsers;
 	}
