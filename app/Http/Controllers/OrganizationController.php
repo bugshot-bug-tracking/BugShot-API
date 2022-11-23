@@ -39,7 +39,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/organizations",
+	 *	path="/users/{user_id}/organizations",
 	 *	tags={"Organization"},
 	 *	summary="All organizations.",
 	 *	operationId="allOrganizations",
@@ -63,6 +63,114 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="timestamp",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-companies",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-statuses",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-users-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-company-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-project-image",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -123,7 +231,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/organizations",
+	 *	path="/users/{user_id}/organizations",
 	 *	tags={"Organization"},
 	 *	summary="Store one organization.",
 	 *	operationId="storeOrganization",
@@ -145,7 +253,14 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
@@ -188,7 +303,7 @@ class OrganizationController extends Controller
 	 * )
 	 **/
 	public function store(OrganizationStoreRequest $request)
-	{	
+	{
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
 
@@ -196,14 +311,7 @@ class OrganizationController extends Controller
         $organization = Organization::create([
 			"id" => $id,
 			"user_id" => $this->user->id,
-			"designation" => $request->designation,
-			// "street" => $request->street,
-			// "housenumber" => $request->housenumber,
-			// "state" => $request->state,
-			// "city" => $request->city,
-			// "zip" => $request->zip,
-			// "country" => $request->country,
-			// "tax_id" => $request->tax_id
+			"designation" => $request->designation
 		]);
 
 		return new OrganizationResource($organization);
@@ -217,7 +325,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/organizations/{organization_id}",
+	 *	path="/users/{user_id}/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Show one organization.",
 	 *	operationId="showOrganization",
@@ -239,7 +347,14 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
 	 *		required=true,
@@ -290,7 +405,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Put(
-	 *	path="/organizations/{organization_id}",
+	 *	path="/users/{user_id}/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Update a organization.",
 	 *	operationId="updateOrganization",
@@ -311,6 +426,14 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -381,11 +504,11 @@ class OrganizationController extends Controller
 		// Update the organization
 		$organization->update($request->all());
 
-		// Update the corresponding stripe customer 
+		// Update the corresponding stripe customer
 		$organization->billingAddress->updateStripeCustomer([
 			'name' => $organization->designation
 		]);
-		
+
 		return new OrganizationResource($organization);
 	}
 
@@ -397,7 +520,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/organizations/{organization_id}",
+	 *	path="/users/{user_id}/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Delete a organization.",
 	 *	operationId="deleteOrganization",
@@ -418,6 +541,14 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -489,7 +620,6 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
 	 *	@OA\Parameter(
 	 *		name="organization_id",
 	 *		required=true,
@@ -529,7 +659,7 @@ class OrganizationController extends Controller
 	public function users(Organization $organization)
 	{
 		// Check if the user is authorized to view the users of the organization
-		$this->authorize('viewUsers', $organization);
+		$this->authorize('view', $organization);
 
 		return OrganizationUserRoleResource::collection(
 			OrganizationUserRole::where("organization_id", $organization->id)
@@ -541,6 +671,94 @@ class OrganizationController extends Controller
 	}
 
 	/**
+	 * Show a specific user that belongs to the organization.
+	 *
+	 * @param  Organization  $organization
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/organizations/{organization_id}/users/{user_id}",
+	 *	tags={"Organization"},
+	 *	summary="A specific organization user.",
+	 *	operationId="showOrganizationsUser",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/OrganizationUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function user(Organization $organization, User $user)
+	{
+		// Check if the user is authorized to view the users of the organization
+		$this->authorize('viewUser',  [$organization, $user]);
+
+		return new OrganizationUserRoleResource(
+			OrganizationUserRole::where("organization_id", $organization->id)
+			->with('organization')
+			->with('user')
+			->with("role")
+			->first()
+		);
+	}
+
+	/**
 	 * Remove a user from the organization
 	 *
 	 * @param  Organization  $organization
@@ -548,7 +766,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/organizations/{organization_id}/users/{user_id}",
+	 *	path="/users/{user_id}/organizations/{organization_id}/users/{user_id}",
 	 *	tags={"Organization"},
 	 *	summary="Remove user from the organization.",
 	 *	operationId="removeOrganizationUser",
@@ -569,6 +787,14 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -616,7 +842,7 @@ class OrganizationController extends Controller
 		$this->authorize('removeUser', $organization);
 
 		$val = $organization->users()->detach($user);
-	
+
 		return response($val, 204);
 	}
 
@@ -685,7 +911,7 @@ class OrganizationController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the organization
 		$this->authorize('viewInvitations', $organization);
-		
+
 		return InvitationResource::collection($organization->invitations);
 	}
 

@@ -117,4 +117,12 @@ class Organization extends Model
 	{
 		return $this->hasMany(Company::class)->orderBy('updated_at', 'desc');
 	}
+
+	/**
+     * Get all of the projects for the organization.
+     */
+    public function projects()
+    {
+        return $this->hasManyThrough(Project::class, Company::class);
+    }
 }

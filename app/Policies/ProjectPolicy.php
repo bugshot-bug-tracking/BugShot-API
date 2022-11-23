@@ -65,27 +65,10 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -119,26 +102,10 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -150,44 +117,10 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -199,27 +132,10 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -279,43 +195,10 @@ class ProjectPolicy
      */
     public function updateUserRole(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -327,43 +210,10 @@ class ProjectPolicy
      */
     public function removeUser(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -375,43 +225,10 @@ class ProjectPolicy
      */
     public function viewInvitations(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -423,44 +240,10 @@ class ProjectPolicy
      */
     public function invite(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -472,32 +255,10 @@ class ProjectPolicy
      */
     public function createUrl(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -509,15 +270,10 @@ class ProjectPolicy
      */
     public function viewUrl(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -551,15 +307,10 @@ class ProjectPolicy
      */
     public function viewAnyUrls(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -593,32 +344,10 @@ class ProjectPolicy
      */
     public function updateUrl(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -630,32 +359,10 @@ class ProjectPolicy
      */
     public function deleteUrl(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -667,31 +374,10 @@ class ProjectPolicy
      */
     public function viewAnyApiTokens(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
 	/**
@@ -703,32 +389,10 @@ class ProjectPolicy
      */
     public function createApiToken(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
 	/**
@@ -740,32 +404,10 @@ class ProjectPolicy
      */
     public function updateApiToken(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
 	/**
@@ -777,31 +419,9 @@ class ProjectPolicy
      */
     public function deleteApiToken(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 }

@@ -110,9 +110,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
-	// Organization resource routes
-	Route::apiResource('/organizations', OrganizationController::class);
-
 	// Organization prefixed routes
 	Route::prefix('organizations/{organization}')->group(function () {
 		Route::apiResource('/companies', CompanyController::class);
@@ -120,7 +117,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
 		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
 		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
-		Route::get("/users/{user}", [OrganizationController::class, "organizationUser"])->name("organization.user"); // TODO: Create method and add headers to include companies + roles, projects + roles
+		Route::get("/users/{user}", [OrganizationController::class, "user"])->name("organization.user"); // TODO: Create method and add headers to include companies + roles, projects + roles
 	});
 
 	// Company resource routes
@@ -175,6 +172,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
+
+		// Organization resource routes
+		Route::apiResource('/organizations', OrganizationController::class);
+
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
 

@@ -43,22 +43,22 @@ class CompanyResource extends JsonResource
 		);
 
 		$header = $request->header();
-
+		// TODO: REWORK THIS SO IT WORKS WITH THIS = COMPANY
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
-			$projects = NULL;
 			/**
 			 * Check if the user is a manager or owner in the organization or the company.
 			 * If so, show him all the projects.
 			 * If not, only show him the ones he is part of in any way
 			*/
-			if(Auth::user()->isPriviliegated('companies', $this->resource) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+			if(!Auth::user()->isPriviliegated('companies', $this->resource)) {
 				$projects = $this->projects;
 			} else {
-				$projects = Auth::user()->projects->where('company_id', $this->id);
 				$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
-				$projects = $projects->concat($createdProjects);
-			};
+				$projects = Auth::user()->projects->where('company_id', $this->id);
+
+				$projects = $createdProjects->concat($projects);
+			}
 
 			$company['attributes']['projects'] = ProjectResource::collection($projects);
 		}

@@ -267,67 +267,48 @@ class User extends Authenticatable implements MustVerifyEmail
 			return true;
 		}
 
+		// Check if the user has a sufficient role within the given resource
+	 	if ($resourceType == 'organizations') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->organizations, $resource);
+		} else if ($resourceType == 'companies') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource->organization);
+		} else if ($resourceType == 'projects') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
+		} else if ($resourceType == 'bugs') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
+		}
+
+		return false;
+	}
+
+
+	// Checks if the given user is a owner or manager in the resource
+	private function isOwnerOrManagerInResource($resources, $resource) {
+		// Check if the user is the creator of the resource
+		if ($resource->user_id == $this->id) {
+			return true;
+		}
+
 		// Check if the resource contains the user
 		if ($resource->users->doesntContain($this)) {
 			return false;
 		}
 
-		// Check if the user has a sufficient role within the given resource
-	 	if ($resourceType == 'organizations') {
-			// Get users resource role
-			$userOrganizationRoleId = $this->organizations->find($resource)->pivot->role_id;
+		$userResourceRoleId = $resources->find($resource)->pivot->role_id;
 
-			switch ($userOrganizationRoleId) {
-				case 1:
-					return true;
-					break;
+		switch ($userResourceRoleId) {
+			case 1:
+				return true;
+				break;
 
-				default:
-					return false;
-					break;
-			}
-		} else if ($resourceType == 'companies') {
-			// Get users resource role
-			$userCompanyRoleId = $this->companies->find($resource)->pivot->role_id;
-
-			switch ($userCompanyRoleId) {
-				case 1:
-					return true;
-					break;
-
-				default:
-					return false;
-					break;
-			}
-		} else if ($resourceType == 'projects') {
-			// Get users resource role
-			$userProjectRoleId = $this->projects->find($resource)->pivot->role_id;
-
-			switch ($userProjectRoleId) {
-				case 1:
-					return true;
-					break;
-
-				default:
-					return false;
-					break;
-			}
-		} else if ($resourceType == 'bugs') {
-			// Get users resource role
-			$userBugRoleId = $this->bugs->find($resource)->pivot->role_id;
-
-			switch ($userBugRoleId) {
-				case 1:
-					return true;
-					break;
-
-				default:
-					return false;
-					break;
-			}
+			default:
+				return false;
+				break;
 		}
-
-		return false;
 	}
 
 }

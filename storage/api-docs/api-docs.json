@@ -4760,7 +4760,7 @@
                 ]
             }
         },
-        "/organizations": {
+        "/users/{user_id}/organizations": {
             "get": {
                 "tags": [
                     "Organization"
@@ -4787,6 +4787,114 @@
                     },
                     {
                         "name": "timestamp",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "include-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users-roles",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
                         "in": "header",
                         "required": false
                     }
@@ -4847,6 +4955,14 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -4899,7 +5015,7 @@
                 ]
             }
         },
-        "/organizations/{organization_id}": {
+        "/users/{user_id}/organizations/{organization_id}": {
             "get": {
                 "tags": [
                     "Organization"
@@ -4923,6 +5039,14 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "organization_id",
@@ -4986,6 +5110,14 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "organization_id",
@@ -5080,6 +5212,14 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "organization_id",
@@ -5183,6 +5323,82 @@
             }
         },
         "/organizations/{organization_id}/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "A specific organization user.",
+                "operationId": "showOrganizationsUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationUserRole"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/users/{user_id}/organizations/{organization_id}/users/{user_id}": {
             "delete": {
                 "tags": [
                     "Organization"
@@ -5206,6 +5422,14 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
                     },
                     {
                         "name": "organization_id",

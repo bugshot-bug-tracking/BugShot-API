@@ -46,14 +46,12 @@ class CompanyPolicy
      */
     public function viewAny(User $user, Organization $organization)
     {
-		if($organization->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
 
-        $organization = $user->organizations()->find($organization);
-        if ($organization != NULL) {
-            return true;
-        }
+		return $user->organizations()->find($organization) != NULL;
     }
 
     /**
@@ -65,10 +63,10 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
-        // Check company role
-        if($company->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
         $company = $user->companies()->find($company);
         if ($company == NULL) {
@@ -91,25 +89,6 @@ class CompanyPolicy
                 return false;
                 break;
         }
-
-		// Check company role
-        if($company->organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->companies()->find($company->organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-
     }
 
     /**
@@ -122,7 +101,7 @@ class CompanyPolicy
     public function create(User $user, Organization $organization)
     {
 		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
+		if($user->isPriviliegated('organizations', $organization)) {
 			return true;
 		};
     }
@@ -140,11 +119,6 @@ class CompanyPolicy
 		if($user->isPriviliegated('companies', $company)) {
 			return true;
 		};
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
-			return true;
-		};
     }
 
     /**
@@ -160,11 +134,6 @@ class CompanyPolicy
         if($company->user_id == $user->id) {
             return true;
         }
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
-			return true;
-		};
     }
 
     /**
@@ -228,11 +197,6 @@ class CompanyPolicy
 		if($user->isPriviliegated('companies', $company)) {
 			return true;
 		};
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
-			return true;
-		};
     }
 
     /**
@@ -246,11 +210,6 @@ class CompanyPolicy
     {
 		// Check if user is the manager or owner of the company
 		if($user->isPriviliegated('companies', $company)) {
-			return true;
-		};
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
 			return true;
 		};
     }
@@ -268,11 +227,6 @@ class CompanyPolicy
 		if($user->isPriviliegated('companies', $company)) {
 			return true;
 		};
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
-			return true;
-		};
     }
 
     /**
@@ -286,11 +240,6 @@ class CompanyPolicy
     {
 		// Check if user is the manager or owner of the company
 		if($user->isPriviliegated('companies', $company)) {
-			return true;
-		};
-
-		// Check if user is the manager or owner of the parent organization
-		if($user->isPriviliegated('organizations', $company->organization)) {
 			return true;
 		};
     }
