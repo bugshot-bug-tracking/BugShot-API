@@ -41,7 +41,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/users/{user_id}/organizations",
+	 *	path="/organizations",
 	 *	tags={"Organization"},
 	 *	summary="All organizations.",
 	 *	operationId="allOrganizations",
@@ -67,14 +67,6 @@ class OrganizationController extends Controller
 	 *		name="timestamp",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-companies",
@@ -203,22 +195,19 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	public function index(Request $request, User $user)
+	public function index(Request $request)
 	{
-		// Check if the user is authorized to list the organizations of the user
-		$this->authorize('viewAny', [User::class, $user]);
-
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the organizations accordingly
         if($timestamp == NULL) {
-            $organizations = $user->organizations;
-			$createdOrganizations = $user->createdOrganizations;
+            $organizations = $this->user->organizations;
+			$createdOrganizations = $this->user->createdOrganizations;
         } else {
-            $organizations = $user->organizations
+            $organizations = $this->user->organizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdOrganizations = $user->createdOrganizations
+			$createdOrganizations = $this->user->createdOrganizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 
@@ -236,7 +225,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/users/{user_id}/organizations",
+	 *	path="/organizations",
 	 *	tags={"Organization"},
 	 *	summary="Store one organization.",
 	 *	operationId="storeOrganization",
@@ -257,14 +246,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *
 	 *  @OA\RequestBody(
@@ -307,7 +288,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(OrganizationStoreRequest $request, User $user, InvitationService $invitationService)
+	public function store(OrganizationStoreRequest $request, InvitationService $invitationService)
 	{
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
@@ -315,7 +296,7 @@ class OrganizationController extends Controller
 		// Store the new organization in the database
         $organization = Organization::create([
 			"id" => $id,
-			"user_id" => $user->id,
+			"user_id" => $this->user->id,
 			"designation" => $request->designation
 		]);
 
@@ -338,7 +319,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/users/{user_id}/organizations/{organization_id}",
+	 *	path="/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Show one organization.",
 	 *	operationId="showOrganization",
@@ -359,14 +340,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -501,7 +474,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(User $user, Organization $organization)
+	public function show(Organization $organization)
 	{
 		// Check if the user is authorized to view the organization
 		$this->authorize('view', $organization);
@@ -518,7 +491,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Put(
-	 *	path="/users/{user_id}/organizations/{organization_id}",
+	 *	path="/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Update a organization.",
 	 *	operationId="updateOrganization",
@@ -539,14 +512,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -633,7 +598,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/users/{user_id}/organizations/{organization_id}",
+	 *	path="/organizations/{organization_id}",
 	 *	tags={"Organization"},
 	 *	summary="Delete a organization.",
 	 *	operationId="deleteOrganization",
@@ -654,14 +619,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -730,6 +687,16 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-companies",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-company-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -813,13 +780,20 @@ class OrganizationController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
+	 * 	@OA\Parameter(
+	 *		name="include-users-companies",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-companies-roles",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-projects",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -902,14 +876,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",
@@ -1014,14 +980,6 @@ class OrganizationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="organization_id",

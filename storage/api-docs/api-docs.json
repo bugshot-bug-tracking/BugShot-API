@@ -4760,7 +4760,7 @@
                 ]
             }
         },
-        "/users/{user_id}/organizations": {
+        "/organizations": {
             "get": {
                 "tags": [
                     "Organization"
@@ -4789,14 +4789,6 @@
                         "name": "timestamp",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     },
                     {
                         "name": "include-companies",
@@ -4955,14 +4947,6 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     }
                 ],
                 "requestBody": {
@@ -5015,7 +4999,7 @@
                 ]
             }
         },
-        "/users/{user_id}/organizations/{organization_id}": {
+        "/organizations/{organization_id}": {
             "get": {
                 "tags": [
                     "Organization"
@@ -5039,14 +5023,6 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     },
                     {
                         "name": "organization_id",
@@ -5212,14 +5188,6 @@
                         "required": false
                     },
                     {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -5314,14 +5282,6 @@
                         "required": false
                     },
                     {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
-                    },
-                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -5376,6 +5336,16 @@
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-company-role",
                         "in": "header",
                         "required": false
                     },
@@ -5448,12 +5418,19 @@
                         "required": false
                     },
                     {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
+                        "name": "include-users-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-companies-roles",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-projects",
+                        "in": "header",
+                        "required": false
                     },
                     {
                         "name": "organization_id",
@@ -5520,14 +5497,6 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     },
                     {
                         "name": "organization_id",
@@ -5598,9 +5567,7 @@
                         "sanctum": []
                     }
                 ]
-            }
-        },
-        "/users/{user_id}/organizations/{organization_id}/users/{user_id}": {
+            },
             "delete": {
                 "tags": [
                     "Organization"
@@ -5624,14 +5591,6 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
-                    },
-                    {
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/components/schemas/User/properties/id"
-                        }
                     },
                     {
                         "name": "organization_id",
@@ -11584,7 +11543,7 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "subscription_id": {
+                    "subscription_item_id": {
                         "description": "The id of the subscription, if the user has been given one.",
                         "type": "integer",
                         "format": "int64"
@@ -11898,7 +11857,7 @@
                     "is_admin": {
                         "type": "boolean"
                     },
-                    "subscription_id": {
+                    "subscription_item_id": {
                         "description": "The id of the subscription, if the user has been given one.",
                         "type": "integer",
                         "format": "int64"

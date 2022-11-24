@@ -28,22 +28,22 @@ class CompanyResource extends JsonResource
 				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"color_hex" => $this->color_hex,
-				"organization" => array(
-					"id" => $organization->id,
-					"type" => "Organization",
-					"attributes" => [
-						"creator" => new UserResource(User::find($organization->user_id)),
-						"designation" => $organization->designation,
-						"color_hex" => $organization->color_hex,
-					]
-				),
+				// "organization" => array(
+				// 	"id" => $organization->id,
+				// 	"type" => "Organization",
+				// 	"attributes" => [
+				// 		"creator" => new UserResource(User::find($organization->user_id)),
+				// 		"designation" => $organization->designation,
+				// 		"color_hex" => $organization->color_hex,
+				// 	]
+				// ),
 				"created_at" => $this->created_at,
 				"updated_at" => $this->updated_at
 			]
 		);
 
 		$header = $request->header();
-		// TODO: REWORK THIS SO IT WORKS WITH THIS = COMPANY
+
 		// Check if the response should contain the respective projects
 		if(array_key_exists('include-projects', $header) && $header['include-projects'][0] == "true") {
 			/**
@@ -51,7 +51,7 @@ class CompanyResource extends JsonResource
 			 * If so, show him all the projects.
 			 * If not, only show him the ones he is part of in any way
 			*/
-			if(!Auth::user()->isPriviliegated('companies', $this->resource)) {
+			if(Auth::user()->isPriviliegated('companies', $this->resource)) {
 				$projects = $this->projects;
 			} else {
 				$createdProjects = Auth::user()->createdProjects->where('company_id', $this->id);
@@ -65,7 +65,7 @@ class CompanyResource extends JsonResource
 
 		// Check if the response should contain the respective company users
 		if(array_key_exists('include-company-users', $header) && $header['include-company-users'][0] == "true") {
-			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('companies', $this->resource)) {
 				if(array_key_exists('include-company-users-roles', $header) && $header['include-company-users'][0] == "true") {
 					$companyUserRoles = CompanyUserRole::where("company_id", $this->id)
 					->with('user')
@@ -93,7 +93,7 @@ class CompanyResource extends JsonResource
 
 		// Check if the response should contain the respective company image
 		if(array_key_exists('include-company-image', $header) && $header['include-company-image'][0] == "true") {
-			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('companies', $this->resource)) {
 				$image = $this->image;
 				$company['attributes']['image'] = new ImageResource($image);
 			}
@@ -101,7 +101,7 @@ class CompanyResource extends JsonResource
 
 		// Check if the response should contain the respective user role within this company
 		if(array_key_exists('include-company-role', $header) && $header['include-company-role'][0] == "true") {
-            if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('organizations', $this->organization)) {
+            if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('companies', $this->resource)) {
                 $userCompany = Auth::user()->companies()->find($this->id);
 
                 if($userCompany == NULL) {
@@ -113,6 +113,20 @@ class CompanyResource extends JsonResource
 
                 $company['attributes']['role'] = new RoleResource($role);
             }
+		}
+
+		// Check if the response should contain the respective user role within this company
+		if(array_key_exists('include-users-company-role', $header) && $header['include-users-company-role'][0] == "true") {
+			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('companies', $this->resource)) {
+				$user = User::find($request->get('user_id'));
+
+                if($this->user_id == $user->id) {
+                    $company['attributes']['user-role'] = 'owner';
+                } else {
+					$companyUserRole = CompanyUserRole::where('user_id', $user->id)->where('company_id', $this->id)->first();
+                    $company['attributes']['user-role'] = new RoleResource($companyUserRole->role);
+                }
+			}
 		}
 
 		return $company;
