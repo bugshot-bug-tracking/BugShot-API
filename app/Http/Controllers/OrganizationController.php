@@ -203,19 +203,22 @@ class OrganizationController extends Controller
 	 *)
 	 *
 	 **/
-	public function index(Request $request)
+	public function index(Request $request, User $user)
 	{
+		// Check if the user is authorized to list the organizations of the user
+		$this->authorize('viewAny', [User::class, $user]);
+
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the organizations accordingly
         if($timestamp == NULL) {
-            $organizations = $this->user->organizations;
-			$createdOrganizations = $this->user->createdOrganizations;
+            $organizations = $user->organizations;
+			$createdOrganizations = $user->createdOrganizations;
         } else {
-            $organizations = $this->user->organizations
+            $organizations = $user->organizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdOrganizations = $this->user->createdOrganizations
+			$createdOrganizations = $user->createdOrganizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
 
@@ -304,7 +307,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(OrganizationStoreRequest $request, InvitationService $invitationService)
+	public function store(OrganizationStoreRequest $request, User $user, InvitationService $invitationService)
 	{
 		// Check if the the request already contains a UUID for the organization
 		$id = $this->setId($request);
@@ -312,7 +315,7 @@ class OrganizationController extends Controller
 		// Store the new organization in the database
         $organization = Organization::create([
 			"id" => $id,
-			"user_id" => $this->user->id,
+			"user_id" => $user->id,
 			"designation" => $request->designation
 		]);
 
@@ -498,7 +501,7 @@ class OrganizationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(Organization $organization)
+	public function show(User $user, Organization $organization)
 	{
 		// Check if the user is authorized to view the organization
 		$this->authorize('view', $organization);
@@ -990,7 +993,7 @@ class OrganizationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/users/{user_id}/organizations/{organization_id}/users/{user_id}",
+	 *	path="/organizations/{organization_id}/users/{user_id}",
 	 *	tags={"Organization"},
 	 *	summary="Remove user from the organization.",
 	 *	operationId="removeOrganizationUser",
