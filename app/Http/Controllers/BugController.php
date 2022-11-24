@@ -39,7 +39,7 @@ use App\Events\AssignedToBug;
 class BugController extends Controller
 {
 
-		
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -148,7 +148,7 @@ class BugController extends Controller
         } else {
             $bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
         }
-		
+
 		return BugResource::collection($bugs);
 	}
 
@@ -191,7 +191,7 @@ class BugController extends Controller
 	 *			ref="#/components/schemas/Status/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
@@ -314,12 +314,12 @@ class BugController extends Controller
 	 **/
 	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
 	{
-		// Check if the user is authorized to create the bug 
+		// Check if the user is authorized to create the bug
 		$this->authorize('create', [Bug::class, $status->project]);
 
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
-		
+
 		// Get the max order number in this status and increase it by one
 		$order_number = $status->bugs->isEmpty() ? 0 : $status->bugs->max('order_number') + 1;
 
@@ -327,7 +327,7 @@ class BugController extends Controller
 		$allBugsQuery = $status->project->bugs()->withTrashed();
 		$numberOfBugs = $allBugsQuery->count();
 		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
-		
+
 		// Store the new bug in the database
 		$bug = $status->bugs()->create([
 			"id" => $id,
@@ -406,7 +406,7 @@ class BugController extends Controller
 	 *			ref="#/components/schemas/Status/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -736,20 +736,20 @@ class BugController extends Controller
 
 		$val = $bug->delete();
 
-		// Delete the respective screenshots
-		foreach($bug->screenshots as $screenshot) {
-			$screenshotService->delete($screenshot);
-		}
+		// // Delete the respective screenshots
+		// foreach($bug->screenshots as $screenshot) {
+		// 	$screenshotService->delete($screenshot);
+		// }
 
-		// Delete the respective comments
-		foreach($bug->comments as $comment) {
-			$commentService->delete($comment);
-		}
+		// // Delete the respective comments
+		// foreach($bug->comments as $comment) {
+		// 	$commentService->delete($comment);
+		// }
 
-		// Delete the respective attachments
-		foreach($bug->attachments as $attachment) {
-			$attachmentService->delete($attachment);
-		}
+		// // Delete the respective attachments
+		// foreach($bug->attachments as $attachment) {
+		// 	$attachmentService->delete($attachment);
+		// }
 
 		return response($val, 204);
 	}
@@ -831,7 +831,7 @@ class BugController extends Controller
 	 **/
 
 	public function assignUser(Request $request, Bug $bug)
-	{ 
+	{
 		// Check if the user is authorized to assign a user to the bug
 		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
@@ -915,7 +915,7 @@ class BugController extends Controller
 	{
 		// Check if the user is authorized to view the users of the bug
 		$this->authorize('view', [Bug::class, $bug->project]);
-		
+
 		return BugUserRoleResource::collection(
 			BugUserRole::where("bug_id", $bug->id)
 				->with('bug')
@@ -985,7 +985,7 @@ class BugController extends Controller
 		$this->authorize('removeUser', [Bug::class, $bug->project]);
 
 		$val = $bug->users()->detach($user);
-	
+
 		return response($val, 204);
 	}
 
@@ -994,7 +994,7 @@ class BugController extends Controller
 	{
 		$originalOrderNumber = $bug->getOriginal('order_number');
 		$newOrderNumber = $request->order_number;
-		
+
 		// Check if the bug also changed it's status
 		if($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
 			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
