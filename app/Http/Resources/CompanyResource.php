@@ -121,12 +121,31 @@ class CompanyResource extends JsonResource
 				$user = User::find($request->get('user_id'));
 
                 if($this->user_id == $user->id) {
-                    $company['attributes']['user-role'] = 'owner';
+                    $company['attributes']['role'] = 'owner';
                 } else {
 					$companyUserRole = CompanyUserRole::where('user_id', $user->id)->where('company_id', $this->id)->first();
-                    $company['attributes']['user-role'] = new RoleResource($companyUserRole->role);
+                    $company['attributes']['role'] = new RoleResource($companyUserRole->role);
                 }
 			}
+		}
+
+		// Check if the response should contain the respective projects of the given user
+		if(array_key_exists('include-users-projects', $header) && $header['include-users-projects'][0] == "true") {
+
+			// Check if the user is a manager or owner in the company.
+			if(Auth::user()->isPriviliegated('companies', $this->resource)) {
+				$createdProjects = $user->createdProjects->where('company_id', $this->id);
+				$projects = $user->projects->where('company_id', $this->id);
+				$projects = $createdProjects->concat($projects);
+			} else {
+				$createdProjects = $user->createdProjects->where('company_id', $this->id)->intersect(Auth::user()->projects); // Projects the user created where Auth::user() is in
+				$projects = $user->projects->where('company_id', $this->id)->where('user_id', Auth::id()); // Projects the user is in where Auth::user() is the owner/manager
+				$projectsOfBoth = $user->projects->where('company_id', $this->id)->intersect(Auth::user()->projects); // Projects where both the user and the Auth:user() are in
+				$projects = $createdProjects->concat($projects);
+				$projects = $projects->concat($projectsOfBoth);
+			}
+
+			$company['attributes']['projects'] = ProjectResource::collection($projects);
 		}
 
 		return $company;

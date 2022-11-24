@@ -5423,7 +5423,7 @@
                         "required": false
                     },
                     {
-                        "name": "include-users-companies-roles",
+                        "name": "include-users-company-role",
                         "in": "header",
                         "required": false
                     },
@@ -5438,6 +5438,14 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Organization/properties/id"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
                         }
                     }
                 ],
@@ -5504,6 +5512,14 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Organization/properties/id"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
                         }
                     },
                     {

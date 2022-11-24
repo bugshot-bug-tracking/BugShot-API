@@ -786,7 +786,7 @@ class OrganizationController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-users-companies-roles",
+	 *		name="include-users-company-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -803,7 +803,14 @@ class OrganizationController extends Controller
 	 *			ref="#/components/schemas/Organization/properties/id"
 	 *		)
 	 *	),
-	 *
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -883,6 +890,14 @@ class OrganizationController extends Controller
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
 	 *	@OA\Parameter(
