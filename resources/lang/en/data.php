@@ -13,7 +13,7 @@ return [
     */
 
     'organization' => 'organization',
-    'company' => 'company',
+    'company' => 'group', // Formerly "company"
     'project' => 'project',
     'bug' => 'bug',
     'backlog' => 'Backlog',
