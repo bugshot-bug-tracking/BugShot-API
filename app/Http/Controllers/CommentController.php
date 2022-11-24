@@ -277,7 +277,8 @@ class CommentController extends Controller
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
-		return $commentService->store($request,$bug, Auth::id(), $this);
+		$client_id = $request->get('client_id');
+		return $commentService->store($request,$bug, Auth::id(), $this, $client_id);
 	}
 	
 	/**
@@ -368,7 +369,8 @@ class CommentController extends Controller
 		$tempProject = $request->get('project');
 		$creator_id = $tempProject->user_id;
 
-		return $commentService->store($request,$bug, $creator_id, $this);
+		$client_id = $request->get('client_id');
+		return $commentService->store($request,$bug, $creator_id, $this, $client_id);
 	}
 
 	/**

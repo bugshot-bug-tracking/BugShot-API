@@ -23,6 +23,7 @@ class CommentResource extends JsonResource
 				"bug_id" => $this->bug_id,
 				"user" => [
 					"id" => $user->id,
+					"client_id" => $this->client_id,
 					"first_name" => $user->first_name,
 					"last_name" => $user->last_name,
 				],

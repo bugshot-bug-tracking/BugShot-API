@@ -24,7 +24,7 @@ class Client extends Model
     /**
      * @var array
      */
-    protected $fillable = ['designation', 'created_at', 'updated_at'];
+    protected $fillable = ['designation','client_url', 'client_key', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

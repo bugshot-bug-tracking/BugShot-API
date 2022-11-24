@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Http\Resources\BugResource;
+use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 
 class ScreenshotService
@@ -9,12 +11,12 @@ class ScreenshotService
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store($bug, $screenshot)
+    public function store($bug, $screenshot, $client_id)
     {
         $base64 = $screenshot->base64;
 
         // If the base64 string contains a prefix, remove it
-        if(str_contains($base64, 'base64')) {
+        if (str_contains($base64, 'base64')) {
             $explodedBase64 = explode(',', $base64);
             $base64 = $explodedBase64[1];
         }
@@ -27,7 +29,7 @@ class ScreenshotService
 
         // Complete building the path where the screenshot will be stored
         $project = $bug->project;
-		$company = $project->company;
+        $company = $project->company;
         $filePath = $this->storagePath . "$company->id/$project->id/$bug->id/" . $fileName;
 
         // Store the screenshot in the public storage
@@ -36,19 +38,25 @@ class ScreenshotService
         // $this->compressImage("storage" . $filePath);
 
         // Create a new screenshot
-		$screenshot = $bug->screenshots()->create([
-			"url" => $filePath,
-			"position_x" => $screenshot->position_x,
-			"position_y" => $screenshot->position_y,
-			"web_position_x" =>  $screenshot->web_position_x,
-			"web_position_y" =>  $screenshot->web_position_y
-		]);
+        $screenshot = $bug->screenshots()->create([
+            "url" => $filePath,
+            "client_id" => $client_id,
+            "position_x" => $screenshot->position_x,
+            "position_y" => $screenshot->position_y,
+            "web_position_x" =>  $screenshot->web_position_x,
+            "web_position_y" =>  $screenshot->web_position_y
+        ]);
+
+        $sendBug = (new BugResource($bug));
+        $sendBug->attributes->screenshots = array();
+        $sendBug->attributes->screenshots[] = $screenshot;
+        $this->triggerInterfaces($sendBug, 3, $project->id);
 
         return $screenshot;
     }
 
     // Delete the screenshot
-    public function delete($screenshot) 
+    public function delete($screenshot)
     {
         $val = $screenshot->delete();
 
@@ -56,8 +64,19 @@ class ScreenshotService
     }
 
     // Compress the image via tinypng
-    public function compressImage($filePath) {  
+    public function compressImage($filePath)
+    {
         $source = \Tinify\fromFile($filePath);
         $source->toFile($filePath);
+    }
+
+    public function triggerInterfaces(BugResource $bug, $trigger_id, $project_id)
+    {
+        $clients = Client::where('client_url', '!=', '')->get();
+        foreach ($clients as $item) {
+            (new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($bug), getBsHeader($item->client_key, $project_id));
+        }
+        // Fehlerprüfung?
+        return $bug;
     }
 }

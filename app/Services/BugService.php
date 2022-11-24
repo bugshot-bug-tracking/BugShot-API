@@ -30,6 +30,7 @@ use App\Http\Requests\BugUpdateRequest;
 // Events
 use App\Events\AssignedToBug;
 use App\Http\Controllers\BugController;
+use App\Models\Client;
 
 class BugService
 {
@@ -77,7 +78,7 @@ class BugService
 		if ($screenshots != NULL) {
 			foreach ($screenshots as $screenshot) {
 				$screenshot = (object) $screenshot;
-				$screenshotService->store($bug, $screenshot);
+				$screenshotService->store($bug, $screenshot, $client_id);
 			}
 		}
 
@@ -91,7 +92,7 @@ class BugService
 			}
 		}
 
-		return new BugResource($bug);
+		return $this->triggerInterfaces(new BugResource($bug), 1, $status->project_id);
 	}
 
 	public function update(BugUpdateRequest $request, BugController $controller, Status $status, Bug $bug)
@@ -108,7 +109,14 @@ class BugService
 			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
 		]);
 
-		return new BugResource($bug);
+		// if status equal to old one send normal update Trigger else send status update trigger
+		if ($request->status_id !=  null && $status->id == $request->status_id) {
+			return $this->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
+		} else {
+			// Add status?
+			return $this->triggerInterfaces(new BugResource($bug), 4, $status->project_id);
+		}
+
 	}
 
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
@@ -133,11 +141,13 @@ class BugService
 		return response($val, 204);
 	}
 
-	public function triggerInterfaces(Request $request, BugResource $bug){
-		//check client id != 9 feedback loop on same interface -> from another interface?!
-		//get corresponding interface? -> Send to all
-		if($request->get('client_id') != 9){
-			callAPI("POST", env('ZAPIER_INTERFACE_URL') . "/trigger/1", new BugResource($bug));
+	public function triggerInterfaces(BugResource $bug, $trigger_id, $project_id)
+	{
+		$clients = Client::where('client_url', '!=', '')->get();
+		foreach ($clients as $item) {
+			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($bug), getBsHeader($item->client_key, $project_id));
 		}
+		// Fehlerprüfung?
+		return $bug;
 	}
 }

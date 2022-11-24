@@ -314,7 +314,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService)
 	{
 		// Check if the user is authorized to create the bug 
 		$this->authorize('create', [Bug::class, $status->project]);

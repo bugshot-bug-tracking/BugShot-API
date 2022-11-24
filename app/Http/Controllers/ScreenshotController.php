@@ -288,7 +288,8 @@ class ScreenshotController extends Controller
 		// Check if the user is authorized to create the screenshot
 		$this->authorize('create', [Screenshot::class, $bug->project]);
 
-		$screenshot = $screenshotService->store($bug, $request);
+		$client_id = $request->get('client_id');
+		$screenshot = $screenshotService->store($bug, $request, $client_id);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;
@@ -474,7 +475,8 @@ class ScreenshotController extends Controller
 	 **/
 	public function storeViaApiKey(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService)
 	{
-		$screenshot = $screenshotService->store($bug, $request);
+		$client_id = $request->get('client_id');
+		$screenshot = $screenshotService->store($bug, $request, $client_id);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;

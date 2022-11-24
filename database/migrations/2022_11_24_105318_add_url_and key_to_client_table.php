@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('screenshots', function (Blueprint $table) {
-            $table->after('bug_id', function ($table) {
-                $table->bigInteger('client_id')->unsigned();;
-			    $table->foreign('client_id')->references('id')->on('clients');
+        Schema::table('clients', function (Blueprint $table) {
+            $table->after('designation', function ($table) {
+                $table->string('client_url')->nullable();
+                $table->string('client_key')->nullable();
             });
         });
     }
@@ -28,8 +28,9 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('screenshots', function (Blueprint $table) {
-            $table->dropColumn('client_id');
+        Schema::table('clients', function (Blueprint $table) {
+            $table->dropColumn('client_url');
+            $table->dropColumn('client_key');
         });
     }
 };
