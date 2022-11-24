@@ -169,14 +169,10 @@ class CommentController extends Controller
 	 **/
 	public function indexViaApiKey(Request $request, Bug $bug)
 	{
-		//Find  bug in project and get status
+		//Check if user has access to bug
 		$tempProject = $request->get('project');
-		foreach ($tempProject->statuses as $status) {
-			foreach ($status->bugs as $searchbug) {
-				if ($bug->id == $searchbug->id) {
-					return CommentResource::collection($searchbug->comments);
-				}
-			}
+		if($bug->project_id == $tempProject->id){
+			return CommentResource::collection($bug->comments);
 		}
 		$response = [
             'success' => false,
@@ -184,8 +180,6 @@ class CommentController extends Controller
         ];
 
         return response()->json($response, 404);
-
-		return CommentResource::collection($bug->comments);
 	}
 
 

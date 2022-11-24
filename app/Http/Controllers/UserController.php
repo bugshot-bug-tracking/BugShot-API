@@ -670,12 +670,15 @@ class UserController extends Controller
 
 		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
-		//Get all Projects that have the same url where the user is involved in / has created
+		//Get all Projects that have the same url where the user is involved in (1) / has created (2)
 		$additionalProjects = collect();
+		//Get all projects where the user is a part of
 		foreach ($user->projects as $tempProject) {
+			//from direct url
 			if ($tempProject->url == $request->url) {
 				$additionalProjects[] = $tempProject;
 			} else {
+				//from all urls in Project
 				foreach ($tempProject->urls() as $url) {
 					if ($url == $request->url) {
 						$additionalProjects[] = $tempProject;
@@ -711,7 +714,7 @@ class UserController extends Controller
 		// 	}
 		// }
 
-		return ProjectResource::collection($returnProjects);
+		return ProjectResource::collection($additionalProjects);
 	}
 
 	/**

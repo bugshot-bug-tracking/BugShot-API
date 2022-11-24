@@ -418,9 +418,4 @@ class ApiTokenController extends Controller
 
 		return response($val, 204);
 	}
-
-	public function test()
-	{
-		return "success";
-	}
 }

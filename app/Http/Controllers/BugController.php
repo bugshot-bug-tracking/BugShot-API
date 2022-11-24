@@ -679,9 +679,13 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function showViaApiKey(Bug $bug)
+	public function showViaApiKey(Request $request, Bug $bug)
 	{
-		return new BugResource($bug);
+		//Check if user has access to bug
+		$tempProject = $request->get('project');
+		if ($bug->project_id == $tempProject->id) {
+			return new BugResource($bug);
+		}
 	}
 
 	/**
@@ -1012,11 +1016,11 @@ class BugController extends Controller
 			}
 		}
 		$response = [
-            'success' => false,
-            'message' => 'The bug was not found or is not available to the user!',
-        ];
+			'success' => false,
+			'message' => 'The bug was not found or is not available to the user!',
+		];
 
-        return response()->json($response, 404);
+		return response()->json($response, 404);
 	}
 
 	/**
@@ -1161,11 +1165,11 @@ class BugController extends Controller
 			}
 		}
 		$response = [
-            'success' => false,
-            'message' => 'The bug was not found or is not available to the user!',
-        ];
+			'success' => false,
+			'message' => 'The bug was not found or is not available to the user!',
+		];
 
-        return response()->json($response, 404);
+		return response()->json($response, 404);
 	}
 
 	/**

@@ -270,20 +270,19 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 Route::middleware(['auth.apitoken', 'check.version'])->group(
 	function () {
 		Route::prefix("interface")->group(function () {
-			Route::get('/test', [ApiTokenController::class, 'test'])->name('test.interface');
 			Route::post('/bugs', [BugController::class, "storeViaApiKey"])->name("apitoken.create.bug");
-			Route::get('/bugs/{bug}', [BugController::class, "showViaApiKey"])->name("apitoken.getSpecific.bug");
+			Route::get('/bugs/{bug}', [BugController::class, "showViaApiKey"])->name("apitoken.get.specific.bug");
 			Route::put('/bugs/{bug}', [BugController::class, "updateViaApiKey"])->name("apitoken.update.bug");
 			Route::delete('/bugs/{bug}', [BugController::class, "destroyViaApiKey"])->name("apitoken.delete.bug");
-			Route::post('/bugs/{bug}/screenshots', [ScreenshotController::class, "storeViaApiKey"])->name("apitoken.addSc.bug");
+			Route::post('/bugs/{bug}/screenshots', [ScreenshotController::class, "storeViaApiKey"])->name("apitoken.add.screenshot.bug");
 			Route::get('/bugs/{bug}/comments', [CommentController::class, "indexViaApiKey"])->name("apitoken.get.comments");
 			Route::post('/bugs/{bug}/comments', [CommentController::class, "storeViaApiKey"])->name("apitoken.post.comments");
-			Route::get('/statuses', [StatusController::class, "indexViaApiKey"])->name("apitoken.getall.status");
+			Route::get('/statuses', [StatusController::class, "indexViaApiKey"])->name("apitoken.get.all.status");
 			Route::get('/statuses/{status_id}', [StatusController::class, "showViaApiKey"])->name("apitoken.get.status");
 			Route::get('/project', [ProjectController::class, "showViaApiKey"])->name("apitoken.get.project");
 			Route::put('/project', [ProjectController::class, "updateViaApiKey"])->name("apitoken.update.project");
-			Route::get('/projects/users', [ProjectController::class, "usersViaApiKey"])->name("apitoken.getusers.project");
-			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.inviteusers.project");
+			Route::get('/projects/users', [ProjectController::class, "usersViaApiKey"])->name("apitoken.get.users.of.project");
+			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.invite.users.to.project");
 		});
 	}
 );

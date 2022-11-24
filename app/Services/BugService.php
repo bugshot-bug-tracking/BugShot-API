@@ -115,21 +115,29 @@ class BugService
 	{
 		$val = $bug->delete();
 
-		// Delete the respective screenshots
-		foreach ($bug->screenshots as $screenshot) {
-			$screenshotService->delete($screenshot);
-		}
+		// // Delete the respective screenshots
+		// foreach ($bug->screenshots as $screenshot) {
+		// 	$screenshotService->delete($screenshot);
+		// }
 
-		// Delete the respective comments
-		foreach ($bug->comments as $comment) {
-			$commentService->delete($comment);
-		}
+		// // Delete the respective comments
+		// foreach ($bug->comments as $comment) {
+		// 	$commentService->delete($comment);
+		// }
 
-		// Delete the respective attachments
-		foreach ($bug->attachments as $attachment) {
-			$attachmentService->delete($attachment);
-		}
+		// // Delete the respective attachments
+		// foreach ($bug->attachments as $attachment) {
+		// 	$attachmentService->delete($attachment);
+		// }
 
 		return response($val, 204);
+	}
+
+	public function triggerInterfaces(Request $request, BugResource $bug){
+		//check client id != 9 feedback loop on same interface -> from another interface?!
+		//get corresponding interface? -> Send to all
+		if($request->get('client_id') != 9){
+			callAPI("POST", env('ZAPIER_INTERFACE_URL') . "/trigger/1", new BugResource($bug));
+		}
 	}
 }

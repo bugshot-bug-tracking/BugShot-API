@@ -542,9 +542,9 @@ class StatusController extends Controller
 	 **/
 	public function showViaApiKey(Request $request, Status $status)
 	{
-		//Find  bug in project and get status
+		//Check if user has access to bug
 		$tempProject = $request->get('project');
-		foreach ($tempProject->statuses as $status) {
+		if ($status->project_id == $tempProject->id) {
 			return new StatusResource($status);
 		}
 	}
