@@ -110,6 +110,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
+	// Organization resource routes
+	Route::apiResource('/organizations', OrganizationController::class);
+
 	// Organization prefixed routes
 	Route::prefix('organizations/{organization}')->group(function () {
 		Route::apiResource('/companies', CompanyController::class);
@@ -172,9 +175,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
-
-		// Organization resource routes
-		Route::apiResource('/organizations', OrganizationController::class);
 
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
