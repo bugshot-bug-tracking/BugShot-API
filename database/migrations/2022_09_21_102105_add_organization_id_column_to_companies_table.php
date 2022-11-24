@@ -27,55 +27,23 @@ return new class extends Migration
 		// Only execute once for the existing live data
 		$users = User::all();
 		foreach($users as $user) {
-			$organizations = $user->organizations;
 
-			if($organizations->isEmpty()) {
-				$id = (string) Str::uuid();
-				$organization = Organization::create([
-					"id" => $id,
-					"user_id" => $user->id,
-					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
-				]);
+			$id = (string) Str::uuid();
+			$organization = Organization::create([
+				"id" => $id,
+				"user_id" => $user->id,
+				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+			]);
 
-				$companies = $user->companies;
-				if($companies->isNotEmpty()) {
-					foreach($companies as $company) {
-						$company->update([
-							"organization_id" => $organization->id
-						]);
-					}
-				} else if (Company::where('user_id', $user->id)->get()->isNotEmpty()) {
-					$companies = Company::where('user_id', $user->id)->get();
-					foreach($companies as $company) {
-						$company->update([
-							"organization_id" => $organization->id
-						]);
-					}
-				}
-			} else if (Organization::where('user_id', $user->id)->get()->isEmpty()) {
-				$id = (string) Str::uuid();
-				$organization = Organization::create([
-					"id" => $id,
-					"user_id" => $user->id,
-					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
-				]);
-
-				$companies = $user->companies;
-				if($companies->isNotEmpty()) {
-					foreach($companies as $company) {
-						$company->update([
-							"organization_id" => $organization->id
-						]);
-					}
-				} else if (Company::where('user_id', $user->id)->get()->isNotEmpty()) {
-					$companies = Company::where('user_id', $user->id)->get();
-					foreach($companies as $company) {
-						$company->update([
-							"organization_id" => $organization->id
-						]);
-					}
+			$companies = $user->createdCompanies;
+			if($companies->isNotEmpty()) {
+				foreach($companies as $company) {
+					$company->update([
+						"organization_id" => $organization->id
+					]);
 				}
 			}
+
 		}
     }
 
