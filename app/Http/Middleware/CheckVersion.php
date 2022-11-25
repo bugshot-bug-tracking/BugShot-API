@@ -24,6 +24,7 @@ class CheckVersion
         ])->first();
 
         if($client_version != NULL) {
+            $request->attributes->add(['client_id' => $request->header('clientId')]);
             return $next($request);
         }
 
