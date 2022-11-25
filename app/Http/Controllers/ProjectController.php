@@ -205,7 +205,6 @@ class ProjectController extends Controller
 			}
         }
 
-
 		return ProjectResource::collection($projects);
 	}
 
@@ -240,7 +239,7 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 *
-	 *	 @OA\Parameter(
+	 *	@OA\Parameter(
 	 *		name="company_id",
      *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,

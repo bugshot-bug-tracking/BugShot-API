@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -19,6 +20,9 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\Project;
 
+// Services
+use App\Services\GetUserLocaleService;
+
 class InvitationReceivedUnregisteredUserNotification extends Notification
 {
     use Queueable;
@@ -30,6 +34,7 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
      */
     public function __construct($invitation)
     {
+		$this->locale = GetUserLocaleService::getLocale(Auth::user());
         $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
@@ -72,8 +77,8 @@ class InvitationReceivedUnregisteredUserNotification extends Notification
                 break;
         }
 
-        return (new InvitationReceivedUnregisteredUserMailable($this->invitation, $this->message))
-        ->subject('BugShot - ' . __('email.invitation-received'))
+        return (new InvitationReceivedUnregisteredUserMailable($this->locale, $this->invitation, $this->message))
+        ->subject('BugShot - ' . __('email.invitation-received', [], $this->locale))
         ->to($notifiable->routes['email']);
     }
 

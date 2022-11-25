@@ -31,6 +31,7 @@ use App\Services\GetUserLocaleService;
 // Models
 use App\Models\User;
 use App\Models\SettingUserValue;
+use App\Models\Organization;
 
 // Requests
 use App\Http\Requests\CustomEmailVerificationRequest;
@@ -134,14 +135,7 @@ class AuthController extends Controller
 			"password" => Hash::make($request->password),
 		]);
 
-        $url = URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ]
-        );
+		$url = $this->createVerificationUrl($user);
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
@@ -240,9 +234,16 @@ class AuthController extends Controller
 				'login_counter' => $userClient->first()->pivot->login_counter + 1
 			]);
 
-			// If the user has no settings yet, set them
+			// If the user has no settings yet, set them (This also means that he has not logged in for the first time yet)
 			if($user->settings->isEmpty()) {
 				$user->settings()->attach($this->getDefaultSettings());
+
+				// Also create the initial default organization for him
+				Organization::create([
+					"id" => $this->setId($request),
+					"user_id" => $user->id,
+					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+				]);
 			}
         } else {
             $user->clients()->attach($clientId, [
@@ -252,6 +253,13 @@ class AuthController extends Controller
 
 			// Create default set of settings for the user when first logged in
 			$user->settings()->attach($this->getDefaultSettings());
+
+			// Also create the initial default organization for him
+			Organization::create([
+				"id" => $this->setId($request),
+				"user_id" => $user->id,
+				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+			]);
         }
 
 		return response()->json([
@@ -465,6 +473,19 @@ class AuthController extends Controller
 				]
 			], 451);
 		}
+	}
+
+	public function createVerificationUrl(User $user) {
+        $url = URL::temporarySignedRoute(
+            'verification.verify',
+            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ]
+        );
+
+		return $url;
 	}
 
 	/**
@@ -695,7 +716,9 @@ class AuthController extends Controller
 	 **/
 	public function resendVerificationMail(Request $request) {
 		$user = User::find($request->user_id);
-		$user->sendEmailVerificationNotification();
+		$url = $this->createVerificationUrl($user);
+
+		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
 		return response(__('auth.verification-link-sent'), 200);
 	}

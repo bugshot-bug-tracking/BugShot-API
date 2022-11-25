@@ -60,7 +60,7 @@ class InvitationPolicy
             case $user->email == $invitation->target_email:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -106,7 +106,7 @@ class InvitationPolicy
             case $user->email == $invitation->target_email:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
