@@ -118,7 +118,7 @@ class CommentController extends Controller
 	 *	path="/interface/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="All comments.",
-	 *	operationId="allComments",
+	 *	operationId="allCommentsViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -292,7 +292,7 @@ class CommentController extends Controller
 	 *	path="/interface/bugs/{bug_id}/comments",
 	 *	tags={"Comment"},
 	 *	summary="Store one comment.",
-	 *	operationId="storeComment",
+	 *	operationId="storeCommentViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,

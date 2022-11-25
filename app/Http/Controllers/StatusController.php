@@ -150,7 +150,7 @@ class StatusController extends Controller
 	 *	path="/interface/statuses",
 	 *	tags={"Interface"},
 	 *	summary="All statuses.",
-	 *	operationId="allStatuses",
+	 *	operationId="allStatusesViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -458,7 +458,7 @@ class StatusController extends Controller
 	 *	path="/interface/statuses/{status_id}",
 	 *	tags={"Interface"},
 	 *	summary="Show one status.",
-	 *	operationId="showStatus",
+	 *	operationId="showStatusViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,

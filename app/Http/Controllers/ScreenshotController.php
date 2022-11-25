@@ -314,7 +314,7 @@ class ScreenshotController extends Controller
 	 *	path="/interface/bugs/{bug}/screenshots",
 	 *	tags={"Interface"},
 	 *	summary="Store one screenshots.",
-	 *	operationId="storeScreenshot",
+	 *	operationId="storeScreenshotViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="api-key",
 	 *		required=true,

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property string $designation
+ * @property string $client_url
+ * @property string $client_key
  * @property string $created_at
  * @property string $updated_at
  * @property UserClient[] $userClients

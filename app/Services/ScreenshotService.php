@@ -50,7 +50,7 @@ class ScreenshotService
         $sendBug = (new BugResource($bug));
         $sendBug->attributes->screenshots = array();
         $sendBug->attributes->screenshots[] = $screenshot;
-        $this->triggerInterfaces($sendBug, 3, $project->id);
+        triggerInterfaces($sendBug, 3, $project->id);
 
         return $screenshot;
     }
@@ -68,15 +68,5 @@ class ScreenshotService
     {
         $source = \Tinify\fromFile($filePath);
         $source->toFile($filePath);
-    }
-
-    public function triggerInterfaces(BugResource $bug, $trigger_id, $project_id)
-    {
-        $clients = Client::where('client_url', '!=', '')->get();
-        foreach ($clients as $item) {
-            (new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($bug), getBsHeader($item->client_key, $project_id));
-        }
-        // Fehlerprüfung?
-        return $bug;
     }
 }
