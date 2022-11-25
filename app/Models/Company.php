@@ -16,14 +16,14 @@ class Company extends Model
 
     /**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     * 
+     *
      * @var bool
      */
     public $incrementing = false;
@@ -42,7 +42,14 @@ class Company extends Model
 	 *  format="int64",
 	 * 	description="The id of the user that created the object."
 	 * )
-	 * 
+	 *
+	 * @OA\Property(
+	 * 	property="organization_id",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The id of the organization to which the object belongs."
+	 * )
+	 *
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
@@ -81,7 +88,7 @@ class Company extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "user_id", "designation", "color_hex"];
+	protected $fillable = ["id", "user_id", "designation", "organization_id", "color_hex"];
 
 	// Cascade the soft deletion to the given child resources
 	protected $cascadeDeletes = ['projects', 'invitations', 'image'];
@@ -92,6 +99,14 @@ class Company extends Model
 	public function creator()
 	{
 		return $this->belongsTo(User::class, 'user_id');
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function organization()
+	{
+		return $this->belongsTo(Organization::class);
 	}
 
     /**

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('organization_user_roles', function (Blueprint $table) {
-			$table->string('subscription_id')->nullable();
-            $table->foreign('subscription_id')->references('stripe_id')->on('subscriptions')->onDelete('set null');
+			$table->string('subscription_item_id')->nullable();
+			$table->foreign('subscription_item_id')->references('stripe_id')->on('subscription_items')->onDelete('set null');
 			$table->boolean('restricted_subscription_usage')->nullable();
         });
     }

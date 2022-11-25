@@ -19,6 +19,7 @@ class CompanySeeder extends Seeder
 		Company::create([
             'id' => 'BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB',
             'user_id' => 1, // Testuser John Doe
+			'organization_id' => 'AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA',
 			'designation' => 'John Doe Company',
             'color_hex' => '#ffffff'
 		]);

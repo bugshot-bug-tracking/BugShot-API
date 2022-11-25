@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->after('password', function ($table) {
-                $table->string('subscription_id')->nullable();
-                $table->foreign('subscription_id')->references('stripe_id')->on('subscriptions')->onDelete('set null');
+                $table->string('subscription_item_id')->nullable();
+                $table->foreign('subscription_item_id')->references('stripe_id')->on('subscription_items')->onDelete('set null');
             });
         });
     }
@@ -29,7 +29,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-			$table->dropColumn('subscription_id');
+			$table->dropColumn('subscription_item_id');
         });
     }
 };

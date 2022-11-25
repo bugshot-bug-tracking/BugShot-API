@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Organization;
 use App\Models\BillingAddress;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -36,31 +35,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -75,31 +56,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -114,31 +77,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -153,31 +98,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -192,31 +119,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -231,31 +140,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -270,31 +161,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -309,31 +182,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -348,31 +203,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -387,31 +224,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -426,31 +245,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -465,31 +266,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -504,31 +287,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
@@ -543,31 +308,13 @@ class BillingAddressPolicy
     {
         if($billingAddress->billing_addressable_type == 'organization') {
             $organization = $billingAddress->billingAddressable;
-  
-            // The user is the creator of the organization
-            if($organization->user_id == $user->id) {
-                return true;
-            }
-    
-            // The user isn't part of the organization
-            $organization = $user->organizations()->find($organization);
-            if ($organization == NULL) {
-                return false;
-            }
-    
-            $role = $organization->pivot->role_id;
-    
-            switch ($role) {
-                case 1:
-                    return true;
-                    break;
-                
-                default:
-                    return false;
-                    break;
-            }
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
         }
-  
+
         return $user->id == $billingAddress->billing_addressable_id;
     }
 }

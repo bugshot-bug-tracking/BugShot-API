@@ -3291,7 +3291,7 @@
                 ]
             }
         },
-        "/companies": {
+        "/organizations/{organization_id}/companies": {
             "get": {
                 "tags": [
                     "Company"
@@ -3315,6 +3315,15 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
                     },
                     {
                         "name": "include-projects",
@@ -3453,6 +3462,15 @@
                         "name": "locale",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
                     }
                 ],
                 "requestBody": {
@@ -3530,7 +3548,7 @@
                 ]
             }
         },
-        "/companies/{company_id}": {
+        "/organizations/{organization_id}/companies/{company_id}": {
             "get": {
                 "tags": [
                     "Company"
@@ -3556,12 +3574,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "include-projects",
@@ -3694,12 +3722,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     },
                     {
                         "name": "_method",
@@ -3796,12 +3834,22 @@
                         "required": false
                     },
                     {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        },
+                        "example": "AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA"
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "responses": {
@@ -3859,7 +3907,8 @@
                         "required": true,
                         "schema": {
                             "$ref": "#/components/schemas/Company/properties/id"
-                        }
+                        },
+                        "example": "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB"
                     }
                 ],
                 "responses": {
@@ -5273,6 +5322,106 @@
                         "name": "timestamp",
                         "in": "header",
                         "required": false
+                    },
+                    {
+                        "name": "include-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users-roles",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -5415,6 +5564,106 @@
                         "schema": {
                             "$ref": "#/components/schemas/Organization/properties/id"
                         }
+                    },
+                    {
+                        "name": "include-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-users-roles",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-company-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-organization-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
                     }
                 ],
                 "responses": {
@@ -5624,6 +5873,16 @@
                         "required": false
                     },
                     {
+                        "name": "include-users-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "organization_id",
                         "in": "path",
                         "required": true,
@@ -5667,6 +5926,197 @@
             }
         },
         "/organizations/{organization_id}/users/{user_id}": {
+            "get": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "A specific organization user.",
+                "operationId": "showOrganizationsUser",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-companies",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-company-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/OrganizationUserRole"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Organization"
+                ],
+                "summary": "Update a users role in a given organization.",
+                "operationId": "updateOrganizationUserRole",
+                "parameters": [
+                    {
+                        "name": "clientId",
+                        "in": "header",
+                        "required": true,
+                        "example": "1"
+                    },
+                    {
+                        "name": "version",
+                        "in": "header",
+                        "required": true,
+                        "example": "1.0.0"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "organization_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Organization/properties/id"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/User/properties/id"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "role_id"
+                                ],
+                                "properties": {
+                                    "role_id": {
+                                        "description": "The id of the new role",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrganizationUserRole"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
             "delete": {
                 "tags": [
                     "Organization"
@@ -5754,6 +6204,11 @@
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "status-id",
                         "in": "header",
                         "required": false
                     },
@@ -10058,6 +10513,10 @@
                                         "description": "Specifies the exact product of the susbcriptions of which the quantitiy shall be changed",
                                         "type": "string"
                                     },
+                                    "subscription_item_id": {
+                                        "description": "The id of the exact subscription item that should be assigned to the user",
+                                        "type": "string"
+                                    },
                                     "type": {
                                         "description": "Specifies if the quantity is an increment or decrement",
                                         "type": "string",
@@ -11973,6 +12432,11 @@
                         "type": "integer",
                         "format": "int64"
                     },
+                    "organization_id": {
+                        "description": "The id of the organization to which the object belongs.",
+                        "type": "string",
+                        "maxLength": 255
+                    },
                     "designation": {
                         "description": "The company name.",
                         "type": "string",
@@ -12276,7 +12740,7 @@
                         "type": "integer",
                         "format": "int64"
                     },
-                    "subscription_id": {
+                    "subscription_item_id": {
                         "description": "The id of the subscription, if the user has been given one.",
                         "type": "integer",
                         "format": "int64"
@@ -12595,7 +13059,7 @@
                     "is_admin": {
                         "type": "boolean"
                     },
-                    "subscription_id": {
+                    "subscription_item_id": {
                         "description": "The id of the subscription, if the user has been given one.",
                         "type": "integer",
                         "format": "int64"
