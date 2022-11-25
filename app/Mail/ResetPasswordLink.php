@@ -9,12 +9,14 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
+use App\Services\GetUserLocaleService;
 
 class ResetPasswordLink extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $url;
 
     /**
@@ -22,8 +24,9 @@ class ResetPasswordLink extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, $url)
+    public function __construct(User $notifiable, $locale, $url)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->url = $url;
     }
@@ -37,6 +40,6 @@ class ResetPasswordLink extends Mailable
     {
         // return $this->view('emails.' . App::currentLocale() . '.reset-password-link-mail');
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.reset-password-link-mail');
+        ->markdown('emails.' . $this->locale . '.reset-password-link-mail');
     }
 }

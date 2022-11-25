@@ -65,27 +65,10 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -103,7 +86,7 @@ class ProjectPolicy
             case 3:
                 return true;
                 break;
-            
+
             default:
                 return false;
                 break;
@@ -119,26 +102,10 @@ class ProjectPolicy
      */
     public function create(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -150,44 +117,10 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-
-        $role = $project->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -199,27 +132,10 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -271,6 +187,21 @@ class ProjectPolicy
     }
 
     /**
+     * Determine whether the user is authorized to update the users role in the given project
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateUserRole(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+    /**
      * Determine whether the user can remove a user from the model.
      *
      * @param  \App\Models\User  $user
@@ -278,44 +209,11 @@ class ProjectPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function removeUser(User $user, Project $project)
-    {        
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
-
-        $project = $user->projects()->find($project);
-        if ($project == NULL) {
-            return false;
-        }
-        
-        $role = $project->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 
     /**
@@ -327,27 +225,55 @@ class ProjectPolicy
      */
     public function viewInvitations(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
 
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
+    /**
+     * Determine whether the user can view the invitations of the the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function invite(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
 
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
+    /**
+     * Determine whether the user can store an url for the project
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createUrl(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
 
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUrl(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -359,7 +285,13 @@ class ProjectPolicy
             case 1:
                 return true;
                 break;
-            
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+
             default:
                 return false;
                 break;
@@ -367,35 +299,18 @@ class ProjectPolicy
     }
 
     /**
-     * Determine whether the user can view the invitations of the the model.
+     * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $company
+     * @param  \App\Models\Project  $project
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function invite(User $user, Project $project)
+    public function viewAnyUrls(User $user, Project $project)
     {
-        // Check company role
-        if($project->company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($project->company);
-        if ($company == NULL) {
-            return false;
-        }
-
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-        }
-
-        // Check project role
-        if($project->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -403,15 +318,110 @@ class ProjectPolicy
         }
 
         $role = $project->pivot->role_id;
-
         switch ($role) {
             case 1:
                 return true;
                 break;
-            
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+
             default:
                 return false;
                 break;
         }
+    }
+
+    /**
+     * Determine whether the user can store an url for the project
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateUrl(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteUrl(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewAnyApiTokens(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+	/**
+     * Determine whether the user can create an api token
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createApiToken(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+	/**
+     * Determine whether the user can update an api token
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateApiToken(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
+    }
+
+	/**
+     * Determine whether the user can delete the api token.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteApiToken(User $user, Project $project)
+    {
+		// Check if user is the manager or owner of the project
+		if($user->isPriviliegated('projects', $project)) {
+			return true;
+		};
     }
 }

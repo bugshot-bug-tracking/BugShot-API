@@ -29,6 +29,13 @@ class OrganizationUpdateRequest extends FormRequest
             return [
                 "id" => ["string", "max:36"],
                 "designation" => ["required", "string", "min:1", "max:255"],
+                // "street" => ["required", "string", "min:1", "max:255"],
+                // "housenumber" => ["required", "string", "min:1", "max:255"],
+                // "city" => ["required", "string", "min:1", "max:255"],
+                // "state" => ["required", "string", "min:1", "max:255"],
+                // "zip" => ["required", "string", "min:1", "max:255"],
+                // "country" => ["required", "string", "min:1", "max:255"],
+                // "tax_id" => ["required", "string", "min:1", "max:255"],
                 "timestamp" => ["date"]
             ];
         }

@@ -13,11 +13,12 @@ return [
     */
 
     'organization' => 'Organisation',
-    'company' => 'Firma',
+    'company' => 'Gruppe', // Formerly "Firma"
     'project' => 'Projekt',
     'bug' => 'Bug',
     'backlog' => 'Backlog',
     'todo' => 'ToDo',
     'doing' => 'In Arbeit',
-    'done' => 'Erledigt'
+    'done' => 'Erledigt',
+	'my-organization' => 'Meine Organisation'
 ];

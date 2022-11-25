@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Screenshot extends Model
 {
-	use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes, CascadeSoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -26,7 +27,14 @@ class Screenshot extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the but to which the object belongs."
 	 * )
-	 *
+	 * 
+	 * @OA\Property(
+	 * 	property="client_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The client that was used to create the bug."
+	 * )
+	 * 
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
@@ -71,7 +79,7 @@ class Screenshot extends Model
 	 *  nullable=true,
 	 * 	description="The y coordinate value of the marker relative to web page top."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
@@ -95,9 +103,12 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
+	protected $fillable = ["bug_id", "client_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
 
 	protected $touches = ["bug"];
+
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['markers'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -113,5 +124,13 @@ class Screenshot extends Model
 	public function markers()
 	{
 		return $this->hasMany(Marker::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function client()
+	{
+		return $this->belongsTo(Client::class);
 	}
 }

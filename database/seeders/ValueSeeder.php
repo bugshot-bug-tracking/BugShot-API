@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Setting;
+use App\Models\Value;
 use Illuminate\Database\Seeder;
 
-class SettingSeeder extends Seeder
+class ValueSeeder extends Seeder
 {
 	/**
 	 * Run the database seeds.
@@ -14,84 +14,47 @@ class SettingSeeder extends Seeder
 	 */
 	public function run()
 	{
-		Setting::create([
-			"id" => 1,
-			"designation" => "company_filter_alphabetical"
-		]);
+		$values = [
+			['designation' => 'az'],
+			['designation' => 'za'],
+			['designation' => 'newest_first'],
+			['designation' => 'oldest_first'],
+			['designation' => 'descending'],
+			['designation' => 'ascending'],
+			['designation' => 'critical_first'],
+			['designation' => 'minor_first'],
+			['designation' => 'ending_first'],
+			['designation' => 'ending_last'],
+			['designation' => 'activated'],
+			['designation' => 'deactivated'],
+			['designation' => 'en'],
+			['designation' => 'de'],
+			['designation' => 'fr'],
+			['designation' => 'ru'],
+			['designation' => 'ro'],
+			['designation' => 'show_all'],
+			['designation' => 'show_basic'],
+			['designation' => 'show_custom'],
+			['designation' => 'show_custom_show_secondary_view_all_projects_button'], // show_custom sub value
+			['designation' => 'show_custom_show_edit_priority_button'], // show_custom sub value
+			['designation' => 'show_custom_show_edit_deadline_button'], // show_custom sub value
+			['designation' => 'show_custom_show_edit_status_button'], // show_custom sub value
+			['designation' => 'receive_notifications_via_app'],
+			['designation' => 'receive_notifications_via_mail'],
+			['designation' => 'every_notification'],
+			['designation' => 'custom_notifications'],
+			['designation' => 'custom_notifications_new_bug_added'], // custom_notifications sub value
+			['designation' => 'custom_notifications_bug_change_of_status'], // custom_notifications sub value
+			['designation' => 'custom_notifications_report_created_deleted'], // custom_notifications sub value
+			['designation' => 'custom_notifications_report_finished'], // custom_notifications sub value
+			['designation' => 'custom_notifications_assignation_to_client_project_task'], // custom_notifications sub value
+			['designation' => 'custom_notifications_new_comments_and_replies'], // custom_notifications sub value
+			['designation' => 'custom_notifications_new_tag_in_comment'], // custom_notifications sub value
+			['designation' => 'light_mode'],
+			['designation' => 'dark_mode'],
+			['designation' => 'system']
+		];
 
-		Setting::create([
-			"id" => 2,
-			"designation" => "company_filter_creation"
-		]);
-
-		Setting::create([
-			"id" => 3,
-			"designation" => "company_filter_last_updated"
-		]);
-
-		Setting::create([
-			"id" => 4,
-			"designation" => "project_filter_alphabetical"
-		]);
-
-		Setting::create([
-			"id" => 5,
-			"designation" => "project_filter_creation"
-		]);
-
-		Setting::create([
-			"id" => 6,
-			"designation" => "project_filter_last_updated"
-		]);
-
-        Setting::create([
-			"id" => 7,
-			"designation" => "bug_filter_alphabetical"
-		]);
-
-		Setting::create([
-			"id" => 8,
-			"designation" => "bug_filter_creation"
-		]);
-
-		Setting::create([
-			"id" => 9,
-			"designation" => "bug_filter_priority"
-		]);
-
-        Setting::create([
-			"id" => 10,
-			"designation" => "bug_filter_deadline"
-		]);
-
-        Setting::create([
-			"id" => 11,
-			"designation" => "bug_filter_assigned_to"
-		]);
-
-        Setting::create([
-			"id" => 12,
-			"designation" => "user_settings_interface_language"
-		]);
-
-        Setting::create([
-			"id" => 13,
-			"designation" => "user_settings_show_ui_elements"
-		]);
-
-        Setting::create([
-			"id" => 14,
-			"designation" => "user_settings_receive_mail_notifications"
-		]);
-
-        Setting::create([
-			"id" => 15,
-			"designation" => "user_settings_select_notifications"
-		]);
-
-        Setting::create([
-			"id" => 16,
-			"designation" => "user_settings_darkmode"
-		]);
+		Value::insert($values);
 	}
 }

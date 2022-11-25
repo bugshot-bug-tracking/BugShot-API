@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
+use App\Services\GetUserLocaleService;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Cashier\Billable;
 
 /**
  * @OA\Schema()
@@ -17,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -62,10 +64,17 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * 	type="string",
 	 * 	nullable=true,
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="is_admin",
 	 * 	type="boolean"
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="subscription_item_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the subscription, if the user has been given one."
 	 * )
 	 *
 	 * @OA\Property(
@@ -88,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 *  format="date-time",
 	 * 	description="The deletion date."
 	 * )
-	 * 
+	 *
 	 */
 	protected $fillable = [
 		'first_name',
@@ -96,6 +105,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'email',
 		'password',
 		'email_verified_at',
+		'subscription_item_id'
 	];
 
 	/**
@@ -116,6 +126,14 @@ class User extends Authenticatable implements MustVerifyEmail
 	protected $casts = [
 		'email_verified_at' => 'datetime',
 	];
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+	public function billingAddress()
+	{
+		return $this->morphOne(BillingAddress::class, "billing_addressable");
+	}
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -190,6 +208,31 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function settings()
+    {
+        return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
+    }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function subscription()
+	{
+		return $this->hasOneThrough(Subscription::class, SubscriptionItem::class);
+		// return $this->belongsTo(Subscription::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function subscriptionItem()
+	{
+		return $this->belongsTo(SubscriptionItem::class);
+	}
+
+	/**
 	 * Send a password reset notification to the user.
 	 *
 	 * @param  string  $token
@@ -197,7 +240,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-	    $this->notify(new ResetPasswordLinkNotification($this->email, $token));
+	    $this->notify((new ResetPasswordLinkNotification($this->email, $token))->locale(GetUserLocaleService::getLocale($this)));
 	}
 
 	/**
@@ -213,7 +256,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * that company, eventhough he isn't part of all projects
 	 */
 	public function isPriviliegated($resourceType, $resource) {
-    
+
 		/**
 		 * Roles:
 		 * | id | designation
@@ -224,58 +267,57 @@ class User extends Authenticatable implements MustVerifyEmail
 		 */
 
 		// Check if the user is an admin
-		if($this->isAdministrator()) {
+		if ($this->isAdministrator()) {
 			return true;
 		}
 
 		// Check if the user is the creator of the resource
-		if($resource->user_id == $this->id) {
+		if ($resource->user_id == $this->id) {
 			return true;
 		}
-     
-		// Check if the user has a sufficient role within the given resource
-        if($resourceType == 'companies') {
-			// Get users resource role
-			$userCompanyRoleId = $this->companies->find($resource)->pivot->role_id;
 
-			switch ($userCompanyRoleId) {
-				case 1:
-					return true;
-					break;
-				
-				default:
-					return false;
-					break;
-			}
+		// Check if the user has a sufficient role within the given resource
+	 	if ($resourceType == 'organizations') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->organizations, $resource);
+		} else if ($resourceType == 'companies') {
+			// Get users resource role
+			return $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource->organization);
 		} else if ($resourceType == 'projects') {
 			// Get users resource role
-			$userProjectRoleId = $this->projects->find($resource)->pivot->role_id;
-
-			switch ($userProjectRoleId) {
-				case 1:
-					return true;
-					break;
-				
-				default:
-					return false;
-					break;
-			}
-		} else if($resourceType == 'bugs') {
+			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
+		} else if ($resourceType == 'bugs') {
 			// Get users resource role
-			$userBugRoleId = $this->bugs->find($resource)->pivot->role_id;
-
-			switch ($userBugRoleId) {
-				case 1:
-					return true;
-					break;
-				
-				default:
-					return false;
-					break;
-			}
+			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
 		}
 
 		return false;
+	}
+
+
+	// Checks if the given user is a owner or manager in the resource
+	private function isOwnerOrManagerInResource($resources, $resource) {
+		// Check if the user is the creator of the resource
+		if ($resource->user_id == $this->id) {
+			return true;
+		}
+
+		// Check if the resource contains the user
+		if ($resource->users->doesntContain($this)) {
+			return false;
+		}
+
+		$userResourceRoleId = $resources->find($resource)->pivot->role_id;
+
+		switch ($userResourceRoleId) {
+			case 1:
+				return true;
+				break;
+
+			default:
+				return false;
+				break;
+		}
 	}
 
 }

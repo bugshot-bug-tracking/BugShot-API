@@ -41,8 +41,8 @@ class PasswordResetSuccessfulNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new PasswordResetSuccessfulMailable($notifiable))
-        ->subject('BugShot - ' . __('email.password-reset-successful'))
+        return (new PasswordResetSuccessfulMailable($notifiable, $this->locale))
+        ->subject('BugShot - ' . __('email.password-reset-successful', [], $this->locale))
         ->to($notifiable->email);
     }
 

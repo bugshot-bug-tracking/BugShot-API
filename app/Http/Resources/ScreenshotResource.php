@@ -23,6 +23,7 @@ class ScreenshotResource extends JsonResource
 			"type" => "Screenshot",
 			"attributes" => [
 				"bug_id" => $this->bug_id,
+				"client_id" => $this->client_id,
 				"url" => $this->url,
 				"position_x" => $this->position_x,
 				"position_y" => $this->position_y,

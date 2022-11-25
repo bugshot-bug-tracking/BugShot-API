@@ -7,6 +7,7 @@ use App\Models\Company;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
+use App\Models\ProjectUserRole;
 
 class ProjectResource extends JsonResource
 {
@@ -17,13 +18,13 @@ class ProjectResource extends JsonResource
 	 * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
 	 */
 	public function toArray($request)
-	{	
+	{
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
 		$bugsDone = $statuses->last()->bugs->count();
 		$bugsTotal = $this->bugs->count();
 		$company = Company::find($this->company_id);
-		
+
 		$project = array(
 			"id" => $this->id,
 			"type" => "Project",
@@ -47,7 +48,7 @@ class ProjectResource extends JsonResource
 				"updated_at" => $this->updated_at
 			]
 		);
-		
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective statuses
@@ -57,8 +58,28 @@ class ProjectResource extends JsonResource
 
 		// Check if the response should contain the respective project users
 		if(array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
-			$users = $this->users;
-			$project['attributes']['users'] = UserResource::collection($users);
+			if(array_key_exists('include-project-users-roles', $header) && $header['include-project-users'][0] == "true") {
+				$projectUserRoles = ProjectUserRole::where("project_id", $this->id)
+				->with('user')
+				->with('role')
+				->get();
+
+				$project['attributes']['users'] = $projectUserRoles->map(function ($item, $key) {
+					return [
+						'id' => $item->user->id,
+						'type' => 'User',
+						'attributes' => [
+							"first_name" => $item->user->first_name,
+							"last_name" => $item->user->last_name,
+							"email" => $item->user->email,
+						],
+						'role' => new RoleResource($item->role)
+					];
+				});
+			} else {
+				$users = $this->users;
+				$project['attributes']['users'] = UserResource::collection($users);
+			}
 		}
 
 		// Check if the response should contain the respective project image
@@ -80,7 +101,7 @@ class ProjectResource extends JsonResource
 
 			$project['attributes']['role'] = new RoleResource($role);
 		}
-		
+
 		return $project;
 	}
 }

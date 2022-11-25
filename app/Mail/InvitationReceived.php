@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
+use App\Services\GetUserLocaleService;
 
 use App\Models\User;
 use App\Models\Invitation;
@@ -16,6 +17,7 @@ class InvitationReceived extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+	public $locale;
     public $invitation;
     public $entryMessage;
 
@@ -24,8 +26,9 @@ class InvitationReceived extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, Invitation $invitation, $message)
+    public function __construct(User $notifiable, $locale, Invitation $invitation, $message)
     {
+        $this->locale = $locale;
         $this->user = $notifiable;
         $this->invitation = $invitation;
         $this->entryMessage = $message;
@@ -38,8 +41,9 @@ class InvitationReceived extends Mailable
      */
     public function build()
     {
-        // return $this->view('emails.' . App::currentLocale() . '.invitation-mail');
-        return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . App::currentLocale() . '.invitation-mail');
+        $status = $this->from(config('mail.noreply'))
+        ->markdown('emails.' . $this->locale . '.invitation-mail');
+
+		return $status;
     }
 }

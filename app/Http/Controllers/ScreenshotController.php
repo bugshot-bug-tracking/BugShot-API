@@ -288,7 +288,195 @@ class ScreenshotController extends Controller
 		// Check if the user is authorized to create the screenshot
 		$this->authorize('create', [Screenshot::class, $bug->project]);
 
-		$screenshot = $screenshotService->store($bug, $request);
+		$client_id = $request->get('client_id');
+		$screenshot = $screenshotService->store($bug, $request, $client_id);
+
+		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
+		$markers = $request->markers;
+		if($markers != NULL) {
+			foreach($markers as $marker) {
+				$marker = (object) $marker;
+				$markerService->store($screenshot, $marker);
+			}
+		}
+
+		return new ScreenshotResource($screenshot);
+	}
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  ScreenshotStoreRequest  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/interface/bugs/{bug}/screenshots",
+	 *	tags={"Interface"},
+	 *	summary="Store one screenshots.",
+	 *	operationId="storeScreenshotViaApiKey",
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="position_x",
+	 *                  type="integer",
+	 *                  format="int32",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="position_y",
+	 *                  type="integer",
+	 *                  format="int32",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="web_position_x",
+	 *                  type="integer",
+	 *                  format="int32",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="web_position_y",
+	 *                  type="integer",
+	 *                  format="int32",
+	 *              ),
+	 * 	   			@OA\Property(
+	 *                  property="base64",
+	 *                  type="string"
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="markers",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *  					@OA\Property(
+	 *              		    property="position_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_height",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="target_width",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="scroll_x",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="scroll_y",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="screenshot_height",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="screenshot_width",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 * 	   					@OA\Property(
+	 *              		    property="target_full_selector",
+	 *              		    type="string"
+	 *              		),
+     * 	   					@OA\Property(
+	 *              		    property="target_short_selector",
+	 *              		    type="string"
+	 *              		),
+     * 	   					@OA\Property(
+	 *              		    property="target_html",
+	 *              		    type="string"
+	 *              		),
+	 * 					)
+	 *              ),
+	 *              required={"base64"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Screenshot"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function storeViaApiKey(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService)
+	{
+		$client_id = $request->get('client_id');
+		$screenshot = $screenshotService->store($bug, $request, $client_id);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;

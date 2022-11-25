@@ -10,15 +10,6 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
-     * Roles:
-     * | id | designation
-     * |----|----------------------
-     * | 1  | Manager
-     * | 2  | Team
-     * | 3  | Client (e.g. Customer)
-     */
-
-    /**
      * Perform pre-authorization checks.
      *
      * @param  \App\Models\User  $user
@@ -66,6 +57,39 @@ class UserPolicy
     }
 
     /**
+     * Determine whether the user can store a billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can retrieve the billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function getBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
+     * Determine whether the user can update a billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateBillingAddress(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+    /**
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
@@ -84,7 +108,7 @@ class UserPolicy
      */
     public function delete(User $user, User $requestedUser)
     {
-        return $user->id == $requestedUser->id;    
+        return $user->id == $requestedUser->id;
     }
 
     /**
@@ -116,6 +140,30 @@ class UserPolicy
      * @return \Illuminate\Auth\Access\Response|bool
      */
     public function checkProject(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+	/**
+     * Determine whether the user can retrieve the settings of the given user
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewSettings(User $user, User $requestedUser)
+    {
+        return $user->id == $requestedUser->id;
+    }
+
+	/**
+     * Determine whether the user can retrieve the settings of the given user
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\User  $requestedUser
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateSetting(User $user, User $requestedUser)
     {
         return $user->id == $requestedUser->id;
     }

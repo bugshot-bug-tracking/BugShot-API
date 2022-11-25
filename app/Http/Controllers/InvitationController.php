@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 // Resources
+use App\Http\Resources\OrganizationUserRoleResource;
 use App\Http\Resources\CompanyUserRoleResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\InvitationStatusResource;
 use App\Http\Resources\ProjectUserRoleResource;
 
 // Models
+use App\Models\Organization;
+use App\Models\OrganizationUserRole;
 use App\Models\Company;
 use App\Models\CompanyUserRole;
 use App\Models\Invitation;
@@ -138,7 +141,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -189,7 +192,7 @@ class InvitationController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/users/{user_id}/invitations/{invitation_id}",
+	 *	path="/invitations/{invitation_id}",
 	 *	tags={"Invitation"},
 	 *	summary="Delete a invitation.",
 	 *	operationId="deleteInvitation",
@@ -210,14 +213,6 @@ class InvitationController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
-	 *	),
-	 *	@OA\Parameter(
-	 *		name="user_id",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/User/properties/id"
-	 *		)
 	 *	),
 	 *
 	 *	@OA\Parameter(
@@ -250,7 +245,7 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(User $user, Invitation $invitation)
+	public function destroy(Invitation $invitation)
 	{
 		// Check if the user is authorized to delete the invitation
 		$this->authorize('delete', $invitation);
@@ -298,7 +293,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -358,11 +353,15 @@ class InvitationController extends Controller
 		$invitable = $invitation->invitable;
 
 		switch ($invitation->invitable_type) {
-			case Company::class:
+			case 'organization':
+				return $this->acceptOrganization($user, $invitation, $invitable);
+				break;
+
+			case 'company':
 				return $this->acceptCompany($user, $invitation, $invitable);
 				break;
 
-			case Project::class:
+			case 'project':
 				return $this->acceptProject($user, $invitation, $invitable);
 				break;
 		}
@@ -412,7 +411,7 @@ class InvitationController extends Controller
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="invitation_id",
 	 *		required=true,
@@ -471,6 +470,31 @@ class InvitationController extends Controller
 	}
 
 	/**
+	 * Generate the link between user, organization and role.
+	 *
+	 * @param  \App\Models\User  $user
+	 * @param  \App\Models\Invitation  $invitation
+	 * @param  \App\Models\Organization  $organization
+	 * @return \App\Http\Resources\OrganizationUserRoleResource
+	 */
+	private function acceptOrganization(User $user, Invitation $invitation, Organization $organization)
+	{
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($organization) !== NULL) {
+			$invitation->update(["status_id" => 5]);
+			return response()->json(["data" => [
+				"message" => __('application.already-part-of-the-organization')
+			]], 288);
+		}
+
+		$user->organizations()->attach($organization->id, ['role_id' => $invitation->role_id]);
+
+		$invitation->update(["status_id" => 2]);
+
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->first());
+	}
+
+	/**
 	 * Generate the link between user, company and role.
 	 *
 	 * @param  \App\Models\User  $user
@@ -489,6 +513,12 @@ class InvitationController extends Controller
 		}
 
 		$user->companies()->attach($company->id, ['role_id' => $invitation->role_id]);
+
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($company->organization) == NULL) {
+			$user->organizations()->attach($company->organization->id, ['role_id' => 2]); // Team
+		}
+
 		$invitation->update(["status_id" => 2]);
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->first());
@@ -516,7 +546,12 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this company
 		if ($user->companies->find($project->company) == NULL) {
-			$user->companies()->attach($project->company->id, ['role_id' => $invitation->role_id]);
+			$user->companies()->attach($project->company->id, ['role_id' => 2]); // Team
+		}
+
+		// Check if the user is already part of this organization
+		if ($user->organizations->find($project->company->organization) == NULL) {
+			$user->organizations()->attach($project->company->organization->id, ['role_id' => 2]); // Team
 		}
 
 		$invitation->update(["status_id" => 2]);

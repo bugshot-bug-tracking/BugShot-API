@@ -56,6 +56,10 @@ class OrganizationPolicy
      */
     public function view(User $user, Organization $organization)
     {
+        if($organization->user_id == $user->id) {
+            return true;
+        }
+
         return $user->organizations()->find($organization) != NULL;
     }
 
@@ -79,26 +83,10 @@ class OrganizationPolicy
      */
     public function update(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
     }
 
     /**
@@ -162,6 +150,41 @@ class OrganizationPolicy
     }
 
     /**
+     * Determine whether the user can view a specific user of this model
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function viewUser(User $user, Organization $organization, User $requestedUser)
+    {
+		// Check if the requested User is the auth user
+		if($user->id == $requestedUser->id) {
+			return true;
+		}
+
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
+    }
+
+    /**
+     * Determine whether the user is authorized to update the users role in the given organization
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function updateUserRole(User $user, Organization $organization)
+    {
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
+    }
+
+    /**
      * Determine whether the user can remove a user from the model.
      *
      * @param  \App\Models\User  $user
@@ -170,26 +193,10 @@ class OrganizationPolicy
      */
     public function removeUser(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
     }
 
     /**
@@ -201,26 +208,10 @@ class OrganizationPolicy
      */
     public function viewInvitations(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
     }
 
     /**
@@ -232,25 +223,9 @@ class OrganizationPolicy
      */
     public function invite(User $user, Organization $organization)
     {
-        if($organization->user_id == $user->id) {
-            return true;
-        }
-
-        $organization = $user->organizations()->find($organization);
-        if ($organization == NULL) {
-            return false;
-        }
-        
-        $role = $organization->pivot->role_id;
-
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
     }
 }
