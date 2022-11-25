@@ -12,6 +12,7 @@ use App\Http\Resources\ScreenshotResource;
 // Services
 use App\Services\ScreenshotService;
 use App\Services\MarkerService;
+use App\Services\ApiCallService;
 
 // Models
 use App\Models\Bug;
@@ -283,13 +284,13 @@ class ScreenshotController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService)
+	public function store(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to create the screenshot
 		$this->authorize('create', [Screenshot::class, $bug->project]);
 
 		$client_id = $request->get('client_id');
-		$screenshot = $screenshotService->store($bug, $request, $client_id);
+		$screenshot = $screenshotService->store($bug, $request, $client_id, $apiCallService);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;
@@ -473,10 +474,10 @@ class ScreenshotController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function storeViaApiKey(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService)
+	public function storeViaApiKey(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService, ApiCallService $apiCallService)
 	{
 		$client_id = $request->get('client_id');
-		$screenshot = $screenshotService->store($bug, $request, $client_id);
+		$screenshot = $screenshotService->store($bug, $request, $client_id, $apiCallService);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;

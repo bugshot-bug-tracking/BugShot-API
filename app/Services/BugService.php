@@ -34,7 +34,7 @@ use App\Models\Client;
 
 class BugService
 {
-	public function store(BugStoreRequest $request, Status $status, $bugId, ScreenshotService $screenshotService, AttachmentService $attachmentService)
+	public function store(BugStoreRequest $request, Status $status, $bugId, ScreenshotService $screenshotService, AttachmentService $attachmentService, ApiCallService $apiCallService)
 	{
 		// Get user information if a api key was used
 		$tempProject = $request->get('project');
@@ -92,10 +92,10 @@ class BugService
 			}
 		}
 
-		return triggerInterfaces(new BugResource($bug), 1, $status->project_id);
+		return $apiCallService->triggerInterfaces(new BugResource($bug), 1, $status->project_id);
 	}
 
-	public function update(BugUpdateRequest $request, BugController $controller, Status $status, Bug $bug)
+	public function update(BugUpdateRequest $request, BugController $controller, Status $status, Bug $bug, ApiCallService $apiCallService)
 	{
 		// Check if the order of the bugs or the status has to be synchronized
 		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
@@ -111,12 +111,11 @@ class BugService
 
 		// if status equal to old one send normal update Trigger else send status update trigger
 		if ($request->status_id !=  null && $status->id == $request->status_id) {
-			return triggerInterfaces(new BugResource($bug), 2, $status->project_id);
+			return $apiCallService->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
 		} else {
 			// Add status?
-			return triggerInterfaces(new BugResource($bug), 4, $status->project_id);
+			return $apiCallService->triggerInterfaces(new BugResource($bug), 4, $status->project_id);
 		}
-
 	}
 
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)

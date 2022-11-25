@@ -23,7 +23,7 @@ class CommentService
 		return $val;
 	}
 
-	public function store(CommentStoreRequest $request, Bug $bug, $user_id, CommentController $commentController, $client_id)
+	public function store(CommentStoreRequest $request, Bug $bug, $user_id, CommentController $commentController, $client_id, ApiCallService $apiCallService)
 	{
 		// Check if the the request already contains a UUID for the comment
 		$id = $commentController->setId($request);
@@ -51,7 +51,7 @@ class CommentService
 		// Broadcast the event
 		broadcast(new CommentSent($commentController->user, $comment, $request->tagged))->toOthers();
 
-		return triggerInterfaces(new CommentResource($comment), 5, $bug->project->id);
+		return $apiCallService->triggerInterfaces(new CommentResource($comment), 5, $bug->project->id);
 	}
 
 }

@@ -46,29 +46,29 @@ class ApiCallService
 		curl_close($curl);
 		return $result;
 	}
-}
 
 
-function getBsHeader($client_key, $project_id)
-{
-    $authorization = "client-key: " . $client_key;
+	function getBsHeader($client_key, $project_id)
+	{
+		$authorization = "client-key: " . $client_key;
 
-    $BSheaders = array(
-        "Accept: application/json",
-        "Content-Type: application/json",
-		"project-id: " . $project_id,
-		$authorization,
-    );
+		$BSheaders = array(
+			"Accept: application/json",
+			"Content-Type: application/json",
+			"project-id: " . $project_id,
+			$authorization,
+		);
 
-    return $BSheaders;
-}
+		return $BSheaders;
+	}
 
-function triggerInterfaces($resource, $trigger_id, $project_id)
+	function triggerInterfaces($resource, $trigger_id, $project_id)
 	{
 		$clients = Client::where('client_url', '!=', '')->get();
 		foreach ($clients as $item) {
-			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($resource), getBsHeader($item->client_key, $project_id));
+			$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($resource), $this->getBsHeader($item->client_key, $project_id));
 		}
-		
+
 		return $resource;
 	}
+}
