@@ -92,7 +92,7 @@ class BugService
 			}
 		}
 
-		return $this->triggerInterfaces(new BugResource($bug), 1, $status->project_id);
+		return triggerInterfaces(new BugResource($bug), 1, $status->project_id);
 	}
 
 	public function update(BugUpdateRequest $request, BugController $controller, Status $status, Bug $bug)
@@ -111,10 +111,10 @@ class BugService
 
 		// if status equal to old one send normal update Trigger else send status update trigger
 		if ($request->status_id !=  null && $status->id == $request->status_id) {
-			return $this->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
+			return triggerInterfaces(new BugResource($bug), 2, $status->project_id);
 		} else {
 			// Add status?
-			return $this->triggerInterfaces(new BugResource($bug), 4, $status->project_id);
+			return triggerInterfaces(new BugResource($bug), 4, $status->project_id);
 		}
 
 	}
@@ -139,15 +139,5 @@ class BugService
 		// }
 
 		return response($val, 204);
-	}
-
-	public function triggerInterfaces(BugResource $bug, $trigger_id, $project_id)
-	{
-		$clients = Client::where('client_url', '!=', '')->get();
-		foreach ($clients as $item) {
-			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($bug), getBsHeader($item->client_key, $project_id));
-		}
-		// Fehlerprüfung?
-		return $bug;
 	}
 }

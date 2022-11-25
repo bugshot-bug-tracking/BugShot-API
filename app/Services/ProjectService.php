@@ -47,8 +47,8 @@ class ProjectService
             "color_hex" => $color_hex,
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
-        
-        return $this->triggerInterfaces(new ProjectResource($project), 6, $project->id);
+
+        return triggerInterfaces(new ProjectResource($project), 6, $project->id);
     }
 
     public function users(Project $project)
@@ -77,15 +77,5 @@ class ProjectService
 		$invitation = $invitationService->send($request, $project, $id, $recipient_mail);
 
 		return new InvitationResource($invitation);
-	}
-
-    public function triggerInterfaces(ProjectResource $project, $trigger_id, $project_id)
-	{
-		$clients = Client::where('client_url', '!=', '')->get();
-		foreach ($clients as $item) {
-			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($project), getBsHeader($item->client_key, $project_id));
-		}
-		// Fehlerprüfung?
-		return $project;
 	}
 }

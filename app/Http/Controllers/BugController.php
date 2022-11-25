@@ -336,7 +336,7 @@ class BugController extends Controller
 	 *	path="/interface/bugs",
 	 *	tags={"Interface"},
 	 *	summary="Store one bug.",
-	 *	operationId="storeBug",
+	 *	operationId="storeBugViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -603,7 +603,7 @@ class BugController extends Controller
 	 *	path="/interface/bugs/{bug}",
 	 *	tags={"Interface"},
 	 *	summary="Show one bug.",
-	 *	operationId="showBug",
+	 *	operationId="showBugViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="api-key",
 	 *		required=true,
@@ -870,7 +870,7 @@ class BugController extends Controller
 	 *	path="/interface/bugs/{bug_id}",
 	 *	tags={"Interface"},
 	 *	summary="Update a bug.",
-	 *	operationId="updateBug",
+	 *	operationId="updateBugViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -1111,7 +1111,7 @@ class BugController extends Controller
 	 *	path="/interface/bugs/{bug_id}",
 	 *	tags={"Interface"},
 	 *	summary="Delete a bug.",
-	 *	operationId="deleteBug",
+	 *	operationId="deleteBugViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="api-key",
 	 *		required=true,

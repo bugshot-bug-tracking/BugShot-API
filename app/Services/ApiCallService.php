@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Client;
 use stdClass;
 
 class ApiCallService
@@ -58,6 +59,16 @@ function getBsHeader($client_key, $project_id)
 		"project-id: " . $project_id,
 		$authorization,
     );
-	
+
     return $BSheaders;
 }
+
+function triggerInterfaces($resource, $trigger_id, $project_id)
+	{
+		$clients = Client::where('client_url', '!=', '')->get();
+		foreach ($clients as $item) {
+			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($resource), getBsHeader($item->client_key, $project_id));
+		}
+		
+		return $resource;
+	}

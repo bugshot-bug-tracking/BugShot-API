@@ -518,7 +518,7 @@ class ProjectController extends Controller
 	 *	path="/interface/projects",
 	 *	tags={"Interface"},
 	 *	summary="Show one project.",
-	 *	operationId="showProject",
+	 *	operationId="showProjectViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -755,7 +755,7 @@ class ProjectController extends Controller
 	 *	path="/interface/projects",
 	 *	tags={"Project"},
 	 *	summary="Update a project.",
-	 *	operationId="updateProject",
+	 *	operationId="updateProjectViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -1298,7 +1298,7 @@ class ProjectController extends Controller
 	 *	path="/interface/projects/users",
 	 *	tags={"Project"},
 	 *	summary="All project users.",
-	 *	operationId="allProjectsUsers",
+	 *	operationId="allProjectsUsersViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,
@@ -1717,7 +1717,7 @@ class ProjectController extends Controller
 	 *	path="/interface/projects/users/invite",
 	 *	tags={"Interface"},
 	 *	summary="Invite a user to the project and asign it a role",
-	 *	operationId="inviteProject",
+	 *	operationId="inviteProjectViaApiKey",
 	 * 	@OA\Parameter(
 	 *		name="locale",
 	 *		required=false,

@@ -12,11 +12,6 @@
         },
         "version": "1.0.0"
     },
-    "servers": [
-        {
-            "url": "http://api.test/api/v1"
-        }
-    ],
     "paths": {
         "/{type}/{id}/api-tokens": {
             "get": {
@@ -1842,6 +1837,142 @@
                 ]
             }
         },
+        "/interface/bugs": {
+            "post": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Store one bug.",
+                "operationId": "storeBugViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "designation",
+                                    "url",
+                                    "priority_id"
+                                ],
+                                "properties": {
+                                    "designation": {
+                                        "description": "The bug name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "The bug description",
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "description": "The bug url",
+                                        "type": "string"
+                                    },
+                                    "priority_id": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "operating_system": {
+                                        "type": "string"
+                                    },
+                                    "browser": {
+                                        "type": "string"
+                                    },
+                                    "selector": {
+                                        "type": "string"
+                                    },
+                                    "resolution": {
+                                        "type": "string"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    },
+                                    "screenshots": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
+                                                },
+                                                "position_x": {
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "position_y": {
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "web_position_x": {
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "web_position_y": {
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "attachments": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "base64": {
+                                                    "type": "string"
+                                                },
+                                                "designation": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bug"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
         "/statuses/{status_id}/bugs/{bug_id}": {
             "get": {
                 "tags": [
@@ -2158,6 +2289,268 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/interface/bugs/{bug}": {
+            "get": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Show one bug.",
+                "operationId": "showBugViaApiKey",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bug"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
+        "/interface/bugs/{bug_id}": {
+            "put": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Update a bug.",
+                "operationId": "updateBugViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "designation",
+                                    "priority_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "project_id": {
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "designation": {
+                                        "description": "The bug name",
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "description": "The bug description",
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "description": "The bug url",
+                                        "type": "string"
+                                    },
+                                    "status_id": {
+                                        "type": "string"
+                                    },
+                                    "order_number": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "priority_id": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "operating_system": {
+                                        "type": "string"
+                                    },
+                                    "browser": {
+                                        "type": "string"
+                                    },
+                                    "selector": {
+                                        "type": "string"
+                                    },
+                                    "resolution": {
+                                        "type": "string"
+                                    },
+                                    "ai_id": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Bug"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Delete a bug.",
+                "operationId": "deleteBugViaApiKey",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Success"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
             }
         },
         "/bugs/{bug_id}/assign-user": {
@@ -2515,6 +2908,146 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/interface/bugs/{bug_id}/comments": {
+            "get": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "All comments.",
+                "operationId": "allCommentsViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Comment"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Comment"
+                ],
+                "summary": "Store one comment.",
+                "operationId": "storeCommentViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "bug_id",
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "The message",
+                                        "type": "string"
+                                    },
+                                    "tagged": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "user_id": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Comment"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
             }
         },
         "/bugs/{bug_id}/comments/{comment_id}": {
@@ -6269,6 +6802,195 @@
                 ]
             }
         },
+        "/interface/projects": {
+            "get": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Show one project.",
+                "operationId": "showProjectViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "include-statuses",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-project-image",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Update a project.",
+                "operationId": "updateProjectViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "_method",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "PUT"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "designation",
+                                    "url"
+                                ],
+                                "properties": {
+                                    "designation": {
+                                        "description": "The project name",
+                                        "type": "string"
+                                    },
+                                    "url": {
+                                        "description": "The project url",
+                                        "type": "string"
+                                    },
+                                    "color_hex": {
+                                        "description": "The hexcode of the color (optional)",
+                                        "type": "string"
+                                    },
+                                    "base64": {
+                                        "description": "The base64 string of the image belonging to the company (optional)",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Project"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
         "/projects/{project_id}/image": {
             "get": {
                 "tags": [
@@ -6591,6 +7313,55 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/interface/projects/users": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "All project users.",
+                "operationId": "allProjectsUsersViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProjectUserRole"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
             }
         },
         "/projects/{project_id}/users/{user_id}": {
@@ -6924,6 +7695,80 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/interface/projects/users/invite": {
+            "post": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Invite a user to the project and asign it a role",
+                "operationId": "inviteProjectViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "target_email",
+                                    "role_id"
+                                ],
+                                "properties": {
+                                    "target_email": {
+                                        "description": "The invited user email.",
+                                        "type": "string"
+                                    },
+                                    "role_id": {
+                                        "description": "The invited user role.",
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Invitation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
             }
         },
         "/administration/roles": {
@@ -7512,6 +8357,159 @@
                 ]
             }
         },
+        "/interface/bugs/{bug}/screenshots": {
+            "post": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Store one screenshots.",
+                "operationId": "storeScreenshotViaApiKey",
+                "parameters": [
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "bug_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Bug/properties/id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "base64"
+                                ],
+                                "properties": {
+                                    "position_x": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "position_y": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "web_position_x": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "web_position_y": {
+                                        "type": "integer",
+                                        "format": "int32"
+                                    },
+                                    "base64": {
+                                        "type": "string"
+                                    },
+                                    "markers": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "position_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "position_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "web_position_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "web_position_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_height": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_width": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "scroll_x": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "scroll_y": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "screenshot_height": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "screenshot_width": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "target_full_selector": {
+                                                    "type": "string"
+                                                },
+                                                "target_short_selector": {
+                                                    "type": "string"
+                                                },
+                                                "target_html": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Screenshot"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
         "/bugs/{bug_id}/screenshots/{screenshot_id}": {
             "get": {
                 "tags": [
@@ -7958,6 +8956,90 @@
                 ]
             }
         },
+        "/interface/statuses": {
+            "get": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "All statuses.",
+                "operationId": "allStatusesViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Status"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            }
+        },
         "/projects/{project_id}/statuses/{status_id}": {
             "get": {
                 "tags": [
@@ -8240,6 +9322,95 @@
                         "sanctum": []
                     }
                 ]
+            }
+        },
+        "/interface/statuses/{status_id}": {
+            "get": {
+                "tags": [
+                    "Interface"
+                ],
+                "summary": "Show one status.",
+                "operationId": "showStatusViaApiKey",
+                "parameters": [
+                    {
+                        "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "api-key",
+                        "in": "header",
+                        "required": true,
+                        "example": "d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+                    },
+                    {
+                        "name": "status_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/Status/properties/id"
+                        }
+                    },
+                    {
+                        "name": "include-bugs",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-screenshots",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-markers",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-comments",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-bug-users",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-attachment-base64",
+                        "in": "header",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Status"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
             }
         },
         "/stripe/checkout/create-session": {
@@ -10669,6 +11840,11 @@
                         "type": "integer",
                         "format": "int64"
                     },
+                    "client_id": {
+                        "description": "The client that was used to create the bug.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
                     "deadline": {
                         "description": "The deadline of the bug.",
                         "type": "string",
@@ -10755,6 +11931,11 @@
                     },
                     "user_id": {
                         "description": "The id of the user to which the object belongs.",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "client_id": {
+                        "description": "The client that was used to create the bug.",
                         "type": "integer",
                         "format": "int64"
                     },
@@ -11210,6 +12391,11 @@
                         "description": "The id of the but to which the object belongs.",
                         "type": "string",
                         "maxLength": 255
+                    },
+                    "client_id": {
+                        "description": "The client that was used to create the bug.",
+                        "type": "integer",
+                        "format": "int64"
                     },
                     "designation": {
                         "description": "The screenshot name.",

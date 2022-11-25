@@ -51,16 +51,7 @@ class CommentService
 		// Broadcast the event
 		broadcast(new CommentSent($commentController->user, $comment, $request->tagged))->toOthers();
 
-		return $this->triggerInterfaces(new CommentResource($comment), 5, $bug->project->id);
+		return triggerInterfaces(new CommentResource($comment), 5, $bug->project->id);
 	}
 
-	public function triggerInterfaces(CommentResource $comment, $trigger_id, $project_id)
-	{
-		$clients = Client::where('client_url', '!=', '')->get();
-		foreach ($clients as $item) {
-			(new ApiCallService)->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, json_encode($comment), getBsHeader($item->client_key, $project_id));
-		}
-		// Fehlerprüfung?
-		return $comment;
-	}
 }
