@@ -12,6 +12,11 @@
         },
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "https://dev-api.bugshot.de/api/v1"
+        }
+    ],
     "paths": {
         "/{type}/{id}/api-tokens": {
             "get": {
@@ -2913,7 +2918,7 @@
         "/interface/bugs/{bug_id}/comments": {
             "get": {
                 "tags": [
-                    "Comment"
+                    "Interface"
                 ],
                 "summary": "All comments.",
                 "operationId": "allCommentsViaApiKey",
@@ -2968,7 +2973,7 @@
             },
             "post": {
                 "tags": [
-                    "Comment"
+                    "Interface"
                 ],
                 "summary": "Store one comment.",
                 "operationId": "storeCommentViaApiKey",
@@ -7359,7 +7364,7 @@
             },
             "put": {
                 "tags": [
-                    "Project"
+                    "Interface"
                 ],
                 "summary": "Update a project.",
                 "operationId": "updateProjectViaApiKey",
@@ -7773,7 +7778,7 @@
         "/interface/projects/users": {
             "get": {
                 "tags": [
-                    "Project"
+                    "Interface"
                 ],
                 "summary": "All project users.",
                 "operationId": "allProjectsUsersViaApiKey",

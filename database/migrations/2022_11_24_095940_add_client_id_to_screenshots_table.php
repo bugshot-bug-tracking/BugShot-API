@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('screenshots', function (Blueprint $table) {
             $table->after('bug_id', function ($table) {
-                $table->bigInteger('client_id')->unsigned();;
+                $table->unsignedBigInteger('client_id')->nullable();
 			    $table->foreign('client_id')->references('id')->on('clients');
             });
         });

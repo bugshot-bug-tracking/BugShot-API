@@ -47,12 +47,7 @@ class ScreenshotService
             "web_position_y" =>  $screenshot->web_position_y
         ]);
 
-        $sendBug = (new BugResource($bug));
-        $sendBug->attributes->screenshots = array();
-        $sendBug->attributes->screenshots[] = $screenshot;
-        $apiCallService->triggerInterfaces($sendBug, 3, $project->id);
-
-        return $screenshot;
+        return $apiCallService->triggerInterfaces($screenshot, 3, $project->id);
     }
 
     // Delete the screenshot

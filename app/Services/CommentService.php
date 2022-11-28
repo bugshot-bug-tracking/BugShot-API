@@ -49,7 +49,7 @@ class CommentService
 		}
 
 		// Broadcast the event
-		broadcast(new CommentSent($commentController->user, $comment, $request->tagged))->toOthers();
+		broadcast(new CommentSent(User::find($user_id), $comment, $request->tagged))->toOthers();
 
 		return $apiCallService->triggerInterfaces(new CommentResource($comment), 5, $bug->project->id);
 	}
