@@ -21,6 +21,7 @@ use App\Http\Resources\ProjectMarkerResource;
 use App\Services\ImageService;
 use App\Services\InvitationService;
 use App\Services\ProjectService;
+use App\Services\ApiCallService;
 
 // Models
 use App\Models\User;
@@ -734,12 +735,12 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService, ProjectService $projectService)
+	public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService, ProjectService $projectService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to update the project
 		$this->authorize('update', $project);
 
-		return $projectService->update($request, $company, $project, $imageService);
+		return $projectService->update($request, $company, $project, $imageService, $apiCallService);
 	}
 
 	/**
@@ -835,11 +836,11 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function updateViaApiKey(ProjectUpdateRequest $request, ImageService $imageService, ProjectService $projectService)
+	public function updateViaApiKey(ProjectUpdateRequest $request, ImageService $imageService, ProjectService $projectService, ApiCallService $apiCallService)
 	{
         $project = $request->get('project');
 		$company = Company::find($project->company_id);
-		return $projectService->update($request, $company, $project, $imageService);
+		return $projectService->update($request, $company, $project, $imageService, $apiCallService);
 	}
 
 	/**
