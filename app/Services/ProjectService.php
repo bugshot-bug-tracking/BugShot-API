@@ -23,7 +23,7 @@ use App\Models\User;
 class ProjectService
 {
 
-    public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService)
+    public function update(ProjectUpdateRequest $request, Company $company, Project $project, ImageService $imageService, ApiCallService $apiCallService)
     {
         // Check if the project comes with an image (or a color)
         $image = $project->image;
@@ -48,7 +48,7 @@ class ProjectService
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 
-        return triggerInterfaces(new ProjectResource($project), 6, $project->id);
+        return $apiCallService->triggerInterfaces(new ProjectResource($project), 6, $project->id);
     }
 
     public function users(Project $project)

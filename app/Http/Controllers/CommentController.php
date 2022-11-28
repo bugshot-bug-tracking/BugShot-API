@@ -13,6 +13,7 @@ use App\Http\Resources\CommentResource;
 
 // Services
 use App\Services\CommentService;
+use App\Services\ApiCallService;
 
 // Models
 use App\Models\Comment;
@@ -272,13 +273,13 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CommentStoreRequest $request, Bug $bug, CommentService $commentService)
+	public function store(CommentStoreRequest $request, Bug $bug, CommentService $commentService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to create the comment
 		$this->authorize('create', [Comment::class, $bug->project]);
 
 		$client_id = $request->get('client_id');
-		return $commentService->store($request,$bug, Auth::id(), $this, $client_id);
+		return $commentService->store($request,$bug, Auth::id(), $this, $client_id, $apiCallService);
 	}
 	
 	/**
@@ -363,14 +364,14 @@ class CommentController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function storeViaApiKey(CommentStoreRequest $request, Bug $bug, CommentService $commentService)
+	public function storeViaApiKey(CommentStoreRequest $request, Bug $bug, CommentService $commentService, ApiCallService $apiCallService)
 	{
 		// Get user information if a api key was used
 		$tempProject = $request->get('project');
 		$creator_id = $tempProject->user_id;
 
 		$client_id = $request->get('client_id');
-		return $commentService->store($request,$bug, $creator_id, $this, $client_id);
+		return $commentService->store($request,$bug, $creator_id, $this, $client_id, $apiCallService);
 	}
 
 	/**

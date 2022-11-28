@@ -17,6 +17,7 @@ use App\Services\ScreenshotService;
 use App\Services\AttachmentService;
 use App\Services\CommentService;
 use App\Services\BugService;
+use App\Services\ApiCallService;
 
 // Models
 use App\Models\Bug;
@@ -314,7 +315,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService)
+	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to create the bug
 		$this->authorize('create', [Bug::class, $status->project]);
@@ -322,7 +323,7 @@ class BugController extends Controller
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
 
-		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService);
+		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService, $apiCallService);
 	}
 
 	/**
@@ -468,7 +469,7 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function storeViaApiKey(BugStoreRequest $request, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService)
+	public function storeViaApiKey(BugStoreRequest $request, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
 	{
 		//get backlog of sent project (api key)
 		$tempProject = $request->get('project');
@@ -478,7 +479,7 @@ class BugController extends Controller
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
 
-		return $bugService->store($request, $returnStatus, $id, $screenshotService, $attachmentService);
+		return $bugService->store($request, $returnStatus, $id, $screenshotService, $attachmentService, $apiCallService);
 	}
 
 	/**
@@ -850,12 +851,12 @@ class BugController extends Controller
 	 * )
 	 **/
 
-	public function update(BugUpdateRequest $request, Status $status, Bug $bug, BugService $bugService)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug, BugService $bugService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
-		return $bugService->update($request, $this, $status, $bug);
+		return $bugService->update($request, $this, $status, $bug, $apiCallService);
 	}
 
 	/**
@@ -1004,14 +1005,14 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function updateViaApiKey(BugUpdateRequest $request, Bug $bug, BugService $bugService)
+	public function updateViaApiKey(BugUpdateRequest $request, Bug $bug, BugService $bugService, ApiCallService $apiCallService)
 	{
 		//Find  bug in project and get status
 		$tempProject = $request->get('project');
 		foreach ($tempProject->statuses as $status) {
 			foreach ($status->bugs as $searchbug) {
 				if ($bug->id == $searchbug->id) {
-					return $bugService->update($request, $this, $status, $searchbug);
+					return $bugService->update($request, $this, $status, $searchbug, $apiCallService);
 				}
 			}
 		}

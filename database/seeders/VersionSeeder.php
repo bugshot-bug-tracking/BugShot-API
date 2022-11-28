@@ -86,7 +86,7 @@ class VersionSeeder extends Seeder
             'supported' => 1
 		]);
         
-        //Interface
+        //zapier interface
         Version::create([
             'client_id' => 9,
             'version_type_id' => 4,
