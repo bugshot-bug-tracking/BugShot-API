@@ -117,7 +117,7 @@ class CommentController extends Controller
 	/**
 	 * @OA\Get(
 	 *	path="/interface/bugs/{bug_id}/comments",
-	 *	tags={"Comment"},
+	 *	tags={"Interface"},
 	 *	summary="All comments.",
 	 *	operationId="allCommentsViaApiKey",
 	 * 	@OA\Parameter(
@@ -291,7 +291,7 @@ class CommentController extends Controller
 	/**
 	 * @OA\Post(
 	 *	path="/interface/bugs/{bug_id}/comments",
-	 *	tags={"Comment"},
+	 *	tags={"Interface"},
 	 *	summary="Store one comment.",
 	 *	operationId="storeCommentViaApiKey",
 	 * 	@OA\Parameter(

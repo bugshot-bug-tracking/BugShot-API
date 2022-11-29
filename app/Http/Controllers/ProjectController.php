@@ -753,7 +753,7 @@ class ProjectController extends Controller
 	/**
 	 * @OA\Put(
 	 *	path="/interface/projects",
-	 *	tags={"Project"},
+	 *	tags={"Interface"},
 	 *	summary="Update a project.",
 	 *	operationId="updateProjectViaApiKey",
 	 * 	@OA\Parameter(
@@ -1296,7 +1296,7 @@ class ProjectController extends Controller
 	/**
 	 * @OA\Get(
 	 *	path="/interface/projects/users",
-	 *	tags={"Project"},
+	 *	tags={"Interface"},
 	 *	summary="All project users.",
 	 *	operationId="allProjectsUsersViaApiKey",
 	 * 	@OA\Parameter(
