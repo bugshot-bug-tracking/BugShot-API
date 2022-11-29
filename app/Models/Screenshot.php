@@ -27,7 +27,14 @@ class Screenshot extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the but to which the object belongs."
 	 * )
-	 *
+	 * 
+	 * @OA\Property(
+	 * 	property="client_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The client that was used to create the bug."
+	 * )
+	 * 
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
@@ -96,7 +103,7 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
+	protected $fillable = ["bug_id", "client_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
 
 	protected $touches = ["bug"];
 
@@ -117,5 +124,13 @@ class Screenshot extends Model
 	public function markers()
 	{
 		return $this->hasMany(Marker::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function client()
+	{
+		return $this->belongsTo(Client::class);
 	}
 }

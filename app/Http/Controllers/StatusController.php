@@ -131,13 +131,104 @@ class StatusController extends Controller
 		// Check if the user is authorized to list the statuses of the project
 		$this->authorize('viewAny', [Status::class, $project]);
 
-		if($request->timestamp == NULL) {
-            $statuses = $project->statuses;
-        } else {
-            $statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
-        }
+		if ($request->timestamp == NULL) {
+			$statuses = $project->statuses;
+		} else {
+			$statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+		}
 
 		return StatusResource::collection($statuses);
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/statuses",
+	 *	tags={"Interface"},
+	 *	summary="All statuses.",
+	 *	operationId="allStatusesViaApiKey",
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Status")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function indexViaApiKey(Request $request)
+	{
+		return StatusResource::collection($request->get('project')->statuses);
 	}
 
 	/**
@@ -357,6 +448,108 @@ class StatusController extends Controller
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Status  $status
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/statuses/{status_id}",
+	 *	tags={"Interface"},
+	 *	summary="Show one status.",
+	 *	operationId="showStatusViaApiKey",
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-key",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="status_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Status/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Status"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function showViaApiKey(Request $request, Status $status)
+	{
+		//Check if user has access to bug
+		$tempProject = $request->get('project');
+		if ($status->project_id == $tempProject->id) {
+			return new StatusResource($status);
+		}
+	}
+
+	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  StatusUpdateRequest  $request
@@ -462,12 +655,12 @@ class StatusController extends Controller
 	 * )
 	 **/
 	public function update(StatusUpdateRequest $request, Project $project, Status $status)
-	{	
+	{
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
 		// Check if the order of the status has to be synchronized
-		if($request->order_number != $status->getOriginal('order_number')) {
+		if ($request->order_number != $status->getOriginal('order_number')) {
 			$this->synchronizeStatusOrder($request, $status, $project);
 		}
 
@@ -557,14 +750,14 @@ class StatusController extends Controller
 	{
 		// Check if the user is authorized to delete the status
 		$this->authorize('delete', [Status::class, $project]);
-		
+
 		// Move the bugs into a new status 
-		if($request->header('move') != NULL) {
+		if ($request->header('move') != NULL) {
 			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
 		}
 
 		$val = $status->delete();
-	
+
 		return response($val, 204);
 	}
 
@@ -576,14 +769,14 @@ class StatusController extends Controller
 
 		$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 		// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
-		if($originalOrderNumber < $newOrderNumber) {
+		if ($originalOrderNumber < $newOrderNumber) {
 			$statuses = $project->statuses->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
 		} else {
 			$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 		}
 
 		// Increase all the order numbers that are greater than the original status order number
-		foreach($statuses as $status) {
+		foreach ($statuses as $status) {
 			$status->update([
 				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
 			]);
@@ -596,7 +789,7 @@ class StatusController extends Controller
 		$status = Status::find($status_id);
 		$orderNumber = $status->bugs->max('order_number') + 1;
 
-		foreach($bugs as $bug) {
+		foreach ($bugs as $bug) {
 			$bug->update([
 				'status_id' => $status->id,
 				'order_number' => $orderNumber++

@@ -15,6 +15,7 @@ return [
     'thanks_for_using_our_app' => 'Vielen Dank, dass du unsere App benutzt!',
     'organization-user-already-invited' => 'User wurde bereits zur :organization eingeladen oder ist bereits Teil der :organization.',
     'company-user-already-invited' => 'User wurde bereits zur :company eingeladen oder ist bereits Teil der :company.',
+	'project-user-not-found' => 'Der User  wurde nicht gefunden!',
     'project-user-already-invited' => 'User wurde bereits zum :project eingeladen oder ist bereits Teil vom :project.',
     'invitation-not-for-you' => 'Diese Einladung ist nicht für dich bestimmt.',
     'invitation-already-in-progress' => 'Einladungsprozess läuft bereits.',
