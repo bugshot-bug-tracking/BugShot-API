@@ -76,7 +76,7 @@ class Organization extends Model
 	protected $fillable = ["id", "user_id", "designation"];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['companies', 'invitations', 'image', 'billingAddress'];
+	protected $cascadeDeletes = ['companies', 'invitations', 'billingAddress'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

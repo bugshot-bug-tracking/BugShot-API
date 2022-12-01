@@ -19,9 +19,9 @@ class BugUserRoleResource extends JsonResource
 		$role = $this->role;
 
 		return [
-			"bug" => new BugResource($bug),
-			"user" => new UserResource($user),
-			"role" => new RoleResource($role),
+			'bug' => new BugResource($bug),
+			'user' => new UserResource($user),
+			'role' => new RoleResource($role),
 		];
 	}
 }
