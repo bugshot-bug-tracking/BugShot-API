@@ -112,9 +112,10 @@ class BugService
 		// if status equal to old one send normal update Trigger else send status update trigger
 		if ($request->status_id !=  null && $status->id == $request->status_id) {
 			return $apiCallService->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
-		} else {
-			// Add status?
-			return $apiCallService->triggerInterfaces(new BugResource($bug), 4, $status->project_id);
+		} else if ($request->status_id !=  null) {
+			$request->headers->set('include-status-info', 'true');
+			$sendBug = json_decode(((new BugResource($bug))->response($request))->content());
+			return $apiCallService->triggerInterfaces($sendBug, 4, $status->project_id);
 		}
 	}
 
