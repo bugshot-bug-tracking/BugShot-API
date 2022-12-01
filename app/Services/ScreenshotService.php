@@ -11,7 +11,7 @@ class ScreenshotService
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store($bug, $screenshot, $client_id, ApiCallService $apiCallService)
+    public function store($bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
     {
         $base64 = $screenshot->base64;
 
@@ -46,6 +46,9 @@ class ScreenshotService
             "web_position_x" =>  $screenshot->web_position_x,
             "web_position_y" =>  $screenshot->web_position_y
         ]);
+
+        if($returnBase64)
+        {$screenshot->base64 = $decodedBase64;}
 
         return $apiCallService->triggerInterfaces($screenshot, 3, $project->id);
     }
