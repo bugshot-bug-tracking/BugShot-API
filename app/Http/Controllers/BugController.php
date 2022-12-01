@@ -856,7 +856,7 @@ class BugController extends Controller
 		// Check if the user is authorized to update the bug
 		$this->authorize('update', [Bug::class, $status->project]);
 
-		return $bugService->update($request, $this, $status, $bug, $apiCallService);
+		return $bugService->update($request, $status, $bug, $apiCallService);
 	}
 
 	/**
@@ -1009,13 +1009,11 @@ class BugController extends Controller
 	{
 		//Find  bug in project and get status
 		$tempProject = $request->get('project');
-		foreach ($tempProject->statuses as $status) {
-			foreach ($status->bugs as $searchbug) {
-				if ($bug->id == $searchbug->id) {
-					return $bugService->update($request, $this, $status, $searchbug, $apiCallService);
-				}
-			}
-		}
+		if ($bug->project_id == $tempProject->id) {
+			$tempstatus = Status::find($bug->status_id);
+			return $bugService->update($request, $tempstatus, $bug, $apiCallService);
+		} 
+		
 		$response = [
 			'success' => false,
 			'message' => 'The bug was not found or is not available to the user!',
@@ -1406,48 +1404,5 @@ class BugController extends Controller
 		$val = $bug->users()->detach($user);
 
 		return response($val, 204);
-	}
-
-	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
-	private function synchronizeBugOrder($request, $bug, $status)
-	{
-		$originalOrderNumber = $bug->getOriginal('order_number');
-		$newOrderNumber = $request->order_number;
-
-		// Check if the bug also changed it's status
-		if ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
-			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
-
-			// Descrease all the order numbers that were greater than the original bug order number
-			foreach ($originalStatusBugs as $originalStatusBug) {
-				$originalStatusBug->update([
-					"order_number" => $originalStatusBug->order_number - 1
-				]);
-			}
-
-			$newStatus = Status::find($request->status_id);
-			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
-
-			// Increase all the order numbers that are greater than the original bug order number
-			foreach ($newStatusBugs as $newStatusBug) {
-				$newStatusBug->update([
-					"order_number" => $newStatusBug->order_number + 1
-				]);
-			}
-		} else {
-			// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
-			if ($originalOrderNumber < $newOrderNumber) {
-				$statusBugs = $status->bugs->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
-			} else {
-				$statusBugs = $status->bugs->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
-			}
-
-			// Change the order number of all affected bugs
-			foreach ($statusBugs as $statusBug) {
-				$statusBug->update([
-					"order_number" => $originalOrderNumber < $newOrderNumber ? $statusBug->order_number - 1 : $statusBug->order_number + 1
-				]);
-			}
-		}
 	}
 }

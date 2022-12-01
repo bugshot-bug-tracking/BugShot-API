@@ -14,6 +14,7 @@ return [
 
     'thanks_for_using_our_app' => 'Thank you for using our application',
     'organization-user-already-invited' => 'User has already been invited to the :organization or is already part of it.',
+	'organization-user-not-found' => 'User was not found in the given :organization!',
     'company-user-already-invited' => 'User has already been invited to the :company or is already part of it.',
     'project-user-already-invited' => 'User has already been invited to the :project or is already part of it.',
 	'project-user-not-found' => 'The user was not found!',

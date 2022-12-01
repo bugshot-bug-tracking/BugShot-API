@@ -24,7 +24,7 @@ class BugStoreRequest extends FormRequest
     public function rules()
     {
 		return [
-			"designation" => ["required", "string", "min:1", "max:1500"],
+			"designation" => ["required", "string", "min:1", "max:70"],
 			"description" => ["min:1", "max:1500", "string", "nullable"],
 			"url" => ["string", "max:65535", "nullable"],
 			"priority_id" => ["required", "integer", "exists:App\Models\Priority,id"],

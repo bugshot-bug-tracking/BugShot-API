@@ -95,11 +95,11 @@ class BugService
 		return $apiCallService->triggerInterfaces(new BugResource($bug), 1, $status->project_id);
 	}
 
-	public function update(BugUpdateRequest $request, BugController $controller, Status $status, Bug $bug, ApiCallService $apiCallService)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService)
 	{
 		// Check if the order of the bugs or the status has to be synchronized
 		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
-			$controller->synchronizeBugOrder($request, $bug, $status);
+			$this->synchronizeBugOrder($request, $bug, $status);
 		}
 
 		// Update the bug
@@ -112,9 +112,10 @@ class BugService
 		// if status equal to old one send normal update Trigger else send status update trigger
 		if ($request->status_id !=  null && $status->id == $request->status_id) {
 			return $apiCallService->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
-		} else {
-			// Add status?
-			return $apiCallService->triggerInterfaces(new BugResource($bug), 4, $status->project_id);
+		} else if ($request->status_id !=  null) {
+			$request->headers->set('include-status-info', 'true');
+			$sendBug = json_decode(((new BugResource($bug))->response($request))->content());
+			return $apiCallService->triggerInterfaces($sendBug, 4, $status->project_id);
 		}
 	}
 
@@ -138,5 +139,48 @@ class BugService
 		// }
 
 		return response($val, 204);
+	}
+
+	// Synchronize the order numbers of all the bugs, that are affected by the updated bug
+	private function synchronizeBugOrder($request, $bug, $status)
+	{
+		$originalOrderNumber = $bug->getOriginal('order_number');
+		$newOrderNumber = $request->order_number;
+
+		// Check if the bug also changed it's status
+		if ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id')) {
+			$originalStatusBugs = $status->bugs->where('order_number', '>', $originalOrderNumber);
+
+			// Descrease all the order numbers that were greater than the original bug order number
+			foreach ($originalStatusBugs as $originalStatusBug) {
+				$originalStatusBug->update([
+					"order_number" => $originalStatusBug->order_number - 1
+				]);
+			}
+
+			$newStatus = Status::find($request->status_id);
+			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
+
+			// Increase all the order numbers that are greater than the original bug order number
+			foreach ($newStatusBugs as $newStatusBug) {
+				$newStatusBug->update([
+					"order_number" => $newStatusBug->order_number + 1
+				]);
+			}
+		} else {
+			// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
+			if ($originalOrderNumber < $newOrderNumber) {
+				$statusBugs = $status->bugs->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
+			} else {
+				$statusBugs = $status->bugs->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
+			}
+
+			// Change the order number of all affected bugs
+			foreach ($statusBugs as $statusBug) {
+				$statusBug->update([
+					"order_number" => $originalOrderNumber < $newOrderNumber ? $statusBug->order_number - 1 : $statusBug->order_number + 1
+				]);
+			}
+		}
 	}
 }
