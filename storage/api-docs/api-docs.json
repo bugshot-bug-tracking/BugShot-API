@@ -12,6 +12,11 @@
         },
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://api.test/api/v1"
+        }
+    ],
     "paths": {
         "/{type}/{id}/api-tokens": {
             "get": {
@@ -2913,7 +2918,7 @@
         "/interface/bugs/{bug_id}/comments": {
             "get": {
                 "tags": [
-                    "Comment"
+                    "Interface"
                 ],
                 "summary": "All comments.",
                 "operationId": "allCommentsViaApiKey",
@@ -2968,7 +2973,7 @@
             },
             "post": {
                 "tags": [
-                    "Comment"
+                    "Interface"
                 ],
                 "summary": "Store one comment.",
                 "operationId": "storeCommentViaApiKey",
@@ -3971,6 +3976,11 @@
                         "required": false
                     },
                     {
+                        "name": "include-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "company_id",
                         "in": "path",
                         "required": true,
@@ -4035,6 +4045,11 @@
                     },
                     {
                         "name": "locale",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-company-role",
                         "in": "header",
                         "required": false
                     },
@@ -5873,6 +5888,16 @@
                         "required": false
                     },
                     {
+                        "name": "include-users-organization-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-subscriptions",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-users-companies",
                         "in": "header",
                         "required": false
@@ -5951,6 +5976,11 @@
                         "required": false
                     },
                     {
+                        "name": "include-users-organization-role",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
                         "name": "include-users-companies",
                         "in": "header",
                         "required": false
@@ -5962,6 +5992,11 @@
                     },
                     {
                         "name": "include-users-projects",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "include-users-project-role",
                         "in": "header",
                         "required": false
                     },
@@ -7359,7 +7394,7 @@
             },
             "put": {
                 "tags": [
-                    "Project"
+                    "Interface"
                 ],
                 "summary": "Update a project.",
                 "operationId": "updateProjectViaApiKey",
@@ -7773,7 +7808,7 @@
         "/interface/projects/users": {
             "get": {
                 "tags": [
-                    "Project"
+                    "Interface"
                 ],
                 "summary": "All project users.",
                 "operationId": "allProjectsUsersViaApiKey",

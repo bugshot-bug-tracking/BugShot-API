@@ -851,6 +851,11 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -894,11 +899,7 @@ class CompanyController extends Controller
 		$this->authorize('view', $company);
 
 		return CompanyUserRoleResource::collection(
-			CompanyUserRole::where("company_id", $company->id)
-				->with('company')
-				->with('user')
-				->with("role")
-				->get()
+			CompanyUserRole::where('company_id', $company->id)->get()
 		);
 	}
 
@@ -931,6 +932,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-company-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),

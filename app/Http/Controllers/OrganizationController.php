@@ -691,6 +691,16 @@ class OrganizationController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-users-organization-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-subscriptions",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-users-companies",
 	 *		required=false,
 	 *		in="header"
@@ -742,11 +752,7 @@ class OrganizationController extends Controller
 		$this->authorize('view', $organization);
 
 		return OrganizationUserRoleResource::collection(
-			OrganizationUserRole::where("organization_id", $organization->id)
-				->with('organization')
-				->with('user')
-				->with("role")
-				->get()
+			OrganizationUserRole::where("organization_id", $organization->id)->get()
 		);
 	}
 
@@ -781,6 +787,11 @@ class OrganizationController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="include-users-organization-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-users-companies",
 	 *		required=false,
 	 *		in="header"
@@ -792,6 +803,11 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-users-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-project-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -843,13 +859,15 @@ class OrganizationController extends Controller
 		// Check if the user is authorized to view the users of the organization
 		$this->authorize('viewUser',  [$organization, $user]);
 
-		return new OrganizationUserRoleResource(
-			OrganizationUserRole::where("organization_id", $organization->id)
-			->with('organization')
-			->with('user')
-			->with("role")
-			->first()
-		);
+		$organizationUserRole = OrganizationUserRole::where("organization_id", $organization->id)->where('user_id', $user->id)->first();
+
+		if(!isset($organizationUserRole)) {
+			return response()->json(["data" => [
+				"message" => __("application.organization-user-not-found", ['organization' => __("data.organization")])
+			]], 409);
+		}
+
+		return new OrganizationUserRoleResource($organizationUserRole);
 	}
 
 	/**
@@ -957,6 +975,18 @@ class OrganizationController extends Controller
 	{
 		// Check if the user is authorized to update the users role in the given organization
 		$this->authorize('updateUserRole', $organization);
+
+		$organizationUserRole = OrganizationUserRole::where("organization_id", $organization->id)->where('user_id', $user->id)
+								->with('organization')
+								->with('user')
+								->with('role')
+								->first();
+
+		if(!isset($organizationUserRole)) {
+			return response()->json(["data" => [
+				"message" => __("application.organization-user-not-found", ['organization' => __("data.organization")])
+			]], 409);
+		}
 
 		// Update the organizations user role
 		$organization->users()->updateExistingPivot($user->id, [

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\Organization;
 use App\Models\CompanyUserRole;
+use App\Models\ProjectUserRole;
 
 class CompanyResource extends JsonResource
 {
@@ -115,22 +116,9 @@ class CompanyResource extends JsonResource
             }
 		}
 
-		// Check if the response should contain the respective user role within this company
-		if(array_key_exists('include-users-company-role', $header) && $header['include-users-company-role'][0] == "true") {
-			if($this->resource->users->contains(Auth::user()) || Auth::user()->isPriviliegated('companies', $this->resource)) {
-				$user = User::find($request->get('user_id'));
-
-                if($this->user_id == $user->id) {
-                    $company['attributes']['role'] = 'owner';
-                } else {
-					$companyUserRole = CompanyUserRole::where('user_id', $user->id)->where('company_id', $this->id)->first();
-                    $company['attributes']['role'] = new RoleResource($companyUserRole->role);
-                }
-			}
-		}
-
 		// Check if the response should contain the respective projects of the given user
 		if(array_key_exists('include-users-projects', $header) && $header['include-users-projects'][0] == "true") {
+			$user = $request->user;
 
 			// Check if the user is a manager or owner in the company.
 			if(Auth::user()->isPriviliegated('companies', $this->resource)) {
@@ -145,7 +133,30 @@ class CompanyResource extends JsonResource
 				$projects = $projects->concat($projectsOfBoth);
 			}
 
-			$company['attributes']['projects'] = ProjectResource::collection($projects);
+			$projects = ProjectResource::collection($projects);
+
+			if(array_key_exists('include-users-project-role', $header) && $header['include-users-project-role'][0] == 'true') {
+				$projectUserRoles = collect();
+				foreach($projects as $project) {
+					if($project->user_id == $user->id) {
+						$role = "owner";
+					} else {
+						$role = ProjectUserRole::where('project_id', $project->id)->where('user_id', $user->id)->first()->role;
+						$role = new RoleResource($role);
+					}
+
+					$projectUserRole = array(
+						"project" => new ProjectResource($project),
+						"role" => $role
+					);
+
+					$projectUserRoles->push($projectUserRole);
+				}
+
+				$projects = $projectUserRoles;
+			}
+
+			$company['attributes']['projects'] = $projects;
 		}
 
 		return $company;

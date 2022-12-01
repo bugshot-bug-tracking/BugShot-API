@@ -121,6 +121,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
 		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
 		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
+		Route::put("/users/{user}", [OrganizationController::class, "updateUserRole"])->name("organization.update-user-role");
 		Route::get("/users/{user}", [OrganizationController::class, "user"])->name("organization.user"); // TODO: Create method and add headers to include companies + roles, projects + roles
 	});
 
