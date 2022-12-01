@@ -54,11 +54,7 @@ class ProjectService
     public function users(Project $project)
 	{
 		return ProjectUserRoleResource::collection(
-			ProjectUserRole::where("project_id", $project->id)
-				->with('project')
-				->with('user')
-				->with("role")
-				->get()
+			ProjectUserRole::where("project_id", $project->id)->get()
 		);
 	}
 
