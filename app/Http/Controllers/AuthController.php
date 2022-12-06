@@ -356,7 +356,7 @@ class AuthController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Get(
 	 *	path="/auth/user",
 	 *	tags={"Auth"},
 	 *	summary="Show current user.",
