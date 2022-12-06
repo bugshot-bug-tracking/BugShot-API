@@ -104,7 +104,7 @@ Route::middleware(['auth:sanctum'])->group(
 	function () {
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
-			Route::post('/user', [AuthController::class, "user"])->name("user");
+			Route::get('/user', [AuthController::class, "user"])->name("user");
 		});
 	}
 );
