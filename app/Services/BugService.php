@@ -78,7 +78,7 @@ class BugService
 		if ($screenshots != NULL) {
 			foreach ($screenshots as $screenshot) {
 				$screenshot = (object) $screenshot;
-				$screenshotService->store($bug, $screenshot, $client_id);
+				$screenshotService->store($bug, $screenshot, $client_id, $apiCallService);
 			}
 		}
 
