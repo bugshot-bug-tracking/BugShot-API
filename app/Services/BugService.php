@@ -101,6 +101,8 @@ class BugService
 		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
 			$this->synchronizeBugOrder($request, $bug, $status);
 		}
+		
+		$oldStatus = (new BugResource($bug))->status_id;
 
 		// Update the bug
 		$bug->update($request->all());
@@ -110,7 +112,7 @@ class BugService
 		]);
 
 		// if status equal to old one send normal update Trigger else send status update trigger
-		if ($request->status_id !=  null && $status->id == $request->status_id) {
+		if ($request->status_id !=  null && $request->status_id == $oldStatus) {
 			return $apiCallService->triggerInterfaces(new BugResource($bug), 2, $status->project_id);
 		} else if ($request->status_id !=  null) {
 			$request->headers->set('include-status-info', 'true');
