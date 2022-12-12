@@ -51,8 +51,15 @@ class ProjectService
         return $apiCallService->triggerInterfaces(new ProjectResource($project), 6, $project->id);
     }
 
-    public function users(Project $project)
+    public function users(Project $project, $withOwner = false)
 	{
+        if($withOwner){
+            return ProjectUserRoleResource::collection(
+                ProjectUserRole::where("project_id", $project->id)->get(),
+                //TODO add owner
+            );
+        }
+
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)->get()
 		);

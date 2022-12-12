@@ -1378,7 +1378,7 @@ class ProjectController extends Controller
 	{
 		$project = $request->get('project');
 
-		return $projectService->users($project);
+		return $projectService->users($project, true);
 	}
 
 	/**
