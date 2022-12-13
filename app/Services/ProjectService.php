@@ -13,6 +13,7 @@ use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
+use App\Http\Resources\UserResource;
 use App\Models\Client;
 //Models
 use App\Models\Company;
@@ -54,10 +55,9 @@ class ProjectService
     public function users(Project $project, $withOwner = false)
 	{
         if($withOwner){
-            return ProjectUserRoleResource::collection(
-                ProjectUserRole::where("project_id", $project->id)->get(),
-                //TODO add owner
-            );
+            $returnCollections = UserResource::collection($project->users);
+			$returnCollections = $returnCollections->push(new UserResource($project->creator));
+            return $returnCollections;
         }
 
 		return ProjectUserRoleResource::collection(
