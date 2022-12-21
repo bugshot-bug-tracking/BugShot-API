@@ -50,7 +50,7 @@ class ScreenshotService
         if($returnBase64)
         {$screenshot->base64 = $decodedBase64;}
 
-        return $apiCallService->triggerInterfaces($screenshot, 3, $project->id);
+        return $apiCallService->triggerInterfaces($screenshot, "bug-updated-sc", $project->id);
     }
 
     // Delete the screenshot
