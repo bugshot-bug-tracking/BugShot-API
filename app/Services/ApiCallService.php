@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ApiToken;
 use App\Models\Client;
 use stdClass;
 use Illuminate\Support\Facades\Http;
@@ -42,10 +43,15 @@ class ApiCallService
 
 	function triggerInterfaces($resource, $trigger_id, $project_id)
 	{
-		$clients = Client::where('client_url', '!=', '')->get();
-		//Todo test for key
-		foreach ($clients as $item) {
-			$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id));
+		$apitoken_entries = ApiToken::where([
+			['api_tokenable_id', '=', $project_id],
+		]);
+
+		if (Count($apitoken_entries) > 0) {
+			$clients = Client::where('client_url', '!=', '')->get();
+			foreach ($clients as $item) {
+				$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id));
+			}
 		}
 
 		return $resource;
