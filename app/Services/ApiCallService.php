@@ -34,7 +34,7 @@ class ApiCallService
 		$BSheaders = array(
 			"Accept" => "application/json",
 			"Content-Type" => "application/json",
-			"project-id" => "$project_id",
+			"project-id" => $project_id,
 			"client-key" => $client_key
 		);
 
