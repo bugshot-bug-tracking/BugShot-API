@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ScreenshotResource;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,7 +52,8 @@ class ScreenshotService
         if($returnBase64)
         {$screenshot->base64 = $decodedBase64;}
 
-        return $apiCallService->triggerInterfaces($screenshot, "bug-updated-sc", $project->id);
+        $apiCallService->triggerInterfaces(new ScreenshotResource($screenshot), "bug-updated-sc", $project->id);
+        return $screenshot;
     }
 
     // Delete the screenshot
