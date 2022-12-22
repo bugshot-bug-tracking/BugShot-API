@@ -41,6 +41,7 @@ class ScreenshotService
         $screenshot = $bug->screenshots()->create([
             "url" => $filePath,
             "client_id" => $client_id,
+            "bug_id" => $bug->id,
             "position_x" => $screenshot->position_x,
             "position_y" => $screenshot->position_y,
             "web_position_x" =>  $screenshot->web_position_x,
