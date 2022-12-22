@@ -582,10 +582,12 @@ class OrganizationController extends Controller
 		// Update the organization
 		$organization->update($request->all());
 
-		// Update the corresponding stripe customer
-		$organization->billingAddress->updateStripeCustomer([
-			'name' => $organization->designation
-		]);
+		// Update the corresponding stripe customer if one exists
+		if($organization->billingAddress) {
+			$organization->billingAddress->updateStripeCustomer([
+				'name' => $organization->designation
+			]);
+		}
 
 		return new OrganizationResource($organization);
 	}
@@ -696,7 +698,7 @@ class OrganizationController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-subscriptions",
+	 *		name="include-subscription-item",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -788,6 +790,11 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-users-organization-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-subscription-item",
 	 *		required=false,
 	 *		in="header"
 	 *	),

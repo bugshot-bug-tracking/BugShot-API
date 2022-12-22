@@ -1211,6 +1211,11 @@ class StripeController extends Controller
 	 *		required=true,
 	 *		in="path"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-subscription-item",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
      * 	@OA\RequestBody(
 	 *      required=true,
@@ -1312,11 +1317,11 @@ class StripeController extends Controller
 			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 		]);
 
-		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
 			->with('organization')
 			->with('user')
 			->with('role')
-			->with('subscription')
+			->with('subscriptionItem')
 		->first());
 	}
 
@@ -1356,6 +1361,11 @@ class StripeController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/BillingAddress/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-subscription-item",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 *
      * 	@OA\RequestBody(
@@ -1435,11 +1445,11 @@ class StripeController extends Controller
 				'restricted_subscription_usage' => NULL
 			]);
 
-			return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+			return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
 			->with('organization')
 			->with('user')
 			->with('role')
-			->with('subscription')
+			->with('subscriptionItem')
 			->first());
 		}
 	}
@@ -1542,11 +1552,11 @@ class StripeController extends Controller
 			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 		]);
 
-		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)
+		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
 			->with('organization')
 			->with('user')
 			->with('role')
-			->with('subscription')
+			->with('subscriptionItem')
 			->first());
 	}
 

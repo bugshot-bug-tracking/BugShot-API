@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
 
 /**
  * @OA\Schema()
@@ -75,8 +75,8 @@ class OrganizationUserRole extends Model
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function subscription()
+	public function subscriptionItem()
 	{
-		return $this->belongsTo(Subscription::class, 'subscription_id', 'stripe_id');
+		return $this->belongsTo(SubscriptionItem::class, 'subscription_item_id', 'stripe_id');
 	}
 }
