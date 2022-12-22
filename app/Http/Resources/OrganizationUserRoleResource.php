@@ -33,9 +33,9 @@ class OrganizationUserRoleResource extends JsonResource
 		}
 
 		// Check if the response should contain the respective subscription
-		if(array_key_exists('include-subscriptions', $header) && $header['include-subscriptions'][0] == 'true') {
+		if(array_key_exists('include-subscription-item', $header) && $header['include-subscription-item'][0] == 'true') {
 			if(Auth::user()->isPriviliegated('organizations', $organization)) {
-				$organizationUserRole['subscription'] = new SubscriptionResource($this->subscription);
+				$organizationUserRole['subscription'] = new SubscriptionItemResource($this->subscriptionItem);
 			}
 		}
 

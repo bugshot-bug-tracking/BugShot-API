@@ -698,7 +698,7 @@ class OrganizationController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-subscriptions",
+	 *		name="include-subscription-item",
 	 *		required=false,
 	 *		in="header"
 	 *	),
