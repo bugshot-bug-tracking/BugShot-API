@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\CompanyUserRole;
+use App\Models\OrganizationUserRole;
 
 class OrganizationUserRoleResource extends JsonResource
 {
@@ -36,6 +37,30 @@ class OrganizationUserRoleResource extends JsonResource
 		if(array_key_exists('include-subscription-item', $header) && $header['include-subscription-item'][0] == 'true') {
 			if(Auth::user()->isPriviliegated('organizations', $organization)) {
 				$organizationUserRole['subscription'] = new SubscriptionItemResource($this->subscriptionItem);
+
+				/**
+				 * If the user does not have a subscription assigned to him in this organization, check if he has any subscriptions
+				 * assigned to him in other organizations.
+				 */
+
+				if($this->subscriptionItem == NULL) {
+					$altSubscriptionsOrganizationUserRoles = OrganizationUserRole::whereNotNull('subscription_item_id')->where('user_id', $this->user_id)
+					->where("restricted_subscription_usage", 0)->get();
+
+					if($altSubscriptionsOrganizationUserRoles != NULL) {
+						$altSubscriptions = collect();
+
+						foreach($altSubscriptionsOrganizationUserRoles as $item) {
+							$altSubscriptions->push(array(
+								"organization" => $item->organization->designation,
+								// TODO: Get the id and name of the sub and proceed with the flow
+								"subscription" => $item->subscriptionItem->subscription
+							));
+						}
+
+						$organizationUserRole['alternative_subscriptions'] = $altSubscriptions;
+					};
+				}
 			}
 		}
 
