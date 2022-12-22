@@ -499,8 +499,8 @@ class ScreenshotController extends Controller
 				$markerService->store($screenshot, $marker);
 			}
 		}
-
-		return new ScreenshotResource($screenshot);
+		
+		return json_encode($screenshot->withoutRelations());
 	}
 
 	/**
