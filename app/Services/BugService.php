@@ -97,12 +97,13 @@ class BugService
 
 	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService)
 	{
+		$oldStatus = $bug->getOriginal('status_id');
+		$newStatus = isset($request->status_id) && $request->status_id != null ? $request->status_id : $oldStatus;
+		
 		// Check if the order of the bugs or the status has to be synchronized
-		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($request->status_id != $bug->getOriginal('status_id') && $request->has('status_id'))) {
+		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($newStatus != $oldStatus && $request->has('status_id'))) {
 			$this->synchronizeBugOrder($request, $bug, $status);
 		}
-		
-		$oldStatus = (new BugResource($bug))->status_id;
 
 		// Update the bug
 		$bug->update($request->all());
@@ -112,9 +113,9 @@ class BugService
 		]);
 
 		// if status equal to old one send normal update Trigger else send status update trigger
-		if ($request->status_id !=  null && $request->status_id == $oldStatus) {
+		if ($newStatus == $oldStatus) {
 			return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-updated-info", $status->project_id);
-		} else if ($request->status_id !=  null) {
+		} else {
 			$request->headers->set('include-status-info', 'true');
 			$sendBug = json_decode(((new BugResource($bug))->response($request))->content());
 			return $apiCallService->triggerInterfaces($sendBug, "bug-updated-status", $status->project_id);
