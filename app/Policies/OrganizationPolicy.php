@@ -228,4 +228,17 @@ class OrganizationPolicy
 			return true;
 		};
     }
+
+	    /**
+     * Determine whether the user can store a billing address for the given user
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function createBillingAddress(User $user, Organization $organization)
+    {
+        return $organization->user_id == $user->id;
+    }
+
 }
