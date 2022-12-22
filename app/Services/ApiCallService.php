@@ -47,7 +47,7 @@ class ApiCallService
 			['api_tokenable_id', '=', $project_id],
 		]);
 
-		if (Count($apitoken_entries) > 0) {
+		if ($apitoken_entries->count() > 0) {
 			$clients = Client::where('client_url', '!=', '')->get();
 			foreach ($clients as $item) {
 				$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id));
