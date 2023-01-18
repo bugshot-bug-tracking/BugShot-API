@@ -72,13 +72,13 @@ class BugService
 			"ai_id" => $ai_id,
 			"client_id" => $client_id
 		]);
-
+		
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$screenshots = $request->screenshots;
 		if ($screenshots != NULL) {
 			foreach ($screenshots as $screenshot) {
 				$screenshot = (object) $screenshot;
-				$screenshotService->store($bug, $screenshot, $client_id, $apiCallService);
+				$screenshotService->store($request, $bug, $screenshot, $client_id, $apiCallService);
 			}
 		}
 
@@ -92,7 +92,7 @@ class BugService
 			}
 		}
 
-		return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-created", $status->project_id);
+		return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-created", $status->project_id, $request->get('session_id'));
 	}
 
 	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService)
@@ -114,11 +114,11 @@ class BugService
 
 		// if status equal to old one send normal update Trigger else send status update trigger
 		if ($newStatus == $oldStatus) {
-			return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-updated-info", $status->project_id);
+			return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-updated-info", $status->project_id, $request->get('session_id'));
 		} else {
 			$request->headers->set('include-status-info', 'true');
 			$sendBug = json_decode(((new BugResource($bug))->response($request))->content());
-			return $apiCallService->triggerInterfaces($sendBug, "bug-updated-status", $status->project_id);
+			return $apiCallService->triggerInterfaces($sendBug, "bug-updated-status", $status->project_id, $request->get('session_id'));
 		}
 	}
 

@@ -6,13 +6,14 @@ use App\Http\Resources\BugResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ScreenshotService
 {
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store($bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
+    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
     {
         $base64 = $screenshot->base64;
 
@@ -52,7 +53,7 @@ class ScreenshotService
         if($returnBase64)
         {$screenshot->base64 = $decodedBase64;}
 
-        $apiCallService->triggerInterfaces(new ScreenshotResource($screenshot), "bug-updated-sc", $project->id);
+        $apiCallService->triggerInterfaces(new ScreenshotResource($screenshot), "bug-updated-sc", $project->id, $request->get('session_id'));
         return $screenshot;
     }
 
