@@ -30,7 +30,7 @@ class ApiCallService
 		return $result;
 	}
 
-	function getHeader($client_key, $project_id)
+	function getHeader($client_key, $project_id, $uuid = null)
 	{
 		$BSheaders = array(
 			"Accept" => "application/json",
@@ -38,11 +38,14 @@ class ApiCallService
 			"project-id" => $project_id,
 			"client-key" => $client_key
 		);
+		if($uuid != null){
+			$BSheaders["session-id"] = $uuid;
+		}
 
 		return $BSheaders;
 	}
 
-	function triggerInterfaces($resource, $trigger_id, $project_id)
+	function triggerInterfaces($resource, $trigger_id, $project_id, $uuid = null)
 	{
 		try {
 			$apitoken_entries = ApiToken::where([
@@ -52,7 +55,7 @@ class ApiCallService
 			if ($apitoken_entries->count() > 0) {
 				$clients = Client::where('client_url', '!=', '')->get();
 				foreach ($clients as $item) {
-					$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id));
+					$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id, $uuid));
 				}
 			}
 		} catch (Exception $e) {
