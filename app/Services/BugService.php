@@ -30,6 +30,7 @@ use App\Http\Requests\BugUpdateRequest;
 // Events
 use App\Events\AssignedToBug;
 use App\Http\Controllers\BugController;
+use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
 
 class BugService
@@ -72,7 +73,7 @@ class BugService
 			"ai_id" => $ai_id,
 			"client_id" => $client_id
 		]);
-		
+
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$screenshots = $request->screenshots;
 		if ($screenshots != NULL) {
@@ -91,15 +92,16 @@ class BugService
 				$attachmentService->store($bug, $attachment);
 			}
 		}
-
-		return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-created", $status->project_id, $request->get('session_id'));
+		$resource = new BugResource($bug);
+		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-created", $status->project_id, $request->get('session_id'));
+		return $resource;
 	}
 
 	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService)
 	{
 		$oldStatus = $bug->getOriginal('status_id');
 		$newStatus = isset($request->status_id) && $request->status_id != null ? $request->status_id : $oldStatus;
-		
+
 		// Check if the order of the bugs or the status has to be synchronized
 		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($newStatus != $oldStatus && $request->has('status_id'))) {
 			$this->synchronizeBugOrder($request, $bug, $status);
@@ -113,12 +115,15 @@ class BugService
 		]);
 
 		// if status equal to old one send normal update Trigger else send status update trigger
+		$resource = new BugResource($bug);
 		if ($newStatus == $oldStatus) {
-			return $apiCallService->triggerInterfaces(new BugResource($bug), "bug-updated-info", $status->project_id, $request->get('session_id'));
+			TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-info", $status->project_id, $request->get('session_id'));
+			return $resource;
 		} else {
 			$request->headers->set('include-status-info', 'true');
-			$sendBug = json_decode(((new BugResource($bug))->response($request))->content());
-			return $apiCallService->triggerInterfaces($sendBug, "bug-updated-status", $status->project_id, $request->get('session_id'));
+			$sendBug = json_decode(($resource->response($request))->content());
+			TriggerInterfacesJob::dispatch($apiCallService, $sendBug, "bug-updated-status", $status->project_id, $request->get('session_id'));
+			return $sendBug;
 		}
 	}
 

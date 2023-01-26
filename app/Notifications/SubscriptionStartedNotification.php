@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 use App\Mail\SubscriptionStarted as SubscriptionStartedMailable;
 use Stripe\StripeClient;
 
-class SubscriptionStartedNotification extends Notification
+class SubscriptionStartedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

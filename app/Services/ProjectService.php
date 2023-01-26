@@ -14,6 +14,7 @@ use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\UserResource;
+use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
 //Models
 use App\Models\Company;
@@ -49,7 +50,9 @@ class ProjectService
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 
-        return $apiCallService->triggerInterfaces(new ProjectResource($project), "project-updated-info", $project->id, $request->get('session_id'));
+        $resource = new ProjectResource($project);
+		TriggerInterfacesJob::dispatch($apiCallService, $resource, "project-updated-info", $project->id, $request->get('session_id'));
+		return $resource;
     }
 
     public function users(Project $project, $withOwner = false)

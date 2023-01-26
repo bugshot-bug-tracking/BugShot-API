@@ -7,6 +7,7 @@ use App\Events\TaggedInComment;
 use App\Http\Controllers\CommentController;
 use App\Http\Requests\CommentStoreRequest;
 use App\Http\Resources\CommentResource;
+use App\Jobs\TriggerInterfacesJob;
 use App\Models\Bug;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
@@ -51,7 +52,8 @@ class CommentService
 		// Broadcast the event
 		broadcast(new CommentSent(User::find($user_id), $comment, $request->tagged))->toOthers();
 
-		return $apiCallService->triggerInterfaces(new CommentResource($comment), "bug-updated-comment", $bug->project->id, $request->get('session_id'));
+		$resource = new CommentResource($comment);
+		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-comment", $bug->project->id, $request->get('session_id'));
+		return $resource;
 	}
-
 }

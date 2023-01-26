@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\AssignedToBugNotification;
 use App\Services\GetUserLocaleService;
 
-class SendAssignedToBugNotification
+class SendAssignedToBugNotification implements ShouldQueue
 {
     /**
      * Handle the event.

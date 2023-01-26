@@ -23,9 +23,14 @@ use App\Models\Project;
 // Services
 use App\Services\GetUserLocaleService;
 
-class InvitationReceivedUnregisteredUserNotification extends Notification
+class InvitationReceivedUnregisteredUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public $locale;
+    public $invitation;
+    public $resource;
+    public $message;
 
     /**
      * Create a new notification instance.

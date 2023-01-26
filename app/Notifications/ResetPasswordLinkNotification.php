@@ -9,9 +9,11 @@ use Illuminate\Notifications\Notification;
 use App\Mail\ResetPasswordLink as ResetPasswordLinkMailable;
 use Illuminate\Support\Facades\App;
 
-class ResetPasswordLinkNotification extends Notification
+class ResetPasswordLinkNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public $url;
 
     /**
      * Create a new notification instance.

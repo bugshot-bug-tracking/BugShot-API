@@ -9,9 +9,11 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\AssignedToBug as AssignedToBugMailable;
 
-class AssignedToBugNotification extends Notification
+class AssignedToBugNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public $bug;
 
     /**
      * Create a new notification instance.
