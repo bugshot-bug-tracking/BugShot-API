@@ -37,7 +37,8 @@ class BugUpdateRequest extends FormRequest
                 "selector" => ["max:65535", "string", "nullable"],
                 "resolution" => ["max:255", "string", "nullable"],
                 "deadline" => ["date", "nullable"],
-                "order_number" => ["integer", "min:0"]
+                "order_number" => ["integer", "min:0"],
+                "status_id" => ["string", "exists:App\Models\Status,id"],
             ];
         }
     }

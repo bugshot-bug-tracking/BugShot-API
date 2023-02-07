@@ -13,6 +13,7 @@ use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
+use App\Http\Resources\UserResource;
 use App\Models\Client;
 //Models
 use App\Models\Company;
@@ -48,11 +49,17 @@ class ProjectService
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 
-        return $apiCallService->triggerInterfaces(new ProjectResource($project), 6, $project->id);
+        return $apiCallService->triggerInterfaces(new ProjectResource($project), "project-updated-info", $project->id, $request->get('session_id'));
     }
 
-    public function users(Project $project)
+    public function users(Project $project, $withOwner = false)
 	{
+        if($withOwner){
+            $returnCollections = UserResource::collection($project->users);
+			$returnCollections = $returnCollections->push(new UserResource($project->creator));
+            return $returnCollections;
+        }
+
 		return ProjectUserRoleResource::collection(
 			ProjectUserRole::where("project_id", $project->id)->get()
 		);

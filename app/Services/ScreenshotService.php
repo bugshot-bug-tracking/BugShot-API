@@ -3,15 +3,17 @@
 namespace App\Services;
 
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ScreenshotResource;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class ScreenshotService
 {
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store($bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
+    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
     {
         $base64 = $screenshot->base64;
 
@@ -41,6 +43,7 @@ class ScreenshotService
         $screenshot = $bug->screenshots()->create([
             "url" => $filePath,
             "client_id" => $client_id,
+            "bug_id" => $bug->id,
             "position_x" => $screenshot->position_x,
             "position_y" => $screenshot->position_y,
             "web_position_x" =>  $screenshot->web_position_x,
@@ -50,7 +53,8 @@ class ScreenshotService
         if($returnBase64)
         {$screenshot->base64 = $decodedBase64;}
 
-        return $apiCallService->triggerInterfaces($screenshot, 3, $project->id);
+        $apiCallService->triggerInterfaces(new ScreenshotResource($screenshot), "bug-updated-sc", $project->id, $request->get('session_id'));
+        return $screenshot;
     }
 
     // Delete the screenshot

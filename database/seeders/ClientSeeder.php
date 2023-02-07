@@ -49,7 +49,7 @@ class ClientSeeder extends Seeder
 
 		Client::create([
 			'designation' => 'zapier interface',
-			'client_url' => 'https://dev-interface.view4all.de/api/zapier',
+			'client_url' => 'https://dev-interface-zapier.bugshot.de/api/zapier',
 			'client_key' => '28k?cX>pab3q2P9<m_ekq5<A.c{Kn$',
 		]);
 	}

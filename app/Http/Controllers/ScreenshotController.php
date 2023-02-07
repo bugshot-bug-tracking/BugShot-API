@@ -290,7 +290,7 @@ class ScreenshotController extends Controller
 		$this->authorize('create', [Screenshot::class, $bug->project]);
 
 		$client_id = $request->get('client_id');
-		$screenshot = $screenshotService->store($bug, $request, $client_id, $apiCallService);
+		$screenshot = $screenshotService->store($request, $bug, $request, $client_id, $apiCallService, true);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;
@@ -317,10 +317,22 @@ class ScreenshotController extends Controller
 	 *	summary="Store one screenshots.",
 	 *	operationId="storeScreenshotViaApiKey",
 	 * 	@OA\Parameter(
-	 *		name="api-key",
+	 *		name="api-token",
 	 *		required=true,
 	 *		in="header",
 	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
@@ -477,7 +489,7 @@ class ScreenshotController extends Controller
 	public function storeViaApiKey(ScreenshotStoreRequest $request, Bug $bug, ScreenshotService $screenshotService, MarkerService $markerService, ApiCallService $apiCallService)
 	{
 		$client_id = $request->get('client_id');
-		$screenshot = $screenshotService->store($bug, $request, $client_id, $apiCallService, true);
+		$screenshot = $screenshotService->store($request, $bug, $request, $client_id, $apiCallService, false);
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$markers = $request->markers;
@@ -487,8 +499,8 @@ class ScreenshotController extends Controller
 				$markerService->store($screenshot, $marker);
 			}
 		}
-
-		return new ScreenshotResource($screenshot);
+		
+		return json_encode($screenshot->withoutRelations());
 	}
 
 	/**

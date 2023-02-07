@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectUserRoleResource extends JsonResource
 {
@@ -38,6 +39,13 @@ class ProjectUserRoleResource extends JsonResource
 
 		// Check if the response should contain the respective role
 		if(array_key_exists('include-roles', $header) && $header['include-roles'][0] == 'true') {
+			if(Auth::user()->isPriviliegated('projects', $project)) {
+				$projectUserRole['role'] = new RoleResource($this->role);
+			}
+		}
+
+		// Check if the response should contain the respective role
+		if(array_key_exists('include-users-project-role', $header) && $header['include-users-project-role'][0] == 'true') {
 			if(Auth::user()->isPriviliegated('projects', $project)) {
 				$projectUserRole['role'] = new RoleResource($this->role);
 			}
