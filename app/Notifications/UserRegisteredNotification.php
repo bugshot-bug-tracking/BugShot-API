@@ -2,14 +2,14 @@
 
 namespace App\Notifications;
 
-// Miscellaneous, Helpers, ...
+use App\Http\Resources\UserResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\AssignedToBug as AssignedToBugMailable;
+use App\Mail\UserRegistered as UserRegisteredMailable;
 
-class AssignedToBugNotification extends Notification implements ShouldQueue
+class UserRegisteredNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -18,9 +18,9 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $bug)
+    public function __construct(public $user)
     {
-        $this->bug = $bug;
+        //
     }
 
     /**
@@ -42,21 +42,8 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new AssignedToBugMailable($notifiable, $this->locale, $this->bug))
-        ->subject('BugShot - ' . __('email.assigned-to-bug', [], $this->locale))
-        ->to($notifiable->email);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
+        return (new UserRegisteredMailable($notifiable, $this->locale, $this->user))
+            ->subject('A User has been registered')
+            ->to(config('app.register_mailer'));
     }
 }

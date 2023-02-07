@@ -29,7 +29,6 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $invitation;
     public $resource;
     public $message;
 
@@ -38,9 +37,8 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($invitation)
+    public function __construct(public $invitation)
     {
-        $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
     }

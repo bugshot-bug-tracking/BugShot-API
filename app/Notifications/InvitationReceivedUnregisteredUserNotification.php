@@ -28,7 +28,6 @@ class InvitationReceivedUnregisteredUserNotification extends Notification implem
     use Queueable;
 
     public $locale;
-    public $invitation;
     public $resource;
     public $message;
 
@@ -37,10 +36,9 @@ class InvitationReceivedUnregisteredUserNotification extends Notification implem
      *
      * @return void
      */
-    public function __construct($invitation)
+    public function __construct(public $invitation)
     {
 		$this->locale = GetUserLocaleService::getLocale(Auth::user());
-        $this->invitation = $invitation;
         $this->resource = NULL;
         $this->message = NULL;
     }

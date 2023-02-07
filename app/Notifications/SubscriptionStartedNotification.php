@@ -16,9 +16,6 @@ class SubscriptionStartedNotification extends Notification implements ShouldQueu
 	// The newly booked products
 	public $products;
 
-	// The subscription itself
-	public $subscription;
-
 	// The calculated total price of the subscription
 	public $totalSubscriptionPrice;
 
@@ -27,7 +24,7 @@ class SubscriptionStartedNotification extends Notification implements ShouldQueu
      *
      * @return void
      */
-    public function __construct($subscription)
+    public function __construct(public $subscription)
     {
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
 

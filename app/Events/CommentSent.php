@@ -8,44 +8,22 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CommentSent implements ShouldBroadcast
+class CommentSent implements ShouldBroadcastNow
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * User that sent the comment
-     *
-     * @var \App\Models\User
-     */
-    public $user;
-
-    /**
-     * Comment details
-     *
-     * @var \App\Models\Comment
-     */
-    public $comment;
+	use Dispatchable, InteractsWithSockets, SerializesModels;
 
 	/**
-     * The array of tagged users
-     */
-    public $taggedUsers;
-
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct(User $user, $comment, $taggedUsers)
-    {
-        $this->user = $user;
-        $this->comment = $comment;
-		$this->taggedUsers = $taggedUsers;
-    }
+	 * Create a new event instance.
+	 *
+	 * @return void
+	 */
+	public function __construct(public User $user, public $comment, public $taggedUsers)
+	{
+	}
 
 	/**
 	 * The event's broadcast name.
@@ -70,11 +48,17 @@ class CommentSent implements ShouldBroadcast
 		}
 
 		// Check if a user other then the comment author is tagged in the comment
-		if(count($this->taggedUsers) > 0 && !in_array(['user_id' => $this->user->id], $this->taggedUsers)) {
+		// if(count($this->taggedUsers) > 0 && !in_array(['user_id' => $this->user->id], $this->taggedUsers)) {
+		// 	return true;
+		// }
+
+		// check if multiple users are part of the project
+		if ($this->comment->bug->project->users->isNotEmpty()) {
 			return true;
 		}
 
-		return false;
+		//TODO CHANGE!!!!!!!! + Broadcast now!
+		return true;
 	}
 
 	/**
@@ -89,14 +73,14 @@ class CommentSent implements ShouldBroadcast
 		];
 	}
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\PrivateChannel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('comments.' . $this->comment->id);
-    }
-
+	/**
+	 * Get the channels the event should broadcast on.
+	 *
+	 * @return \Illuminate\Broadcasting\PrivateChannel|array
+	 */
+	public function broadcastOn()
+	{
+		// return new PrivateChannel('comments.' . $this->comment->id);
+		return new PrivateChannel('bugs.' . $this->comment->bug->id);
+	}
 }

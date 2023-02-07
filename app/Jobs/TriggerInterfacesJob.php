@@ -14,23 +14,15 @@ class TriggerInterfacesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public ApiCallService $apiCallService;
-    public $resource;
-    public $trigger_id;
-    public $project_id;
-    public $uuid;
+ 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(ApiCallService $apiCallService, $resource, $trigger_id, $project_id, $uuid = null)
+    public function __construct(public ApiCallService $apiCallService,public $resource,public $trigger_id,public $project_id,public $uuid = null)
     {
-        $this->apiCallService = $apiCallService;
-        $this->resource = $resource;
-        $this->trigger_id = $trigger_id;
-        $this->project_id = $project_id;
-        $this->uuid = $uuid;
+
     }
 
     /**

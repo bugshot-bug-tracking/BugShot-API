@@ -13,14 +13,13 @@ class VerifyEmailAddressNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $url;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct(public $url)
     {
         $this->url = $url;
     }
