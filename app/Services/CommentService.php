@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Events\CommentSent;
+use App\Events\CommentCreated;
 use App\Events\TaggedInComment;
 use App\Http\Controllers\CommentController;
 use App\Http\Requests\CommentStoreRequest;
@@ -50,7 +50,7 @@ class CommentService
 		}
 
 		// Broadcast the event
-		broadcast(new CommentSent(User::find($user_id), $comment, $request->tagged))->toOthers();
+		broadcast(new CommentCreated(User::find($user_id), $comment, $request->tagged))->toOthers();
 
 		$resource = new CommentResource($comment);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-comment", $bug->project->id, $request->get('session_id'));

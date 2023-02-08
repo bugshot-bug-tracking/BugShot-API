@@ -29,6 +29,9 @@ use App\Http\Requests\BugUpdateRequest;
 
 // Events
 use App\Events\AssignedToBug;
+use App\Events\BugCreated;
+use App\Events\BugDeleted;
+use App\Events\BugUpdated;
 use App\Http\Controllers\BugController;
 use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
@@ -94,6 +97,8 @@ class BugService
 		}
 		$resource = new BugResource($bug);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-created", $status->project_id, $request->get('session_id'));
+		broadcast(new BugCreated($bug))->toOthers();
+
 		return $resource;
 	}
 
@@ -115,6 +120,7 @@ class BugService
 		]);
 
 		// if status equal to old one send normal update Trigger else send status update trigger
+		broadcast(new BugUpdated($bug))->toOthers();
 		$resource = new BugResource($bug);
 		if ($newStatus == $oldStatus) {
 			TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-info", $status->project_id, $request->get('session_id'));
@@ -130,7 +136,7 @@ class BugService
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
 	{
 		$val = $bug->delete();
-
+		broadcast(new BugDeleted($bug))->toOthers();
 		// // Delete the respective screenshots
 		// foreach ($bug->screenshots as $screenshot) {
 		// 	$screenshotService->delete($screenshot);

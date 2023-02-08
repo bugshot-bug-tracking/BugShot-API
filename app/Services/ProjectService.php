@@ -3,6 +3,9 @@
 namespace App\Services;
 
 //Controller
+
+use App\Events\InvitationCreated;
+use App\Events\ProjectUpdated;
 use App\Http\Controllers\ProjectController;
 
 //Requests
@@ -52,6 +55,8 @@ class ProjectService
 
         $resource = new ProjectResource($project);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "project-updated-info", $project->id, $request->get('session_id'));
+        broadcast(new ProjectUpdated($project))->toOthers();
+
 		return $resource;
     }
 
@@ -85,6 +90,8 @@ class ProjectService
 
 		$id = $projectController->setId($request);
 		$invitation = $invitationService->send($request, $project, $id, $recipient_mail);
+
+        broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
 	}

@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\ScreenshotCreated;
+use App\Events\ScreenshotDeleted;
 use App\Http\Resources\BugResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Jobs\TriggerInterfacesJob;
@@ -56,6 +58,8 @@ class ScreenshotService
 
         $resource = new ScreenshotResource($screenshot);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-sc", $project->id, $request->get('session_id'));
+        broadcast(new ScreenshotCreated($screenshot))->toOthers();
+
 		return $screenshot;
     }
 
@@ -63,6 +67,7 @@ class ScreenshotService
     public function delete($screenshot)
     {
         $val = $screenshot->delete();
+        broadcast(new ScreenshotDeleted($screenshot))->toOthers();
 
         return $val;
     }

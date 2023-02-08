@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\BugMembersUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -555,6 +557,8 @@ class InvitationController extends Controller
 		}
 
 		$invitation->update(["status_id" => 2]);
+
+		broadcast(new BugMembersUpdated($project))->toOthers();
 
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->first());
 	}

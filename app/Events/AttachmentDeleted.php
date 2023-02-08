@@ -2,27 +2,29 @@
 
 namespace App\Events;
 
-use App\Models\User;
-use App\Models\Comment;
+use App\Http\Resources\AttachmentResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CommentSent implements ShouldBroadcastNow
+class AttachmentDeleted implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
+
+	public $bug;
 
 	/**
 	 * Create a new event instance.
 	 *
 	 * @return void
 	 */
-	public function __construct(public User $user, public $comment, public $taggedUsers)
+	public function __construct(public $attachment)
 	{
+		$this->bug = $attachment->bug;
 	}
 
 	/**
@@ -32,7 +34,7 @@ class CommentSent implements ShouldBroadcastNow
 	 */
 	public function broadcastAs()
 	{
-		return 'comment.created';
+		return 'attachment.deleted';
 	}
 
 	/**
@@ -43,22 +45,16 @@ class CommentSent implements ShouldBroadcastNow
 	public function broadcastWhen()
 	{
 		// Check if there are any users assigned to the bug
-		if($this->comment->bug->users->isNotEmpty()) {
+		if ($this->bug->users->isNotEmpty()) {
 			return true;
 		}
-
-		// Check if a user other then the comment author is tagged in the comment
-		// if(count($this->taggedUsers) > 0 && !in_array(['user_id' => $this->user->id], $this->taggedUsers)) {
-		// 	return true;
-		// }
 
 		// check if multiple users are part of the project
-		if ($this->comment->bug->project->users->isNotEmpty()) {
+		if ($this->bug->project->users->isNotEmpty()) {
 			return true;
 		}
 
-		//TODO CHANGE!!!!!!!! + Broadcast now!
-		return true;
+		return false;
 	}
 
 	/**
@@ -69,7 +65,7 @@ class CommentSent implements ShouldBroadcastNow
 	public function broadcastWith()
 	{
 		return [
-			'comment' => $this->comment
+			'data' => new AttachmentResource($this->attachment)
 		];
 	}
 
@@ -81,6 +77,6 @@ class CommentSent implements ShouldBroadcastNow
 	public function broadcastOn()
 	{
 		// return new PrivateChannel('comments.' . $this->comment->id);
-		return new PrivateChannel('bugs.' . $this->comment->bug->id);
+		return new Channel('bug.' . $this->bug->id);
 	}
 }

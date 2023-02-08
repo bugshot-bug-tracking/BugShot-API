@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\StatusCreated;
+use App\Events\StatusDeleted;
+use App\Events\StatusUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -340,6 +344,8 @@ class StatusController extends Controller
 			"designation" => $request->designation,
 			"order_number" => $order_number
 		]);
+
+		broadcast(new StatusCreated($status))->toOthers();
 
 		return new StatusResource($status);
 	}
@@ -694,6 +700,8 @@ class StatusController extends Controller
 			"project_id" => $project->id
 		]);
 
+		broadcast(new StatusUpdated($status))->toOthers();
+
 		return new StatusResource($status);
 	}
 
@@ -781,6 +789,8 @@ class StatusController extends Controller
 		}
 
 		$val = $status->delete();
+
+		broadcast(new StatusDeleted($status))->toOthers();
 
 		return response($val, 204);
 	}
