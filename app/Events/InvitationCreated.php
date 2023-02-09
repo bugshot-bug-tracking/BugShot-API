@@ -9,10 +9,11 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class InvitationCreated implements ShouldBroadcast
+class InvitationCreated implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -65,7 +66,9 @@ class InvitationCreated implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('comments.' . $this->comment->id);
-        $userId = User::all()->where('email', '=', $this->invitation->target_email)->first()->id;
+        $userList = User::all()->where('email', '=', $this->invitation->target_email);
+        if ($userList->isEmpty()){return null;}
+        $userId = $userList->first()->id;
         return new Channel('user.' . $userId);
     }
 }
