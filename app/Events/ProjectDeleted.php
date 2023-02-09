@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectSlimResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -57,7 +58,7 @@ class ProjectDeleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => new ProjectResource($this->project)
+            'data' => new ProjectSlimResource($this->project)
         ];
     }
 
