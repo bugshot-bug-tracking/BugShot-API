@@ -286,9 +286,6 @@ class User extends Authenticatable implements MustVerifyEmail
 		} else if ($resourceType == 'projects') {
 			// Get users resource role
 			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
-		} else if ($resourceType == 'bugs') {
-			// Get users resource role
-			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
 		}
 
 		return false;
@@ -307,7 +304,9 @@ class User extends Authenticatable implements MustVerifyEmail
 			return false;
 		}
 
-		$userResourceRoleId = $resources->find($resource)->pivot->role_id;
+		$tempResource = $resources->find($resource);
+		if(!isset($tempResource) || $tempResource == null){return false;}
+		$userResourceRoleId = $tempResource->pivot->role_id;
 
 		switch ($userResourceRoleId) {
 			case 1:
