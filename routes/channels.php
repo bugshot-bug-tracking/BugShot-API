@@ -55,7 +55,7 @@ Broadcast::channel('organization.{organizationId}', function ($user, $organizati
 
 Broadcast::channel('user.{userId}', function ($user) {
 	// $bug = Bug::findOrFail($bugId);
-    // test if user is in org
+    // test if user is user?
     // return $user->id === Bug::findOrFail($bugId);
     return true;
 });
