@@ -65,7 +65,7 @@ class InvitationCreated implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('comments.' . $this->comment->id);
-        $userId = User::all()->where('email', '=', $this->invitation->target_email);
+        $userId = User::all()->where('email', '=', $this->invitation->target_email)->first()->id;
         return new Channel('user.' . $userId);
     }
 }
