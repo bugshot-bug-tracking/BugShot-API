@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Http\Resources\InvitationResource;
+use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -64,6 +65,7 @@ class InvitationCreated implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('user.' . $this->invitation->target->id);
+        $userId = User::all()->where('email', '=', $this->invitation->target_email);
+        return new Channel('user.' . $userId);
     }
 }
