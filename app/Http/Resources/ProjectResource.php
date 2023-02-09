@@ -21,8 +21,10 @@ class ProjectResource extends JsonResource
 	{
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
-		$bugsDone = $statuses->last()->bugs->count();
-		$bugsTotal = $this->bugs->count();
+		$donebugs = $statuses->last()->bugs;
+		$bugsDone = isset($donebugs)? $donebugs->count(): -1;
+		$bugsAll = $this->bugs;
+		$bugsTotal = isset($bugsAll)? $bugsAll->count(): -1;
 		$company = Company::find($this->company_id);
 
 		$project = array(
