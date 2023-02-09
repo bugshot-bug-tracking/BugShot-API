@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\PasswordResetSuccessful as PasswordResetSuccessfulMailable;
 
-class PasswordResetSuccessfulNotification extends Notification
+class PasswordResetSuccessfulNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -60,8 +60,9 @@ class ApiCallService
 			}
 		} catch (Exception $e) {
 			// echo 'Caught exception: ',  $e->getMessage(), "\n";
+			return false;
 		}
 
-		return $resource;
+		return true;
 	}
 }

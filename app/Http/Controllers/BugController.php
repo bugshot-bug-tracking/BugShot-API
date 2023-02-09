@@ -31,8 +31,7 @@ use App\Http\Requests\BugUpdateRequest;
 
 // Events
 use App\Events\AssignedToBug;
-
-
+use App\Events\BugMembersUpdated;
 
 /**
  * @OA\Tag(
@@ -1048,8 +1047,8 @@ class BugController extends Controller
 		if ($bug->project_id == $tempProject->id) {
 			$tempstatus = Status::find($bug->status_id);
 			return $bugService->update($request, $tempstatus, $bug, $apiCallService);
-		} 
-		
+		}
+
 		$response = [
 			'success' => false,
 			'message' => 'The bug was not found or is not available to the user!',
@@ -1303,7 +1302,8 @@ class BugController extends Controller
 		$targetUser = User::find($request->user_id);
 		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
 
-		AssignedToBug::dispatch($targetUser, $bug);
+		//AssignedToBug::dispatch($targetUser, $bug);
+		broadcast(new BugMembersUpdated($bug))->toOthers();
 
 		return response()->json("", 204);
 	}
@@ -1450,6 +1450,7 @@ class BugController extends Controller
 		$this->authorize('removeUser', [Bug::class, $bug->project]);
 
 		$val = $bug->users()->detach($user);
+		broadcast(new BugMembersUpdated($bug))->toOthers();
 
 		return response($val, 204);
 	}

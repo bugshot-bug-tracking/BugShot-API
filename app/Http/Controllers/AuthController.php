@@ -39,6 +39,7 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Notifications\UserRegisteredNotification;
 
 /**
  * @OA\Tag(
@@ -138,6 +139,9 @@ class AuthController extends Controller
 		$url = $this->createVerificationUrl($user);
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
+
+		//Send mail to marketing
+		$user->notify((new UserRegisteredNotification($user))->locale(GetUserLocaleService::getLocale($user)));
 
 		return new UserResource($user);
 	}

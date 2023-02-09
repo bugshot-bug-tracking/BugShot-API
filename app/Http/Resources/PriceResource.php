@@ -30,6 +30,7 @@ class PriceResource extends JsonResource
 				'recurring' => $this->recurring,
 				'tax_behavior' => $this->tax_behavior,
 				'tiers_mode' => $this->tiers_mode,
+				'tiers'=> $this->tiers,
 				'transform_quantity' => $this->transform_quantity,
 				'type' => $this->type,
 				'unit_amount' => $this->unit_amount,

@@ -9,15 +9,12 @@ use Illuminate\Notifications\Notification;
 use App\Mail\SubscriptionStarted as SubscriptionStartedMailable;
 use Stripe\StripeClient;
 
-class SubscriptionStartedNotification extends Notification
+class SubscriptionStartedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
 	// The newly booked products
 	public $products;
-
-	// The subscription itself
-	public $subscription;
 
 	// The calculated total price of the subscription
 	public $totalSubscriptionPrice;
@@ -27,7 +24,7 @@ class SubscriptionStartedNotification extends Notification
      *
      * @return void
      */
-    public function __construct($subscription)
+    public function __construct(public $subscription)
     {
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
 

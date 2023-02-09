@@ -2,13 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Http\Resources\UserResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\VerificationSuccessful as VerificationSuccessfulMailable;
+use App\Mail\UserRegistered as UserRegisteredMailable;
 
-class VerificationSuccessfulNotification extends Notification implements ShouldQueue
+class UserRegisteredNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -17,7 +18,7 @@ class VerificationSuccessfulNotification extends Notification implements ShouldQ
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(public $user)
     {
         //
     }
@@ -41,21 +42,8 @@ class VerificationSuccessfulNotification extends Notification implements ShouldQ
      */
     public function toMail($notifiable)
     {
-        return (new VerificationSuccessfulMailable($notifiable, $this->locale))
-        ->subject('BugShot - ' . __('email.verification-successful', [], $this->locale))
-        ->to($notifiable->email);
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
+        return (new UserRegisteredMailable($notifiable, $this->locale, $this->user))
+            ->subject('A User has been registered')
+            ->to(config('app.register_mailer'));
     }
 }

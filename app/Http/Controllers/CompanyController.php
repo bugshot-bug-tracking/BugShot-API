@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\CompanyDeleted;
+use App\Events\CompanyUpdated;
+use App\Events\InvitationCreated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -660,6 +664,8 @@ class CompanyController extends Controller
 			'color_hex' => $color_hex
 		]);
 
+		broadcast(new CompanyUpdated($company))->toOthers();
+
 		return new CompanyResource($company);
 	}
 
@@ -739,6 +745,7 @@ class CompanyController extends Controller
 		$this->authorize('delete', $company);
 
 		$val = $company->delete();
+		broadcast(new CompanyDeleted($company))->toOthers();
 
 		// Delete the respective image if present
 		$imageService->delete($company->image);
@@ -1301,6 +1308,8 @@ class CompanyController extends Controller
 
 		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $company, $id, $recipient_mail);
+
+		broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
 	}

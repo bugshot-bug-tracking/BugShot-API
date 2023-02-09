@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\InvitationCreated;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -1267,6 +1269,8 @@ class OrganizationController extends Controller
 
 		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $organization, $id, $recipient_mail);
+
+		broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
 	}
