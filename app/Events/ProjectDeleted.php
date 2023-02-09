@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectSlimResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -42,12 +41,7 @@ class ProjectDeleted implements ShouldBroadcast
      */
     public function broadcastWhen()
     {
-        // check if multiple users are part of the project
-        if ($this->project->users->isNotEmpty()) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     /**
