@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 
 use App\Events\AttachmentCreated;
+use App\Events\AttachmentDeleted;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -490,7 +491,7 @@ class AttachmentController extends Controller
 		$this->authorize('delete', [Attachment::class, $attachment->bug->project]);
 
 		$val = $attachmentService->delete($attachment);
-		broadcast(new AttachmentCreated($attachment))->toOthers();
+		broadcast(new AttachmentDeleted($attachment))->toOthers();
 
 		return response($val, 204);
 	}
