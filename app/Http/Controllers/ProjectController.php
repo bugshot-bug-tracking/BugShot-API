@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
 
+use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -367,6 +368,8 @@ class ProjectController extends Controller
 				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
 			]);
 		}
+
+		broadcast(new ProjectCreated($project))->toOthers();
 
 		return new ProjectResource($project);
 	}
@@ -1655,8 +1658,8 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the project
 		$this->authorize('viewInvitations', $project);
-
-		return InvitationResource::collection($project->invitations);
+		$invitations = $project->invitations->where('status_id', '=', 1);
+		return InvitationResource::collection($invitations);
 	}
 
 	/**

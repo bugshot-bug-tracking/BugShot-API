@@ -33,29 +33,31 @@ Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in proj
-    // return $user->id === Bug::findOrFail($bugId);
     return true;
 });
 
 Broadcast::channel('company.{companyId}', function ($user, $companyId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in comp
-    // return $user->id === Bug::findOrFail($bugId);
+    return true;
+});
+
+Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
+    // test if user is creator / manager of company
     return true;
 });
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in org
-    // return $user->id === Bug::findOrFail($bugId);
+    return true;
+});
+
+Broadcast::channel('organization.{organizationId}.admin', function ($user, $organizationId) {
+    // test if user is creator / manager of company
     return true;
 });
 
 Broadcast::channel('user.{userId}', function ($user) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is user?
-    // return $user->id === Bug::findOrFail($bugId);
     return true;
 });
