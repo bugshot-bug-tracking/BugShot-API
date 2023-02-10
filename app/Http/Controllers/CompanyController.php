@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
 
+use App\Events\CompanyCreated;
 use App\Events\CompanyDeleted;
 use App\Events\CompanyUpdated;
 use App\Events\InvitationCreated;
@@ -365,6 +366,8 @@ class CompanyController extends Controller
 				$invitationService->send((object) $invitation, $company, (string) Str::uuid(), $invitation['target_email']);
 			}
 		}
+
+		broadcast(new CompanyCreated($company))->toOthers();
 
 		return new CompanyResource($company);
 	}

@@ -2,6 +2,7 @@
 
 use App\Models\Bug;
 use App\Models\Comment;
+use App\Models\Project;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -20,42 +21,51 @@ Broadcast::channel('test', function () {
     return true;
 });
 
-Broadcast::channel('comments.{commentId}', function ($user, $commentId) {
-	$comment = Comment::findOrFail($commentId);
-    return $this->authorize('view', [Comment::class, $comment->bug->project]);
-});
+// Broadcast::channel('comments.{commentId}', function ($user, $commentId) {
+// 	$comment = Comment::findOrFail($commentId);
+//     return $this->authorize('view', [Comment::class, $comment->bug->project]);
+// });
 
 Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
-	// $bug = Bug::findOrFail($bugId);
+    
     // test if user is in proj // assigned
-    // return $user->id === Bug::findOrFail($bugId);
+	// $bug = Bug::findOrFail($bugId);
+    // $project = Project::findOrFail($bug->project->id);
+    // $bugUsers = $bug->users->where('id', '=', $user->id);
+    // $projectUsers = $project->users->where('id', '=', $user->id);
+
+    // if(!$bugUsers->empty() && $user->id === $bugUsers->first()->id){return true;}
+    // if(!$projectUsers->empty() && $user->id === $projectUsers->first()->id){return true;}
+    // return false;
     return true;
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in proj
-    // return $user->id === Bug::findOrFail($bugId);
     return true;
 });
 
 Broadcast::channel('company.{companyId}', function ($user, $companyId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in comp
-    // return $user->id === Bug::findOrFail($bugId);
+    return true;
+});
+
+Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
+    // test if user is creator / manager of company
     return true;
 });
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is in org
-    // return $user->id === Bug::findOrFail($bugId);
+    return true;
+});
+
+Broadcast::channel('organization.{organizationId}.admin', function ($user, $organizationId) {
+    // test if user is creator / manager of company
     return true;
 });
 
 Broadcast::channel('user.{userId}', function ($user) {
-	// $bug = Bug::findOrFail($bugId);
     // test if user is user?
-    // return $user->id === Bug::findOrFail($bugId);
     return true;
 });

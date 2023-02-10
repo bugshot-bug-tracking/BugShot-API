@@ -30,7 +30,27 @@ class TestEvent implements ShouldBroadcast
         $this->test = $test;
     }
 
-    
+    /**
+	 * The event's broadcast name.
+	 *
+	 * @return string
+	 */
+	public function broadcastAs()
+	{
+		return 'event.private';
+	}
+
+	/**
+	 * Get the data to broadcast.
+	 *
+	 * @return array
+	 */
+	public function broadcastWith()
+	{
+		return [
+			'data' => "private channel test"
+		];
+	}
 
     /**
      * Get the channels the event should broadcast on.
@@ -39,7 +59,7 @@ class TestEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('test');
+        return new PrivateChannel('test');
     }
 
 }
