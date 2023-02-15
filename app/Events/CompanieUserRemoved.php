@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Http\Resources\CompanyResource;
+use App\Http\Resources\UserResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,7 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CompanyDeleted implements ShouldBroadcast
+class CompanieUserRemoved implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,7 +20,7 @@ class CompanyDeleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public $company)
+    public function __construct(public $user)
     {
     }
 
@@ -31,7 +31,7 @@ class CompanyDeleted implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'company.deleted';
+        return 'company.removed';
     }
 
     /**
@@ -52,7 +52,7 @@ class CompanyDeleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => new CompanyResource($this->company)
+            'data' => new UserResource($this->user)
         ];
     }
 
@@ -63,6 +63,6 @@ class CompanyDeleted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('organization.' . $this->company->organization->id);
+        return new PrivateChannel('user.' . $this->user->id);
     }
 }
