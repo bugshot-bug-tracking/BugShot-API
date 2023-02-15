@@ -73,7 +73,6 @@ class BugUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('project.' . $this->bug->project->id);
+        return new PrivateChannel('project.' . $this->bug->project->id);
     }
 }

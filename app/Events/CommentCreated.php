@@ -81,7 +81,6 @@ class CommentCreated implements ShouldBroadcast
 	 */
 	public function broadcastOn()
 	{
-		// return new PrivateChannel('comments.' . $this->comment->id);
-		return new Channel('bug.' . $this->comment->bug->id);
+		return new PrivateChannel('bug.' . $this->comment->bug->id);
 	}
 }

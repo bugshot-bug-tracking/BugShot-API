@@ -69,6 +69,6 @@ class InvitationCreated implements ShouldBroadcast
         $userList = User::all()->where('email', '=', $this->invitation->target_email);
         if ($userList->isEmpty()){return null;}
         $userId = $userList->first()->id;
-        return new Channel('user.' . $userId);
+        return new PrivateChannel('user.' . $userId);
     }
 }

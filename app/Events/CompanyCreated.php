@@ -63,7 +63,6 @@ class CompanyCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('organization.' . $this->company->organization->id . '.admin');
+        return new PrivateChannel('organization.' . $this->company->organization->id . '.admin');
     }
 }
