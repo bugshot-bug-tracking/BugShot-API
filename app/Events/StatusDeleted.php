@@ -69,6 +69,6 @@ class StatusDeleted implements ShouldBroadcast
 	public function broadcastOn()
 	{
 		// return new PrivateChannel('comments.' . $this->comment->id);
-		return new Channel('project.' . $this->status->project->id);
+		return new PrivateChannel('project.' . $this->status->project->id);
 	}
 }

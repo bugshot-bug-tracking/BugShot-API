@@ -64,6 +64,6 @@ class ProjectCreated implements ShouldBroadcast
     public function broadcastOn()
     {
         // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('company.' . $this->project->company->id . '.admin');
+        return new PrivateChannel('company.' . $this->project->company->id . '.admin');
     }
 }

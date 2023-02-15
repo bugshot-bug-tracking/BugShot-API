@@ -69,7 +69,6 @@ class ProjectMembersUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('project.' . $this->project->id);
+        return new PrivateChannel('project.' . $this->project->id);
     }
 }

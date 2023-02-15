@@ -9,6 +9,7 @@ use App\Http\Requests\CommentStoreRequest;
 use App\Http\Resources\CommentResource;
 use App\Jobs\TriggerInterfacesJob;
 use App\Models\Bug;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Comment;

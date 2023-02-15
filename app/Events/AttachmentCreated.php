@@ -76,7 +76,6 @@ class AttachmentCreated implements ShouldBroadcast
 	 */
 	public function broadcastOn()
 	{
-		// return new PrivateChannel('comments.' . $this->comment->id);
-		return new Channel('bug.' . $this->bug->id);
+		return new PrivateChannel('bug.' . $this->bug->id);
 	}
 }

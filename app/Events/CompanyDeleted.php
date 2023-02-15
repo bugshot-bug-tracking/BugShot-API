@@ -68,7 +68,6 @@ class CompanyDeleted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments.' . $this->comment->id);
-        return new Channel('organization.' . $this->company->organization->id);
+        return new PrivateChannel('organization.' . $this->company->organization->id);
     }
 }
