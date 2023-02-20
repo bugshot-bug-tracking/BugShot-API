@@ -30,7 +30,7 @@ class ApiTokenCreated implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'project.created';
+        return 'project.token.created';
     }
 
     /**
@@ -51,7 +51,7 @@ class ApiTokenCreated implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => new ProjectResource($this->project)
+            'data' => "refresh"
         ];
     }
 
@@ -62,7 +62,6 @@ class ApiTokenCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        // return new PrivateChannel('comments.' . $this->comment->id);
-        return new PrivateChannel('company.' . $this->project->company->id . '.admin');
+        return new PrivateChannel('project.' . $this->project->id . '.admin');
     }
 }
