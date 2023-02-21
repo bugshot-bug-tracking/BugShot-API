@@ -285,7 +285,7 @@ class User extends Authenticatable implements MustVerifyEmail
 			return $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource->organization);
 		} else if ($resourceType == 'projects') {
 			// Get users resource role
-			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource) || $this->isOwnerOrManagerInResource($this->organizations, $resource);
+			return $this->isOwnerOrManagerInResource($this->projects, $resource) || $this->isOwnerOrManagerInResource($this->companies, $resource->company) || $this->isOwnerOrManagerInResource($this->organizations, $resource->company->organization);
 		}
 
 		return false;
