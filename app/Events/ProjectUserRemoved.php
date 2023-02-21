@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -20,7 +21,7 @@ class ProjectUserRemoved implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public $user)
+    public function __construct(public $user, public $project)
     {
     }
 
@@ -52,7 +53,7 @@ class ProjectUserRemoved implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => new UserResource($this->user)
+            'data' => new ProjectResource($this->project)
         ];
     }
 

@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
+use App\Events\ProjectUserRemoved;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -363,10 +364,11 @@ class ProjectController extends Controller
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
-				"order_number" => $key++,
+				"order_number" => $key == 3 ? 9999 : $key,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
+				"permanent" => $key == 0 || $key == 3 ? ($key == 0 ? 'backlog' : 'done') : NULL, // Check wether the status is backlog or done
 			]);
+			$key++;
 		}
 
 		broadcast(new ProjectCreated($project))->toOthers();
@@ -1582,6 +1584,7 @@ class ProjectController extends Controller
 			$this->authorize('removeUser', $project);
 
 		$val = $project->users()->detach($user);
+		broadcast(new ProjectUserRemoved($user, $project))->toOthers();
 
 		return response($val, 204);
 	}

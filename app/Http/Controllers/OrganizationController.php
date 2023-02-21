@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 
 use App\Events\InvitationCreated;
+use App\Events\OrganizationUpdated;
+use App\Events\OrganizationUserRemoved;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -591,6 +593,8 @@ class OrganizationController extends Controller
 			]);
 		}
 
+		broadcast(new OrganizationUpdated($organization))->toOthers();
+
 		return new OrganizationResource($organization);
 	}
 
@@ -660,6 +664,7 @@ class OrganizationController extends Controller
 		$this->authorize('delete', $organization);
 
 		$val = $organization->delete();
+		broadcast(new OrganizationUpdated($organization))->toOthers();
 
 		return response($val, 204);
 	}
@@ -1081,6 +1086,8 @@ class OrganizationController extends Controller
 		$this->authorize('removeUser', $organization);
 
 		$val = $organization->users()->detach($user);
+
+		broadcast(new OrganizationUserRemoved($user, $organization))->toOthers();
 
 		return response($val, 204);
 	}

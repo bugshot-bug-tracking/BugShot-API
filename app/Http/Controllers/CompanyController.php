@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Events\CompanyCreated;
 use App\Events\CompanyDeleted;
 use App\Events\CompanyUpdated;
+use App\Events\CompanyUserRemoved;
 use App\Events\InvitationCreated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -1110,6 +1111,7 @@ class CompanyController extends Controller
 			$this->authorize('removeUser', $company);
 
 		$val = $company->users()->detach($user);
+		broadcast(new CompanyUserRemoved($user, $company))->toOthers();
 
 		// Also remove the user from the related project
 		// Commented out right now because we want that the user can stay in the projects while beeing removed from the company
