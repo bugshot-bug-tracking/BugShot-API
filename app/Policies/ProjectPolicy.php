@@ -46,6 +46,10 @@ class ProjectPolicy
    */
   public function viewAny(User $user, Company $company)
   {
+    if ($user->isPriviliegated('companies', $company)) {
+      return true;
+    }
+
     if ($company->user_id == $user->id) {
       return true;
     }
