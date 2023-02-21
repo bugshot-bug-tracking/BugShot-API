@@ -361,14 +361,14 @@ class ProjectController extends Controller
 		$defaultStatuses = [__('data.backlog'), __('data.todo'), __('data.doing'), __('data.done')];
 
 		foreach ($defaultStatuses as $key => $status) {
-			$key = 0;
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
-				"order_number" => $key == 4 ? 9999 : $key++,
+				"order_number" => $key == 3 ? 9999 : $key,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'whatsthefuckingkey: ' . $key) : NULL, // Check wether the status is backlog or done
+				"permanent" => $key == 0 || $key == 3 ? ($key == 0 ? 'backlog' : 'done') : NULL, // Check wether the status is backlog or done
 			]);
+			$key++;
 		}
 
 		broadcast(new ProjectCreated($project))->toOthers();
