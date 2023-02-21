@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\BugResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -18,28 +19,34 @@ class AssignedToBug
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * User that sent the comment
+     * The event's broadcast name.
      *
-     * @var User
+     * @return string
      */
-    public $user;
-
-    /**
-     * Bug details
-     *
-     * @var Bug
-     */
-    public $bug;
+    public function broadcastAs()
+    {
+        return 'assigned.to.bug';
+    }
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(User $user, Bug $bug)
+    public function __construct(public User $user, public Bug $bug)
     {
-        $this->user = $user;
-        $this->bug = $bug;
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'data' => new BugResource($this->bug)
+        ];
     }
 
     /**
@@ -47,8 +54,8 @@ class AssignedToBug
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    // public function broadcastOn()
-    // {
-    //     return new PrivateChannel('comments');
-    // }
+    public function broadcastOn()
+    {
+        return new PrivateChannel('user.' . $this->user->id);
+    }
 }

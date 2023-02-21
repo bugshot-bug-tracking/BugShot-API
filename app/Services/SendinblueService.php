@@ -53,7 +53,7 @@ class SendinblueService
             'api-key' => $this->sendinblueApiKey
         ]);
     
-        $response = Http::withHeaders($header)->post($this->sendiblueV3ApiUrl . '/contacts/' . $user->email, [
+        $response = Http::withHeaders($header)->put($this->sendiblueV3ApiUrl . '/contacts/' . $user->email, [
             'attributes' => $attributes,
             'emailBlacklisted' => $emailBlacklisted,
             'smsBlacklisted' => $smsBlacklisted,

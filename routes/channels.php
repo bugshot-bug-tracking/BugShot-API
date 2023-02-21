@@ -2,6 +2,7 @@
 
 use App\Models\Bug;
 use App\Models\Comment;
+use App\Models\Company;
 use App\Models\Project;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -21,33 +22,48 @@ Broadcast::channel('test', function () {
     return true;
 });
 
-// Broadcast::channel('comments.{commentId}', function ($user, $commentId) {
-// 	$comment = Comment::findOrFail($commentId);
-//     return $this->authorize('view', [Comment::class, $comment->bug->project]);
-// });
-
 Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
-    
-    // test if user is in proj // assigned
-	// $bug = Bug::findOrFail($bugId);
-    // $project = Project::findOrFail($bug->project->id);
-    // $bugUsers = $bug->users->where('id', '=', $user->id);
-    // $projectUsers = $project->users->where('id', '=', $user->id);
 
-    // if(!$bugUsers->empty() && $user->id === $bugUsers->first()->id){return true;}
-    // if(!$projectUsers->empty() && $user->id === $projectUsers->first()->id){return true;}
-    // return false;
-    return true;
+    // test if user is assigned
+    $bug = Bug::findOrFail($bugId);
+    $bugUsers = $bug->users->where('id', '=', $user->id);
+    if (!$bugUsers->empty() && $user->id === $bugUsers->first()->id) {
+        return true;
+    }
+
+    // test if user is in proj
+    $project = Project::findOrFail($bug->project->id);
+    $projectUsers = $project->users->where('id', '=', $user->id);
+    if (!$projectUsers->empty() && $user->id === $projectUsers->first()->id) {
+        return true;
+    }
+
+    return false;
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
     // test if user is in proj
-    return true;
+    $project = Project::findOrFail($projectId);
+    $projectUsers = $project->users->where('id', '=', $user->id);
+    if (!$projectUsers->empty() && $user->id === $projectUsers->first()->id) {
+        return true;
+    }
+    return false;
+});
+
+Broadcast::channel('project.{projectId}.admin', function ($user, $projectId) {
+    // test if user is creator / manager of proj
+    return false;
 });
 
 Broadcast::channel('company.{companyId}', function ($user, $companyId) {
     // test if user is in comp
-    return true;
+    $company = Company::findOrFail($companyId);
+    $companyUsers = $company->users->where('id', '=', $user->id);
+    if (!$companyUsers->empty() && $user->id === $companyUsers->first()->id) {
+        return true;
+    }
+    return false;
 });
 
 Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
@@ -57,7 +73,12 @@ Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
     // test if user is in org
-    return true;
+    $org = Company::findOrFail($organizationId);
+    $orgUsers = $org->users->where('id', '=', $user->id);
+    if (!$orgUsers->empty() && $user->id === $orgUsers->first()->id) {
+        return true;
+    }
+    return false;
 });
 
 Broadcast::channel('organization.{organizationId}.admin', function ($user, $organizationId) {
