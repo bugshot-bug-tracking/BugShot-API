@@ -3,6 +3,7 @@
 use App\Models\Bug;
 use App\Models\Comment;
 use App\Models\Company;
+use App\Models\Organization;
 use App\Models\Project;
 use Illuminate\Support\Facades\Broadcast;
 
@@ -73,7 +74,7 @@ Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
     // test if user is in org
-    $org = Company::findOrFail($organizationId);
+    $org = Organization::findOrFail($organizationId);
     $orgUsers = $org->users->where('id', '=', $user->id);
     if (!$orgUsers->empty() && $user->id === $orgUsers->first()->id) {
         return true;
