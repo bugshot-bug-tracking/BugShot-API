@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
+//TEST IF ALLOWED TO VIEW CERTAIN RESOURCE -> inside resource as part of users / creator || manager / creator on higher level
 
 Broadcast::channel('test', function () {
     return true;
@@ -32,62 +33,42 @@ Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
         return true;
     }
 
-    // test if user is in proj
-    $project = Project::findOrFail($bug->project->id);
-    $projectUsers = $project->users->where('id', '=', $user->id);
-    if (!$projectUsers->empty() && $user->id === $projectUsers->first()->id) {
-        return true;
-    }
-
-    return false;
+    return $this->authorize('view', [Bug::class, $bug->project])->allowed();
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
-    // test if user is in proj
     $project = Project::findOrFail($projectId);
-    $projectUsers = $project->users->where('id', '=', $user->id);
-    if (!$projectUsers->empty() && $user->id === $projectUsers->first()->id) {
-        return true;
-    }
-    return false;
-});
-
-Broadcast::channel('project.{projectId}.admin', function ($user, $projectId) {
-    // test if user is creator / manager of proj
-    return false;
+    return $this->authorize('view', [Project::class, $project])->allowed();
 });
 
 Broadcast::channel('company.{companyId}', function ($user, $companyId) {
-    // test if user is in comp
     $company = Company::findOrFail($companyId);
-    $companyUsers = $company->users->where('id', '=', $user->id);
-    if (!$companyUsers->empty() && $user->id === $companyUsers->first()->id) {
-        return true;
-    }
-    return false;
-});
-
-Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
-    // test if user is creator / manager of company
-    return true;
+    return $this->authorize('view', [Company::class, $company])->allowed();
 });
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
-    // test if user is in org
     $org = Organization::findOrFail($organizationId);
-    $orgUsers = $org->users->where('id', '=', $user->id);
-    if (!$orgUsers->empty() && $user->id === $orgUsers->first()->id) {
-        return true;
-    }
-    return false;
+    return $this->authorize('view', [Organization::class, $org])->allowed();
+});
+
+
+//Admin routes for Creator / Managers only
+
+Broadcast::channel('project.{projectId}.admin', function ($user, $projectId) {
+    $project = Project::findOrFail($projectId);
+    return $user->isPriviliegated('projects', $project);
+});
+
+Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
+    $company = Company::findOrFail($companyId);
+    return $user->isPriviliegated('companies', $company);
 });
 
 Broadcast::channel('organization.{organizationId}.admin', function ($user, $organizationId) {
-    // test if user is creator / manager of company
-    return true;
+    $org = Organization::findOrFail($organizationId);
+    return $user->isPriviliegated('organizations', $org);
 });
 
-Broadcast::channel('user.{userId}', function ($user) {
-    // test if user is user?
-    return true;
+Broadcast::channel('user.{userId}', function ($user, $userId) {
+    return $user->id == $userId;
 });
