@@ -33,37 +33,35 @@ Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
         return true;
     }
 
-    $this->authorize('view', [Bug::class, $bug->project]);
-
-    return false;
+    return $this->authorize('view', [Bug::class, $bug->project])->allowed();
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
     $project = Project::findOrFail($projectId);
-    $this->authorize('view', [Project::class, $project]);
-    return false;
+    return $this->authorize('view', [Project::class, $project])->allowed();
 });
+
+Broadcast::channel('company.{companyId}', function ($user, $companyId) {
+    $company = Company::findOrFail($companyId);
+    return $this->authorize('view', [Company::class, $company])->allowed();
+});
+
+Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
+    $org = Organization::findOrFail($organizationId);
+    return $this->authorize('view', [Organization::class, $org])->allowed();
+});
+
+
+//Admin routes for Creator / Managers only
 
 Broadcast::channel('project.{projectId}.admin', function ($user, $projectId) {
     $project = Project::findOrFail($projectId);
     return $user->isPriviliegated('projects', $project);
 });
 
-Broadcast::channel('company.{companyId}', function ($user, $companyId) {
-    $company = Company::findOrFail($companyId);
-    $this->authorize('view', [Company::class, $company]);
-    return false;
-});
-
 Broadcast::channel('company.{companyId}.admin', function ($user, $companyId) {
     $company = Company::findOrFail($companyId);
     return $user->isPriviliegated('companies', $company);
-});
-
-Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
-    $org = Organization::findOrFail($organizationId);
-    $this->authorize('view', [Organization::class, $org]);
-    return false;
 });
 
 Broadcast::channel('organization.{organizationId}.admin', function ($user, $organizationId) {
