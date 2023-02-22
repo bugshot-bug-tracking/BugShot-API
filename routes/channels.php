@@ -33,22 +33,22 @@ Broadcast::channel('bug.{bugId}', function ($user, $bugId) {
         return true;
     }
 
-    return $this->authorize('view', [Bug::class, $bug->project])->allowed();
+    return $user->can('view', [Bug::class, $bug->project]);
 });
 
 Broadcast::channel('project.{projectId}', function ($user, $projectId) {
     $project = Project::findOrFail($projectId);
-    return $this->authorize('view', [Project::class, $project])->allowed();
+    return $user->can('view', [Project::class, $project]);
 });
 
 Broadcast::channel('company.{companyId}', function ($user, $companyId) {
     $company = Company::findOrFail($companyId);
-    return $this->authorize('view', [Company::class, $company])->allowed();
+    return $user->can('view', [Company::class, $company]);
 });
 
 Broadcast::channel('organization.{organizationId}', function ($user, $organizationId) {
     $org = Organization::findOrFail($organizationId);
-    return $this->authorize('view', [Organization::class, $org])->allowed();
+    return $user->can('view', [Organization::class, $org]);
 });
 
 

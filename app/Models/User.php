@@ -105,7 +105,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'email',
 		'password',
 		'email_verified_at',
-		'subscription_item_id'
+		'subscription_item_id',
 	];
 
 	/**
