@@ -45,21 +45,21 @@ class CommentCreated implements ShouldBroadcast
 	public function broadcastWhen()
 	{
 		// Check if there are any users assigned to the bug
-		if ($this->comment->bug->users->isNotEmpty()) {
-			return true;
-		}
-
-		// Check if a user other then the comment author is tagged in the comment
-		// if(count($this->taggedUsers) > 0 && !in_array(['user_id' => $this->user->id], $this->taggedUsers)) {
+		// if ($this->comment->bug->users->isNotEmpty()) {
 		// 	return true;
 		// }
 
-		// check if multiple users are part of the project
-		if ($this->comment->bug->project->users->isNotEmpty()) {
-			return true;
-		}
+		// // Check if a user other then the comment author is tagged in the comment
+		// // if(count($this->taggedUsers) > 0 && !in_array(['user_id' => $this->user->id], $this->taggedUsers)) {
+		// // 	return true;
+		// // }
 
-		return false;
+		// // check if multiple users are part of the project
+		// if ($this->comment->bug->project->users->isNotEmpty()) {
+		// 	return true;
+		// }
+
+		return true;
 	}
 
 	/**
