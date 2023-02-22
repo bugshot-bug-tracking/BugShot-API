@@ -31,6 +31,7 @@ class BugSeeder extends Seeder
             'resolution' => '1920x1080',
             'order_number' => 1,
             'ai_id' => 1,
+            'client_id' => 1,
             'deadline' => Carbon::now()
 		]);
 

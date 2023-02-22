@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property integer $id
  * @property string $designation
+ * @property string $client_url
+ * @property string $client_key
  * @property string $created_at
  * @property string $updated_at
  * @property UserClient[] $userClients
@@ -24,7 +26,7 @@ class Client extends Model
     /**
      * @var array
      */
-    protected $fillable = ['designation', 'created_at', 'updated_at'];
+    protected $fillable = ['designation','client_url', 'client_key', 'created_at', 'updated_at'];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

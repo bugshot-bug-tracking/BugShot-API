@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\TaggedInComment as TaggedInCommentMailable;
 
-class TaggedInCommentNotification extends Notification
+class TaggedInCommentNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\TaggedInCommentNotification;
 use App\Services\GetUserLocaleService;
 
-class SendTaggedInCommentNotification
+class SendTaggedInCommentNotification implements ShouldQueue
 {
     /**
      * Handle the event.

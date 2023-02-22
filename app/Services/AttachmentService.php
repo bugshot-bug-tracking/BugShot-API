@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Events\ScreenshotCreated;
+use App\Events\ScreenshotDeleted;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Attachment;
 
@@ -32,6 +34,8 @@ class AttachmentService
 			"designation" => $attachment->designation
 		]);
 
+        broadcast(new ScreenshotCreated($attachment))->toOthers();
+
         return $attachment;
     }
 
@@ -39,6 +43,7 @@ class AttachmentService
     public function delete($attachment) 
     {
         $val = $attachment->delete();
+        broadcast(new ScreenshotDeleted($attachment))->toOthers();
 
         return $val;
     }

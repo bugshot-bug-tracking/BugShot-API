@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Contracts\Filesystem\Cloud;
 
 /**
  * @OA\Schema()
@@ -126,6 +127,13 @@ class Bug extends Model
 	 *  format="int64",
 	 * 	description="Auto-Incrementing Id."
 	 * )
+	 * 
+	 * * @OA\Property(
+	 * 	property="client_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The client that was used to create the bug."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="deadline",
@@ -158,7 +166,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "operating_system", "browser", "selector", "resolution", "deadline"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline"];
 
 	protected $touches = ["project", "status"];
 
@@ -227,5 +235,13 @@ class Bug extends Model
 	public function comments()
 	{
 		return $this->hasMany(Comment::class)->orderBy('created_at');
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function client()
+	{
+		return $this->belongsTo(Client::class);
 	}
 }

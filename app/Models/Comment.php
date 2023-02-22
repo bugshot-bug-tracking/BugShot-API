@@ -47,7 +47,14 @@ class Comment extends Model
 	 *  format="int64",
 	 * 	description="The id of the user to which the object belongs."
 	 * )
-	 *
+	 * 
+	 * @OA\Property(
+	 * 	property="client_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The client that was used to create the bug."
+	 * )
+	 * 
 	 * @OA\Property(
 	 * 	property="content",
 	 * 	type="string",
@@ -76,7 +83,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "content"];
+	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content"];
 
 	protected $touches = ['bug'];
 
@@ -94,5 +101,13 @@ class Comment extends Model
 	public function user()
 	{
 		return $this->belongsTo(User::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function client()
+	{
+		return $this->belongsTo(Client::class);
 	}
 }

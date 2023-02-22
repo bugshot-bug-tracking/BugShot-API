@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 // Models
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Organization;
 
 class CompanyPolicy
 {
@@ -40,11 +41,17 @@ class CompanyPolicy
      * Determine whether the user can view any models.
      *
      * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user, Organization $organization)
     {
-        //
+		// Check if user is the manager or owner of the organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
+
+		return $user->organizations()->find($organization) != NULL;
     }
 
     /**
@@ -56,36 +63,10 @@ class CompanyPolicy
      */
     public function view(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        return $user->companies()->find($company) != NULL;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     *
-     * @param  \App\Models\User  $user
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function create(User $user)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Company  $company
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function update(User $user, Company $company)
-    {
-        if($company->user_id == $user->id) {
-            return true;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
 
         $company = $user->companies()->find($company);
         if ($company == NULL) {
@@ -97,11 +78,47 @@ class CompanyPolicy
             case 1:
                 return true;
                 break;
-            
+            case 2:
+                return true;
+                break;
+            case 3:
+                return true;
+                break;
+
             default:
                 return false;
                 break;
         }
+    }
+
+    /**
+     * Determine whether the user can create models.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Organization  $organization
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function create(User $user, Organization $organization)
+    {
+		// Check if user is the manager or owner of the parent organization
+		if($user->isPriviliegated('organizations', $organization)) {
+			return true;
+		};
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Company  $company
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function update(User $user, Company $company)
+    {
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -113,7 +130,10 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company)
     {
-        return $company->user_id == $user->id;
+        // Check if user is the owner
+        if($company->user_id == $user->id) {
+            return true;
+        }
     }
 
     /**
@@ -173,25 +193,10 @@ class CompanyPolicy
      */
     public function updateUserRole(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -203,25 +208,10 @@ class CompanyPolicy
      */
     public function removeUser(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -233,25 +223,10 @@ class CompanyPolicy
      */
     public function viewInvitations(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 
     /**
@@ -263,24 +238,9 @@ class CompanyPolicy
      */
     public function invite(User $user, Company $company)
     {
-        if($company->user_id == $user->id) {
-            return true;
-        }
-
-        $company = $user->companies()->find($company);
-        if ($company == NULL) {
-            return false;
-        }
-        
-        $role = $company->pivot->role_id;
-        switch ($role) {
-            case 1:
-                return true;
-                break;
-            
-            default:
-                return false;
-                break;
-        }
+		// Check if user is the manager or owner of the company
+		if($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
     }
 }

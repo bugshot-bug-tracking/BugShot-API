@@ -99,15 +99,8 @@ class BillingAddressController extends Controller
 	public function getBillingAddress($type, $id)
 	{
 		// Check if the given type is a user or an organization
-		if($type == 'user') {
-			// Check if the user is authorized to get the billing address for the given user
-			$this->authorize('getBillingAddress', User::findOrFail($id));
-		} else {
-			// Check if the user is authorized to get the billing address for the given organization
-			$this->authorize('getBillingAddress', Organization::findOrFail($id));
-		}
-
 		$billingAddress = BillingAddress::where('billing_addressable_id', $id)->firstOrFail();
+		$this->authorize('getStripeCustomer', $billingAddress);
 
 		return new BillingAddressResource($billingAddress);
 	}

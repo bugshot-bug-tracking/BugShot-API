@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\StatusCreated;
+use App\Events\StatusDeleted;
+use App\Events\StatusUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -131,13 +135,116 @@ class StatusController extends Controller
 		// Check if the user is authorized to list the statuses of the project
 		$this->authorize('viewAny', [Status::class, $project]);
 
-		if($request->timestamp == NULL) {
-            $statuses = $project->statuses;
-        } else {
-            $statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
-        }
+		if ($request->timestamp == NULL) {
+			$statuses = $project->statuses;
+		} else {
+			$statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+		}
 
 		return StatusResource::collection($statuses);
+	}
+
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/statuses",
+	 *	tags={"Interface"},
+	 *	summary="All statuses.",
+	 *	operationId="allStatusesViaApiKey",
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Status")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function indexViaApiKey(Request $request)
+	{
+		return StatusResource::collection($request->get('project')->statuses);
 	}
 
 	/**
@@ -227,9 +334,8 @@ class StatusController extends Controller
 		// Check if the the request already contains a UUID for the status
 		$id = $this->setId($request);
 
-		// Get the max order number in this project and increase it by one
-		$order_number = $project->statuses->max('order_number');
-		$project->statuses->last()->update(['order_number' => $order_number + 1]);
+		// Get order_number for last status and move in front of the status
+		$order_number = $project->statuses->count() - 1;
 
 		// Store the new status in the database
 		$status = $project->statuses()->create([
@@ -237,6 +343,8 @@ class StatusController extends Controller
 			"designation" => $request->designation,
 			"order_number" => $order_number
 		]);
+
+		broadcast(new StatusCreated($status))->toOthers();
 
 		return new StatusResource($status);
 	}
@@ -357,6 +465,120 @@ class StatusController extends Controller
 	}
 
 	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Status  $status
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/interface/statuses/{status_id}",
+	 *	tags={"Interface"},
+	 *	summary="Show one status.",
+	 *	operationId="showStatusViaApiKey",
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="api-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="d1359f79-ce2d-45b1-8fd8-9566c606aa6c"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="status_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Status/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Status"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function showViaApiKey(Request $request, Status $status)
+	{
+		//Check if user has access to bug
+		$tempProject = $request->get('project');
+		if ($status->project_id == $tempProject->id) {
+			return new StatusResource($status);
+		}
+	}
+
+	/**
 	 * Update the specified resource in storage.
 	 *
 	 * @param  StatusUpdateRequest  $request
@@ -462,20 +684,29 @@ class StatusController extends Controller
 	 * )
 	 **/
 	public function update(StatusUpdateRequest $request, Project $project, Status $status)
-	{	
+	{
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
 		// Check if the order of the status has to be synchronized
-		if($request->order_number != $status->getOriginal('order_number')) {
-			$this->synchronizeStatusOrder($request, $status, $project);
+		if ($request->order_number != $status->getOriginal('order_number')) {
+
+			//Prevent higher order numbers
+			$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
+
+			$this->synchronizeStatusOrder($order_number, $status, $project);
 		}
 
 		// Update the status
-		$status->update($request->all());
+		$status->update([
+			"designation" => isset($request->designation) ? $request->designation : $status->designation,
+			"order_number" => isset($request->order_number) ? $order_number : $status->order_number
+		]);
 		$status->update([
 			"project_id" => $project->id
 		]);
+
+		broadcast(new StatusUpdated($status))->toOthers();
 
 		return new StatusResource($status);
 	}
@@ -557,35 +788,54 @@ class StatusController extends Controller
 	{
 		// Check if the user is authorized to delete the status
 		$this->authorize('delete', [Status::class, $project]);
-		
+
 		// Move the bugs into a new status 
-		if($request->header('move') != NULL) {
+		if ($request->header('move') != NULL) {
 			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
 		}
 
+		//synchronize the statuses -> order // SET ORIGINAL ORDER WHEN RESTORING IS POSSIBLE AND SYCHRONIZE
+		$this->synchronizeStatusDeletedOrder($status, $project);
 		$val = $status->delete();
-	
+
+		broadcast(new StatusDeleted($status))->toOthers();
+
 		return response($val, 204);
 	}
 
 	// Synchronize the order numbers of all the statuses, that are affected by the updated status
-	private function synchronizeStatusOrder($request, $status, $project)
+	//	Might need rebuild -> update, sort by order_number, from 0 to count -> reset order_numbers
+	private function synchronizeStatusOrder($newOrderNumber, $status, $project)
 	{
 		$originalOrderNumber = $status->getOriginal('order_number');
-		$newOrderNumber = $request->order_number;
 
-		$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 		// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
-		if($originalOrderNumber < $newOrderNumber) {
+		if ($originalOrderNumber < $newOrderNumber) {
 			$statuses = $project->statuses->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
 		} else {
 			$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 		}
 
 		// Increase all the order numbers that are greater than the original status order number
-		foreach($statuses as $status) {
-			$status->update([
-				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
+		foreach ($statuses as $statusItem) {
+			if ($statusItem->permanent == 'done' || $statusItem->id == $status->id) {
+				continue;
+			}
+			$statusItem->update([
+				"order_number" => $originalOrderNumber < $newOrderNumber ? $statusItem->order_number - 1 : $statusItem->order_number + 1
+			]);
+		}
+	}
+
+	private function synchronizeStatusDeletedOrder($status, $project)
+	{
+		$statuses = $project->statuses->whereBetween('order_number', [$status->order_number, $project->statuses->last()->order_number]);
+		foreach ($statuses as $statusItem){
+			if ($statusItem->permanent == 'done' || $statusItem->id == $status->id) {
+				continue;
+			}
+			$statusItem->update([
+				"order_number" => $statusItem->order_number - 1
 			]);
 		}
 	}
@@ -596,7 +846,7 @@ class StatusController extends Controller
 		$status = Status::find($status_id);
 		$orderNumber = $status->bugs->max('order_number') + 1;
 
-		foreach($bugs as $bug) {
+		foreach ($bugs as $bug) {
 			$bug->update([
 				'status_id' => $status->id,
 				'order_number' => $orderNumber++
