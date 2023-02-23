@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ImageResource extends JsonResource
@@ -19,15 +20,19 @@ class ImageResource extends JsonResource
 		}
 
 		$path = "storage" . $this->url;
-		$data = file_get_contents($path);
-		$base64 = base64_encode($data);
+		try {
+			$data = file_get_contents($path);
+			$base64 = base64_encode($data);
 
-		return [
-			"type" => "Image",
-			"attributes" => [
-				"url" => $this->url,
-				"base64" => $base64
-			]
-		];
+			return [
+				"type" => "Image",
+				"attributes" => [
+					"url" => $this->url,
+					"base64" => $base64
+				]
+			];
+		} catch (Exception $e) {
+			return [];
+		}
 	}
 }
