@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 // Miscellaneous, Helpers, ...
 
 use App\Events\BugMembersUpdated;
+use App\Events\CompanyMembersUpdated;
+use App\Events\OrganizationMembersUpdated;
+use App\Events\ProjectMembersUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -493,6 +496,8 @@ class InvitationController extends Controller
 
 		$invitation->update(["status_id" => 2]);
 
+		broadcast(new OrganizationMembersUpdated($organization))->toOthers();
+
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->first());
 	}
 
@@ -522,6 +527,8 @@ class InvitationController extends Controller
 		}
 
 		$invitation->update(["status_id" => 2]);
+
+		broadcast(new CompanyMembersUpdated($company))->toOthers();
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->first());
 	}
@@ -558,7 +565,7 @@ class InvitationController extends Controller
 
 		$invitation->update(["status_id" => 2]);
 
-		broadcast(new BugMembersUpdated($project))->toOthers();
+		broadcast(new ProjectMembersUpdated($project))->toOthers();
 
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->first());
 	}
