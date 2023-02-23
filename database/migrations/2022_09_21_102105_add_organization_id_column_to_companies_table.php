@@ -9,6 +9,7 @@ use App\Models\CompanyUserRole;
 use Illuminate\Support\Str;
 use App\Models\Organization;
 use App\Services\GetUserLocaleService;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -47,7 +48,10 @@ return new class extends Migration
                     $companyUserRole = CompanyUserRole::where("user_id", $company->creator->id)
                         ->where("company_id", $company->id)->first();
                     if ($companyUserRole) {
-                        $company->users->detach($company->creator);
+                        DB::table('company_user_roles')
+                            ->where("user_id", $company->creator->id)
+                            ->where("company_id", $company->id)
+                            ->delete();
                     }
                 }
             }
