@@ -22,14 +22,7 @@ return new class extends Migration
         foreach ($orgs as $org) {
             foreach ($org->companies as $company) {
                 foreach ($company->users as $user) {
-                    // Get role of the user in the company and add to the organization
-                    $userRole = CompanyUserRole::all()
-                        ->where('company_id', '=', $company->id)
-                        ->where('user_id', '=', $user->id);
-                    $roleId = $userRole->first()->role_id;
-
                     //check if already exists
-                    
                     $userRole = OrganizationUserRole::all()
                         ->where('organization_id', '=', $org->id)
                         ->where('user_id', '=', $user->id);
@@ -40,7 +33,7 @@ return new class extends Migration
                     $orgRole = OrganizationUserRole::create([
                         "organization_id" => $org->id,
                         "user_id" => $user->id,
-                        "role_id" => $roleId,
+                        "role_id" => 2,
                     ]);
                     $orgRolesArray[] = $orgRole;
                 }

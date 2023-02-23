@@ -40,14 +40,9 @@ class StatusUpdated implements ShouldBroadcast
 	 * @return bool
 	 */
 	public function broadcastWhen()
-	{
-		// check if multiple users are part of the project
-		// if ($this->status->project->users->isNotEmpty()) {
-		// 	return true;
-		// }
-
-		return true;
-	}
+    {
+        return true;
+    }
 
 	/**
 	 * Get the data to broadcast.
