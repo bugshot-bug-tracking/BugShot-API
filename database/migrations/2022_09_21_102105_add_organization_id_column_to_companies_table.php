@@ -47,7 +47,7 @@ return new class extends Migration
                     $companyUserRole = CompanyUserRole::where("user_id", $company->creator->id)
                         ->where("company_id", $company->id)->first();
                     if ($companyUserRole) {
-                        $companyUserRole->delete();
+                        $company->users->detach($company->creator);
                     }
                 }
             }
