@@ -43,16 +43,6 @@ class BugMembersUpdated implements ShouldBroadcast
      */
     public function broadcastWhen()
     {
-        // Check if there are any users assigned to the bug
-        // if ($this->bug->users->isNotEmpty()) {
-        //     return true;
-        // }
-
-        // // check if multiple users are part of the project
-        // if ($this->bug->project->users->isNotEmpty()) {
-        //     return true;
-        // }
-
         return true;
     }
 

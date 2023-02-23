@@ -41,11 +41,6 @@ class OrganizationDeleted implements ShouldBroadcast
      */
     public function broadcastWhen()
     {
-        // check if multiple users are part of the organization
-        // if ($this->organization->users->isNotEmpty()) {
-        //     return true;
-        // }
-
         return true;
     }
 

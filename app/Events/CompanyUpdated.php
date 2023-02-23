@@ -41,11 +41,6 @@ class CompanyUpdated implements ShouldBroadcast
      */
     public function broadcastWhen()
     {
-        // check if multiple users are part of the company
-        // if ($this->company->users->isNotEmpty()) {
-        //     return true;
-        // }
-
         return true;
     }
 
