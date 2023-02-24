@@ -109,6 +109,10 @@ class ProjectResource extends JsonResource
 			$project['attributes']['role'] = new RoleResource($role);
 		}
 
+		if(array_key_exists('include-organization-id', $header) && $header['include-organization-id'][0] == "true"){
+			$project['attributes']['company']['attributes']['organization_id'] = $company->organization->id;
+		}
+
 		return $project;
 	}
 }
