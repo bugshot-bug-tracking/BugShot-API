@@ -115,6 +115,7 @@ Route::middleware(['auth:sanctum'])->group(
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
 			Route::get('/user', [AuthController::class, "user"])->name("user");
+			Route::post('/user/trial', [AuthController::class, "startTrial"])->name("start.trial");
 		});
 	}
 );

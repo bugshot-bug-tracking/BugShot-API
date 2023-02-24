@@ -71,7 +71,8 @@ class OrganizationPolicy
      */
     public function create(User $user)
     {
-        //
+        if(!$user->licenseActive()){return false;}
+
     }
 
     /**
@@ -83,6 +84,8 @@ class OrganizationPolicy
      */
     public function update(User $user, Organization $organization)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the organization
 		if($user->isPriviliegated('organizations', $organization)) {
 			return true;
@@ -98,6 +101,8 @@ class OrganizationPolicy
      */
     public function delete(User $user, Organization $organization)
     {
+        if(!$user->licenseActive()){return false;}
+
         return $organization->user_id == $user->id;
     }
 
@@ -178,6 +183,8 @@ class OrganizationPolicy
      */
     public function updateUserRole(User $user, Organization $organization)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the organization
 		if($user->isPriviliegated('organizations', $organization)) {
 			return true;
@@ -193,6 +200,8 @@ class OrganizationPolicy
      */
     public function removeUser(User $user, Organization $organization)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the organization
 		if($user->isPriviliegated('organizations', $organization)) {
 			return true;
@@ -223,13 +232,15 @@ class OrganizationPolicy
      */
     public function invite(User $user, Organization $organization)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the organization
 		if($user->isPriviliegated('organizations', $organization)) {
 			return true;
 		};
     }
 
-	    /**
+	/**
      * Determine whether the user can store a billing address for the given user
      *
      * @param  \App\Models\User  $user

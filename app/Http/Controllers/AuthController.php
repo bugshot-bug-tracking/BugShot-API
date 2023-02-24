@@ -177,12 +177,12 @@ class AuthController extends Controller
 	 *  			@OA\Property(
 	 *                  property="email",
 	 *                  type="string",
-     *                  default="john@mail.de"
+	 *                  default="john@mail.de"
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="password",
 	 *                  type="string",
-     *                  default="password1"
+	 *                  default="password1"
 	 *              ),
 	 *              required={"email","password"}
 	 *          )
@@ -231,15 +231,15 @@ class AuthController extends Controller
 		// ? Set the token name to either device name or device type in the future
 		$token = $user->createToken("mytoken");
 
-        // Check if the intermediate entry already exists and create/update it
-        if($userClient->exists()) {
-            $user->clients()->updateExistingPivot($clientId, [
+		// Check if the intermediate entry already exists and create/update it
+		if ($userClient->exists()) {
+			$user->clients()->updateExistingPivot($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
 				'login_counter' => $userClient->first()->pivot->login_counter + 1
 			]);
 
 			// If the user has no settings yet, set them (This also means that he has not logged in for the first time yet)
-			if($user->settings->isEmpty()) {
+			if ($user->settings->isEmpty()) {
 				$user->settings()->attach($this->getDefaultSettings());
 
 				// Also create the initial default organization for him
@@ -249,8 +249,8 @@ class AuthController extends Controller
 					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
 				]);
 			}
-        } else {
-            $user->clients()->attach($clientId, [
+		} else {
+			$user->clients()->attach($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
 				'login_counter' => 1
 			]);
@@ -264,7 +264,7 @@ class AuthController extends Controller
 				"user_id" => $user->id,
 				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
 			]);
-        }
+		}
 
 		return response()->json([
 			"data" => [
@@ -282,7 +282,8 @@ class AuthController extends Controller
 	}
 
 	// Returns a set of default settings with their default values
-	private function getDefaultSettings() {
+	private function getDefaultSettings()
+	{
 		$defaultSettings = [
 			1 => ['value_id' => 1], // company_filter_alphabetical: az
 			2 => ['value_id' => 3], // company_filter_creation: newest_first
@@ -461,13 +462,14 @@ class AuthController extends Controller
 	 *	),
 	 *)
 	 *
-	**/
-	public function forgotPassword(ForgotPasswordRequest $request) {
+	 **/
+	public function forgotPassword(ForgotPasswordRequest $request)
+	{
 		$status = PasswordFacade::sendResetLink(
 			$request->only('email')
 		);
 
-		if($status === PasswordFacade::RESET_LINK_SENT) {
+		if ($status === PasswordFacade::RESET_LINK_SENT) {
 			return response(__($status), 250);
 		} else {
 			return response()->json([
@@ -479,15 +481,16 @@ class AuthController extends Controller
 		}
 	}
 
-	public function createVerificationUrl(User $user) {
-        $url = URL::temporarySignedRoute(
-            'verification.verify',
-            Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ]
-        );
+	public function createVerificationUrl(User $user)
+	{
+		$url = URL::temporarySignedRoute(
+			'verification.verify',
+			Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
+			[
+				'id' => $user->getKey(),
+				'hash' => sha1($user->getEmailForVerification()),
+			]
+		);
 
 		return $url;
 	}
@@ -564,7 +567,8 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function resetPassword(ResetPasswordRequest $request) {
+	public function resetPassword(ResetPasswordRequest $request)
+	{
 		$status = PasswordFacade::reset(
 			$request->only('email', 'password', 'password_confirmation', 'token'),
 			function ($user, $password) {
@@ -580,7 +584,7 @@ class AuthController extends Controller
 
 		$user = User::where('email', $request->email)->first();
 
-		if($status === PasswordFacade::PASSWORD_RESET) {
+		if ($status === PasswordFacade::PASSWORD_RESET) {
 			// Send password reset success mail
 			$user->notify((new PasswordResetSuccessfulNotification())->locale(GetUserLocaleService::getLocale($user)));
 
@@ -635,7 +639,8 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function verifyEmail(CustomEmailVerificationRequest $request, $id, SendinblueService $sendinblueService) {
+	public function verifyEmail(CustomEmailVerificationRequest $request, $id, SendinblueService $sendinblueService)
+	{
 		$request->fulfill();
 		$user = User::find($id);
 
@@ -657,7 +662,7 @@ class AuthController extends Controller
 		);
 
 		// Trigger the corresponding sendinblue event if the contact creation was successful
-		if($response->successful()) {
+		if ($response->successful()) {
 			$response = $sendinblueService->triggerEvent(
 				'registered_for_betatest',
 				$user,
@@ -671,7 +676,7 @@ class AuthController extends Controller
 		$user = User::find($id);
 		$user->notify((new VerificationSuccessfulNotification())->locale(GetUserLocaleService::getLocale($user)));
 
-		return response()->json( __('auth.email-verified-successfully'), 204);
+		return response()->json(__('auth.email-verified-successfully'), 204);
 	}
 
 	/**
@@ -718,7 +723,8 @@ class AuthController extends Controller
 	 *)
 	 *
 	 **/
-	public function resendVerificationMail(Request $request) {
+	public function resendVerificationMail(Request $request)
+	{
 		$user = User::find($request->user_id);
 		$url = $this->createVerificationUrl($user);
 
@@ -756,4 +762,9 @@ class AuthController extends Controller
 	// 		$settingUserValue->subValues()->attach($subValue);
 	// 	}
 	// }
+
+	public function startTrial(Request $request)
+	{
+		$request->user()->startTrial();
+	}
 }
