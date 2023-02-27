@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
 
 /**
  * @OA\Schema()
@@ -34,9 +34,9 @@ class OrganizationUserRole extends Model
 	 *  format="int64",
 	 * 	description="The id of the role."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
-	 * 	property="subscription_id",
+	 * 	property="subscription_item_id",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The id of the subscription, if the user has been given one."
@@ -44,7 +44,7 @@ class OrganizationUserRole extends Model
 	 *
 	 */
 
-	protected $fillable = ["organization_id", "user_id", "role_id", "subscription_id"];
+	protected $fillable = ["organization_id", "user_id", "role_id", "subscription_item_id"];
 
 	public $timestamps = false;
 
@@ -75,8 +75,8 @@ class OrganizationUserRole extends Model
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function subscription()
+	public function subscriptionItem()
 	{
-		return $this->belongsTo(Subscription::class, 'subscription_id', 'stripe_id');
+		return $this->belongsTo(SubscriptionItem::class, 'subscription_item_id', 'stripe_id');
 	}
 }

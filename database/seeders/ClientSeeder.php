@@ -46,5 +46,11 @@ class ClientSeeder extends Seeder
         Client::create([
 			'designation' => 'flyer_creator'
 		]);
+
+		Client::create([
+			'designation' => 'zapier interface',
+			'client_url' => 'https://dev-interface-zapier.bugshot.de/api/zapier',
+			'client_key' => '28k?cX>pab3q2P9<m_ekq5<A.c{Kn$',
+		]);
 	}
 }

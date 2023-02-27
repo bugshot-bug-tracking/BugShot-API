@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ScreenshotResource extends JsonResource
@@ -15,14 +16,19 @@ class ScreenshotResource extends JsonResource
 	public function toArray($request)
 	{
 		$path = "storage" . $this->url;
-		$data = file_get_contents($path);
-		$base64 = base64_encode($data);
+		$base64 = "";
+		try {
+			$data = file_get_contents($path);
+			$base64 = base64_encode($data);
+		} catch (Exception $e) {
+		}
 
 		$screenshot = array(
 			"id" => $this->id,
 			"type" => "Screenshot",
 			"attributes" => [
 				"bug_id" => $this->bug_id,
+				"client_id" => $this->client_id,
 				"url" => $this->url,
 				"position_x" => $this->position_x,
 				"position_y" => $this->position_y,

@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\CompanyCreated;
+use App\Events\CompanyDeleted;
+use App\Events\CompanyUpdated;
+use App\Events\CompanyUserRemoved;
+use App\Events\InvitationCreated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -19,6 +25,7 @@ use App\Services\ImageService;
 use App\Services\InvitationService;
 
 // Models
+use App\Models\Organization;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\CompanyUserRole;
@@ -44,7 +51,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/companies",
+	 *	path="/organizations/{organization_id}/companies",
 	 *	tags={"Company"},
 	 *	summary="All companies.",
 	 *	operationId="allCompanies",
@@ -65,6 +72,15 @@ class CompanyController extends Controller
 	 *		name="locale",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
 	 *	),
 	 *
 	 * 	@OA\Parameter(
@@ -176,24 +192,40 @@ class CompanyController extends Controller
 	 *
 	 **/
 
-	public function index(Request $request)
+	public function index(Request $request, Organization $organization)
 	{
+		// Check if the user is authorized to list the companies of the organization
+		$this->authorize('viewAny', [Company::class, $organization]);
+
 		// Get timestamp
 		$timestamp = $request->header('timestamp');
+		$userIsPriviliegated = $this->user->isPriviliegated('organizations', $organization);
 
 		// Check if the request includes a timestamp and query the companies accordingly
-        if($timestamp == NULL) {
-            $companies = $this->user->companies;
-			$createdCompanies = $this->user->createdCompanies;
+		if($timestamp == NULL) {
+			if($userIsPriviliegated) {
+				$companies = $organization->companies;
+			} else {
+				$companies = Auth::user()->companies->where('organization_id', $organization->id);
+				$createdCompanies = $this->user->createdCompanies->where('organization_id', $organization->id);
+				// Combine the two collections
+				$companies = $companies->concat($createdCompanies);
+			}
         } else {
-            $companies = $this->user->companies
-				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdCompanies = $this->user->createdCompanies
-				->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-        }
+			if($userIsPriviliegated) {
+				$companies = $organization->companies->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			} else {
+				$companies = Auth::user()->companies
+					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('organization_id', $organization->id);
+				$createdCompanies = $this->user->createdCompanies
+					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+					->where('organization_id', $organization->id);
 
-		// Combine the two collections
-		$companies = $companies->concat($createdCompanies);
+				// Combine the two collections
+				$companies = $companies->concat($createdCompanies);
+			}
+        }
 
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}
@@ -206,7 +238,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/companies",
+	 *	path="/organizations/{organization_id}/companies",
 	 *	tags={"Company"},
 	 *	summary="Store one company.",
 	 *	operationId="storeCompany",
@@ -228,7 +260,15 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *  @OA\RequestBody(
 	 *      required=true,
@@ -297,13 +337,16 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function store(CompanyStoreRequest $request, ImageService $imageService, InvitationService $invitationService)
+	public function store(CompanyStoreRequest $request, Organization $organization, ImageService $imageService, InvitationService $invitationService)
 	{
+		// Check if the user is authorized to create the company
+		$this->authorize('create', [Company::class, $organization]);
+
 		// Check if the the request already contains a UUID for the company
 		$id = $this->setId($request);
 
 		// Store the new company in the database
-		$company = Company::create([
+		$company = $organization->companies()->create([
 			"id" => $id,
 			"user_id" => $this->user->id,
 			"designation" => $request->designation,
@@ -325,6 +368,8 @@ class CompanyController extends Controller
 			}
 		}
 
+		broadcast(new CompanyCreated($company))->toOthers();
+
 		return new CompanyResource($company);
 	}
 
@@ -336,7 +381,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Show one company.",
 	 *	operationId="showCompany",
@@ -358,10 +403,20 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -467,7 +522,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(Company $company)
+	public function show(Organization $organization, Company $company)
 	{
 		// Check if the user is authorized to view the company
 		$this->authorize('view', $company);
@@ -484,7 +539,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Put(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Update a company.",
 	 *	operationId="updateCompany",
@@ -506,10 +561,19 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -578,7 +642,7 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(CompanyUpdateRequest $request, Company $company, ImageService $imageService)
+	public function update(CompanyUpdateRequest $request, Organization $organization, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
@@ -589,20 +653,22 @@ class CompanyController extends Controller
 		if($request->base64 != NULL && $request->base64 != 'true') {
 			$image = $imageService->store($request->base64, $image);
 			$image != false ? $company->image()->save($image) : true;
-			$color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
+			$color_hex = $company->color_hex; // Color stays the same
 		} else {
 			$imageService->delete($image);
 			$color_hex = $request->color_hex;
 		}
 
 		// Apply default color if color_hex is null
-		$color_hex = $request->has('color_hex') && $color_hex == NULL ? '#7A2EE6' : $color_hex;
+		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
 		$company->update($request->all());
 		$company->update([
 			'color_hex' => $color_hex
 		]);
+
+		broadcast(new CompanyUpdated($company))->toOthers();
 
 		return new CompanyResource($company);
 	}
@@ -615,7 +681,7 @@ class CompanyController extends Controller
 	 */
 	/**
 	 * @OA\Delete(
-	 *	path="/companies/{company_id}",
+	 *	path="/organizations/{organization_id}/companies/{company_id}",
 	 *	tags={"Company"},
 	 *	summary="Delete a company.",
 	 *	operationId="deleteCompany",
@@ -637,9 +703,19 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="organization_id",
+	 *		required=true,
+     *      example="AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA",
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Organization/properties/id"
+	 *		)
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -667,12 +743,13 @@ class CompanyController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(Company $company, ImageService $imageService)
+	public function destroy(Organization $organization, Company $company, ImageService $imageService)
 	{
 		// Check if the user is authorized to delete the company
 		$this->authorize('delete', $company);
 
 		$val = $company->delete();
+		broadcast(new CompanyDeleted($company))->toOthers();
 
 		// Delete the respective image if present
 		$imageService->delete($company->image);
@@ -710,10 +787,10 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
+	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -785,6 +862,11 @@ class CompanyController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-projects",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
@@ -828,11 +910,7 @@ class CompanyController extends Controller
 		$this->authorize('view', $company);
 
 		return CompanyUserRoleResource::collection(
-			CompanyUserRole::where("company_id", $company->id)
-				->with('company')
-				->with('user')
-				->with("role")
-				->get()
+			CompanyUserRole::where('company_id', $company->id)->get()
 		);
 	}
 
@@ -865,6 +943,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-users-company-role",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -1028,6 +1111,7 @@ class CompanyController extends Controller
 			$this->authorize('removeUser', $company);
 
 		$val = $company->users()->detach($user);
+		broadcast(new CompanyUserRemoved($user, $company))->toOthers();
 
 		// Also remove the user from the related project
 		// Commented out right now because we want that the user can stay in the projects while beeing removed from the company
@@ -1229,6 +1313,8 @@ class CompanyController extends Controller
 
 		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $company, $id, $recipient_mail);
+
+		broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
 	}

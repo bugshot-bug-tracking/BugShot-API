@@ -82,6 +82,13 @@ class ProjectResource extends JsonResource
 			}
 		}
 
+		if(array_key_exists('include-project-users-with-owner', $header) && $header['include-project-users-with-owner'][0] == "true"){
+			$users = $this->users;
+			$returnCollections = UserResource::collection($users);
+			$returnCollections = $returnCollections->push(new UserResource(User::find($this->user_id)));
+			$project['attributes']['users'] = $returnCollections;
+		}
+
 		// Check if the response should contain the respective project image
 		if(array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
 			$image = $this->image;
@@ -100,6 +107,10 @@ class ProjectResource extends JsonResource
 			}
 
 			$project['attributes']['role'] = new RoleResource($role);
+		}
+
+		if(array_key_exists('include-organization-id', $header) && $header['include-organization-id'][0] == "true"){
+			$project['attributes']['company']['attributes']['organization_id'] = $company->organization->id;
 		}
 
 		return $project;

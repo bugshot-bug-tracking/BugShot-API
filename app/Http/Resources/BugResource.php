@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\User;
 
@@ -27,6 +28,7 @@ class BugResource extends JsonResource
 				"status_id" => $this->status_id,
 				"order_number" => $this->order_number,
 				"ai_id" => $this->ai_id,
+				"client_id" => $this->client_id,
 				"priority" => new PriorityResource($this->priority),
 				"operating_system" => $this->operating_system,
 				"browser" => $this->browser,
@@ -62,6 +64,13 @@ class BugResource extends JsonResource
 		if(array_key_exists('include-bug-users', $header) && $header['include-bug-users'][0] == "true") {
 			$users = $this->users;
 			$bug['attributes']['users'] = UserResource::collection($users);
+		}
+
+		// Check if the response should contain status infos (interfaces)
+		if(array_key_exists('include-status-info', $header) && $header['include-status-info'][0] == "true") {
+			$users = $this->users;
+			$bug['attributes']['status_designation'] = Status::find($this->status_id)->designation;
+			$bug['attributes']['status_order_number'] = Status::find($this->status_id)->order_number;
 		}
 
 		return $bug;

@@ -2,22 +2,24 @@
 
 namespace App\Notifications;
 
+use App\Jobs\VerfiyEmailAddressJob;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\VerifyEmailAddress as VerifyEmailAddressMailable;
 
-class VerifyEmailAddressNotification extends Notification
+class VerifyEmailAddressNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($url)
+    public function __construct(public $url)
     {
         $this->url = $url;
     }
@@ -42,8 +44,8 @@ class VerifyEmailAddressNotification extends Notification
     public function toMail($notifiable)
     {
         return (new VerifyEmailAddressMailable($notifiable, $this->locale, $this->url))
-        ->subject('BugShot - ' . __('email.verify-email', [], $this->locale))
-        ->to($notifiable->email);
+            ->subject('BugShot - ' . __('email.verify-email', [], $this->locale))
+            ->to($notifiable->email);
     }
 
     /**

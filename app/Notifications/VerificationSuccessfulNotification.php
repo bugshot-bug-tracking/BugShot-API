@@ -8,7 +8,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\VerificationSuccessful as VerificationSuccessfulMailable;
 
-class VerificationSuccessfulNotification extends Notification
+class VerificationSuccessfulNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

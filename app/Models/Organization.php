@@ -16,14 +16,14 @@ class Organization extends Model
 
     /**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     * 
+     *
      * @var bool
      */
     public $incrementing = false;
@@ -42,7 +42,7 @@ class Organization extends Model
 	 *  format="int64",
 	 * 	description="The id of the user that created the organization."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
@@ -75,6 +75,9 @@ class Organization extends Model
 
 	protected $fillable = ["id", "user_id", "designation"];
 
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['companies', 'invitations', 'billingAddress'];
+
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -106,4 +109,20 @@ class Organization extends Model
 	{
 		return $this->morphOne(BillingAddress::class, "billing_addressable");
 	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function companies()
+	{
+		return $this->hasMany(Company::class)->orderBy('updated_at', 'desc');
+	}
+
+	/**
+     * Get all of the projects for the organization.
+     */
+    public function projects()
+    {
+        return $this->hasManyThrough(Project::class, Company::class);
+    }
 }

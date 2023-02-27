@@ -31,6 +31,7 @@ use App\Services\GetUserLocaleService;
 // Models
 use App\Models\User;
 use App\Models\SettingUserValue;
+use App\Models\Organization;
 
 // Requests
 use App\Http\Requests\CustomEmailVerificationRequest;
@@ -38,6 +39,7 @@ use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Notifications\UserRegisteredNotification;
 
 /**
  * @OA\Tag(
@@ -138,6 +140,9 @@ class AuthController extends Controller
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
+		//Send mail to marketing
+		$user->notify((new UserRegisteredNotification($user))->locale(GetUserLocaleService::getLocale($user)));
+
 		return new UserResource($user);
 	}
 
@@ -233,9 +238,16 @@ class AuthController extends Controller
 				'login_counter' => $userClient->first()->pivot->login_counter + 1
 			]);
 
-			// If the user has no settings yet, set them
+			// If the user has no settings yet, set them (This also means that he has not logged in for the first time yet)
 			if($user->settings->isEmpty()) {
 				$user->settings()->attach($this->getDefaultSettings());
+
+				// Also create the initial default organization for him
+				Organization::create([
+					"id" => $this->setId($request),
+					"user_id" => $user->id,
+					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+				]);
 			}
         } else {
             $user->clients()->attach($clientId, [
@@ -245,6 +257,13 @@ class AuthController extends Controller
 
 			// Create default set of settings for the user when first logged in
 			$user->settings()->attach($this->getDefaultSettings());
+
+			// Also create the initial default organization for him
+			Organization::create([
+				"id" => $this->setId($request),
+				"user_id" => $user->id,
+				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+			]);
         }
 
 		return response()->json([
@@ -341,7 +360,7 @@ class AuthController extends Controller
 	}
 
 	/**
-	 * @OA\Post(
+	 * @OA\Get(
 	 *	path="/auth/user",
 	 *	tags={"Auth"},
 	 *	summary="Show current user.",
