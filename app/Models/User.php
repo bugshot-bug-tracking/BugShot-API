@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
 use App\Services\GetUserLocaleService;
+use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
 
@@ -106,6 +107,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'password',
 		'email_verified_at',
 		'subscription_item_id',
+		'trial_end_date',
 	];
 
 	/**
@@ -128,96 +130,96 @@ class User extends Authenticatable implements MustVerifyEmail
 	];
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+	 */
 	public function billingAddress()
 	{
 		return $this->morphOne(BillingAddress::class, "billing_addressable");
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function organizations()
-    {
-        return $this->belongsToMany(Organization::class, 'organization_user_roles')->withPivot('role_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function organizations()
+	{
+		return $this->belongsToMany(Organization::class, 'organization_user_roles')->withPivot('role_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function createdOrganizations()
-    {
-        return $this->hasMany(Organization::class, 'user_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function createdOrganizations()
+	{
+		return $this->hasMany(Organization::class, 'user_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function companies()
-    {
-        return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function companies()
+	{
+		return $this->belongsToMany(Company::class, 'company_user_roles')->withPivot('role_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function createdCompanies()
-    {
-        return $this->hasMany(Company::class, 'user_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function createdCompanies()
+	{
+		return $this->hasMany(Company::class, 'user_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function projects()
-    {
-        return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->orderBy('updated_at', 'desc');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function projects()
+	{
+		return $this->belongsToMany(Project::class, 'project_user_roles')->withPivot('role_id')->orderBy('updated_at', 'desc');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function createdProjects()
-    {
-        return $this->hasMany(Project::class, 'user_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function createdProjects()
+	{
+		return $this->hasMany(Project::class, 'user_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function bugs()
-    {
-        return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->orderBy('order_number');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function bugs()
+	{
+		return $this->belongsToMany(Bug::class, 'bug_user_roles')->withPivot('role_id')->orderBy('order_number');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function createdBugs()
-    {
-        return $this->hasMany(Bug::class, 'user_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function createdBugs()
+	{
+		return $this->hasMany(Bug::class, 'user_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function clients()
-    {
-        return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter']);
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function clients()
+	{
+		return $this->belongsToMany(Client::class, 'client_users')->withPivot(['last_active_at', 'login_counter']);
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function settings()
-    {
-        return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function settings()
+	{
+		return $this->belongsToMany(Setting::class, 'setting_user_values')->withPivot('value_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function subscription()
 	{
 		return $this->hasOneThrough(Subscription::class, SubscriptionItem::class);
@@ -225,8 +227,8 @@ class User extends Authenticatable implements MustVerifyEmail
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function subscriptionItem()
 	{
 		return $this->belongsTo(SubscriptionItem::class);
@@ -240,13 +242,14 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function sendPasswordResetNotification($token)
 	{
-	    $this->notify((new ResetPasswordLinkNotification($this->email, $token))->locale(GetUserLocaleService::getLocale($this)));
+		$this->notify((new ResetPasswordLinkNotification($this->email, $token))->locale(GetUserLocaleService::getLocale($this)));
 	}
 
 	/**
 	 * Check if the user is an admin
 	 */
-	public function isAdministrator() {
+	public function isAdministrator()
+	{
 		return $this->is_admin;
 	}
 
@@ -255,7 +258,8 @@ class User extends Authenticatable implements MustVerifyEmail
 	 * E.g.: A user with the role of a company manager should have access to all projects within
 	 * that company, eventhough he isn't part of all projects
 	 */
-	public function isPriviliegated($resourceType, $resource) {
+	public function isPriviliegated($resourceType, $resource)
+	{
 
 		/**
 		 * Roles:
@@ -277,7 +281,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		}
 
 		// Check if the user has a sufficient role within the given resource
-	 	if ($resourceType == 'organizations') {
+		if ($resourceType == 'organizations') {
 			// Get users resource role
 			return $this->isOwnerOrManagerInResource($this->organizations, $resource);
 		} else if ($resourceType == 'companies') {
@@ -293,7 +297,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
 
 	// Checks if the given user is a owner or manager in the resource
-	private function isOwnerOrManagerInResource($resources, $resource) {
+	private function isOwnerOrManagerInResource($resources, $resource)
+	{
 		// Check if the user is the creator of the resource
 		if ($resource->user_id == $this->id) {
 			return true;
@@ -305,7 +310,9 @@ class User extends Authenticatable implements MustVerifyEmail
 		}
 
 		$tempResource = $resources->find($resource);
-		if(!isset($tempResource) || $tempResource == null){return false;}
+		if (!isset($tempResource) || $tempResource == null) {
+			return false;
+		}
 		$userResourceRoleId = $tempResource->pivot->role_id;
 
 		switch ($userResourceRoleId) {
@@ -319,5 +326,57 @@ class User extends Authenticatable implements MustVerifyEmail
 		}
 	}
 
-}
+	public function trialActive()
+	{
+		return strtotime($this->trial_end_date) > time();
+	}
 
+	public function startTrial($days = 15)
+	{
+		if ($this->trial_end_date == null) {
+			$trialDuration = $days * 24 * 60 * 60;
+
+			$date = gmdate("Y-m-d H:i:s", time() + $trialDuration);
+			$this->update([
+				"trial_end_date" => $date
+			]);
+		} else {
+			$message = [
+				'httpCode' => 403,
+				'success' => false,
+				'message' => "User already had a trial"
+			];
+			response()->json($message, 403)->send();
+		}
+	}
+
+	public function endTrial()
+	{
+		$date = gmdate("Y-m-d H:i:s", 1);
+		$this->update([
+			"trial_end_date" => $date
+		]);
+	}
+
+	public function licenseActive($orgId = null)
+	{
+		if ($this->trialActive()) {
+			return true;
+		}
+
+		//get subscriptions of user
+		if (isset($orgId)) { 
+			//allowed to use in another org?
+			$licenses = OrganizationUserRole::where("user_id", $this->id)
+			->where("subscription_item_id", "!=", null)
+			->where("organization_id", $orgId)
+			->get();
+		} else {
+			$licenses = OrganizationUserRole::where("user_id", $this->id)
+				->where("subscription_item_id", "!=", null)
+				->get();
+		}
+
+		return $licenses->count() > 0;
+	}
+}
