@@ -2,6 +2,7 @@
 
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\ApiTokenController;
 
 // Events
 use App\Events\TestEvent;
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,6 +61,14 @@ Route::get('/broadcast/test', function () {
 Route::get('/debug-sentry', function () {
 	throw new Exception('My first Sentry error!');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Pusher Auth Route
+|--------------------------------------------------------------------------
+*/
+
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
 
 /*
 |--------------------------------------------------------------------------

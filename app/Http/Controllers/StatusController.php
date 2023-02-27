@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\StatusCreated;
+use App\Events\StatusDeleted;
+use App\Events\StatusUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -330,9 +334,8 @@ class StatusController extends Controller
 		// Check if the the request already contains a UUID for the status
 		$id = $this->setId($request);
 
-		// Get the max order number in this project and increase it by one
-		$order_number = $project->statuses->max('order_number');
-		$project->statuses->last()->update(['order_number' => $order_number + 1]);
+		// Get order_number for last status and move in front of the status
+		$order_number = $project->statuses->count() - 1;
 
 		// Store the new status in the database
 		$status = $project->statuses()->create([
@@ -340,6 +343,8 @@ class StatusController extends Controller
 			"designation" => $request->designation,
 			"order_number" => $order_number
 		]);
+
+		broadcast(new StatusCreated($status))->toOthers();
 
 		return new StatusResource($status);
 	}
@@ -684,15 +689,25 @@ class StatusController extends Controller
 		$this->authorize('update', [Status::class, $project]);
 
 		// Check if the order of the status has to be synchronized
+		$order_number =  $request->order_number;
 		if ($request->order_number != $status->getOriginal('order_number')) {
-			$this->synchronizeStatusOrder($request, $status, $project);
+			
+			//Prevent higher order numbers
+			$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
+
+			$this->synchronizeStatusOrder($order_number, $status, $project);
 		}
 
 		// Update the status
-		$status->update($request->all());
+		$status->update([
+			"designation" => isset($request->designation) ? $request->designation : $status->designation,
+			"order_number" => isset($request->order_number) ? $order_number : $status->order_number
+		]);
 		$status->update([
 			"project_id" => $project->id
 		]);
+
+		broadcast(new StatusUpdated($status))->toOthers();
 
 		return new StatusResource($status);
 	}
@@ -780,18 +795,21 @@ class StatusController extends Controller
 			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
 		}
 
+		//synchronize the statuses -> order // SET ORIGINAL ORDER WHEN RESTORING IS POSSIBLE AND SYCHRONIZE
+		$this->synchronizeStatusDeletedOrder($status, $project);
 		$val = $status->delete();
+
+		broadcast(new StatusDeleted($status))->toOthers();
 
 		return response($val, 204);
 	}
 
 	// Synchronize the order numbers of all the statuses, that are affected by the updated status
-	private function synchronizeStatusOrder($request, $status, $project)
+	//	Might need rebuild -> update, sort by order_number, from 0 to count -> reset order_numbers
+	private function synchronizeStatusOrder($newOrderNumber, $status, $project)
 	{
 		$originalOrderNumber = $status->getOriginal('order_number');
-		$newOrderNumber = $request->order_number;
 
-		$statuses = $project->statuses->whereBetween('order_number', [$newOrderNumber, $originalOrderNumber]);
 		// Check wether the original or new order_number is bigger because ->whereBetween only works when the first array parameter is smaller than the second
 		if ($originalOrderNumber < $newOrderNumber) {
 			$statuses = $project->statuses->whereBetween('order_number', [$originalOrderNumber, $newOrderNumber]);
@@ -800,9 +818,25 @@ class StatusController extends Controller
 		}
 
 		// Increase all the order numbers that are greater than the original status order number
-		foreach ($statuses as $status) {
-			$status->update([
-				"order_number" => $originalOrderNumber < $newOrderNumber ? $status->order_number - 1 : $status->order_number + 1
+		foreach ($statuses as $statusItem) {
+			if ($statusItem->permanent == 'done' || $statusItem->id == $status->id) {
+				continue;
+			}
+			$statusItem->update([
+				"order_number" => $originalOrderNumber < $newOrderNumber ? $statusItem->order_number - 1 : $statusItem->order_number + 1
+			]);
+		}
+	}
+
+	private function synchronizeStatusDeletedOrder($status, $project)
+	{
+		$statuses = $project->statuses->whereBetween('order_number', [$status->order_number, $project->statuses->last()->order_number]);
+		foreach ($statuses as $statusItem){
+			if ($statusItem->permanent == 'done' || $statusItem->id == $status->id) {
+				continue;
+			}
+			$statusItem->update([
+				"order_number" => $statusItem->order_number - 1
 			]);
 		}
 	}

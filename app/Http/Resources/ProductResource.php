@@ -17,7 +17,7 @@ class ProductResource extends JsonResource
 	{
 		// Get the corresponding prices of the selected product
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
-	  	$prices = $stripe->prices->all(['product' => $this->id])->data;
+	  	$prices = $stripe->prices->all(['product' => $this->id,'expand'=>['data.tiers']])->data;
 
 		return [
 			'id' => $this->id,

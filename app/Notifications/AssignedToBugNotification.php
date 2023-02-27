@@ -9,7 +9,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use App\Mail\AssignedToBug as AssignedToBugMailable;
 
-class AssignedToBugNotification extends Notification
+class AssignedToBugNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -18,7 +18,7 @@ class AssignedToBugNotification extends Notification
      *
      * @return void
      */
-    public function __construct($bug)
+    public function __construct(public $bug)
     {
         $this->bug = $bug;
     }

@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
+use App\Events\ProjectUserRemoved;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -77,7 +81,7 @@ class ProjectController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="company_id",
 	 *		required=true,
-     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Company/properties/id"
@@ -181,8 +185,8 @@ class ProjectController extends Controller
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
 		// Check if the request includes a timestamp and query the projects accordingly
-		if($timestamp == NULL) {
-			if($userIsPriviliegated) {
+		if ($timestamp == NULL) {
+			if ($userIsPriviliegated) {
 				$projects = $company->projects;
 			} else {
 				$projects = Auth::user()->projects->where('company_id', $company->id);
@@ -190,8 +194,8 @@ class ProjectController extends Controller
 				// Combine the two collections
 				$projects = $projects->concat($createdProjects);
 			}
-        } else {
-			if($userIsPriviliegated) {
+		} else {
+			if ($userIsPriviliegated) {
 				$projects = $company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 			} else {
 				$projects = Auth::user()->projects
@@ -204,7 +208,7 @@ class ProjectController extends Controller
 				// Combine the two collections
 				$projects = $projects->concat($createdProjects);
 			}
-        }
+		}
 
 		return ProjectResource::collection($projects);
 	}
@@ -242,7 +246,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="company_id",
-     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -340,15 +344,15 @@ class ProjectController extends Controller
 
 		// Check if the project comes with an image (or a color)
 		$image = NULL;
-		if($request->base64 != NULL) {
+		if ($request->base64 != NULL) {
 			$image = $imageService->store($request->base64, $image);
 			$project->image()->save($image);
 		}
 
 		// Send the invitations
 		$invitations = $request->invitations;
-		if($invitations != NULL) {
-			foreach($request->invitations as $invitation) {
+		if ($invitations != NULL) {
+			foreach ($request->invitations as $invitation) {
 				$invitationService->send((object) $invitation, $project, (string) Str::uuid(), $invitation['target_email']);
 			}
 		}
@@ -360,11 +364,14 @@ class ProjectController extends Controller
 			Status::create([
 				"id" => (string) Str::uuid(),
 				"designation" => $status,
-				"order_number" => $key++,
+				"order_number" => $key == 3 ? 9999 : $key,
 				"project_id" => $project->id,
-				"permanent" => $key == 1 || $key == 4 ? ($key == 1 ? 'backlog' : 'done') : NULL // Check wether the status is backlog or done
+				"permanent" => $key == 0 || $key == 3 ? ($key == 0 ? 'backlog' : 'done') : NULL, // Check wether the status is backlog or done
 			]);
+			$key++;
 		}
+
+		broadcast(new ProjectCreated($project))->toOthers();
 
 		return new ProjectResource($project);
 	}
@@ -402,7 +409,7 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
-     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -412,7 +419,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -506,7 +513,7 @@ class ProjectController extends Controller
 
 		return new ProjectResource($project);
 	}
-	
+
 	/**
 	 * Display the specified resource.
 	 *
@@ -625,7 +632,7 @@ class ProjectController extends Controller
 	 **/
 	public function showViaApiKey(Request $request)
 	{
-		return new ProjectResource($request->get('project')); 
+		return new ProjectResource($request->get('project'));
 	}
 
 	/**
@@ -662,7 +669,7 @@ class ProjectController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="company_id",
-     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -672,7 +679,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -862,7 +869,7 @@ class ProjectController extends Controller
 	 **/
 	public function updateViaApiKey(ProjectUpdateRequest $request, ImageService $imageService, ProjectService $projectService, ApiCallService $apiCallService)
 	{
-        $project = $request->get('project');
+		$project = $request->get('project');
 		$company = Company::find($project->company_id);
 		return $projectService->update($request, $company, $project, $imageService, $apiCallService);
 	}
@@ -899,7 +906,7 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="company_id",
-     *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -909,7 +916,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -945,6 +952,7 @@ class ProjectController extends Controller
 
 		// Softdelete the project
 		$val = $project->delete();
+		broadcast(new ProjectDeleted($project))->toOthers();
 
 		// Delete the respective image if present
 		$imageService->delete($project->image);
@@ -985,7 +993,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1061,7 +1069,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1141,11 +1149,11 @@ class ProjectController extends Controller
 		$this->authorize('viewAny', [Bug::class, $project]);
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if($request->timestamp == NULL) {
-            $bugs = $project->bugs;
-        } else {
-            $bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
-        }
+		if ($request->timestamp == NULL) {
+			$bugs = $project->bugs;
+		} else {
+			$bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+		}
 
 		return BugResource::collection($bugs);
 	}
@@ -1183,7 +1191,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1268,7 +1276,7 @@ class ProjectController extends Controller
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1528,7 +1536,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1537,7 +1545,7 @@ class ProjectController extends Controller
 	 *	),
 	 *	@OA\Parameter(
 	 *		name="user_id",
-     *      example=1,
+	 *      example=1,
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1571,11 +1579,12 @@ class ProjectController extends Controller
 	public function removeUser(Project $project, User $user)
 	{
 		// replace with approval request procedure
-		if((Auth::id()!==$user->id))
+		if ((Auth::id() !== $user->id))
 			// Check if the user is authorized to view the users of the project
 			$this->authorize('removeUser', $project);
 
 		$val = $project->users()->detach($user);
+		broadcast(new ProjectUserRemoved($user, $project))->toOthers();
 
 		return response($val, 204);
 	}
@@ -1613,7 +1622,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(
@@ -1652,8 +1661,8 @@ class ProjectController extends Controller
 	{
 		// Check if the user is authorized to view the invitations of the project
 		$this->authorize('viewInvitations', $project);
-
-		return InvitationResource::collection($project->invitations);
+		$invitations = $project->invitations->where('status_id', '=', 1);
+		return InvitationResource::collection($invitations);
 	}
 
 	/**
@@ -1683,7 +1692,7 @@ class ProjectController extends Controller
 	 *
 	 *	@OA\Parameter(
 	 *		name="project_id",
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		required=true,
 	 *		in="path",
 	 *		@OA\Schema(

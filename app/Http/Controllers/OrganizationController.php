@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\InvitationCreated;
+use App\Events\OrganizationUpdated;
+use App\Events\OrganizationUserRemoved;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -589,6 +593,8 @@ class OrganizationController extends Controller
 			]);
 		}
 
+		broadcast(new OrganizationUpdated($organization))->toOthers();
+
 		return new OrganizationResource($organization);
 	}
 
@@ -658,6 +664,7 @@ class OrganizationController extends Controller
 		$this->authorize('delete', $organization);
 
 		$val = $organization->delete();
+		broadcast(new OrganizationUpdated($organization))->toOthers();
 
 		return response($val, 204);
 	}
@@ -1080,6 +1087,8 @@ class OrganizationController extends Controller
 
 		$val = $organization->users()->detach($user);
 
+		broadcast(new OrganizationUserRemoved($user, $organization))->toOthers();
+
 		return response($val, 204);
 	}
 
@@ -1259,7 +1268,7 @@ class OrganizationController extends Controller
 		// Check if the user has already been invited to the organization or is already part of it
         $recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if($organization->invitations->contains('target_email', $recipient_mail) || $organization->users->contains($recipient)) {
+		if(!$organization->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $organization->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.organization-user-already-invited')
 			]], 409);
@@ -1267,6 +1276,8 @@ class OrganizationController extends Controller
 
 		$id = $this->setId($request);
 		$invitation = $invitationService->send($request, $organization, $id, $recipient_mail);
+
+		broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
 	}

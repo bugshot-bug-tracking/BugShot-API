@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\AttachmentCreated;
+use App\Events\AttachmentDeleted;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -193,6 +196,7 @@ class AttachmentController extends Controller
 		$this->authorize('create', [Attachment::class, $bug->project]);
 
 		$attachment = $attachmentService->store($bug, $request);
+		broadcast(new AttachmentCreated($attachment))->toOthers();
 
 		return new AttachmentResource($attachment);
 	}
@@ -487,6 +491,7 @@ class AttachmentController extends Controller
 		$this->authorize('delete', [Attachment::class, $attachment->bug->project]);
 
 		$val = $attachmentService->delete($attachment);
+		broadcast(new AttachmentDeleted($attachment))->toOthers();
 
 		return response($val, 204);
 	}

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
+
+use App\Events\ApiTokenCreated;
+use App\Events\ApiTokenDeleted;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -215,6 +218,9 @@ class ApiTokenController extends Controller
 			"token" => $request->token == '' ? (string) Str::uuid() : $request->token
 		]);
 
+		if ($class == Project::class) {
+			broadcast(new ApiTokenCreated($model))->toOthers();
+		}
 		return new ApiTokenResource($apiToken);
 	}
 
@@ -416,6 +422,9 @@ class ApiTokenController extends Controller
 		// Softdelete the url
 		$val = $apiToken->delete();
 
+		if ($class == Project::class) {
+			broadcast(new ApiTokenDeleted($model))->toOthers();
+		}
 		return response($val, 204);
 	}
 }

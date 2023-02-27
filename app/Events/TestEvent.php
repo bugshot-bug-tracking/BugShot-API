@@ -7,6 +7,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -30,13 +31,35 @@ class TestEvent implements ShouldBroadcast
     }
 
     /**
+	 * The event's broadcast name.
+	 *
+	 * @return string
+	 */
+	public function broadcastAs()
+	{
+		return 'event.private';
+	}
+
+	/**
+	 * Get the data to broadcast.
+	 *
+	 * @return array
+	 */
+	public function broadcastWith()
+	{
+		return [
+			'data' => "private channel test"
+		];
+	}
+
+    /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\Channel
      */
     public function broadcastOn()
     {
-        return new Channel('test');
+        return new PrivateChannel('test');
     }
 
 }
