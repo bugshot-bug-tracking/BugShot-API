@@ -213,6 +213,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// Stripe prefixed routes
 	Route::prefix('stripe')->group(function () {
 
+		Route::any("/webhook", [StripeController::class, "handle"]);
+
 		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
 
 		Route::get('/customer/{customer}', [StripeController::class, "getStripeCustomer"])->name("user.stripe.get-stripe-customer");

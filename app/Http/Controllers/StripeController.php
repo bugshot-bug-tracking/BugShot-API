@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\Log;
 
 // Resources
 use App\Http\Resources\OrganizationUserRoleResource;
@@ -50,6 +51,11 @@ use App\Http\Resources\UserResource;
  */
 class StripeController extends Controller
 {
+
+	public function handle(Request $request)
+	{
+		Log::debug("Webhook event received.", $request->all());
+	}
 
     /**
 	 * Create a new stripe session
