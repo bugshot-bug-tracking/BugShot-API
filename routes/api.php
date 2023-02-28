@@ -115,6 +115,7 @@ Route::middleware(['auth:sanctum'])->group(
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
 			Route::get('/user', [AuthController::class, "user"])->name("user");
+			Route::post('/user/trial', [AuthController::class, "startTrial"])->name("start.trial");
 		});
 	}
 );
@@ -211,6 +212,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Stripe prefixed routes
 	Route::prefix('stripe')->group(function () {
+
+		Route::any("/webhook", [StripeController::class, "handle"]);
 
 		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
 
