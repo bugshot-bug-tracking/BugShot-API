@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\Broadcast;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/stripe/test', function () {
+Route::post('/stripe/test', function () {
 	Log::debug("Webhook event received.");
 });
 
