@@ -140,7 +140,7 @@ class AuthController extends Controller
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
 
-		//Send mail to marketing
+		// Send mail to marketing
 		$user->notify((new UserRegisteredNotification($user))->locale(GetUserLocaleService::getLocale($user)));
 
 		return new UserResource($user);

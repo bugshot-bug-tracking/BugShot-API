@@ -1265,7 +1265,6 @@ class StripeController extends Controller
 	 **/
 	public function assignSubscription(SubscriptionAssignRequest $request, BillingAddress $billingAddress, $subscriptionId)
 	{
-
 		// Check if the user is authorized to assign a subscription to a user
 		$this->authorize('assignSubscription', $billingAddress);
 
@@ -1296,13 +1295,13 @@ class StripeController extends Controller
 		$organization = $billingAddress->billingAddressable;
 
 		// Check if the user the subscription shall be assigned to is also the owner of the organization
-		if($organization->user_id == $request->user_id) {
-			$organization->creator->update([
-				'subscription_item_id' => $subscriptionItemId
-			]);
+		// if($organization->user_id == $request->user_id) {
+		// 	$organization->creator->update([
+		// 		'subscription_item_id' => $subscriptionItemId
+		// 	]);
 
-			return new UserResource($organization->creator);
-		}
+		// 	return new UserResource($organization->creator);
+		// }
 
 		// Check if the user that shall receive the subscription is part of the organization
 		$user = User::find($request->user_id);
@@ -1563,9 +1562,10 @@ class StripeController extends Controller
 	// Get the total amount of users that the given subscription was assigned to
 	public function getAmountOfAssignments($subscriptionItemId)
 	{
-		$amountOfUsers = User::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of personal user accounts this subscription has been assigned to
+		// $amountOfUsers = User::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of personal user accounts this subscription has been assigned to
 		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of organization user accounts this subscription has been assigned to
 
-		return $amountOfUsers + $amountOfOrganizationUsers;
+		// return $amountOfUsers + $amountOfOrganizationUsers;
+		return $amountOfOrganizationUsers;
 	}
 }

@@ -142,7 +142,7 @@ class User extends Authenticatable implements MustVerifyEmail
 	 */
 	public function organizations()
 	{
-		return $this->belongsToMany(Organization::class, 'organization_user_roles')->withPivot('role_id');
+		return $this->belongsToMany(Organization::class, 'organization_user_roles')->withPivot('role_id', "subscription_item_id");
 	}
 
 	/**
@@ -365,7 +365,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		}
 
 		//get subscriptions of user
-		if (isset($orgId)) { 
+		if (isset($orgId)) {
 			//allowed to use in another org?
 			$licenses = OrganizationUserRole::where("user_id", $this->id)
 			->where("subscription_item_id", "!=", null)

@@ -305,6 +305,9 @@ class OrganizationController extends Controller
 			"designation" => $request->designation
 		]);
 
+		// Also add the owner to the organization user role table in order to be able to store the subscription
+		$this->user->organizations()->attach($organization->id, ['role_id' => 0]);
+
 		// Send the invitations
 		$invitations = $request->invitations;
 		if ($invitations != NULL) {
@@ -391,6 +394,11 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-subscription",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -762,7 +770,7 @@ class OrganizationController extends Controller
 		$this->authorize('view', $organization);
 
 		return OrganizationUserRoleResource::collection(
-			OrganizationUserRole::where("organization_id", $organization->id)->get()
+			OrganizationUserRole::where("organization_id", $organization->id)->whereNot("role_id", 0)->get()
 		);
 	}
 
