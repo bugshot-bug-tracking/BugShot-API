@@ -44,6 +44,9 @@ use App\Http\Requests\PaymentMethodsGetRequest;
 use App\Http\Requests\SubscriptionChangeQuantityRequest;
 use App\Http\Resources\UserResource;
 
+// Events
+use App\Events\SubscriptionCreated;
+
 /**
  * @OA\Tag(
  *     name="Stripe",
@@ -54,7 +57,11 @@ class StripeController extends Controller
 
 	public function handle(Request $request)
 	{
-		Log::debug("Webhook event received.", $request->all());
+		$customer = $request->data["object"]["customer"];
+		$billingAddress = BillingAddress::where("stripe_id", $customer)->first();
+		$billingAddressable = $billingAddress->billingAddressable();
+
+		broadcast(new SubscriptionCreated($billingAddressable))->toOthers();
 	}
 
     /**
