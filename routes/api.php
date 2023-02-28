@@ -55,6 +55,13 @@ Route::get('/debug-sentry', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Stripe webhook route
+|--------------------------------------------------------------------------
+*/
+Route::any('/stripe/webhook', [StripeController::class, "handle"]);
+
+/*
+|--------------------------------------------------------------------------
 | Pusher Auth Route
 |--------------------------------------------------------------------------
 */
@@ -202,8 +209,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Stripe prefixed routes
 	Route::prefix('stripe')->group(function () {
-
-		Route::any('/webhook', [StripeController::class, "handle"]);
 
 		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
 
