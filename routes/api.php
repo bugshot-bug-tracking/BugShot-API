@@ -3,6 +3,7 @@
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -43,12 +44,12 @@ use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
-| Debug API Route for Sentry
+| Debug API Route for Stripe
 |--------------------------------------------------------------------------
 */
 
-Route::get('/broadcast/test', function () {
-	TestEvent::dispatch("Test");
+Route::get('/stripe/test', function () {
+	Log::debug("Webhook event received.");
 });
 
 
@@ -115,7 +116,6 @@ Route::middleware(['auth:sanctum'])->group(
 		Route::prefix("auth")->group(function () {
 			Route::post('/logout', [AuthController::class, "logout"])->name("logout");
 			Route::get('/user', [AuthController::class, "user"])->name("user");
-			Route::post('/user/trial', [AuthController::class, "startTrial"])->name("start.trial");
 		});
 	}
 );
@@ -212,8 +212,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Stripe prefixed routes
 	Route::prefix('stripe')->group(function () {
-
-		Route::any("/webhook", [StripeController::class, "handle"]);
 
 		Route::post('/checkout/create-session', [StripeController::class, "createSession"])->name("user.stripe.create-session"); // DEV ONLY
 
