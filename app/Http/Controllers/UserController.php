@@ -238,6 +238,11 @@ class UserController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-subscriptions",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *
 	 *	@OA\Parameter(
 	 *		name="user_id",
