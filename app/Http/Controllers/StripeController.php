@@ -59,7 +59,7 @@ class StripeController extends Controller
 	{
 		$customer = $request->data["object"]["customer"];
 		$billingAddress = BillingAddress::where("stripe_id", $customer)->first();
-		$billingAddressable = $billingAddress->billingAddressable();
+		$billingAddressable = $billingAddress->billingAddressable;
 
 		broadcast(new SubscriptionCreated($billingAddressable))->toOthers();
 	}
