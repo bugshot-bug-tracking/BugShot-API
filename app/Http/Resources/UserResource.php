@@ -2,7 +2,11 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
+use App\Models\OrganizationUserRole;
 
 class UserResource extends JsonResource
 {
@@ -14,7 +18,7 @@ class UserResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		return [
+		$user = array(
 			'id' => $this->id,
 			'type' => 'User',
 			'attributes' => [
@@ -23,6 +27,25 @@ class UserResource extends JsonResource
 				'email' => $this->email,
 				'trial_end_date' => $this->trial_end_date,
 			]
-		];
+		);
+
+		$header = $request->header();
+
+		// Check if the response should contain the respective subscription-items of the user
+		if(array_key_exists('include-subscriptions', $header) && $header['include-subscriptions'][0] == "true") {
+			if(Auth::user()->id == $this->id || Auth::user()->isAdministrator()) {
+				$organizationUserRoles = OrganizationUserRole::where("user_id", $this->id)->whereNot("subscription_item_id", NULL)->get()->unique(["subscription_item_id"]);
+				$subscriptionItems = collect();
+
+				foreach($organizationUserRoles as $organizationUserRole) {
+					$subscriptionItem = SubscriptionItem::where("stripe_id", $organizationUserRole->subscription_item_id)->first();
+					$subscriptionItems->push($subscriptionItem);
+				}
+
+				$user['attributes']['subscriptions'] = SubscriptionItemResource::collection($subscriptionItems);
+			}
+		}
+
+		return $user;
 	}
 }
