@@ -575,6 +575,11 @@ class InvitationController extends Controller
 	private function attachUserToOrganization($organization, $user, $role) {
 		$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->whereNot("subscription_item_id", NULL)->first();
 
-		$user->organizations()->attach($organization->id, ['role_id' => $role, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+		if($organizationUserRole != NULL) {
+			$user->organizations()->attach($organization->id, ['role_id' => $role, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+		} else {
+			$user->organizations()->attach($organization->id, ['role_id' => $role]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+		}
+
 	}
 }
