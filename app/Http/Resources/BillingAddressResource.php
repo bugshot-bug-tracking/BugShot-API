@@ -42,6 +42,7 @@ class BillingAddressResource extends JsonResource
 				'zip' => $this->zip,
 				'country' => $this->country,
 				'tax_id' => $this->tax_id,
+				'stripe_customer_id' => $this->stripe_id,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at
 			]

@@ -208,16 +208,16 @@ class OrganizationController extends Controller
 		// Check if the request includes a timestamp and query the organizations accordingly
 		if ($timestamp == NULL) {
 			$organizations = $this->user->organizations;
-			$createdOrganizations = $this->user->createdOrganizations;
+			// $createdOrganizations = $this->user->createdOrganizations;
 		} else {
 			$organizations = $this->user->organizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdOrganizations = $this->user->createdOrganizations
-				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			// $createdOrganizations = $this->user->createdOrganizations
+			// 	->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 		}
 
 		// Combine the two collections
-		$organizations = $organizations->concat($createdOrganizations);
+		// $organizations = $organizations->concat($createdOrganizations);
 
 		return OrganizationResource::collection($organizations->sortBy('designation'));
 	}
