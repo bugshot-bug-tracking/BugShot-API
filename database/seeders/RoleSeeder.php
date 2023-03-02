@@ -26,7 +26,7 @@ class RoleSeeder extends Seeder
 		foreach($organizations as $organization) {
 			$user = $organization->creator;
 			if($user) {
-				$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->where("role_id", 0)->first();
+				$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->where("organization_id", $organization->id)->where("role_id", 0)->first();
 				if(empty($organizationUserRole)) {
 					$user->organizations()->attach($organization->id, [
 						'role_id' => 0

@@ -809,11 +809,20 @@ class StripeController extends Controller
 			]);
 		} else {
 			// Check if the creator of the organization ist the only member in it. If so, assign the subscription to him.
-			if($billingAddress->billingAddressable->users->isEmpty()) {
-				$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
-				$creator = $billingAddress->billingAddressable->creator;
-				$creator->update([
-					'subscription_item_id' => $subscriptionItem->stripe_id
+			// if($billingAddress->billingAddressable->users->isEmpty()) {
+			// 	$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
+			// 	$creator = $billingAddress->billingAddressable->creator;
+			// 	$creator->update([
+			// 		'subscription_item_id' => $subscriptionItem->stripe_id
+			// 	]);
+			// }
+			$subscriptionItem = SubscriptionItem::where("stripe_price", $subscription->stripe_price)->where("subscription_id", $subscription->id)->first();
+			$organizationUserRole = OrganizationUserRole::where("organization_id", $billingAddress->billingAddressable->id)->where("user_id", $billingAddress->billingAddressable->user_id)->first();
+
+			if($organizationUserRole->subscription_item_id == NULL) {
+				$billingAddress->billingAddressable->users()->updateExistingPivot($billingAddress->billingAddressable->user_id, [
+					'subscription_item_id' => $subscriptionItem->stripe_id,
+					'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 				]);
 			}
 
