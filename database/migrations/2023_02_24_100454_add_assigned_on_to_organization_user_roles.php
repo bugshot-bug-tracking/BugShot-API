@@ -13,8 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->date('trial_end_date')->nullable();
+        Schema::table('organization_user_roles', function (Blueprint $table) {
+            $table->after('subscription_item_id', function ($table) {
+                $table->date('assigned_on')->nullable();
+            });
         });
     }
 
@@ -25,8 +27,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('trial_end_date');
+        Schema::table('organization_user_roles', function (Blueprint $table) {
+            $table->dropColumn('assigned_on');
         });
     }
 };

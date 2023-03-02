@@ -1336,7 +1336,8 @@ class StripeController extends Controller
 		// Update the pivot model
 		$user->organizations()->updateExistingPivot($organization->id, [
 			'subscription_item_id' => $subscriptionItemId,
-			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
+			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0,
+			"assigned_on" => now()
 		]);
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)

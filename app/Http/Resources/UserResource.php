@@ -35,14 +35,19 @@ class UserResource extends JsonResource
 		if(array_key_exists('include-subscriptions', $header) && $header['include-subscriptions'][0] == "true") {
 			if(Auth::user()->id == $this->id || Auth::user()->isAdministrator()) {
 				$organizationUserRoles = OrganizationUserRole::where("user_id", $this->id)->whereNot("subscription_item_id", NULL)->get()->unique(["subscription_item_id"]);
-				$subscriptionItems = collect();
+				$subscriptionItems = array();
 
 				foreach($organizationUserRoles as $organizationUserRole) {
 					$subscriptionItem = SubscriptionItem::where("stripe_id", $organizationUserRole->subscription_item_id)->first();
-					$subscriptionItems->push($subscriptionItem);
-				}
+					// $subscriptionItems->push($subscriptionItem);
 
-				$user['attributes']['subscriptions'] = SubscriptionItemResource::collection($subscriptionItems);
+					array_push($subscriptionItems, [
+						"subscription" => new SubscriptionItemResource($subscriptionItem),
+						"assigned_on" => $organizationUserRole->assigned_on
+					]);
+				}
+				$user['attributes']['subscriptions'] = $subscriptionItems;
+				// $user['attributes']['subscriptions'] = SubscriptionItemResource::collection($subscriptionItems);
 			}
 		}
 
