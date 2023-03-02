@@ -21,7 +21,8 @@ class OrganizationUserRoleResource extends JsonResource
 		$user = $this->user;
 
 		$organizationUserRole = array(
-			'user' => new UserResource($user)
+			'user' => new UserResource($user),
+			'assigned_on' => $this->assigned_on
 		);
 
 		$header = $request->header();

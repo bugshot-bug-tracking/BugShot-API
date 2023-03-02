@@ -27,7 +27,7 @@ class SubscriptionItemResource extends JsonResource
 				"stripe_price" => $this->stripe_price,
 				"quantity" => $this->quantity,
 				"updated_at" => $this->updated_at,
-				"created_at" => $this->updated_at
+				"created_at" => $this->created_at
 			]
 		];
 	}

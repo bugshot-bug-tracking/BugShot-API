@@ -52,7 +52,7 @@ Broadcast::channel('organization.{organizationId}', function ($user, $organizati
 });
 
 
-//Admin routes for Creator / Managers only
+// Admin routes for Creator / Managers only
 
 Broadcast::channel('project.{projectId}.admin', function ($user, $projectId) {
     $project = Project::findOrFail($projectId);

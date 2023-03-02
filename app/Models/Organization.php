@@ -91,7 +91,7 @@ class Organization extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class, 'organization_user_roles')->withPivot('role_id');
+        return $this->belongsToMany(User::class, 'organization_user_roles')->withPivot('role_id', 'subscription_item_id');
     }
 
 	/**

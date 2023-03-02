@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Stripe\StripeClient;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\Log;
 
 // Resources
 use App\Http\Resources\OrganizationUserRoleResource;
@@ -43,6 +44,9 @@ use App\Http\Requests\PaymentMethodsGetRequest;
 use App\Http\Requests\SubscriptionChangeQuantityRequest;
 use App\Http\Resources\UserResource;
 
+// Events
+use App\Events\SubscriptionCreated;
+
 /**
  * @OA\Tag(
  *     name="Stripe",
@@ -50,6 +54,15 @@ use App\Http\Resources\UserResource;
  */
 class StripeController extends Controller
 {
+
+	public function handle(Request $request)
+	{
+		$customer = $request->data["object"]["customer"];
+		$billingAddress = BillingAddress::where("stripe_id", $customer)->first();
+		$billingAddressable = $billingAddress->billingAddressable;
+
+		broadcast(new SubscriptionCreated($billingAddressable))->toOthers();
+	}
 
     /**
 	 * Create a new stripe session
@@ -796,11 +809,20 @@ class StripeController extends Controller
 			]);
 		} else {
 			// Check if the creator of the organization ist the only member in it. If so, assign the subscription to him.
-			if($billingAddress->billingAddressable->users->isEmpty()) {
-				$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
-				$creator = $billingAddress->billingAddressable->creator;
-				$creator->update([
-					'subscription_item_id' => $subscriptionItem->stripe_id
+			// if($billingAddress->billingAddressable->users->isEmpty()) {
+			// 	$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
+			// 	$creator = $billingAddress->billingAddressable->creator;
+			// 	$creator->update([
+			// 		'subscription_item_id' => $subscriptionItem->stripe_id
+			// 	]);
+			// }
+			$subscriptionItem = SubscriptionItem::where("stripe_price", $subscription->stripe_price)->where("subscription_id", $subscription->id)->first();
+			$organizationUserRole = OrganizationUserRole::where("organization_id", $billingAddress->billingAddressable->id)->where("user_id", $billingAddress->billingAddressable->user_id)->first();
+
+			if($organizationUserRole->subscription_item_id == NULL) {
+				$billingAddress->billingAddressable->users()->updateExistingPivot($billingAddress->billingAddressable->user_id, [
+					'subscription_item_id' => $subscriptionItem->stripe_id,
+					'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
 				]);
 			}
 
@@ -999,7 +1021,7 @@ class StripeController extends Controller
 	public function listProducts(Request $request)
 	{
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
-		$response = $stripe->products->all();
+		$response = $stripe->products->all(["active" => true]);
 
         return ProductResource::collection($response->data);
 	}
@@ -1014,7 +1036,7 @@ class StripeController extends Controller
 	 * @OA\Get(
 	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions",
 	 *	tags={"Stripe"},
-	 *	summary="Get a list of the stripe subscriptions of a specific user",
+	 *	summary="Get a list of the stripe subscriptions of a specific billing address",
 	 *	operationId="listSubscriptions",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
@@ -1265,14 +1287,14 @@ class StripeController extends Controller
 	 **/
 	public function assignSubscription(SubscriptionAssignRequest $request, BillingAddress $billingAddress, $subscriptionId)
 	{
-
 		// Check if the user is authorized to assign a subscription to a user
 		$this->authorize('assignSubscription', $billingAddress);
 
 		// Check if the provided subscription has a sufficient quantity
 		$subscriptionItemId = $request->subscription_item_id;
-		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
-		$subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
+		// $subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+		// $subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
+		$subscriptionItem = SubscriptionItem::where("stripe_id", $subscriptionItemId)->first();
 		$assignments = $this->getAmountOfAssignments($subscriptionItemId);
 
 		if($assignments >= $subscriptionItem->quantity) {
@@ -1296,13 +1318,13 @@ class StripeController extends Controller
 		$organization = $billingAddress->billingAddressable;
 
 		// Check if the user the subscription shall be assigned to is also the owner of the organization
-		if($organization->user_id == $request->user_id) {
-			$organization->creator->update([
-				'subscription_item_id' => $subscriptionItemId
-			]);
+		// if($organization->user_id == $request->user_id) {
+		// 	$organization->creator->update([
+		// 		'subscription_item_id' => $subscriptionItemId
+		// 	]);
 
-			return new UserResource($organization->creator);
-		}
+		// 	return new UserResource($organization->creator);
+		// }
 
 		// Check if the user that shall receive the subscription is part of the organization
 		$user = User::find($request->user_id);
@@ -1314,7 +1336,8 @@ class StripeController extends Controller
 		// Update the pivot model
 		$user->organizations()->updateExistingPivot($organization->id, [
 			'subscription_item_id' => $subscriptionItemId,
-			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0
+			'restricted_subscription_usage' => $request->restricted_subscription_usage ? 1 : 0,
+			"assigned_on" => now()
 		]);
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
@@ -1332,7 +1355,7 @@ class StripeController extends Controller
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/revoke",
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscriptions/{subscription_id}/revoke",
 	 *	tags={"Stripe"},
 	 *	summary="Revoke a subscription to a user",
 	 *	operationId="revokeSubscription",
@@ -1355,6 +1378,11 @@ class StripeController extends Controller
 	 *		in="header"
 	 *	),
 	 *	@OA\Parameter(
+	 *		name="subscription_id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+	 *	@OA\Parameter(
 	 *		name="billing_address_id",
 	 *		required=true,
 	 *		in="path",
@@ -1373,6 +1401,11 @@ class StripeController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
+	 *             @OA\Property(
+	 *                  description="The id of the exact subscription item that should be assigned to the user",
+	 *                  property="subscription_item_id",
+	 *                  type="string"
+	 *              ),
 	 *              @OA\Property(
 	 *                  description="The id of the user the subscription is assigned to",
 	 *                  property="user_id",
@@ -1404,7 +1437,7 @@ class StripeController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function revokeSubscription(SubscriptionRevokeRequest $request, BillingAddress $billingAddress)
+	public function revokeSubscription(SubscriptionRevokeRequest $request, BillingAddress $billingAddress, $subscriptionId)
 	{
 		// Check if the user is authorized to revoke a subscription from a user
 		$this->authorize('revokeSubscription', $billingAddress);
@@ -1423,34 +1456,52 @@ class StripeController extends Controller
 		} else {
 			$organization = $billingAddress->billingAddressable;
 
-			// Check if the user the subscription shall be assigned to is also the owner of the organization
-			if($organization->user_id == $request->user_id) {
-				$organization->creator->update([
-					'subscription_item_id' => NULL
-				]);
+			// Check if the user the subscription shall be revoked from is also the owner of the organization
+			// if($organization->user_id == $request->user_id) {
+			// 	$organization->creator->update([
+			// 		'subscription_item_id' => NULL
+			// 	]);
 
-				return new UserResource($organization->creator);
+			// 	return new UserResource($organization->creator);
+			// }
+
+			// Check if the subscription that shall be revoked belongs to one of the requesting users organizations
+			$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
+
+			if($subscription->billing_address_id != $billingAddress->id) {
+				return response()->json(["message" => __('application.unsufficient-permissions')], 403);
+			} else {
+
+				// Check if the user that the subscription shall be revoked from is part of the organization
+				$user = User::find($request->user_id);
+				$organization = $user->organizations->find($organization);
+				if ($organization == NULL && $organization->user_id != $user->id) {
+					return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
+				}
+
+				// Update the pivot model
+				$organizations = $user->organizations()->where("subscription_item_id", $request->subscription_item_id)->get();
+
+				foreach($organizations as $organization) {
+					$organization->users()->updateExistingPivot($user, array(
+						'subscription_item_id' => NULL,
+						'restricted_subscription_usage' => 0
+					), false);
+				}
+				// $user->organizations()->updateExistingPivot($organization->id, [
+				// 	'subscription_item_id' => NULL,
+				// 	'restricted_subscription_usage' => NULL
+				// ]);
+
+				return response()->json(["message" => __('application.subscription-revoked-successfully')], 200);
+				// return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
+				// ->with('organization')
+				// ->with('user')
+				// ->with('role')
+				// ->with('subscriptionItem')
+				// ->first());
+
 			}
-
-			// Check if the user that the subscription shall be revoked from is part of the organization
-			$user = User::find($request->user_id);
-			$organization = $user->organizations->find($organization);
-			if ($organization == NULL && $organization->user_id != $user->id) {
-				return response()->json(["message" => __('application.user-not-part-of-organization')], 403);
-			}
-
-			// Update the pivot model
-			$user->organizations()->updateExistingPivot($organization->id, [
-				'subscription_item_id' => NULL,
-				'restricted_subscription_usage' => NULL
-			]);
-
-			return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)
-			->with('organization')
-			->with('user')
-			->with('role')
-			->with('subscriptionItem')
-			->first());
 		}
 	}
 
@@ -1563,9 +1614,11 @@ class StripeController extends Controller
 	// Get the total amount of users that the given subscription was assigned to
 	public function getAmountOfAssignments($subscriptionItemId)
 	{
-		$amountOfUsers = User::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of personal user accounts this subscription has been assigned to
-		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of organization user accounts this subscription has been assigned to
+		// $amountOfUsers = User::where('subscription_item_id', $subscriptionItemId)->count(); // Amount of personal user accounts this subscription has been assigned to
+		// $amountOfOrganizationUsers = OrganizationUserRole::where('subscription_item_id', $subscriptionItemId)->groupBy(["user_id"])->count(); // Amount of organization user accounts this subscription has been assigned to
+		$amountOfOrganizationUsers = OrganizationUserRole::where('subscription_item_id', $subscriptionItemId)->get()->unique(["user_id"])->count();
 
-		return $amountOfUsers + $amountOfOrganizationUsers;
+		// return $amountOfUsers + $amountOfOrganizationUsers;
+		return $amountOfOrganizationUsers;
 	}
 }

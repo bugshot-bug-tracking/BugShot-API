@@ -27,5 +27,7 @@ return [
     'feedback-sent-successfully' => 'Feedback erfolgreich gesendet',
     'subscription-quantity-not-sufficient' => 'Die Anzahl dieses Abonnements ist nicht ausreichend. Bitte erhöhen Sie die Anzahl, um es dem angegebenen Benutzer zuweisen zu können, oder widerrufen Sie das Abonnement von einem Benutzer, dem es zugewiesen ist.',
     'user-not-part-of-organization' => 'Der angegebene Benutzer scheint nicht zu der :organization zu gehören, in der das Abonnement dem Benutzer zugewiesen werden soll.',
-	'api-token-already-exists' => 'Die ausgewählte Resource verfügt bereits über ein API Token'
+	'api-token-already-exists' => 'Die ausgewählte Resource verfügt bereits über ein API Token',
+	'unsufficient-permissions' => 'Du hast nicht die Berechtigungen um diese Aktion auszuführen',
+	'subscription-revoked-successfully' => 'Die Lizenz wurde dem User erfolgreich entzogen'
 ];
