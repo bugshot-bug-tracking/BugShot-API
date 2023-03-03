@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Stripe\StripeClient;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
@@ -674,7 +675,16 @@ class OrganizationController extends Controller
 
 		foreach($organization->billingAddress->subscriptions as $subscription) {
 			$subscriptionItems = $subscription->items;
-			$organization->billingAddress->subscription($subscription->name)->cancel();
+
+            $stripe = new StripeClient(config('app.stripe_api_secret'));
+
+            $stripe->subscriptions->cancel(
+                $subscription->stripe_id,
+                []
+            );
+
+			// $organization->billingAddress->subscription($subscription->name)->cancel();
+
 			foreach($subscriptionItems as $subscriptionItem) {
 				$users = $organization->users;
 				foreach($users as $user) {
