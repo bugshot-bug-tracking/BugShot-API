@@ -674,7 +674,7 @@ class OrganizationController extends Controller
 
 		foreach($organization->billingAddress->subscriptions as $subscription) {
 			$subscriptionItems = $subscription->items;
-
+			$organization->billingAddress->subscription($subscription->name)->cancel();
 			foreach($subscriptionItems as $subscriptionItem) {
 				$users = $organization->users;
 				foreach($users as $user) {
