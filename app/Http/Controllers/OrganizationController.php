@@ -672,8 +672,6 @@ class OrganizationController extends Controller
 		// Check if the user is authorized to delete the organization
 		$this->authorize('delete', $organization);
 
-		$val = $organization->delete();
-
 		foreach($organization->billingAddress->subscriptions as $subscription) {
 			$subscriptionItems = $subscription->items;
 
@@ -688,6 +686,8 @@ class OrganizationController extends Controller
 				}
 			}
 		}
+
+		$val = $organization->delete();
 
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
