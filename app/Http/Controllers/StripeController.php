@@ -1174,11 +1174,11 @@ class StripeController extends Controller
 		$val = $billingAddress->subscription($subscription->name)->cancel();
 
 		// Remove sub itemes from users
-		foreach($subscriptionItems as $subscriptionItem) {
-			User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
-				'subscription_item_id' => NULL
-			]);
-		}
+		// foreach($subscriptionItems as $subscriptionItem) {
+		// 	User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
+		// 		'subscription_item_id' => NULL
+		// 	]);
+		// }
 
 		// Remove sub itemes from organization users
 		foreach($subscriptionItems as $subscriptionItem) {

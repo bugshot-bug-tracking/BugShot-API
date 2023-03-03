@@ -243,11 +243,14 @@ class AuthController extends Controller
 				$user->settings()->attach($this->getDefaultSettings());
 
 				// Also create the initial default organization for him
-				Organization::create([
+				$organization = Organization::create([
 					"id" => $this->setId($request),
 					"user_id" => $user->id,
 					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
 				]);
+
+				// Also add the owner to the organization user role table in order to be able to store the subscription
+				$organization->users()->attach($user->id, ['role_id' => 0]);
 			}
 		} else {
 			$user->clients()->attach($clientId, [
