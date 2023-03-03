@@ -1186,9 +1186,10 @@ class StripeController extends Controller
 			// 	'subscription_item_id' => NULL,
 			// 	'restricted_subscription_usage' => NULL
 			// ]);
+
 			$users = $billingAddress->billingAddressable->users;
 			foreach($users as $user) {
-				$billingAddress->billingAddressable->users()->updateExistingPivot($user->id, [
+				$billingAddress->billingAddressable->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
 					'subscription_item_id' => NULL,
 					'restricted_subscription_usage' => NULL,
 					'assigned_on' => NULL

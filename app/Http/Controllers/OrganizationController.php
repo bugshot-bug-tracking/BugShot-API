@@ -673,6 +673,22 @@ class OrganizationController extends Controller
 		$this->authorize('delete', $organization);
 
 		$val = $organization->delete();
+
+		foreach($organization->billingAddress->subscriptions as $subscription) {
+			$subscriptionItems = $subscription->items;
+
+			foreach($subscriptionItems as $subscriptionItem) {
+				$users = $organization->users;
+				foreach($users as $user) {
+					$organization->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
+						'subscription_item_id' => NULL,
+						'restricted_subscription_usage' => NULL,
+						'assigned_on' => NULL
+					]);
+				}
+			}
+		}
+
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
 		return response($val, 204);
