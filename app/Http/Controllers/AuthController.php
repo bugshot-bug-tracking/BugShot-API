@@ -246,7 +246,7 @@ class AuthController extends Controller
 				Organization::create([
 					"id" => $this->setId($request),
 					"user_id" => $user->id,
-					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
 				]);
 			}
 		} else {
