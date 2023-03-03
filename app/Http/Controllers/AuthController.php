@@ -252,6 +252,8 @@ class AuthController extends Controller
 				// Also add the owner to the organization user role table in order to be able to store the subscription
 				$organization->users()->attach($user->id, ['role_id' => 0]);
 			}
+
+			$new_user = false;
 		} else {
 			$user->clients()->attach($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
@@ -270,6 +272,8 @@ class AuthController extends Controller
 
 			// Also add the owner to the organization user role table in order to be able to store the subscription
 			$organization->users()->attach($user->id, ['role_id' => 0]);
+
+			$new_user = true;
 		}
 
 		return response()->json([
@@ -282,7 +286,8 @@ class AuthController extends Controller
 						->with('value')
 						->get()
 				),
-				"token" => $token->plainTextToken
+				"token" => $token->plainTextToken,
+				"new_user" => $new_user
 			]
 		], 200);
 	}
