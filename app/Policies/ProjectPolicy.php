@@ -106,6 +106,8 @@ class ProjectPolicy
    */
   public function create(User $user, Company $company)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the company
     if ($user->isPriviliegated('companies', $company)) {
       return true;
@@ -121,6 +123,8 @@ class ProjectPolicy
    */
   public function update(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -136,6 +140,8 @@ class ProjectPolicy
    */
   public function delete(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -199,6 +205,8 @@ class ProjectPolicy
    */
   public function updateUserRole(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -214,6 +222,8 @@ class ProjectPolicy
    */
   public function removeUser(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -244,6 +254,8 @@ class ProjectPolicy
    */
   public function invite(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -259,6 +271,8 @@ class ProjectPolicy
    */
   public function createUrl(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -348,6 +362,8 @@ class ProjectPolicy
    */
   public function updateUrl(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -363,6 +379,8 @@ class ProjectPolicy
    */
   public function deleteUrl(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -393,6 +411,8 @@ class ProjectPolicy
    */
   public function createApiToken(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;
@@ -408,6 +428,8 @@ class ProjectPolicy
    */
   public function updateApiToken(User $user, Project $project)
   {
+    if(!$user->licenseActive()){return false;}
+
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
       return true;

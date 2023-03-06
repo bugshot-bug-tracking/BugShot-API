@@ -230,22 +230,37 @@ class BillingAddressController extends Controller
 			$this->authorize('createBillingAddress', [Organization::class, $model]);
 		}
 
-        // Create the billing address
-        $billingAddress = $model->billingAddress()->create([
-            "id" => (string) Str::uuid(),
-			"street" => $request->street,
-			"housenumber" => $request->housenumber,
-			"state" => $request->state,
-			"city" => $request->city,
-			"zip" => $request->zip,
-			"country" => $request->country,
-			"tax_id" => $request->tax_id
-		]);
+		$billingAddress = BillingAddress::where("billing_addressable_id", $model->id)->first();
 
-		if($class == User::class) {
-			$billingAddress->createOrGetStripeCustomer(['name' => $model->first_name . ' ' . $model->last_name, 'email' => $model->email]);
-		} else {
-			$billingAddress->createOrGetStripeCustomer(['name' => $model->designation, 'email' => $model->creator->email]);
+		if(!$billingAddress) {
+			// Create the billing address
+			$billingAddress = $model->billingAddress()->create([
+				"id" => (string) Str::uuid(),
+				"street" => $request->street,
+				"housenumber" => $request->housenumber,
+				"state" => $request->state,
+				"city" => $request->city,
+				"zip" => $request->zip,
+				"country" => $request->country,
+				"tax_id" => $request->tax_id
+			]);
+
+			if($class == User::class) {
+				$billingAddress->createOrGetStripeCustomer(['name' => $model->first_name . ' ' . $model->last_name, 'email' => $model->email]);
+			} else {
+				$billingAddress->createOrGetStripeCustomer(['name' => $model->designation, 'email' => $model->creator->email]);
+			}
+
+
+			$count = 0;
+			do {
+				$billingAddress = $model->billingAddress;
+				if($count != 0) {
+					sleep(1);
+				}
+				$count++;
+			} while ($billingAddress->stripe_id == NULL && $count <= 3);
+
 		}
 
         return new BillingAddressResource($billingAddress);

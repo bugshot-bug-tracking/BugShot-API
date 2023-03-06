@@ -45,10 +45,10 @@ class BugPolicy
      */
     public function viewAny(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         // Check project role
         return $user->projects()->find($project) != NULL;
@@ -63,10 +63,10 @@ class BugPolicy
      */
     public function view(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         // Check project role
         return $user->projects()->find($project) != NULL;
@@ -80,10 +80,10 @@ class BugPolicy
      */
     public function create(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         // Check project role
         return $user->projects()->find($project) != NULL;
@@ -98,10 +98,14 @@ class BugPolicy
      */
     public function update(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        if (!$user->licenseActive()) {
+            return false;
+        }
+
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -132,10 +136,14 @@ class BugPolicy
      */
     public function delete(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        if (!$user->licenseActive()) {
+            return false;
+        }
+
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -191,10 +199,14 @@ class BugPolicy
      */
     public function assignUser(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        if (!$user->licenseActive()) {
+            return false;
+        }
+
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {
@@ -238,10 +250,14 @@ class BugPolicy
      */
     public function removeUser(User $user, Project $project)
     {
-		// Check if user is the manager or owner of the project
-		if($user->isPriviliegated('projects', $project)) {
-			return true;
-		};
+        if (!$user->licenseActive()) {
+            return false;
+        }
+
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
 
         $project = $user->projects()->find($project);
         if ($project == NULL) {

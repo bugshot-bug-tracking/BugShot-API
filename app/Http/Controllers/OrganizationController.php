@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Stripe\StripeClient;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
@@ -30,6 +31,7 @@ use App\Http\Requests\OrganizationStoreRequest;
 use App\Http\Requests\OrganizationUpdateRequest;
 use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\OrganizationUserRoleUpdateRequest;
+use App\Policies\OrganizationPolicy;
 
 /**
  * @OA\Tag(
@@ -205,18 +207,18 @@ class OrganizationController extends Controller
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the organizations accordingly
-        if($timestamp == NULL) {
-            $organizations = $this->user->organizations;
-			$createdOrganizations = $this->user->createdOrganizations;
-        } else {
-            $organizations = $this->user->organizations
+		if ($timestamp == NULL) {
+			$organizations = $this->user->organizations;
+			// $createdOrganizations = $this->user->createdOrganizations;
+		} else {
+			$organizations = $this->user->organizations
 				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			$createdOrganizations = $this->user->createdOrganizations
-				->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-        }
+			// $createdOrganizations = $this->user->createdOrganizations
+			// 	->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+		}
 
 		// Combine the two collections
-		$organizations = $organizations->concat($createdOrganizations);
+		// $organizations = $organizations->concat($createdOrganizations);
 
 		return OrganizationResource::collection($organizations->sortBy('designation'));
 	}
@@ -298,16 +300,19 @@ class OrganizationController extends Controller
 		$id = $this->setId($request);
 
 		// Store the new organization in the database
-        $organization = Organization::create([
+		$organization = Organization::create([
 			"id" => $id,
 			"user_id" => $this->user->id,
 			"designation" => $request->designation
 		]);
 
+		// Also add the owner to the organization user role table in order to be able to store the subscription
+		$this->user->organizations()->attach($organization->id, ['role_id' => 0]);
+
 		// Send the invitations
 		$invitations = $request->invitations;
-		if($invitations != NULL) {
-			foreach($invitations as $invitation) {
+		if ($invitations != NULL) {
+			foreach ($invitations as $invitation) {
 				$invitationService->send((object) $invitation, $organization, (string) Str::uuid(), $invitation['target_email']);
 			}
 		}
@@ -390,6 +395,11 @@ class OrganizationController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-organization-subscription",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -587,7 +597,7 @@ class OrganizationController extends Controller
 		$organization->update($request->all());
 
 		// Update the corresponding stripe customer if one exists
-		if($organization->billingAddress) {
+		if ($organization->billingAddress) {
 			$organization->billingAddress->updateStripeCustomer([
 				'name' => $organization->designation
 			]);
@@ -663,7 +673,32 @@ class OrganizationController extends Controller
 		// Check if the user is authorized to delete the organization
 		$this->authorize('delete', $organization);
 
+		foreach($organization->billingAddress->subscriptions as $subscription) {
+			$subscriptionItems = $subscription->items;
+
+            $stripe = new StripeClient(config('app.stripe_api_secret'));
+
+            $stripe->subscriptions->cancel(
+                $subscription->stripe_id,
+                []
+            );
+
+			// $organization->billingAddress->subscription($subscription->name)->cancel();
+
+			foreach($subscriptionItems as $subscriptionItem) {
+				$users = $organization->users;
+				foreach($users as $user) {
+					$organization->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
+						'subscription_item_id' => NULL,
+						'restricted_subscription_usage' => NULL,
+						'assigned_on' => NULL
+					]);
+				}
+			}
+		}
+
 		$val = $organization->delete();
+
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
 		return response($val, 204);
@@ -761,7 +796,7 @@ class OrganizationController extends Controller
 		$this->authorize('view', $organization);
 
 		return OrganizationUserRoleResource::collection(
-			OrganizationUserRole::where("organization_id", $organization->id)->get()
+			OrganizationUserRole::where("organization_id", $organization->id)->whereNot("role_id", 0)->get()
 		);
 	}
 
@@ -875,7 +910,7 @@ class OrganizationController extends Controller
 
 		$organizationUserRole = OrganizationUserRole::where("organization_id", $organization->id)->where('user_id', $user->id)->first();
 
-		if(!isset($organizationUserRole)) {
+		if (!isset($organizationUserRole)) {
 			return response()->json(["data" => [
 				"message" => __("application.organization-user-not-found", ['organization' => __("data.organization")])
 			]], 409);
@@ -991,12 +1026,12 @@ class OrganizationController extends Controller
 		$this->authorize('updateUserRole', $organization);
 
 		$organizationUserRole = OrganizationUserRole::where("organization_id", $organization->id)->where('user_id', $user->id)
-								->with('organization')
-								->with('user')
-								->with('role')
-								->first();
+			->with('organization')
+			->with('user')
+			->with('role')
+			->first();
 
-		if(!isset($organizationUserRole)) {
+		if (!isset($organizationUserRole)) {
 			return response()->json(["data" => [
 				"message" => __("application.organization-user-not-found", ['organization' => __("data.organization")])
 			]], 409);
@@ -1165,7 +1200,7 @@ class OrganizationController extends Controller
 
 		// Check if the request contains a status_id so only those invitations are returned
 		$header = $request->header();
-		if(array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
+		if (array_key_exists('status-id', $header) && $header['status-id'][0] != '') {
 			$invitations = $organization->invitations()->where('status_id', $header['status-id'][0])->get();
 		} else {
 			$invitations = $organization->invitations;
@@ -1266,9 +1301,9 @@ class OrganizationController extends Controller
 		$this->authorize('invite', $organization);
 
 		// Check if the user has already been invited to the organization or is already part of it
-        $recipient_mail = $request->target_email;
+		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-		if(!$organization->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $organization->users->contains($recipient)) {
+		if (!$organization->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $organization->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.organization-user-already-invited')
 			]], 409);

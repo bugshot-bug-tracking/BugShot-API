@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Laravel\Cashier\Subscription;
 use App\Models\BillingAddress;
+use App\Models\OrganizationUserRole;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class StripeSubscriptionResource extends JsonResource
@@ -18,6 +19,11 @@ class StripeSubscriptionResource extends JsonResource
 	{
 		$subscriptionModel = Subscription::where('stripe_id', $this->id)->first();
 		$billingAddress = BillingAddress::find($subscriptionModel->billing_address_id);
+
+		foreach($this->items as $item) {
+			$assigned = OrganizationUserRole::where("subscription_item_id", $item->id)->get()->unique(["user_id"])->count();
+			$item["assigned"] = $assigned;
+		}
 
 		return [
 			'id' => $this->id,
