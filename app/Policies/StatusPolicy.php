@@ -82,6 +82,8 @@ class StatusPolicy
      */
     public function create(User $user, Project $project)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the project
 		if($user->isPriviliegated('projects', $project)) {
 			return true;
@@ -116,6 +118,8 @@ class StatusPolicy
      */
     public function update(User $user, Project $project)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the project
 		if($user->isPriviliegated('projects', $project)) {
 			return true;
@@ -151,6 +155,8 @@ class StatusPolicy
      */
     public function delete(User $user, Project $project)
     {
+        if(!$user->licenseActive()){return false;}
+
 		// Check if user is the manager or owner of the project
 		if($user->isPriviliegated('projects', $project)) {
 			return true;

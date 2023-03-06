@@ -3,6 +3,7 @@
 // Miscellaneous, Helpers, ...
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -41,16 +42,6 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-/*
-|--------------------------------------------------------------------------
-| Debug API Route for Sentry
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/broadcast/test', function () {
-	TestEvent::dispatch("Test");
-});
-
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +52,13 @@ Route::get('/broadcast/test', function () {
 Route::get('/debug-sentry', function () {
 	throw new Exception('My first Sentry error!');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Stripe webhook route
+|--------------------------------------------------------------------------
+*/
+Route::any('/stripe/webhook', [StripeController::class, "handle"]);
 
 /*
 |--------------------------------------------------------------------------
@@ -256,7 +254,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get('/subscriptions', [StripeController::class, "listSubscriptions"])->name("billing-address.stripe.list-subscriptions");
 			Route::delete('/subscriptions/{subscription}', [StripeController::class, "cancelSubscription"])->name("billing-address.stripe.cancel-subscription");
 			Route::post('/subscriptions/{subscription}/assign', [StripeController::class, "assignSubscription"])->name("billing-address.stripe.assign-subscription");
-			Route::post('/subscriptions/revoke', [StripeController::class, "revokeSubscription"])->name("billing-address.stripe.revoke-subscription");
+			Route::post('/subscriptions/{subscription}/revoke', [StripeController::class, "revokeSubscription"])->name("billing-address.stripe.revoke-subscription");
 			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
 		});
 	});

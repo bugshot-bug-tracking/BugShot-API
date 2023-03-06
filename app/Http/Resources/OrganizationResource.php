@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\OrganizationUserRole;
+use Laravel\Cashier\SubscriptionItem;
 
 class OrganizationResource extends JsonResource
 {
@@ -66,13 +67,38 @@ class OrganizationResource extends JsonResource
 
                 if($userOrganization == NULL) {
                     $userOrganization = Auth::user()->createdOrganizations()->find($this->id);
-                    $role =  Role::find(1); // Owner
+                    $role = Role::find(1); // Owner
                 } else {
                     $role = Role::find($userOrganization->pivot->role_id);
                 }
 
                 $organization['attributes']['role'] = new RoleResource($role);
             }
+		}
+
+		// Check if the response should contain the respective subscription
+		// if(array_key_exists('include-creator-subscription', $header) && $header['include-creator-subscription'][0] == 'true') {
+		// 	if(Auth::user()->isPriviliegated('organizations', $this)) {
+		// 		$organizationsUserRole = OrganizationUserRole::where("user_id", $this->user_id)->first();
+		// 		$subscriptionItem = SubscriptionItem::where('stripe_id', $organizationsUserRole->subscription_item_id)->first();
+
+		// 		$organization['attributes']['subscription_item'] = new SubscriptionItemResource($subscriptionItem);
+		// 	}
+		// }
+
+		// Check if the response should contain the respective user role within this organization
+		if(array_key_exists('include-organization-subscription', $header) && $header['include-organization-subscription'][0] == "true") {
+            $userOrganization = Auth::user()->organizations()->find($this->id);
+
+			if(Auth::user()->isPriviliegated('organizations', $this)) {
+				$subscriptionItem = SubscriptionItem::where('stripe_id', $userOrganization->pivot->subscription_item_id)->first();
+			} else if ($this->resource->users->contains(Auth::user())) {
+				if($userOrganization != NULL) {
+					$subscriptionItem = SubscriptionItem::where('stripe_id', $userOrganization->pivot->subscription_item_id)->first();
+				}
+			}
+
+			$organization['attributes']['subscription_item'] = new SubscriptionItemResource($subscriptionItem);
 		}
 
 		// Check if the response should contain the respective projects

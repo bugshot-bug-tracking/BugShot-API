@@ -8,6 +8,8 @@ use App\Events\TaggedInComment;
 use App\Listeners\SendTaggedInCommentNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Laravel\Cashier\Events\WebhookReceived;
+use App\Listeners\StripeEventListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         AssignedToBug::class => [
             SendAssignedToBugNotification::class,
+        ],
+		WebhookReceived::class => [
+            StripeEventListener::class,
         ],
     ];
 

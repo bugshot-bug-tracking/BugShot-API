@@ -99,6 +99,8 @@ class InvitationPolicy
      */
     public function delete(User $user, Invitation $invitation)
     {
+        if(!$user->licenseActive()){return false;}
+
         switch (true) {
             case $user->id == $invitation->sender_id:
                 return true;

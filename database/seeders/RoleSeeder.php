@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use Illuminate\Database\Seeder;
+use App\Models\Organization;
+use App\Models\OrganizationUserRole;
 
 class RoleSeeder extends Seeder
 {
@@ -14,10 +16,24 @@ class RoleSeeder extends Seeder
 	 */
 	public function run()
 	{
-		// Role::create([
-		// 	"id" => 1,
-		// 	"designation" => "Owner"
-		// ]);
+		Role::create([
+			"id" => 0,
+			"designation" => "Owner"
+		]);
+
+		// Only run once
+		$organizations = Organization::all();
+		foreach($organizations as $organization) {
+			$user = $organization->creator;
+			if($user) {
+				$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->where("organization_id", $organization->id)->where("role_id", 0)->first();
+				if(empty($organizationUserRole)) {
+					$user->organizations()->attach($organization->id, [
+						'role_id' => 0
+					]);
+				}
+			}
+		}
 
 		Role::create([
 			"id" => 1,

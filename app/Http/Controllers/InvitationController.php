@@ -492,7 +492,7 @@ class InvitationController extends Controller
 			]], 288);
 		}
 
-		$user->organizations()->attach($organization->id, ['role_id' => $invitation->role_id]);
+		$this->attachUserToOrganization($organization, $user, $invitation->role_id);
 
 		$invitation->update(["status_id" => 2]);
 
@@ -523,7 +523,7 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this organization
 		if ($user->organizations->find($company->organization) == NULL) {
-			$user->organizations()->attach($company->organization->id, ['role_id' => 2]); // Team
+			$this->attachUserToOrganization($company->organization, $user, 2); // Team
 		}
 
 		$invitation->update(["status_id" => 2]);
@@ -560,7 +560,7 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this organization
 		if ($user->organizations->find($project->company->organization) == NULL) {
-			$user->organizations()->attach($project->company->organization->id, ['role_id' => 2]); // Team
+			$this->attachUserToOrganization($project->company->organization, $user, 2);
 		}
 
 		$invitation->update(["status_id" => 2]);
@@ -568,5 +568,18 @@ class InvitationController extends Controller
 		broadcast(new ProjectMembersUpdated($project))->toOthers();
 
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->first());
+	}
+
+
+	// Attaches the user to the organization while also adding existing subs
+	private function attachUserToOrganization($organization, $user, $role) {
+		$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->whereNot("subscription_item_id", NULL)->first();
+
+		if($organizationUserRole != NULL) {
+			$user->organizations()->attach($organization->id, ['role_id' => $role, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+		} else {
+			$user->organizations()->attach($organization->id, ['role_id' => $role]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+		}
+
 	}
 }
