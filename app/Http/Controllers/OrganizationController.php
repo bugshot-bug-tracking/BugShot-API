@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Stripe\StripeClient;
 
 // Resources
 use App\Http\Resources\OrganizationResource;
@@ -672,7 +673,32 @@ class OrganizationController extends Controller
 		// Check if the user is authorized to delete the organization
 		$this->authorize('delete', $organization);
 
+		foreach($organization->billingAddress->subscriptions as $subscription) {
+			$subscriptionItems = $subscription->items;
+
+            $stripe = new StripeClient(config('app.stripe_api_secret'));
+
+            $stripe->subscriptions->cancel(
+                $subscription->stripe_id,
+                []
+            );
+
+			// $organization->billingAddress->subscription($subscription->name)->cancel();
+
+			foreach($subscriptionItems as $subscriptionItem) {
+				$users = $organization->users;
+				foreach($users as $user) {
+					$organization->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
+						'subscription_item_id' => NULL,
+						'restricted_subscription_usage' => NULL,
+						'assigned_on' => NULL
+					]);
+				}
+			}
+		}
+
 		$val = $organization->delete();
+
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
 		return response($val, 204);

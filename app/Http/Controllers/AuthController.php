@@ -243,12 +243,17 @@ class AuthController extends Controller
 				$user->settings()->attach($this->getDefaultSettings());
 
 				// Also create the initial default organization for him
-				Organization::create([
+				$organization = Organization::create([
 					"id" => $this->setId($request),
 					"user_id" => $user->id,
-					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
 				]);
+
+				// Also add the owner to the organization user role table in order to be able to store the subscription
+				$organization->users()->attach($user->id, ['role_id' => 0]);
 			}
+
+			$new_user = false;
 		} else {
 			$user->clients()->attach($clientId, [
 				'last_active_at' => date('Y-m-d H:i:s'),
@@ -259,11 +264,16 @@ class AuthController extends Controller
 			$user->settings()->attach($this->getDefaultSettings());
 
 			// Also create the initial default organization for him
-			Organization::create([
+			$organization = Organization::create([
 				"id" => $this->setId($request),
 				"user_id" => $user->id,
-				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user))
+				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
 			]);
+
+			// Also add the owner to the organization user role table in order to be able to store the subscription
+			$organization->users()->attach($user->id, ['role_id' => 0]);
+
+			$new_user = true;
 		}
 
 		return response()->json([
@@ -276,7 +286,8 @@ class AuthController extends Controller
 						->with('value')
 						->get()
 				),
-				"token" => $token->plainTextToken
+				"token" => $token->plainTextToken,
+				"new_user" => $new_user
 			]
 		], 200);
 	}
@@ -644,33 +655,35 @@ class AuthController extends Controller
 		$request->fulfill();
 		$user = User::find($id);
 
-		// Create the corresponding contact in sendinblue
-		$response = $sendinblueService->createContact(
-			$user,
-			array(
-				'VORNAME' => $user->first_name,
-				'NACHNAME' => $user->last_name
-			),
-			false,
-			false,
-			array(
-				4,
-				5
-			),
-			true,
-			array()
-		);
-
-		// Trigger the corresponding sendinblue event if the contact creation was successful
-		if ($response->successful()) {
-			$response = $sendinblueService->triggerEvent(
-				'registered_for_betatest',
+		if(config("app.sendinblue_active")) {
+			// Create the corresponding contact in sendinblue
+			$response = $sendinblueService->createContact(
 				$user,
 				array(
-					'firstname' => $user->first_name,
-					'lastname' => $user->last_name
-				)
+					'VORNAME' => $user->first_name,
+					'NACHNAME' => $user->last_name
+				),
+				false,
+				false,
+				array(
+					4,
+					5
+				),
+				true,
+				array()
 			);
+
+			// Trigger the corresponding sendinblue event if the contact creation was successful
+			if ($response->successful()) {
+				$response = $sendinblueService->triggerEvent(
+					'registered_for_betatest',
+					$user,
+					array(
+						'firstname' => $user->first_name,
+						'lastname' => $user->last_name
+					)
+				);
+			}
 		}
 
 		$user = User::find($id);

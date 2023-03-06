@@ -1174,18 +1174,27 @@ class StripeController extends Controller
 		$val = $billingAddress->subscription($subscription->name)->cancel();
 
 		// Remove sub itemes from users
-		foreach($subscriptionItems as $subscriptionItem) {
-			User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
-				'subscription_item_id' => NULL
-			]);
-		}
+		// foreach($subscriptionItems as $subscriptionItem) {
+		// 	User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
+		// 		'subscription_item_id' => NULL
+		// 	]);
+		// }
 
 		// Remove sub itemes from organization users
 		foreach($subscriptionItems as $subscriptionItem) {
-			OrganizationUserRole::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
-				'subscription_item_id' => NULL,
-				'restricted_subscription_usage' => NULL
-			]);
+			// OrganizationUserRole::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
+			// 	'subscription_item_id' => NULL,
+			// 	'restricted_subscription_usage' => NULL
+			// ]);
+
+			$users = $billingAddress->billingAddressable->users;
+			foreach($users as $user) {
+				$billingAddress->billingAddressable->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
+					'subscription_item_id' => NULL,
+					'restricted_subscription_usage' => NULL,
+					'assigned_on' => NULL
+				]);
+			}
 		}
 
 		return response($val, 204);

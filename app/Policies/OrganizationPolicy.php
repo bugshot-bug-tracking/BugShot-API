@@ -101,7 +101,7 @@ class OrganizationPolicy
      */
     public function delete(User $user, Organization $organization)
     {
-        if(!$user->licenseActive()){return false;}
+        // if(!$user->licenseActive()){return false;}
 
         return $organization->user_id == $user->id;
     }

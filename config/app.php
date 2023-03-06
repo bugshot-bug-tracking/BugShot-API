@@ -116,6 +116,7 @@ return [
     |
     */
 
+	'sendinblue_active' => env('SENDINBLUE_ACTIVE', true),
     'sendinblue_ma_key' => env('SENDINBLUE_MA_KEY', null),
     'sendinblue_v2_api_url' => env('SENDINBLUE_V2_API_URL', null),
     'sendinblue_v3_api_key' => env('SENDINBLUE_V3_API_KEY', null),
