@@ -250,6 +250,17 @@ class BillingAddressController extends Controller
 			} else {
 				$billingAddress->createOrGetStripeCustomer(['name' => $model->designation, 'email' => $model->creator->email]);
 			}
+
+
+			$count = 0;
+			do {
+				$billingAddress = $model->billingAddress;
+				if($count != 0) {
+					sleep(1);
+				}
+				$count++;
+			} while ($billingAddress->stripe_id == NULL && $count <= 3);
+
 		}
 
         return new BillingAddressResource($billingAddress);
