@@ -1320,6 +1320,8 @@ class StripeController extends Controller
 				'subscription_item_id' => $subscriptionItemId
 			]);
 
+			$user->endTrial();
+
 			return new UserResource($user);
 		}
 
