@@ -140,6 +140,9 @@ class CompanyPolicy
     if ($company->user_id == $user->id) {
       return true;
     }
+    if ($user->isPriviliegated('organizations', $company->organization)) {
+      return true;
+    };
   }
 
   /**
