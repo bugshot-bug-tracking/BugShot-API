@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
 use App\Events\ProjectUserRemoved;
+use App\Events\ProjectUserUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -1499,6 +1500,8 @@ class ProjectController extends Controller
 		$project->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
+
+		broadcast(new ProjectUserUpdated($user, $project))->toOthers();
 
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->where('user_id', $user->id)->first());
 	}
