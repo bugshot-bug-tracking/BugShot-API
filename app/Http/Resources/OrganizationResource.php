@@ -50,7 +50,8 @@ class OrganizationResource extends JsonResource
 								"last_name" => $item->user->last_name,
 								"email" => $item->user->email,
 							],
-							'role' => new RoleResource($item->role)
+							'role' => new RoleResource($item->role),
+							'trial_end_date' => $item->user->trial_end_date,
 						];
 					});
 				} else {

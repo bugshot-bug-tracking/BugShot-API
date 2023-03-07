@@ -8,6 +8,7 @@ use App\Events\CompanyCreated;
 use App\Events\CompanyDeleted;
 use App\Events\CompanyUpdated;
 use App\Events\CompanyUserRemoved;
+use App\Events\CompanyUserUpdated;
 use App\Events\InvitationCreated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -1029,6 +1030,8 @@ class CompanyController extends Controller
 		$company->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
+		
+		broadcast(new CompanyUserUpdated($user, $company))->toOthers();
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->where('user_id', $user->id)->first());
 	}
