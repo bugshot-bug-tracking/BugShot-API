@@ -17,7 +17,7 @@ class ScreenshotService
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
+    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService)
     {
         $base64 = $screenshot->base64;
 
@@ -70,9 +70,6 @@ class ScreenshotService
             "web_position_x" =>  $screenshot->web_position_x,
             "web_position_y" =>  $screenshot->web_position_y
         ]);
-
-        if($returnBase64)
-        {$screenshot->base64 = $decodedBase64;}
 
         $resource = new ScreenshotResource($screenshot);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-sc", $project->id, $request->get('session_id'));

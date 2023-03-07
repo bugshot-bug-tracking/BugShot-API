@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Events\InvitationCreated;
 use App\Events\OrganizationUpdated;
 use App\Events\OrganizationUserRemoved;
+use App\Events\OrganizationUserUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -1041,6 +1042,8 @@ class OrganizationController extends Controller
 		$organization->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
+		
+		broadcast(new OrganizationUserUpdated($user, $organization))->toOthers();
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)->first());
 	}
