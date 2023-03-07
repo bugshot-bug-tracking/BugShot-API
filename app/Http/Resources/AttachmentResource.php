@@ -32,14 +32,8 @@ class AttachmentResource extends JsonResource
 			try {
 				$type = pathinfo($path, PATHINFO_EXTENSION);
 				$data = file_get_contents($path);
-				$dataSubstr = substr(base64_encode($data), 0, 1);
-
-				if($dataSubstr == "/") {
-					$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-					$base64 = base64_encode($base64);
-				} else {
-					$base64 = base64_encode($data);
-				}
+				$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+				$base64 = base64_encode($base64);
 				$attachment['attributes']['base64'] = $base64;
 			} catch (Exception $e) {
 				$attachment['attributes']['base64'] = null;
