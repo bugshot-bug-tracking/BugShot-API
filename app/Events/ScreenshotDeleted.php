@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Http\Resources\ScreenshotResource;
+use App\Http\Resources\ScreenshotSlimResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -54,8 +55,9 @@ class ScreenshotDeleted implements ShouldBroadcast
 	 */
 	public function broadcastWith()
 	{
+		//send without base64 to minimize data flow over pusher
 		return [
-			'data' => new ScreenshotResource($this->screenshot)
+			'data' => new ScreenshotSlimResource($this->screenshot)
 		];
 	}
 

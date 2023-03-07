@@ -10,21 +10,30 @@ use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ScreenshotService
 {
     private $storagePath = "/uploads/screenshots/";
 
     // Store a newly created screenshot on the server.
-    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService, $returnBase64 = false)
+    public function store(Request $request, $bug, $screenshot, $client_id, ApiCallService $apiCallService)
     {
         $base64 = $screenshot->base64;
 
         // If the base64 string contains a prefix, remove it
-        if (str_contains($base64, 'base64')) {
-            $explodedBase64 = explode(',', $base64);
-            $base64 = $explodedBase64[1];
-        }
+        // if (str_contains($base64, 'base64')) {
+        //     $explodedBase64 = explode(',', $base64);
+        //     $base64 = $explodedBase64[1];
+        // } else {
+		// 	$base64 = base64_decode($base64);
+		// 	$explodedBase64 = explode(',', $base64);
+        //     $base64 = $explodedBase64[1];
+		// }
+
+		$base64 = base64_decode($base64);
+		$explodedBase64 = explode(',', $base64);
+		$base64 = $explodedBase64[1];
 
         // Get the mime_type of the screenshot to build the filename with file extension
         $decodedBase64 = base64_decode($base64);
@@ -40,7 +49,16 @@ class ScreenshotService
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-        // $this->compressImage("storage" . $filePath);
+		try
+		{
+			if(config("app.tinypng_active")) {
+				$this->compressImage("storage" . $filePath);
+			}
+		}
+		catch (\Exception $e)
+		{
+			Log::info($e);
+		}
 
         // Create a new screenshot
         $screenshot = $bug->screenshots()->create([
@@ -52,9 +70,6 @@ class ScreenshotService
             "web_position_x" =>  $screenshot->web_position_x,
             "web_position_y" =>  $screenshot->web_position_y
         ]);
-
-        if($returnBase64)
-        {$screenshot->base64 = $decodedBase64;}
 
         $resource = new ScreenshotResource($screenshot);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-sc", $project->id, $request->get('session_id'));

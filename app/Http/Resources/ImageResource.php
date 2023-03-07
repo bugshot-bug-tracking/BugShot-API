@@ -21,8 +21,10 @@ class ImageResource extends JsonResource
 
 		$path = "storage" . $this->url;
 		try {
-			$data = file_get_contents($path);
-			$base64 = base64_encode($data);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+			$base64 = base64_encode($base64);
 
 			return [
 				"type" => "Image",

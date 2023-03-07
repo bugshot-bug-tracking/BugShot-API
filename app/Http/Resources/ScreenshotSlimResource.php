@@ -2,29 +2,18 @@
 
 namespace App\Http\Resources;
 
-use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ScreenshotResource extends JsonResource
+class ScreenshotSlimResource extends JsonResource
 {
-	/**
-	 * Transform the resource into an array.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-	 */
-	public function toArray($request)
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     */
+    public function toArray($request)
 	{
-		$path = "storage" . $this->url;
-		$base64 = "";
-		try {
-            $type = pathinfo($path, PATHINFO_EXTENSION);
-            $data = file_get_contents($path);
-            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-			$base64 = base64_encode($base64);
-		} catch (Exception $e) {
-		}
-
 		$screenshot = array(
 			"id" => $this->id,
 			"type" => "Screenshot",
@@ -36,7 +25,6 @@ class ScreenshotResource extends JsonResource
 				"position_y" => $this->position_y,
 				"web_position_x" => $this->web_position_x,
 				"web_position_y" => $this->web_position_y,
-				"base64" => $base64
 			]
 		);
 

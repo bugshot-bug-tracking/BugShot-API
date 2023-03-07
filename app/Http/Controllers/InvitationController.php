@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Events\BugMembersUpdated;
 use App\Events\CompanyMembersUpdated;
+use App\Events\InvitationDeleted;
 use App\Events\OrganizationMembersUpdated;
 use App\Events\ProjectMembersUpdated;
 use Illuminate\Http\Request;
@@ -471,6 +472,8 @@ class InvitationController extends Controller
 			]], 288);
 
 		$invitation->update(["status_id" => 3]);
+		broadcast(new InvitationDeleted($invitation, $invitation->invitable_type))->toOthers();
+
 		return response()->json("", 204);
 	}
 
@@ -497,6 +500,7 @@ class InvitationController extends Controller
 		$invitation->update(["status_id" => 2]);
 
 		broadcast(new OrganizationMembersUpdated($organization))->toOthers();
+		broadcast(new InvitationDeleted($invitation))->toOthers();
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->first());
 	}
@@ -529,6 +533,7 @@ class InvitationController extends Controller
 		$invitation->update(["status_id" => 2]);
 
 		broadcast(new CompanyMembersUpdated($company))->toOthers();
+		broadcast(new InvitationDeleted($invitation))->toOthers();
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->first());
 	}
@@ -566,6 +571,7 @@ class InvitationController extends Controller
 		$invitation->update(["status_id" => 2]);
 
 		broadcast(new ProjectMembersUpdated($project))->toOthers();
+		broadcast(new InvitationDeleted($invitation))->toOthers();
 
 		return new ProjectUserRoleResource(ProjectUserRole::where('project_id', $project->id)->first());
 	}
