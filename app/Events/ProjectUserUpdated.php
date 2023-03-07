@@ -52,7 +52,7 @@ class ProjectUserUpdated implements ShouldBroadcast
      */
     public function broadcastWith()
     {
-        $role = ProjectUserRole::where("organization_id", $this->project->id)->where('user_id', $this->user->id)->first();
+        $role = ProjectUserRole::where("project_id", $this->project->id)->where('user_id', $this->user->id)->first();
 
         return [
             'data' => new ProjectUserRoleResource($role)
