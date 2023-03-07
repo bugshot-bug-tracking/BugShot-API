@@ -129,6 +129,7 @@ return [
     |
     */
 
+	'tinypng_active' => env('TINYPNG_ACTIVE', true),
     'tinypng_api_key' => env('TINYPNG_API_KEY', null),
 
     /*

@@ -10,6 +10,7 @@ use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ScreenshotService
 {
@@ -21,10 +22,18 @@ class ScreenshotService
         $base64 = $screenshot->base64;
 
         // If the base64 string contains a prefix, remove it
-        if (str_contains($base64, 'base64')) {
-            $explodedBase64 = explode(',', $base64);
-            $base64 = $explodedBase64[1];
-        }
+        // if (str_contains($base64, 'base64')) {
+        //     $explodedBase64 = explode(',', $base64);
+        //     $base64 = $explodedBase64[1];
+        // } else {
+		// 	$base64 = base64_decode($base64);
+		// 	$explodedBase64 = explode(',', $base64);
+        //     $base64 = $explodedBase64[1];
+		// }
+
+		$base64 = base64_decode($base64);
+		$explodedBase64 = explode(',', $base64);
+		$base64 = $explodedBase64[1];
 
         // Get the mime_type of the screenshot to build the filename with file extension
         $decodedBase64 = base64_decode($base64);
@@ -40,7 +49,16 @@ class ScreenshotService
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-        // $this->compressImage("storage" . $filePath);
+		try
+		{
+			if(config("app.tinypng_active")) {
+				$this->compressImage("storage" . $filePath);
+			}
+		}
+		catch (\Exception $e)
+		{
+			Log::info($e);
+		}
 
         // Create a new screenshot
         $screenshot = $bug->screenshots()->create([
