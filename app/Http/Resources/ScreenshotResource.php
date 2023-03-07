@@ -18,8 +18,10 @@ class ScreenshotResource extends JsonResource
 		$path = "storage" . $this->url;
 		$base64 = "";
 		try {
-			$data = file_get_contents($path);
-			$base64 = base64_encode($data);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+			$base64 = base64_encode($base64);
 		} catch (Exception $e) {
 		}
 

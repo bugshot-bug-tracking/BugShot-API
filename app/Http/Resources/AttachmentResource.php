@@ -30,8 +30,10 @@ class AttachmentResource extends JsonResource
 		if (array_key_exists('include-attachment-base64', $header) && $header['include-attachment-base64'][0] == "true") {
 			$path = "storage" . $this->url;
 			try {
+				$type = pathinfo($path, PATHINFO_EXTENSION);
 				$data = file_get_contents($path);
-				$base64 = base64_encode($data);
+				$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+				$base64 = base64_encode($base64);
 				$attachment['attributes']['base64'] = $base64;
 			} catch (Exception $e) {
 				$attachment['attributes']['base64'] = null;
