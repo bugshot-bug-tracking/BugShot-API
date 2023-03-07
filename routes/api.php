@@ -186,6 +186,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
 
+		Route::get("/start-trial", [UserController::class, "startTrial"])->name("user.start-trial");
+
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
 

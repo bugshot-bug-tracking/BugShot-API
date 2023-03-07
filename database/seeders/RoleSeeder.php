@@ -31,6 +31,10 @@ class RoleSeeder extends Seeder
 					$user->organizations()->attach($organization->id, [
 						'role_id' => 0
 					]);
+				} else if ($organizationUserRole->role_id == 2) {
+					$user->organizations()->updateExistingPivot($organizationUserRole->organization_id, [
+						'role_id' => 0
+					]);
 				}
 			}
 		}

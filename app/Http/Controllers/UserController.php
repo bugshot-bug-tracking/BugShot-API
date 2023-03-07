@@ -904,4 +904,75 @@ class UserController extends Controller
 
 		return new SettingUserValueResource(SettingUserValue::where('setting_id', $setting->id)->where('user_id', $user->id)->first());
 	}
+
+
+	/**
+	 * Start a trial for the given user
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/users/{user_id}/start-trial",
+	 *	tags={"User"},
+	 *	summary="Start a trial for the user.",
+	 *	operationId="userStartTrial",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function startTrial(User $user)
+	{
+		// Check if the user is authorized to start the trial
+		$this->authorize('view', $user);
+
+		$user->startTrial();
+
+		return response()->json("Trial started succesfully", 200);
+	}
 }

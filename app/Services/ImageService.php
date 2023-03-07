@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 
 class ImageService
 {
@@ -23,9 +24,12 @@ class ImageService
             }
         }
 
-        $decodedBase64 = base64_decode($base64);
+		$base64 = base64_decode($base64);
+		$explodedBase64 = explode(',', $base64);
+		$base64 = $explodedBase64[1];
 
         // Get the mime_type of the image to build the filename with file extension
+		$decodedBase64 = base64_decode($base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
         $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
@@ -36,8 +40,16 @@ class ImageService
         // Store the image in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-        // TODO: Combine ScreenshotService, AttachmentService and this service at some point
-        // $this->compressImage("storage" . $filePath, $decodedBase64); // Deactivated because of max requests per month
+		try
+		{
+			if(config("app.tinypng_active")) {
+				$this->compressImage("storage" . $filePath);
+			}
+		}
+		catch (\Exception $e)
+		{
+			Log::info($e);
+		}
 
         // Create a new image model
         $image = new Image([
@@ -57,15 +69,10 @@ class ImageService
     }
 
     // Compress the image via tinypng
-    public function compressImage($filePath, $decodedBase64) {  
-
-        // If the base64 string contains a prefix, remove it
-        if(str_contains($decodedBase64, 'base64')) {
-            $explodedBase64 = explode(',', $decodedBase64);
-            $decodedBase64 = $explodedBase64[1];
-        }
-
+    public function compressImage($filePath)
+	{
         $source = \Tinify\fromFile($filePath);
         $source->toFile($filePath);
     }
 }
+
