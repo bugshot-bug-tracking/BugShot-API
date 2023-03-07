@@ -942,7 +942,7 @@ class UserController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/User/properties/id"
 	 *		)
-	 *	)
+	 *	),
 	 *
 	 *	@OA\Response(
 	 *		response=200,

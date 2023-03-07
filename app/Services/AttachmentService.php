@@ -6,6 +6,7 @@ use App\Events\ScreenshotCreated;
 use App\Events\ScreenshotDeleted;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Attachment;
+use Illuminate\Support\Facades\Log;
 
 class AttachmentService
 {
@@ -14,11 +15,16 @@ class AttachmentService
     // Store a newly created attachment on the server.
     public function store($bug, $attachment)
     {
+		$base64 = base64_decode($attachment->base64);
+		$explodedBase64 = explode(',', $base64);
+		$base64 = $explodedBase64[1];
+
         // Get the mime_type of the attachment to build the filename with file extension
-        $decodedBase64 = base64_decode($attachment->base64);
+        $decodedBase64 = base64_decode($base64);
         $f = finfo_open();
         $mime_type = finfo_buffer($f, $decodedBase64, FILEINFO_MIME_TYPE);
-        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . explode('/', $mime_type)[1];
+		$mime_type = explode('/', $mime_type)[1];
+        $fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . "." . $mime_type;
 
         // Complete building the path where the attachment will be stored
         $project = $bug->project;
@@ -27,6 +33,19 @@ class AttachmentService
 
         // Store the attachment in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
+
+		if($mime_type == "jpeg" || $mime_type == "webp" || $mime_type == "jpg" || $mime_type == "png") {
+			try
+			{
+				if(config("app.tinypng_active")) {
+					$this->compressImage("storage" . $filePath);
+				}
+			}
+			catch (\Exception $e)
+			{
+				Log::info($e);
+			}
+		}
 
         // Create a new attachment
 		$attachment = $bug->attachments()->create([
@@ -40,11 +59,18 @@ class AttachmentService
     }
 
     // Delete the attachment
-    public function delete($attachment) 
+    public function delete($attachment)
     {
         $val = $attachment->delete();
         broadcast(new ScreenshotDeleted($attachment))->toOthers();
 
         return $val;
     }
+
+	// Compress the image via tinypng
+	public function compressImage($filePath)
+	{
+		$source = \Tinify\fromFile($filePath);
+		$source->toFile($filePath);
+	}
 }
