@@ -52,7 +52,7 @@ class CompanyUserUpdated implements ShouldBroadcast
      */
     public function broadcastWith()
     {
-        $role = CompanyUserRole::where("organization_id", $this->company->id)->where('user_id', $this->user->id)->first();
+        $role = CompanyUserRole::where("company_id", $this->company->id)->where('user_id', $this->user->id)->first();
 
         return [
             'data' => new CompanyUserRoleResource($role)
