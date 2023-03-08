@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\Screenshot;
+use App\Models\Image;
+
 class ScriptController extends Controller
 {
 	public function compressImages() {
@@ -14,7 +17,6 @@ class ScriptController extends Controller
 		// $files = $this->find_files(getcwd() . "/storage/uploads/screenshots/BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB/CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC/1ccf0906-2776-43ea-903d-fa5a86895ccd/", '*.plain');
 
 		foreach($files as $file) {
-
 			$data = file_get_contents($file);
 
 			// Check if the data is a correct base64 string
@@ -35,19 +37,54 @@ class ScriptController extends Controller
 
 				$disk->put($fileName,  $decodedBase64);
 
-				try
-				{
-					if(config("app.tinypng_active")) {
-						$this->compressImage(dirname($file) . "/" . $fileName);
+				// Update the url of that screenshot and compress it
+				if(strpos($file, "screenshots") !== false) {
+					$screenshot = Screenshot::where("url", "like", "%" . basename($file) . "%")->first();
+					if($screenshot) {
+						try
+						{
+							if(config("app.tinypng_active")) {
+								$this->compressImage(dirname($file) . "/" . $fileName);
+							}
+						}
+						catch (\Exception $e)
+						{
+							Log::info($e);
+						}
+
+						$screenshot->update([
+							"url" => str_replace(basename($file), $fileName, $screenshot->url)
+						]);
+
+						// Delete the old plain file
+						unlink($file);
+					} else {
+						unlink(dirname($file) . "/" . $fileName);
+					}
+				} else if (strpos($file, "images") !== false) {
+					$image = Image::where("url", "like", "%" . basename($file) . "%")->first();
+					if($image) {
+						try
+						{
+							if(config("app.tinypng_active")) {
+								$this->compressImage(dirname($file) . "/" . $fileName);
+							}
+						}
+						catch (\Exception $e)
+						{
+							Log::info($e);
+						}
+
+						$image->update([
+							"url" => str_replace(basename($file), $fileName, $image->url)
+						]);
+
+						// Delete the old plain file
+						unlink($file);
+					} else {
+						unlink(dirname($file) . "/" . $fileName);
 					}
 				}
-				catch (\Exception $e)
-				{
-					Log::info($e);
-				}
-
-				// Delete the old plain file
-				unlink($file);
 			}
 		}
 
