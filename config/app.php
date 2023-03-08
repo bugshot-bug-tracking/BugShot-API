@@ -116,11 +116,20 @@ return [
     |
     */
 
-	'sendinblue_active' => env('SENDINBLUE_ACTIVE', true),
+	'sendinblue_active' => env('SENDINBLUE_ACTIVE', false),
     'sendinblue_ma_key' => env('SENDINBLUE_MA_KEY', null),
     'sendinblue_v2_api_url' => env('SENDINBLUE_V2_API_URL', null),
     'sendinblue_v3_api_key' => env('SENDINBLUE_V3_API_KEY', null),
     'sendinblue_v3_api_url' => env('SENDINBLUE_V3_API_URL', null),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scripts
+    |--------------------------------------------------------------------------
+    |
+    */
+
+	'script_active' => env('SCRIPTS_ACTIVE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -129,7 +138,7 @@ return [
     |
     */
 
-	'tinypng_active' => env('TINYPNG_ACTIVE', true),
+	'tinypng_active' => env('TINYPNG_ACTIVE', false),
     'tinypng_api_key' => env('TINYPNG_API_KEY', null),
 
     /*
