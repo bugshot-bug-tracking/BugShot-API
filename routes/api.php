@@ -26,6 +26,7 @@ use App\Http\Controllers\BillingAddressController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
+use App\Http\Controllers\ScriptController;
 
 // Events
 use App\Events\TestEvent;
@@ -300,3 +301,14 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 		});
 	}
 );
+
+
+
+/*
+|--------------------------------------------------------------------------
+| Script routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
+
