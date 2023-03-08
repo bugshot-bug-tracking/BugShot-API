@@ -225,6 +225,8 @@ class AuthController extends Controller
 			return response()->json(["message" => __('auth.email-not-verified')], 401);
 		}
 
+		Auth::attempt(['email' => $request->email, 'password' => $request->password]);
+
 		$clientId = $request->header('clientId');
 		$userClient = $user->clients()->where('client_id', $clientId);
 
