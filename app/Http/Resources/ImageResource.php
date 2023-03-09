@@ -24,12 +24,13 @@ class ImageResource extends JsonResource
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data = file_get_contents($path);
 
-            if($this->created_at > "2023-03-06 15:00:00") {
-                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-                $base64 = base64_encode($base64);
-            } else {
-                $base64 = base64_encode($data);
-            }
+            // if($this->created_at > "2023-03-06 15:00:00") {
+            //     $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+            //     $base64 = base64_encode($base64);
+            // } else {
+            //     $base64 = base64_encode($data);
+            // }
+			$base64 = base64_encode($data);
 
 			return [
 				"type" => "Image",

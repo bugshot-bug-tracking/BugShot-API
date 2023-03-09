@@ -243,16 +243,6 @@ class AuthController extends Controller
 			// If the user has no settings yet, set them (This also means that he has not logged in for the first time yet)
 			if ($user->settings->isEmpty()) {
 				$user->settings()->attach($this->getDefaultSettings());
-
-				// Also create the initial default organization for him
-				$organization = Organization::create([
-					"id" => $this->setId($request),
-					"user_id" => $user->id,
-					"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
-				]);
-
-				// Also add the owner to the organization user role table in order to be able to store the subscription
-				$organization->users()->attach($user->id, ['role_id' => 0]);
 			}
 
 			$new_user = false;
@@ -264,16 +254,6 @@ class AuthController extends Controller
 
 			// Create default set of settings for the user when first logged in
 			$user->settings()->attach($this->getDefaultSettings());
-
-			// Also create the initial default organization for him
-			$organization = Organization::create([
-				"id" => $this->setId($request),
-				"user_id" => $user->id,
-				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
-			]);
-
-			// Also add the owner to the organization user role table in order to be able to store the subscription
-			$organization->users()->attach($user->id, ['role_id' => 0]);
 
 			$new_user = true;
 		}
