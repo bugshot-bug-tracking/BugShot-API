@@ -68,7 +68,8 @@ class ScreenshotService
             "position_x" => $screenshot->position_x,
             "position_y" => $screenshot->position_y,
             "web_position_x" =>  $screenshot->web_position_x,
-            "web_position_y" =>  $screenshot->web_position_y
+            "web_position_y" =>  $screenshot->web_position_y,
+			"device_pixel_ratio" =>  $screenshot->device_pixel_ratio
         ]);
 
         $resource = new ScreenshotResource($screenshot);
