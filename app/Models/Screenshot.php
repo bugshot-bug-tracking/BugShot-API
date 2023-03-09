@@ -27,14 +27,14 @@ class Screenshot extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the but to which the object belongs."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="client_id",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The client that was used to create the bug."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="designation",
 	 * 	type="string",
@@ -81,6 +81,13 @@ class Screenshot extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="device_pixel_ratio",
+	 * 	type="float",
+	 *  nullable=true,
+	 * 	description="ratio of the devices pixels."
+	 * )
+	 *
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -103,7 +110,7 @@ class Screenshot extends Model
 	 *
 	 */
 
-	protected $fillable = ["bug_id", "client_id", "url", "position_x", "position_y", "web_position_x", "web_position_y"];
+	protected $fillable = ["bug_id", "client_id", "url", "position_x", "position_y", "web_position_x", "web_position_y", "device_pixel_ratio"];
 
 	protected $touches = ["bug"];
 

@@ -60,7 +60,7 @@ class MarkerController extends Controller
 	 *			ref="#/components/schemas/Screenshot/properties/id"
 	 *		)
 	 *	),
-	 * 
+	 *
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -92,7 +92,7 @@ class MarkerController extends Controller
     {
 		// Check if the user is authorized to list the markers of the screenshot
 		$this->authorize('viewAny', [Marker::class, $screenshot->bug->project]);
-  
+
 		return MarkerResource::collection($screenshot->markers);
     }
 
@@ -198,6 +198,11 @@ class MarkerController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="screenshot_width",
+	 *                  type="number",
+	 *                  format="float",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="device_pixel_ratio",
 	 *                  type="number",
 	 *                  format="float",
 	 *              ),
@@ -456,6 +461,11 @@ class MarkerController extends Controller
 	 *              ),
 	 *  			@OA\Property(
 	 *                  property="screenshot_width",
+	 *                  type="number",
+	 *                  format="float",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="device_pixel_ratio",
 	 *                  type="number",
 	 *                  format="float",
 	 *              ),
