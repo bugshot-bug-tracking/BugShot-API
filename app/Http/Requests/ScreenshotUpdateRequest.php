@@ -31,6 +31,7 @@ class ScreenshotUpdateRequest extends FormRequest
                 "position_y" => ["integer"],
                 "web_position_x" => ["integer"],
                 "web_position_y" => ["integer"],
+				"device_pixel_ratio" => ["numeric"],
                 "base64" => ["string"]
             ];
         }
