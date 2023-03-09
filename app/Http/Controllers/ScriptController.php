@@ -59,6 +59,8 @@ class ScriptController extends Controller
 						// Delete the old plain file
 						unlink($file);
 					} else {
+                        // Also delete the old file because
+                        unlink($file);
 						unlink(dirname($file) . "/" . $fileName);
 					}
 				} else if (strpos($file, "images") !== false) {
@@ -82,6 +84,8 @@ class ScriptController extends Controller
 						// Delete the old plain file
 						unlink($file);
 					} else {
+                        // Also delete the old file because
+                        unlink($file);
 						unlink(dirname($file) . "/" . $fileName);
 					}
 				}
