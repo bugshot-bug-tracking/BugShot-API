@@ -713,7 +713,11 @@ class OrganizationController extends Controller
 			}
 		}
 
-		$val = $organization->delete();
+		if(Auth::user()->createdOrganizations->count() > 1) {
+			$val = $organization->delete();
+		} else {
+			return response()->json(["message" => __('app.cannot-delete-last-organization')], 400);
+		}
 
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
