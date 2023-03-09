@@ -5,24 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
  */
 class Status extends Model
 {
-	use HasFactory, SoftDeletes;
+	use HasFactory, SoftDeletes, CascadeSoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     * 
+     *
      * @var bool
      */
     public $incrementing = false;
@@ -40,7 +41,7 @@ class Status extends Model
 	 *  maxLength=255,
 	 * 	description="The status name."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="order_number",
 	 * 	type="integer",
@@ -54,7 +55,7 @@ class Status extends Model
 	 *  maxLength=255,
 	 * 	description="The id of the project to which the object belongs."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="permanent",
 	 * 	type="string",
@@ -88,6 +89,9 @@ class Status extends Model
 	protected $fillable = ["id", "designation", "order_number", "project_id", "permanent"];
 
 	protected $touches = ['project'];
+
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['bugs'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
