@@ -172,6 +172,11 @@ class ScreenshotController extends Controller
 	 *                  type="integer",
 	 *                  format="int32",
 	 *              ),
+	 *  			@OA\Property(
+	 *                  property="device_pixel_ratio",
+	 *                  type="number",
+	 *                  format="float",
+	 *              ),
 	 * 	   			@OA\Property(
 	 *                  property="base64",
 	 *                  type="string"
@@ -237,6 +242,11 @@ class ScreenshotController extends Controller
 	 *              		),
 	 *  					@OA\Property(
 	 *              		    property="screenshot_width",
+	 *              		    type="number",
+	 *              		    format="float",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
 	 *              		    type="number",
 	 *              		    format="float",
 	 *              		),
@@ -499,7 +509,7 @@ class ScreenshotController extends Controller
 				$markerService->store($screenshot, $marker);
 			}
 		}
-		
+
 		return json_encode($screenshot->withoutRelations());
 	}
 
@@ -671,6 +681,11 @@ class ScreenshotController extends Controller
 	 *                  type="integer",
 	 *                  format="int32",
 	 *              ),
+	 *  			@OA\Property(
+	 *                  property="device_pixel_ratio",
+	 *                  type="number",
+	 *                  format="float",
+	 *              ),
 	 * 	   			@OA\Property(
 	 *                  property="base64",
 	 *                  type="string"
@@ -817,7 +832,7 @@ class ScreenshotController extends Controller
 		// Delete the respective markers
 		foreach($screenshot->markers as $marker) {
 			$markerService->delete($marker);
-		}		
+		}
 
 		return response($val, 204);
 	}

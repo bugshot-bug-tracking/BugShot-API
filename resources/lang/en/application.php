@@ -29,5 +29,6 @@ return [
     'user-not-part-of-organization' => 'The provided user appears to not be part of the :organization, in which the subscription is supposed to be assigned to the user.',
 	'api-token-already-exists' => 'The selected resource already has an api token',
 	'unsufficient-permissions' => 'You do not have the permissions to perform this action',
-	'subscription-revoked-successfully' => 'The license was successfully revoked from the user'
+	'subscription-revoked-successfully' => 'The license was successfully revoked from the user',
+	'cannot-delete-last-organization' => 'The last organization cannot be deleted'
 ];

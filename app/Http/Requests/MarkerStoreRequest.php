@@ -36,6 +36,7 @@ class MarkerStoreRequest extends FormRequest
 			"scroll_y" => ["numeric"],
 			"screenshot_height" => ["numeric"],
 			"screenshot_width" => ["numeric"],
+			"device_pixel_ratio" => ["numeric"],
             "target_full_selector" => ["string"],
             "target_short_selector" => ["string"],
             "target_html" => ["string"]

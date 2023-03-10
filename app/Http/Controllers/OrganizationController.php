@@ -21,6 +21,7 @@ use App\Http\Resources\OrganizationUserRoleResource;
 
 // Services
 use App\Services\InvitationService;
+use App\Services\GetUserLocaleService;
 
 // Models
 use App\Models\Organization;
@@ -220,6 +221,20 @@ class OrganizationController extends Controller
 
 		// Combine the two collections
 		// $organizations = $organizations->concat($createdOrganizations);
+
+		// If the user does not have any orgs yet, create one
+		if($organizations->isEmpty()) {
+			$organizations = Organization::create([
+				"id" => $this->setId($request),
+				"user_id" => Auth::user()->id,
+				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale(Auth::user())) . " (" . Auth::user()->first_name . " " . Auth::user()->last_name . ")"
+			]);
+
+			// Also add the owner to the organization user role table in order to be able to store the subscription
+			$organizations->users()->attach(Auth::user()->id, ['role_id' => 0]);
+
+			$organizations = collect($organizations);
+		}
 
 		return OrganizationResource::collection($organizations->sortBy('designation'));
 	}
@@ -698,7 +713,11 @@ class OrganizationController extends Controller
 			}
 		}
 
-		$val = $organization->delete();
+		if(Auth::user()->createdOrganizations->count() > 1) {
+			$val = $organization->delete();
+		} else {
+			return response()->json(["message" => __('app.cannot-delete-last-organization')], 400);
+		}
 
 		broadcast(new OrganizationUpdated($organization))->toOthers();
 
@@ -1042,7 +1061,7 @@ class OrganizationController extends Controller
 		$organization->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
-		
+
 		broadcast(new OrganizationUserUpdated($user, $organization))->toOthers();
 
 		return new OrganizationUserRoleResource(OrganizationUserRole::where('organization_id', $organization->id)->where('user_id', $user->id)->first());

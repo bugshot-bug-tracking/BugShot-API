@@ -31,6 +31,7 @@ class MarkerResource extends JsonResource
                 "scroll_y" => $this->scroll_y,
                 "screenshot_height" => $this->screenshot_height,
                 "screenshot_width" => $this->screenshot_width,
+				"device_pixel_ratio" => $this->device_pixel_ratio,
                 "target_full_selector" => $this->target_full_selector,
                 "target_short_selector" => $this->target_short_selector,
                 "target_html" => $this->target_html,

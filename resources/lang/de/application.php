@@ -29,5 +29,6 @@ return [
     'user-not-part-of-organization' => 'Der angegebene Benutzer scheint nicht zu der :organization zu gehören, in der das Abonnement dem Benutzer zugewiesen werden soll.',
 	'api-token-already-exists' => 'Die ausgewählte Resource verfügt bereits über ein API Token',
 	'unsufficient-permissions' => 'Du hast nicht die Berechtigungen um diese Aktion auszuführen',
-	'subscription-revoked-successfully' => 'Die Lizenz wurde dem User erfolgreich entzogen'
+	'subscription-revoked-successfully' => 'Die Lizenz wurde dem User erfolgreich entzogen',
+	'cannot-delete-last-organization' => 'Die letzte Organisation kann nicht gelöscht werden'
 ];
