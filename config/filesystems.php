@@ -53,6 +53,20 @@ return [
 			'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
 		],
 
+		'ftp' => [
+			'driver' => 'ftp',
+			'host' => 'bugshotupdate.itmichel.de',
+			'username' => 'f013c238',
+			'password' => '3kESd!oBNyfgJQbCo',
+			// Optional FTP settings
+			'port' => 21,
+			'root' => '/',
+			'passive' => true,
+			'ssl' => false,
+			'tls' => true,
+			'timeout' => 30,
+		],
+
 	],
 
 	/*

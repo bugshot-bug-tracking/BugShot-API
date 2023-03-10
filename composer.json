@@ -16,6 +16,7 @@
         "laravel/framework": "^9.0",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
+        "league/flysystem-ftp": "^3.0",
         "pusher/pusher-php-server": "^7.2",
         "sentry/sentry-laravel": "^2.11",
         "tinify/tinify": "^1.5"
