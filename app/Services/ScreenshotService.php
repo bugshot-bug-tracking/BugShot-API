@@ -5,12 +5,15 @@ namespace App\Services;
 use App\Events\ScreenshotCreated;
 use App\Events\ScreenshotDeleted;
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ScreenshotInterfaceResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Jobs\TriggerInterfacesJob;
 use App\Models\Client;
+use App\Models\Screenshot;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class ScreenshotService
 {
@@ -26,14 +29,16 @@ class ScreenshotService
         //     $explodedBase64 = explode(',', $base64);
         //     $base64 = $explodedBase64[1];
         // } else {
-		// 	$base64 = base64_decode($base64);
-		// 	$explodedBase64 = explode(',', $base64);
+        // 	$base64 = base64_decode($base64);
+        // 	$explodedBase64 = explode(',', $base64);
         //     $base64 = $explodedBase64[1];
-		// }
+        // }
 
-		$base64 = base64_decode($base64);
-		$explodedBase64 = explode(',', $base64);
-		$base64 = $explodedBase64[1];
+
+        $interfaceBase64 = "" . $base64;
+        $base64 = base64_decode($base64);
+        $explodedBase64 = explode(',', $base64);
+        $base64 = $explodedBase64[1];
 
         // Get the mime_type of the screenshot to build the filename with file extension
         $decodedBase64 = base64_decode($base64);
@@ -49,16 +54,13 @@ class ScreenshotService
         // Store the screenshot in the public storage
         Storage::disk('public')->put($filePath, $decodedBase64);
 
-		try
-		{
-			if(config("app.tinypng_active")) {
-				$this->compressImage("storage" . $filePath);
-			}
-		}
-		catch (\Exception $e)
-		{
-			Log::info($e);
-		}
+        try {
+            if (config("app.tinypng_active")) {
+                $this->compressImage("storage" . $filePath);
+            }
+        } catch (\Exception $e) {
+            Log::info($e);
+        }
 
         // Create a new screenshot
         $screenshot = $bug->screenshots()->create([
@@ -69,14 +71,14 @@ class ScreenshotService
             "position_y" => $screenshot->position_y,
             "web_position_x" =>  $screenshot->web_position_x,
             "web_position_y" =>  $screenshot->web_position_y,
-			"device_pixel_ratio" =>  $screenshot->device_pixel_ratio
+            "device_pixel_ratio" =>  $screenshot->device_pixel_ratio
         ]);
 
-        $resource = new ScreenshotResource($screenshot);
-		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-sc", $project->id, $request->get('session_id'));
+        $resource = $this->createInterfaceModel($screenshot, $interfaceBase64);
+        TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-sc", $project->id, $request->get('session_id'));
         broadcast(new ScreenshotCreated($screenshot))->toOthers();
 
-		return $screenshot;
+        return $screenshot;
     }
 
     // Delete the screenshot
@@ -93,5 +95,13 @@ class ScreenshotService
     {
         $source = \Tinify\fromFile($filePath);
         $source->toFile($filePath);
+    }
+
+    public function createInterfaceModel($screenshot, $base64)
+    {
+        $sendobj = clone $screenshot;
+        $sendobj->base64 = $base64;
+
+        return new ScreenshotInterfaceResource($sendobj);
     }
 }

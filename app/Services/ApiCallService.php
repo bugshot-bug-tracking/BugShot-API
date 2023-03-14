@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ApiToken;
 use App\Models\Client;
+use ErrorException;
 use Exception;
 use stdClass;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +39,7 @@ class ApiCallService
 			"project-id" => $project_id,
 			"client-key" => $client_key
 		);
-		if($uuid != null){
+		if ($uuid != null) {
 			$BSheaders["session-id"] = $uuid;
 		}
 
@@ -47,22 +48,18 @@ class ApiCallService
 
 	function triggerInterfaces($resource, $trigger_id, $project_id, $uuid = null)
 	{
-		try {
-			$apitoken_entries = ApiToken::where([
-				['api_tokenable_id', '=', $project_id],
-			]);
-	
-			if ($apitoken_entries->count() > 0) {
-				$clients = Client::where('client_url', '!=', '')->get();
-				foreach ($clients as $item) {
-					$this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id, $uuid));
+		$apitoken_entries = ApiToken::where([
+			['api_tokenable_id', '=', $project_id],
+		]);
+
+		if ($apitoken_entries->count() > 0) {
+			$clients = Client::where('client_url', '!=', '')->get();
+			foreach ($clients as $item) {
+				$result = $this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id, $uuid));
+				if ($result->httpCode != 200 && $result->httpCode != 201) {
+					file_put_contents("storage/logs/WorkerErrorLog.txt", json_encode($resource) . "\n" . $result->httpCode . "\n" . $result->httpContent, FILE_APPEND);
 				}
 			}
-		} catch (Exception $e) {
-			// echo 'Caught exception: ',  $e->getMessage(), "\n";
-			return false;
 		}
-
-		return true;
 	}
 }
