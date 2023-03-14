@@ -18,6 +18,9 @@ class StripeSubscriptionResource extends JsonResource
 	public function toArray($request)
 	{
 		$subscriptionModel = Subscription::where('stripe_id', $this->id)->first();
+		if($subscriptionModel == null){
+			return;
+		}
 		$billingAddress = BillingAddress::find($subscriptionModel->billing_address_id);
 
 		foreach($this->items as $item) {
