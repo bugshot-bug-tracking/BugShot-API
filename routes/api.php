@@ -31,6 +31,7 @@ use App\Http\Controllers\SearchController;
 
 // Events
 use App\Events\TestEvent;
+use App\Http\Controllers\DownloadController;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -103,6 +104,9 @@ Route::prefix('sendinblue')->group(function () {
 
 // Feedback Routes
 Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('check.version')->name("feedback.store");
+
+// Get Desktop installer
+Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDesktopClient"])->name('download.client.desktop');
 
 /*
 |--------------------------------------------------------------------------
