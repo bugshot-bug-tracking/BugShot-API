@@ -6,28 +6,43 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
-use Illuminate\Contracts\Filesystem\Cloud;
+use Laravel\Scout\Searchable;
 
 /**
  * @OA\Schema()
  */
 class Bug extends Model
 {
-	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
-     * 
+     *
      * @var bool
      */
     public $incrementing = false;
+
+	/**
+	 * Get the indexable data array for the model.
+	 *
+	 * @return array
+	 */
+	public function toSearchableArray()
+	{
+		return [
+			'id' => $this->id,
+			'designation' => $this->designation,
+			'description' => $this->description,
+			'url' => $this->url
+		];
+	}
 
 	/**
 	 * @OA\Property(
@@ -113,21 +128,21 @@ class Bug extends Model
 	 *  nullable=true,
 	 * 	description="The resolution of the display."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="order_number",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The order number."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="ai_id",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="Auto-Incrementing Id."
 	 * )
-	 * 
+	 *
 	 * * @OA\Property(
 	 * 	property="client_id",
 	 * 	type="integer",

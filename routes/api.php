@@ -27,6 +27,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
+use App\Http\Controllers\SearchController;
 
 // Events
 use App\Events\TestEvent;
@@ -119,6 +120,9 @@ Route::middleware(['auth:sanctum'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
+
+	// Search route
+	Route::get("/search", [SearchController::class, "search"])->name("search");
 
 	// Organization resource routes
 	Route::apiResource('/organizations', OrganizationController::class);

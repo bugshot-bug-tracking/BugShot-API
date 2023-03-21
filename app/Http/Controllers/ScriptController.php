@@ -16,7 +16,7 @@ class ScriptController extends Controller
 		$files = $this->find_files(getcwd() . "/storage/uploads", '*.plain');
 		// $files = $this->find_files(getcwd() . "/storage/uploads/screenshots/BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB/CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC/1ccf0906-2776-43ea-903d-fa5a86895ccd/", '*.plain');
 
-		foreach($files as $file) {
+		foreach($files as $key=>$file) {
 			$data = file_get_contents($file);
 
 			// Check if the data is a correct base64 string
@@ -43,6 +43,7 @@ class ScriptController extends Controller
 					if($screenshot) {
 						try
 						{
+                            Log::info("Compressing file '" . $file . "' ...");
 							if(config("app.tinypng_active")) {
 								$this->compressImage(dirname($file) . "/" . $fileName);
 							}
@@ -59,6 +60,7 @@ class ScriptController extends Controller
 						// Delete the old plain file
 						unlink($file);
 					} else {
+                        Log::info("Deleted file '" . $file . "' because it was not found in the DB.");
                         // Also delete the old file because
                         unlink($file);
 						unlink(dirname($file) . "/" . $fileName);
@@ -90,9 +92,11 @@ class ScriptController extends Controller
 					}
 				}
 			}
+
+            Log::info("File [" . $key . "of" . count($files) . "] '" . $file . "' finished.");
 		}
 
-		return response()->json(["files" => $files], 200);
+		return response()->json([], 200);
 	}
 
     public function find_files($dir, $pattern) {
