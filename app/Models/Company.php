@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Laravel\Scout\Searchable;
 
 /**
  * @OA\Schema()
  */
 class Company extends Model
 {
-	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
 
     /**
      * The "type" of the auto-incrementing ID.
@@ -28,6 +29,18 @@ class Company extends Model
      */
     public $incrementing = false;
 
+	/**
+	 * Get the indexable data array for the model.
+	 *
+	 * @return array
+	 */
+	public function toSearchableArray()
+	{
+		return [
+			'id' => $this->id,
+			'designation' => $this->designation
+		];
+	}
 
 	/**
 	 * @OA\Property(

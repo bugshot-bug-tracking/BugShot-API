@@ -185,6 +185,14 @@ class User extends Authenticatable implements MustVerifyEmail
 		return $this->hasMany(Project::class, 'user_id');
 	}
 
+    /**
+     * Get all of the bugs of the users projects.
+     */
+    public function projectsBugs()
+    {
+        return $this->hasManyThrough(Bug::class, Project::class);
+    }
+
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
