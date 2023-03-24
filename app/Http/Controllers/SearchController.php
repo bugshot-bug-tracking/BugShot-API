@@ -86,44 +86,66 @@ class SearchController extends Controller
 
 		switch ($resource) {
 			case 'companies':
-				$searchResults = Company::search($searchString)
-				->query(function ($query) {
-					$query->join('company_user_roles', 'companies.id', 'company_user_roles.company_id')
-						->where('company_user_roles.user_id', '=', Auth::id());
-				})
-				->paginate(3);
+				$searchResults = $this->searchCompanies($searchString);
 				break;
 
 			case 'projects':
-				$searchResults = Project::search($searchString)
-				->query(function ($query) {
-					$query->join('project_user_roles', 'projects.id', 'project_user_roles.project_id')
-						->where('project_user_roles.user_id', '=', Auth::id());
-				})
-				->paginate(3);
+				$searchResults = $this->searchProjects($searchString);
 				break;
 
 			case 'bugs':
-				$projectIds = Auth::user()->projects()->select("id");
-				$searchResults = Bug::whereIn("project_id", $projectIds)
-					->where(function($query) use ($searchString) {
-						$query->where("bugs.id", "LIKE", "%" . $searchString . "%")
-						->orWhere("bugs.designation", "LIKE", "%" . $searchString . "%")
-						->orWhere("bugs.description", "LIKE", "%" . $searchString . "%")
-						->orWhere("bugs.url", "LIKE", "%" . $searchString . "%");
-					})
-					->paginate(3);
+				$searchResults = $this->searchBugs($searchString);
+                $searchResults = Bug::search($searchString)->get();
 				break;
 
 			default:
 				$searchResults = array(
-					"companies" => Company::search($searchString)->paginate(3),
-					"projects" => Project::search($searchString)->paginate(3),
-					"bugs" => Bug::search($searchString)->paginate(3),
+					"companies" => $this->searchCompanies($searchString),
+					"projects" => $this->searchProjects($searchString),
+					"bugs" => $this->searchBugs($searchString),
 				);
 				break;
 		}
 
 		return response()->json(["data" => $searchResults], 200);
 	}
+
+    public function searchBugs($searchString) {
+
+        $projectIds = Auth::user()->projects()->select("id");
+        $searchResults = Bug::whereIn("project_id", $projectIds)
+            ->where(function($query) use ($searchString) {
+                $query->where("bugs.id", "LIKE", "%" . $searchString . "%")
+                ->orWhere("bugs.designation", "LIKE", "%" . $searchString . "%")
+                ->orWhere("bugs.description", "LIKE", "%" . $searchString . "%")
+                ->orWhere("bugs.url", "LIKE", "%" . $searchString . "%");
+            })
+            ->paginate(3);
+
+        return $searchResults;
+    }
+
+    public function searchProjects($searchString) {
+
+        $searchResults = Project::search($searchString)
+        ->query(function ($query) {
+            $query->join('project_user_roles', 'projects.id', 'project_user_roles.project_id')
+                ->where('project_user_roles.user_id', '=', Auth::id());
+        })
+        ->paginate(3);
+
+        return $searchResults;
+    }
+
+    public function searchCompanies($searchString) {
+
+        $searchResults = Company::search($searchString)
+        ->query(function ($query) {
+            $query->join('company_user_roles', 'companies.id', 'company_user_roles.company_id')
+                ->where('company_user_roles.user_id', '=', Auth::id());
+        })
+        ->paginate(3);
+
+        return $searchResults;
+    }
 }
