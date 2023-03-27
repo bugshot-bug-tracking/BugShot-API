@@ -13,6 +13,8 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
+	public $comment;
+
     /**
      * Create a new notification instance.
      *

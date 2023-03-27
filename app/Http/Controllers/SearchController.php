@@ -95,7 +95,6 @@ class SearchController extends Controller
 
 			case 'bugs':
 				$searchResults = $this->searchBugs($searchString);
-                $searchResults = Bug::search($searchString)->get();
 				break;
 
 			default:
