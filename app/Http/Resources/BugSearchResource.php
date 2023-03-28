@@ -19,7 +19,7 @@ class BugSearchResource extends JsonResource
 			"type" => "Bug",
 			"attributes" => [
 				"organization_id" => $this->project->company->organization_id,
-				"group_id" => $this->project->company_id,
+				"company_id" => $this->project->company_id,
 				"project_id" => $this->project_id,
 				"designation" => $this->designation,
 				"description" => $this->description,

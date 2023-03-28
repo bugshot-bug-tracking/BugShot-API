@@ -639,7 +639,7 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,

@@ -137,6 +137,7 @@ class BugService
 	{
 		$val = $bug->delete();
 		broadcast(new BugDeleted($bug))->toOthers();
+
 		// // Delete the respective screenshots
 		// foreach ($bug->screenshots as $screenshot) {
 		// 	$screenshotService->delete($screenshot);

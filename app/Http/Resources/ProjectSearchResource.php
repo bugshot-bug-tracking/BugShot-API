@@ -19,7 +19,7 @@ class ProjectSearchResource extends JsonResource
 			"type" => "Project",
 			"attributes" => [
 				"organization_id" => $this->company->organization_id,
-				"group_id" => $this->company_id,
+				"company_id" => $this->company_id,
 				"designation" => $this->designation,
 				"url" => $this->url
 			]
