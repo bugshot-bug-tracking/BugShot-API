@@ -39,7 +39,7 @@ class BugResource extends JsonResource
 				"updated_at" => $this->updated_at
 			]
 		);
-		
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective attachments
