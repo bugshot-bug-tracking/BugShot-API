@@ -13,14 +13,16 @@ class CompressImage implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+	public $filePath;
+
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($filePath)
     {
-        //
+        $this->filePath = $filePath;
     }
 
     /**
@@ -30,6 +32,7 @@ class CompressImage implements ShouldQueue
      */
     public function handle()
     {
-        //
+        $source = \Tinify\fromFile($this->filePath);
+        $source->toFile($this->filePath);
     }
 }

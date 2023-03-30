@@ -268,6 +268,11 @@ class BugController extends Controller
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
 	 * 					)
 	 *              ),
 	 *   			@OA\Property(
@@ -431,6 +436,11 @@ class BugController extends Controller
 	 *              		),
 	 *  					@OA\Property(
 	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
