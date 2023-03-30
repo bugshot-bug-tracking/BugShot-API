@@ -343,6 +343,9 @@ class ProjectController extends Controller
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
+		// Also add the owner to the project user role table
+		$this->user->projects()->attach($project->id, ['role_id' => 0]);
+
 		// Check if the project comes with an image (or a color)
 		$image = NULL;
 		if ($request->base64 != NULL) {

@@ -354,6 +354,9 @@ class CompanyController extends Controller
 			"color_hex" => $request->color_hex,
 		]);
 
+		// Also add the owner to the company user role table
+		$this->user->companies()->attach($company->id, ['role_id' => 0]);
+
 		// Check if the company comes with an image (or a color)
 		$image = NULL;
 		if($request->base64 != NULL) {
@@ -644,7 +647,7 @@ class CompanyController extends Controller
 	 * )
 	 **/
 	public function update(CompanyUpdateRequest $request, Organization $organization, Company $company, ImageService $imageService)
-	{	dd($request);
+	{
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
 
