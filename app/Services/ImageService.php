@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
 use App\Models\Image;
+use App\Jobs\CompressImage;
 use Illuminate\Support\Facades\Log;
 
 class ImageService
@@ -43,7 +44,7 @@ class ImageService
 		try
 		{
 			if(config("app.tinypng_active")) {
-				$this->compressImage("storage" . $filePath);
+				CompressImage::dispatch("storage" . $filePath);
 			}
 		}
 		catch (\Exception $e)
