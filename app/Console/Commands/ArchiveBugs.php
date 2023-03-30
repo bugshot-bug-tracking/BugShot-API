@@ -31,7 +31,7 @@ class ArchiveBugs extends Command
     public function handle()
     {
 		$bugs = Bug::where("archived_at", NULL)
-					->where("deleted_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
+					->whereNot("deleted_at", NULL)
 					->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
 					->withTrashed()
 					->get();
