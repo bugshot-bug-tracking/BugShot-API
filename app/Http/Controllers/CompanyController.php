@@ -644,7 +644,7 @@ class CompanyController extends Controller
 	 * )
 	 **/
 	public function update(CompanyUpdateRequest $request, Organization $organization, Company $company, ImageService $imageService)
-	{
+	{	dd($request);
 		// Check if the user is authorized to update the company
 		$this->authorize('update', $company);
 
@@ -1030,7 +1030,7 @@ class CompanyController extends Controller
 		$company->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
-		
+
 		broadcast(new CompanyUserUpdated($user, $company))->toOthers();
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->where('user_id', $user->id)->first());
