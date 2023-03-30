@@ -44,7 +44,7 @@ class ImageService
 		try
 		{
 			if(config("app.tinypng_active")) {
-				CompressImage::dispatch("storage" . $filePath);
+				CompressImage::dispatch("/app/public" . $filePath);
 			}
 		}
 		catch (\Exception $e)

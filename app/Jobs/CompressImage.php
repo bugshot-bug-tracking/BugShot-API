@@ -32,7 +32,8 @@ class CompressImage implements ShouldQueue
      */
     public function handle()
     {
-        $source = \Tinify\fromFile($this->filePath);
-        $source->toFile($this->filePath);
+		$path = storage_path() . $this->filePath;
+        $source = \Tinify\fromFile($path);
+        $source->toFile($path);
     }
 }
