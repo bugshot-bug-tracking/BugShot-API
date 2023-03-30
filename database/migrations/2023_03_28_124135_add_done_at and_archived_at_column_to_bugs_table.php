@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::table('bugs', function (Blueprint $table) {
 			$table->after('deadline', function ($table) {
-				$table->date('done_at')->nullable();
-				$table->date('archived_at')->nullable();
+				$table->timestamp('done_at')->nullable();
+				$table->timestamp('archived_at')->nullable();
             });
         });
     }
@@ -29,8 +29,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('bugs', function (Blueprint $table) {
-            $table->date('done_at')->nullable();
-			$table->date('archived_at')->nullable();
+            $table->timestamp('done_at')->nullable();
+			$table->timestamp('archived_at')->nullable();
         });
     }
 };

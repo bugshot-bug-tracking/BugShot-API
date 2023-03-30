@@ -774,16 +774,6 @@ class BugController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="project_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",
 	 *                  property="designation",

@@ -354,6 +354,9 @@ class CompanyController extends Controller
 			"color_hex" => $request->color_hex,
 		]);
 
+		// Also add the owner to the company user role table
+		$this->user->companies()->attach($company->id, ['role_id' => 0]);
+
 		// Check if the company comes with an image (or a color)
 		$image = NULL;
 		if($request->base64 != NULL) {
@@ -1030,7 +1033,7 @@ class CompanyController extends Controller
 		$company->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
-		
+
 		broadcast(new CompanyUserUpdated($user, $company))->toOthers();
 
 		return new CompanyUserRoleResource(CompanyUserRole::where('company_id', $company->id)->where('user_id', $user->id)->first());
