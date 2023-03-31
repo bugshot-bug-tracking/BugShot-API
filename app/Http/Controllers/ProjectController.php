@@ -1155,9 +1155,9 @@ class ProjectController extends Controller
 
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			$bugs = $project->bugs;
+			$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
 		} else {
-			$bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+			$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
 		}
 
 		return BugResource::collection($bugs);
