@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -319,5 +320,15 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 |--------------------------------------------------------------------------
 */
 
-Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
+Route::get("/archive-bugs", function() {
+	Artisan::call("bugs:archive");
+});
 
+
+/*
+|--------------------------------------------------------------------------
+| Cronjob routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");

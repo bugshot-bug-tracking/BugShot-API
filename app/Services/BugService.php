@@ -135,6 +135,10 @@ class BugService
 
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
 	{
+		$bug->update([
+			"archived_at" => now()
+		]);
+
 		$val = $bug->delete();
 
 		broadcast(new BugDeleted($bug))->toOthers();
