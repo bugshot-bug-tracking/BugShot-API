@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -161,6 +162,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
@@ -318,5 +320,15 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 |--------------------------------------------------------------------------
 */
 
-Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
+Route::get("/archive-bugs", function() {
+	Artisan::call("bugs:archive");
+});
 
+
+/*
+|--------------------------------------------------------------------------
+| Cronjob routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");

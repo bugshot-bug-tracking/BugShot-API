@@ -159,6 +159,20 @@ class Bug extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="done_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The date when the bug was moved to status done."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="archived_at",
+	 * 	type="string",
+	 *  format="date-time",
+	 * 	description="The date when the bug was archived."
+	 * )
+	 *
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -179,9 +193,10 @@ class Bug extends Model
 	 * 	description="The deletion date."
 	 * )
 	 *
+	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline", "done_at", "archived_at"];
 
 	protected $touches = ["project", "status"];
 

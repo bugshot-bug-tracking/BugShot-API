@@ -10,6 +10,11 @@ use App\Models\Company;
 use App\Models\Project;
 use App\Models\Bug;
 
+// Resources
+use App\Http\Resources\BugSearchCollection;
+use App\Http\Resources\ProjectSearchCollection;
+use App\Http\Resources\CompanySearchCollection;
+
 /**
  * @OA\Tag(
  *     name="Search",
@@ -95,7 +100,6 @@ class SearchController extends Controller
 
 			case 'bugs':
 				$searchResults = $this->searchBugs($searchString);
-                $searchResults = Bug::search($searchString)->get();
 				break;
 
 			default:
@@ -107,7 +111,7 @@ class SearchController extends Controller
 				break;
 		}
 
-		return response()->json(["data" => $searchResults], 200);
+		return $searchResults;
 	}
 
     public function searchBugs($searchString) {
@@ -122,7 +126,7 @@ class SearchController extends Controller
             })
             ->paginate(3);
 
-        return $searchResults;
+		return new BugSearchCollection($searchResults);
     }
 
     public function searchProjects($searchString) {
@@ -134,7 +138,7 @@ class SearchController extends Controller
         })
         ->paginate(3);
 
-        return $searchResults;
+        return new ProjectSearchCollection($searchResults);
     }
 
     public function searchCompanies($searchString) {
@@ -146,6 +150,6 @@ class SearchController extends Controller
         })
         ->paginate(3);
 
-        return $searchResults;
+        return new CompanySearchCollection($searchResults);
     }
 }

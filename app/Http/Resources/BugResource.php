@@ -35,11 +35,14 @@ class BugResource extends JsonResource
 				"selector" => $this->selector,
 				"resolution" => $this->resolution,
 				"deadline" => $this->deadline,
+				"done_at" => $this->done_at,
+				"archived_at" => $this->archived_at,
 				"created_at" => $this->created_at,
-				"updated_at" => $this->updated_at
+				"updated_at" => $this->updated_at,
+				"deleted_at" => $this->deleted_at
 			]
 		);
-		
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective attachments
