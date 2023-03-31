@@ -268,6 +268,11 @@ class BugController extends Controller
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
 	 * 					)
 	 *              ),
 	 *   			@OA\Property(
@@ -431,6 +436,11 @@ class BugController extends Controller
 	 *              		),
 	 *  					@OA\Property(
 	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
@@ -639,7 +649,7 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -774,16 +784,6 @@ class BugController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="project_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",
 	 *                  property="designation",

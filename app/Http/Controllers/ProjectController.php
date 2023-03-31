@@ -32,6 +32,7 @@ use App\Services\ApiCallService;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Company;
+use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
 
@@ -342,6 +343,9 @@ class ProjectController extends Controller
 			"color_hex" => $request->color_hex,
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
+
+		// Also add the owner to the project user role table
+		$this->user->projects()->attach($project->id, ['role_id' => 0]);
 
 		// Check if the project comes with an image (or a color)
 		$image = NULL;
@@ -1155,6 +1159,126 @@ class ProjectController extends Controller
 		} else {
 			$bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
 		}
+
+		return BugResource::collection($bugs);
+	}
+
+	/**
+	 * Display a list of bugs that belong to the project and were archived.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/archived-bugs",
+	 *	tags={"Project"},
+	 *	summary="All project archived bugs.",
+	 *	operationId="allProjectsArchivedBugs",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Bug")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function archivedBugs(Request $request, Project $project)
+	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+
+		// Get all archived bugs
+		$bugs = $project->bugs()->whereNot("archived_at", NULL)
+					->withTrashed()
+					->get();
 
 		return BugResource::collection($bugs);
 	}

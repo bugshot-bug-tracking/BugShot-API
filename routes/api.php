@@ -27,6 +27,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
+use App\Http\Controllers\SearchController;
 
 // Events
 use App\Events\TestEvent;
@@ -124,6 +125,9 @@ Route::middleware(['auth:sanctum'])->group(
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
+	// Search route
+	Route::get("/search", [SearchController::class, "search"])->name("search");
+
 	// Organization resource routes
 	Route::apiResource('/organizations', OrganizationController::class);
 
@@ -157,6 +161,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");

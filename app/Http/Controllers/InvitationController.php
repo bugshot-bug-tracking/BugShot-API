@@ -458,7 +458,7 @@ class InvitationController extends Controller
 		// Check if the user is authorized to decline the invitation
 		$this->authorize('decline', $invitation);
 
-		if (Auth::id() !== $invitation->target_email)
+		if (Auth::user()->email !== $invitation->target_email)
 			return response()->json([
 				"errors" => [
 					"status" => 403,
