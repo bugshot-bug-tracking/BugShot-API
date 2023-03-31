@@ -233,7 +233,7 @@ class OrganizationController extends Controller
 			// Also add the owner to the organization user role table in order to be able to store the subscription
 			$organizations->users()->attach(Auth::user()->id, ['role_id' => 0]);
 
-			$organizations = collect($organizations);
+            $organizations = Organization::where("user_id", Auth::id())->limit(1)->get();
 		}
 
 		return OrganizationResource::collection($organizations->sortBy('designation'));
