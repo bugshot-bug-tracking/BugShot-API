@@ -10,6 +10,7 @@ use Carbon\Carbon;
 
 // Resources
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ArchivedBugResource;
 use App\Http\Resources\BugUserRoleResource;
 
 // Services
@@ -612,6 +613,121 @@ class BugController extends Controller
 		$this->authorize('view', [Bug::class, $status->project]);
 
 		return new BugResource($bug);
+	}
+
+		/**
+	 * Display the specified resource.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/statuses/{status_id}/archived-bugs/{bug_id}",
+	 *	tags={"Bug"},
+	 *	summary="Show one archived bug.",
+	 *	operationId="showArchivedBug",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="status_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Status/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function showArchivedBug(Status $status, $bug_id)
+	{
+		$bug = Bug::where("id", $bug_id)
+			->withTrashed()
+			->first();
+
+		// Check if the user is authorized to view the bug
+		$this->authorize('view', [Bug::class, $status->project]);
+
+		return new ArchivedBugResource($bug);
 	}
 
 	/**

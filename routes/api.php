@@ -174,6 +174,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
 		Route::apiResource('/bugs', BugController::class);
+		Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
 	});
 
 	// Bug prefixed routes
