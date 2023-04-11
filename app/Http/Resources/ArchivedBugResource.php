@@ -6,7 +6,7 @@ use App\Models\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\User;
 
-class BugResource extends JsonResource
+class ArchivedBugResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -47,25 +47,33 @@ class BugResource extends JsonResource
 
 		// Check if the response should contain the respective attachments
 		if(array_key_exists('include-attachments', $header) && $header['include-attachments'][0] == "true") {
-			$attachments = $this->attachments;
+			$attachments = $this->attachments()
+				->withTrashed()
+				->get();
 			$bug['attributes']['attachments'] = AttachmentResource::collection($attachments);
 		}
 
 		// Check if the response should contain the respective screenshots
 		if(array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true") {
-			$screenshots = $this->screenshots;
-			$bug['attributes']['screenshots'] = ArchivedScreenshotResource::collection($screenshots);
+			$screenshots = $this->screenshots()
+				->withTrashed()
+				->get();
+			$bug['attributes']['screenshots'] = ScreenshotResource::collection($screenshots);
 		}
 
 		// Check if the response should contain the respective comments
 		if(array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true") {
-			$comments = $this->comments;
+			$comments = $this->comments()
+				->withTrashed()
+				->get();
 			$bug['attributes']['comments'] = CommentResource::collection($comments);
 		}
 
 		// Check if the response should contain the respective bug users
 		if(array_key_exists('include-bug-users', $header) && $header['include-bug-users'][0] == "true") {
-			$users = $this->users;
+			$users = $this->users()
+				->withTrashed()
+				->get();
 			$bug['attributes']['users'] = UserResource::collection($users);
 		}
 
