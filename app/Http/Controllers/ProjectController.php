@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 // Resources
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ArchivedBugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
@@ -1280,7 +1281,7 @@ class ProjectController extends Controller
 					->withTrashed()
 					->get();
 
-		return BugResource::collection($bugs);
+		return ArchivedBugResource::collection($bugs);
 	}
 
 	/**
