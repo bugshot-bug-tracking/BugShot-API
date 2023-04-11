@@ -718,14 +718,18 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function showArchivedBug(Status $status, $bug_id)
+	public function showArchivedBug($status_id, $bug_id)
 	{
-		$bug = Bug::where("id", $bug_id)
+		$status = Status::where("id", $status_id)
 			->withTrashed()
 			->first();
 
 		// Check if the user is authorized to view the bug
 		$this->authorize('view', [Bug::class, $status->project]);
+
+		$bug = Bug::where("id", $bug_id)
+			->withTrashed()
+			->first();
 
 		return new ArchivedBugResource($bug);
 	}
