@@ -24,8 +24,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('bugs:archive')->daily();
-        $schedule->command('auth:clear-resets')->everyFifteenMinutes();
+		$schedule->exec('php artisan queue:restart')
+			->daily()
+			->then(function () use ($schedule) {
+				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
+			}); // Restarts the job daemon
+        $schedule->command('bugs:archive')->hourly();
+        $schedule->command('auth:clear-resets')->daily();
     }
 
     /**
