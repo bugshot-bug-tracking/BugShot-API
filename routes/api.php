@@ -29,6 +29,7 @@ use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ExportController;
 
 // Events
 use App\Events\TestEvent;
@@ -162,6 +163,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::apiResource('/exports', ExportController::class);
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
