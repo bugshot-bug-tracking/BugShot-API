@@ -97,6 +97,16 @@ class Bug extends Model
 	 *  format="int64",
 	 * 	description="The id of the priority that the bug has."
 	 * )
+	 * @OA\Property(
+	 * 	property="approval_status_id",
+	 * 	type="string",
+	 * 	description="The id of the approval status that the bug has."
+	 * )
+	 * @OA\Property(
+	 * 	property="time_estimation",
+	 * 	type="string",
+	 * 	description="The time estimation that of the bug."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="operating_system",
@@ -196,7 +206,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline", "done_at", "archived_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "time_estimation", "approval_status_id", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline", "done_at", "archived_at"];
 
 	protected $touches = ["project", "status"];
 
@@ -241,6 +251,14 @@ class Bug extends Model
 	public function priority()
 	{
 		return $this->belongsTo(Priority::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function approvalStatus()
+	{
+		return $this->belongsTo(BugExportStatus::class, "approval_status_id");
 	}
 
 	/**

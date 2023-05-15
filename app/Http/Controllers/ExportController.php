@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Storage;
 use PDF;
 
 // Services
@@ -21,14 +22,18 @@ use App\Models\Bug;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Export;
+use App\Models\Report;
 
 // Requests
 use App\Http\Requests\ExportStoreRequest;
 use App\Http\Requests\ExportUpdateRequest;
 use App\Models\BugExport;
+
 // Notifications
 use App\Notifications\ImplementationApprovalFormNotification;
 use App\Notifications\ImplementationApprovalFormUnregisteredUserNotification;
+use App\Notifications\ApprovalReportNotification;
+use App\Notifications\ApprovalReportUnregisteredUserNotification;
 
 // Only owners and managers of the project are allowed to work with the exports
 
@@ -167,11 +172,6 @@ class ExportController extends Controller
 	 *              		    property="id",
 	 *							type="string"
 	 *              		),
-	 *              		@OA\Property(
-	 *              		    description="The time estimation of the bug in minutes.",
-	 *              		    property="time_estimation",
-	 *							type="string"
-	 *              		),
 	 * 					)
 	 *              ),
 	 *     			@OA\Property(
@@ -235,10 +235,7 @@ class ExportController extends Controller
 
 		// Attach the bugs to the export
 		foreach($request->bugs as $bug) {
-			$export->bugs()->attach($bug["id"], [
-				'time_estimation' => $bug["time_estimation"],
-				'status_id' => 1 // Pending
-			]);
+			$export->bugs()->attach($bug["id"]);
 		}
 
 		foreach($request->recipients as $recipient) {
@@ -414,11 +411,6 @@ class ExportController extends Controller
 	 *              		    property="id",
 	 *							type="string"
 	 *              		),
-	 *              		@OA\Property(
-	 *              		    description="The time estimation of the bug in minutes.",
-	 *              		    property="time_estimation",
-	 *							type="string"
-	 *              		),
 	 *               		@OA\Property(
 	 *              		    description="The status the bug was switched to.",
 	 *              		    property="status_id",
@@ -483,15 +475,30 @@ class ExportController extends Controller
 		foreach($request->bugs as $bug) {
 			$dbBug = Bug::find($bug["id"]);
 
-			$export->bugs()->updateExistingPivot($dbBug, array(
-				"status_id" => $bug["status_id"],
-				"time_estimation" => $bug["time_estimation"]
-			), false);
+			$dbBug->update([
+				"approval_status_id" => $bug["status_id"],
+			]);
 		}
 
-		$this->generateExportPDF($project, $request->bugs, $request->evaluator);
+		$filePath = $this->generateExportPDF($request, $project, $export, $request->bugs, $request->evaluator);
 
-		return new ExportResource($export);
+		foreach($request->recipients as $recipient) {
+			// Check if the recipient is a registered user or not
+			$user = User::where('email', $recipient["email"])->first();
+
+			if ($user != null) {
+				$user->notify((new ApprovalReportNotification($filePath))->locale(GetUserLocaleService::getLocale($user)));
+			} else {
+				Notification::route('email', $recipient["email"])
+					->notify((new ApprovalReportNotificationUnregisteredUserNotification($export))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
+			}
+		}
+
+		return response()->json([
+			"data" => [
+				"pdf-download-path" => config("app.url") . "/storage" . $filePath
+			]
+		], 200);
 	}
 
 	/**
@@ -580,17 +587,30 @@ class ExportController extends Controller
      *
      * @return \Illuminate\Http\Response
     */
-    public function generateExportPDF($project, $exports, $evaluator)
+    public function generateExportPDF($request, $project, $export, $bugs, $evaluator)
     {
+		$userEvaluator = User::where("email", $evaluator)->first();
+		$evaluator = $userEvaluator ? $userEvaluator->first_name . " " . $userEvaluator->last_name : $evaluator;
 
         $data = [
             'evaluator' => $evaluator,
             'project' => $project,
-            'exports' => $exports
+            'bugs' => $bugs
         ];
 
         $pdf = PDF::loadView('pdfs/export-report', $data);
 
-        return $pdf->download('report.pdf');
+		$fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . ".pdf";
+		$filePath = "/uploads/reports/" . $project->company->id . "/" . $project->id. "/" . $fileName;
+		Storage::disk('public')->put($filePath, $pdf->output());
+
+		Report::create([
+			"id" => $this->setId($request),
+			"export_id" => $export->id,
+			"generated_by" => $evaluator,
+			"url" => $filePath
+		]);
+
+        return $filePath;
     }
 }

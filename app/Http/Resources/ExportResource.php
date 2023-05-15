@@ -57,15 +57,7 @@ class ExportResource extends JsonResource
 					'id' => $item->pivot->bug_id,
 					'type' => 'BugExport',
 					'attributes' => [
-						"bug" => new BugResource(Bug::find($item->pivot->bug_id)),
-						"status" => array(
-							"id" => $item->pivot->status_id,
-							"type" => "Status",
-							"attributes" => [
-								"designation" => BugExportStatus::find($item->pivot->status_id)->designation
-							]
-						),
-						"time_estimation" => $item->pivot->time_estimation,
+						"bug" => new BugResource($item),
 						"evaluated_by" => User::find($item->pivot->evaluated_by) ? new UserResource(User::find($item->pivot->evaluated_by)) : NULL
 					]
 				];

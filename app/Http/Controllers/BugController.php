@@ -225,6 +225,10 @@ class BugController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
+	 *                  property="time_estimation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
 	 *                  property="browser",
 	 *                  type="string",
 	 *              ),
@@ -384,6 +388,10 @@ class BugController extends Controller
 	 *              @OA\Property(
 	 *                  description="The bug url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="time_estimation",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
@@ -920,6 +928,10 @@ class BugController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
+	 *                  property="time_estimation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
 	 *                  property="status_id",
 	 *                  type="string",
 	 *              ),
@@ -1084,6 +1096,10 @@ class BugController extends Controller
 	 *              @OA\Property(
 	 *                  description="The bug url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="time_estimation",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
