@@ -23,6 +23,7 @@ return [
     'verify-email' => 'Email Verification',
     'tagged-in-comment' => 'You were mentioned in a comment',
     'assigned-to-bug' => 'You were assigned to a bug',
-	'subscription-started' => 'Your new subscription'
+	'subscription-started' => 'Your new subscription',
+	'implementation-approval-form-received' => 'You received an Implementation Approval Form'
 
 ];

@@ -29,6 +29,7 @@ use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ExportController;
 
 // Events
 use App\Events\TestEvent;
@@ -162,6 +163,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::apiResource('/exports', ExportController::class)->except(
+			"show"
+		);
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
@@ -170,6 +174,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
+
+	// Export prefixed routes
+	Route::get("exports/{export}", [ExportController::class, "show"])->name("export.show");
+
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
@@ -312,19 +320,6 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 		});
 	}
 );
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Script routes
-|--------------------------------------------------------------------------
-*/
-
-Route::get("/archive-bugs", function() {
-	Artisan::call("bugs:archive");
-});
-
 
 /*
 |--------------------------------------------------------------------------
