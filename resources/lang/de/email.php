@@ -24,6 +24,7 @@ return [
     'tagged-in-comment' => 'Du wurdest in einem Kommentar erwähnt',
     'assigned-to-bug' => 'Du wurdest einem Bug zugewiesen',
 	'subscription-started' => 'Dein neues Abonnement',
-	'implementation-approval-form-received' => 'Du hast ein Umsetzungsfreigabe Formular erhalten'
+	'implementation-approval-form-received' => 'Du hast ein Umsetzungsfreigabe Formular erhalten',
+	'approval-report-received' => 'Du hast einen Umsetzungsbericht erhalten'
 
 ];

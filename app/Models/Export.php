@@ -94,7 +94,7 @@ class Export extends Model
      */
     public function bugs()
     {
-        return $this->belongsToMany(Bug::class, 'bug_exports')->withPivot('status_id', 'time_estimation', 'evaluated_by');
+        return $this->belongsToMany(Bug::class, 'bug_exports')->withPivot('evaluated_by');
     }
 
 	/**

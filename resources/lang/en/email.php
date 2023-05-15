@@ -24,6 +24,7 @@ return [
     'tagged-in-comment' => 'You were mentioned in a comment',
     'assigned-to-bug' => 'You were assigned to a bug',
 	'subscription-started' => 'Your new subscription',
-	'implementation-approval-form-received' => 'You received an Implementation Approval Form'
+	'implementation-approval-form-received' => 'You received an Implementation Approval Form',
+	'approval-report-received' => 'You received an approval report'
 
 ];

@@ -18,8 +18,7 @@ return new class extends Migration
 
 			$table->string('export_id');
 			$table->foreign('export_id')->references('id')->on('exports')->onDelete('cascade');
-			$table->unsignedBigInteger('generated_by')->nullable();
-			$table->foreign('generated_by')->references('id')->on('users')->nullOnDelete();
+			$table->string('generated_by');
 			$table->text('url')->nullable();
 
             $table->timestamps();

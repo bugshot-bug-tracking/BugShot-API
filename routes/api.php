@@ -110,6 +110,15 @@ Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('che
 // Get Desktop installer
 Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDesktopClient"])->name('download.client.desktop');
 
+Route::prefix('projects/{project}')->group(function () {
+	Route::apiResource('/exports', ExportController::class)->except(
+		"show", "store"
+	);
+});
+
+// Export prefixed routes
+Route::get("exports/{export}", [ExportController::class, "show"])->name("export.show");
+
 /*
 |--------------------------------------------------------------------------
 | Private API Routes
@@ -163,9 +172,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
-		Route::apiResource('/exports', ExportController::class)->except(
-			"show"
-		);
+		Route::post('/exports', [ExportController::class, "store"])->name("project.export.store");
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
@@ -174,10 +181,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
-
-	// Export prefixed routes
-	Route::get("exports/{export}", [ExportController::class, "show"])->name("export.show");
-
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {

@@ -17,11 +17,9 @@ class ExportResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$project = Project::find($this->project_id);
-
 		$export = array(
 			"id" => $this->id,
-			"type" => "Export",
+			"type" => "BugExport",
 			"attributes" => [
 				"exporter" => new UserResource(User::find($this->exported_by)),
 				"project" => array(
@@ -37,24 +35,6 @@ class ExportResource extends JsonResource
 				"updated_at" => $this->updated_at
 			]
 		);
-
-		$header = $request->header();
-
-		// Check if the response should contain the respective project
-		if(array_key_exists('include-project', $header) && $header['include-project'][0] == "true") {
-			$export['attributes']['projects'] = ProjectResource::collection($this->project);
-		}
-
-		// Check if the response should contain the respective project-users
-		if(array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
-			$project = $this->project;
-			$users = $project->users()
-			->orWherePivot('role_id', 0)
-			->orWherePivot('role_id', 1)
-			->get();
-
-			$export['attributes']['users'] = UserResource::collection($users);
-		}
 
 		return $export;
 	}
