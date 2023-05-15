@@ -163,7 +163,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
-		Route::apiResource('/exports', ExportController::class);
+		Route::apiResource('/exports', ExportController::class)->except(
+			"show"
+		);
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
@@ -172,6 +174,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 	});
+
+	// Export prefixed routes
+	Route::get("exports/{export}", [ExportController::class, "show"])->name("export.show");
+
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {

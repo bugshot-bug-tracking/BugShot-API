@@ -7,6 +7,11 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
+use PDF;
+
+// Services
+use App\Services\GetUserLocaleService;
 
 // Resources
 use App\Http\Resources\ExportResource;
@@ -20,6 +25,10 @@ use App\Models\Export;
 // Requests
 use App\Http\Requests\ExportStoreRequest;
 use App\Http\Requests\ExportUpdateRequest;
+use App\Models\BugExport;
+// Notifications
+use App\Notifications\ImplementationApprovalFormNotification;
+use App\Notifications\ImplementationApprovalFormUnregisteredUserNotification;
 
 // Only owners and managers of the project are allowed to work with the exports
 
@@ -232,8 +241,17 @@ class ExportController extends Controller
 			]);
 		}
 
+		foreach($request->recipients as $recipient) {
+			// Check if the recipient is a registered user or not
+			$user = User::where('email', $recipient["email"])->first();
 
-		// TODO: Add event to send email with link to list
+			if ($user != null) {
+				$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
+			} else {
+				Notification::route('email', $recipient["email"])
+					->notify((new ImplementationApprovalFormUnregisteredUserNotification($export))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
+			}
+		}
 
 		return new ExportResource($export);
 	}
@@ -246,7 +264,7 @@ class ExportController extends Controller
 	 */
 	/**
 	 * @OA\Get(
-	 *	path="/projects/{project_id}/exports/{export_id}",
+	 *	path="/exports/{export_id}",
 	 *	tags={"Export"},
 	 *	summary="Show one export.",
 	 *	operationId="showExport",
@@ -269,98 +287,23 @@ class ExportController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="project_id",
-	 *		required=true,
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Project/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Parameter(
-	 *		name="export_id",
-	 *		required=true,
-	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Export/properties/id"
-	 *		)
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-projects",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-statuses",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
 	 *		name="include-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="include-screenshots",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-markers",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-comments",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-export-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-export-role",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
 	 *		name="include-project-users",
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-project-role",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *  @OA\Parameter(
-	 *		name="include-bug-users",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-export-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-project-image",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="include-attachment-base64",
-	 *		required=false,
-	 *		in="header"
+	 *
+	 *	@OA\Parameter(
+	 *		name="export_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Export/properties/id"
+	 *		)
 	 *	),
 	 *	@OA\Response(
 	 *		response=200,
@@ -387,10 +330,10 @@ class ExportController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function show(Project $project, Export $export)
+	public function show(Export $export)
 	{
 		// Check if the user is authorized to view the export
-		$this->authorize('view', $export);
+		// $this->authorize('view', $export);
 
 		return new ExportResource($export);
 	}
@@ -438,7 +381,6 @@ class ExportController extends Controller
 	 *	@OA\Parameter(
 	 *		name="export_id",
 	 *		required=true,
-	 *		example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Export/properties/id"
@@ -458,22 +400,48 @@ class ExportController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *              @OA\Property(
-	 *                  description="The export name",
-	 *                  property="designation",
-	 *                  type="string",
+	 * 				@OA\Property(
+	 * 					description="The name of the evaluator.",
+	 * 					property="evaluator",
+	 * 					type="string"
+	 * 				),
+	 *     			@OA\Property(
+	 *                  property="bugs",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The id of the bug.",
+	 *              		    property="id",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The time estimation of the bug in minutes.",
+	 *              		    property="time_estimation",
+	 *							type="string"
+	 *              		),
+	 *               		@OA\Property(
+	 *              		    description="The status the bug was switched to.",
+	 *              		    property="status_id",
+	 *							type="string"
+	 *              		),
+	 * 					)
 	 *              ),
-	 *  			@OA\Property(
-	 *                  description="The hexcode of the color (optional)",
-	 *                  property="color_hex",
-	 * 					type="string",
-	 *              ),
-	 *              @OA\Property(
-	 *                  description="The base64 string of the image belonging to the export (optional)",
-	 *                  property="base64",
-	 *                  type="string",
-	 *              ),
-	 *              required={"designation"}
+	 *     			@OA\Property(
+	 *                  property="recipients",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 *              		@OA\Property(
+	 *              		    description="The email of the recipient.",
+	 *              		    property="email",
+	 *							type="string"
+	 *              		),
+	 *              		@OA\Property(
+	 *              		    description="The name of the recipient.",
+	 *              		    property="name",
+	 *              		    type="string"
+	 *              		),
+	 * 					)
+	 *              )
 	 *          )
 	 *      )
 	 *  ),
@@ -507,33 +475,21 @@ class ExportController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function update(ExportUpdateRequest $request, Project $project, Export $export, ImageService $imageService)
+	public function update(Request $request, Project $project, Export $export)
 	{
 		// Check if the user is authorized to update the export
-		$this->authorize('update', $export);
+		// $this->authorize('update', $export);
 
-		// Check if the export comes with an image (or a color)
-		$image = $export->image;
+		foreach($request->bugs as $bug) {
+			$dbBug = Bug::find($bug["id"]);
 
-		if($request->base64 != NULL && $request->base64 != 'true') {
-			$image = $imageService->store($request->base64, $image);
-			$image != false ? $export->image()->save($image) : true;
-			$color_hex = $export->color_hex; // Color stays the same
-		} else {
-			$imageService->delete($image);
-			$color_hex = $request->color_hex;
+			$export->bugs()->updateExistingPivot($dbBug, array(
+				"status_id" => $bug["status_id"],
+				"time_estimation" => $bug["time_estimation"]
+			), false);
 		}
 
-		// Apply default color if color_hex is null
-		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
-
-		// Update the export
-		$export->update($request->all());
-		$export->update([
-			'color_hex' => $color_hex
-		]);
-
-		broadcast(new ExportUpdated($export))->toOthers();
+		$this->generateExportPDF($project, $request->bugs, $request->evaluator);
 
 		return new ExportResource($export);
 	}
@@ -618,4 +574,23 @@ class ExportController extends Controller
 
 		return response($val, 204);
 	}
+
+	/**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+    */
+    public function generateExportPDF($project, $exports, $evaluator)
+    {
+
+        $data = [
+            'evaluator' => $evaluator,
+            'project' => $project,
+            'exports' => $exports
+        ];
+
+        $pdf = PDF::loadView('pdfs/export-report', $data);
+
+        return $pdf->download('report.pdf');
+    }
 }

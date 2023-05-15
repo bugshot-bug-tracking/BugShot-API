@@ -31,6 +31,7 @@ class Kernel extends ConsoleKernel
 			}); // Restarts the job daemon
         $schedule->command('bugs:archive')->hourly();
         $schedule->command('auth:clear-resets')->daily();
+		$schedule->command('php artisan queue:retry all')->everyFifteenMinutes();
     }
 
     /**
