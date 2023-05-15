@@ -236,6 +236,10 @@ class ExportController extends Controller
 		// Attach the bugs to the export
 		foreach($request->bugs as $bug) {
 			$export->bugs()->attach($bug["id"]);
+			$bug = Bug::find($bug["id"]);
+			$bug->update([
+				"approval_status_id" => 1
+			]);
 		}
 
 		foreach($request->recipients as $recipient) {

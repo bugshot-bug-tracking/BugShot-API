@@ -26,7 +26,7 @@ class BugResource extends JsonResource
 				"description" => $this->description,
 				"url" => $this->url,
 				"time_estimation" => $this->time_estimation,
-				"approval_status_id" => array(
+				"approval_status" => array(
 					"id" => $this->approval_status_id,
 					"designation" => $this->approvalStatus ? $this->approvalStatus->designation : NULL
 				),
