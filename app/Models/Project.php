@@ -113,7 +113,7 @@ class Project extends Model
 	protected $touches = ['company'];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens'];
+	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens', 'exports'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -153,6 +153,14 @@ class Project extends Model
 	public function bugs()
 	{
 		return $this->hasMany(Bug::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function exports()
+	{
+		return $this->hasMany(Export::class);
 	}
 
 	/**
