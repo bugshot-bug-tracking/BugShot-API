@@ -1,5 +1,5 @@
 @component('mail::message', ['locale' => $locale])
-	<p>Hello {{ $user->first_name }},</p>
+	<p>Hello,</p>
 	<p>
 		You have just received an implementation release.<br />
 		In it you can see which tasks your customer has approved or rejected for implementation.<br /><br />

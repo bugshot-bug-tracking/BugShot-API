@@ -6,24 +6,24 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
-use App\Mail\ImplementationApprovalFormUnregisteredUser as ImplementationApprovalFormUnregisteredUserNotificationMailable;
+use App\Mail\ApprovalReportUnregisteredUser as ApprovalReportUnregisteredUserMailable;
 
-class ImplementationApprovalFormUnregisteredUserNotification extends Notification implements ShouldQueue
+class ApprovalReportUnregisteredUserNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public $export;
-	public $url;
+    public $filePath;
+	public $fileName;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($export, $usermail)
+    public function __construct($filePath)
     {
-        $this->export = $export;
-		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($usermail) . "/" . $export->id;
+        $this->filePath = config("app.url") . "/storage" . $filePath;
+		$this->fileName = basename($filePath);
     }
 
     /**
@@ -45,8 +45,12 @@ class ImplementationApprovalFormUnregisteredUserNotification extends Notificatio
      */
     public function toMail($notifiable)
     {
-        return (new ImplementationApprovalFormUnregisteredUserNotificationMailable($this->locale, $this->export, $this->url))
-        ->subject('BugShot - ' . __('email.implementation-approval-form-received', [], $this->locale))
+        return (new ApprovalReportUnregisteredUserMailable($this->locale))
+        ->subject('BugShot - ' . __('email.approval-report-received', [], $this->locale))
+		->attach($this->filePath, [
+            'as' => $this->fileName,
+            'mime' => 'application/pdf'
+        ])
         ->to($notifiable->routes['email']);
     }
 
