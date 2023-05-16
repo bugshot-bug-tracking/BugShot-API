@@ -254,6 +254,9 @@ class ExportController extends Controller
 			}
 		}
 
+		// Notify the owner as well
+		$project->creator->notify((new ImplementationApprovalFormNotification($export, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+
 		return new ExportResource($export);
 	}
 
@@ -497,6 +500,9 @@ class ExportController extends Controller
 					->notify((new ApprovalReportUnregisteredUserNotification($filePath))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
 			}
 		}
+
+		// Notify the owner as well
+		$project->creator->notify((new ApprovalReportNotification($filePath))->locale(GetUserLocaleService::getLocale($project->creator)));
 
 		return response()->json([
 			"data" => [
