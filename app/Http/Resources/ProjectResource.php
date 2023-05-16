@@ -92,7 +92,15 @@ class ProjectResource extends JsonResource
 		// Check if the response should contain the respective project image
 		if(array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
 			$image = $this->image;
-			$project['attributes']['image'] = new ImageResource($image);
+			// $project['attributes']['image'] = new ImageResource($image);
+			if($image) {
+				$project['attributes']['image'] = array(
+					"id" => $image->id,
+					"url" => config("app.url") . "/storage" . $image->url
+				);
+			} else {
+				$project['attributes']['image'] = NULL;
+			}
 		}
 
 		// Check if the response should contain the respective user role within this project
