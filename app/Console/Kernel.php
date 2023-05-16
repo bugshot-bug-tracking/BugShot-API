@@ -29,9 +29,10 @@ class Kernel extends ConsoleKernel
 			->then(function () use ($schedule) {
 				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
 			}); // Restarts the job daemon
+
         $schedule->command('bugs:archive')->hourly();
         $schedule->command('auth:clear-resets')->daily();
-		$schedule->command('php artisan queue:retry all')->everyFifteenMinutes();
+		$schedule->command('queue:retry all')->everyFifteenMinutes();
     }
 
     /**
