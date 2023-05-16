@@ -9,24 +9,27 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use App\Services\GetUserLocaleService;
 
-use App\Models\User;
+use App\Models\Export;
 
-class ApprovalReport extends Mailable
+class ImplementationApprovalFormUnregisteredUser extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $user;
 	public $locale;
+    public $export;
+	public $url;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale)
+    public function __construct($locale, Export $export, $url)
     {
         $this->locale = $locale;
-        $this->user = $notifiable;
+        $this->export = $export;
+		$this->url = $url;
     }
 
     /**
@@ -37,7 +40,7 @@ class ApprovalReport extends Mailable
     public function build()
     {
         $status = $this->from(config('mail.noreply'))
-        ->markdown('emails.' . $this->locale . '.approval-report-mail');
+        ->markdown('emails.' . $this->locale . '.unregistered-user-implementation-approval-form-mail');
 
 		return $status;
     }
