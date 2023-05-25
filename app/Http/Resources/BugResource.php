@@ -59,7 +59,7 @@ class BugResource extends JsonResource
 		// Check if the response should contain the respective screenshots
 		if(array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true") {
 			$screenshots = $this->screenshots;
-			$bug['attributes']['screenshots'] = ArchivedScreenshotResource::collection($screenshots);
+			$bug['attributes']['screenshots'] = ScreenshotResource::collection($screenshots);
 		}
 
 		// Check if the response should contain the respective comments

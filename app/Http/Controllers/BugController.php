@@ -24,6 +24,7 @@ use App\Services\ApiCallService;
 use App\Models\Bug;
 use App\Models\User;
 use App\Models\Status;
+use App\Models\Project;
 use App\Models\BugUserRole;
 
 // Requests
@@ -1005,7 +1006,6 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-
 	public function update(BugUpdateRequest $request, Status $status, Bug $bug, BugService $bugService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to update the bug

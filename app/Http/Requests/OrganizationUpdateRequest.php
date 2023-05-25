@@ -29,6 +29,7 @@ class OrganizationUpdateRequest extends FormRequest
             return [
                 "id" => ["string", "max:36"],
                 "designation" => ["required", "string", "min:1", "max:255"],
+				"groups_wording" => ["required", "string", "min:1", "max:255"],
                 // "street" => ["required", "string", "min:1", "max:255"],
                 // "housenumber" => ["required", "string", "min:1", "max:255"],
                 // "city" => ["required", "string", "min:1", "max:255"],

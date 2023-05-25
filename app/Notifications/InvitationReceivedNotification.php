@@ -51,7 +51,7 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -99,7 +99,13 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+			"type" => "InvitationReceived",
+            "data" => [
+				"id" => $this->invitation->id,
+				"invited_to" => $this->invitation->invitable->designation,
+				"invited_by" => $this->invitation->sender->first_name . " " . $this->invitation->sender->last_name,
+				"created_at" => $this->invitation->created_at
+			]
         ];
     }
 }

@@ -25,6 +25,7 @@ class OrganizationResource extends JsonResource
 			'attributes' => [
 				'creator' => new UserResource(User::find($this->user_id)),
 				'designation' => $this->designation,
+				'groups_wording' => $this->groups_wording,
 				'created_at' => $this->created_at,
 				'updated_at' => $this->updated_at
 			]
