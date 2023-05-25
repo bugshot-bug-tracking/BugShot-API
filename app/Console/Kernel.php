@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,10 +25,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+		Log::info("Running scheduler.");
 		$schedule->exec('php artisan queue:restart')
 			->daily()
 			->then(function () use ($schedule) {
+				Log::info("Queue restarted. Starting daemon now.");
 				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
+				Log::info("Daemon started successfully.");
 			}); // Restarts the job daemon
 
         $schedule->command('bugs:archive')->hourly();
