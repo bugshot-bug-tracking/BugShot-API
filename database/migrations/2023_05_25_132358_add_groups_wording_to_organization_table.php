@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('organization', function (Blueprint $table) {
+        Schema::table('organizations', function (Blueprint $table) {
 			$table->after('designation', function ($table) {
 				$table->string('groups_wording')->nullable();
             });
@@ -27,7 +27,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('organization', function (Blueprint $table) {
+        Schema::table('organizations', function (Blueprint $table) {
             $table->dropColumn('groups_wording');
         });
     }
