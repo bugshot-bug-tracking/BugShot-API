@@ -64,6 +64,7 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
         return [
 			"type" => "ImplementationApprovalFormReceived",
             "data" => [
+				"exporter_name" => $this->export->exporter->first_name . " " . $this->export->exporter->last_name,
 				"project_designation" => $this->export->project->designation,
 				"url" => $this->url
 			]

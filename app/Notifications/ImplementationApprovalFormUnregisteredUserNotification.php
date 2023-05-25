@@ -20,10 +20,10 @@ class ImplementationApprovalFormUnregisteredUserNotification extends Notificatio
      *
      * @return void
      */
-    public function __construct($export, $usermail)
+    public function __construct($export, $user)
     {
         $this->export = $export;
-		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($usermail) . "/" . $export->id;
+		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($user["email"]) ."/" . base64_encode($user["name"]) . "/" . $export->id;
     }
 
     /**

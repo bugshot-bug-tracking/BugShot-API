@@ -250,7 +250,7 @@ class ExportController extends Controller
 				$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
-					->notify((new ImplementationApprovalFormUnregisteredUserNotification($export, $recipient["email"]))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
+					->notify((new ImplementationApprovalFormUnregisteredUserNotification($export, $recipient))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
 			}
 		}
 
@@ -494,10 +494,10 @@ class ExportController extends Controller
 			$user = User::where('email', $recipient["email"])->first();
 
 			if ($user != null) {
-				$user->notify((new ApprovalReportNotification($filePath))->locale(GetUserLocaleService::getLocale($user)));
+				$user->notify((new ApprovalReportNotification($filePath, $request->evaluator))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
-					->notify((new ApprovalReportUnregisteredUserNotification($filePath))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
+					->notify((new ApprovalReportUnregisteredUserNotification($filePath, $request->evaluator))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
 			}
 		}
 
@@ -599,8 +599,6 @@ class ExportController extends Controller
     */
     public function generateExportPDF($request, $project, $export, $bugs, $evaluator)
     {
-		$userEvaluator = User::where("email", $evaluator)->first();
-		$evaluator = $userEvaluator ? $userEvaluator->first_name . " " . $userEvaluator->last_name : $evaluator;
 		$reportId = $this->setId($request);
 
 		$dbBugs = array();
@@ -609,7 +607,7 @@ class ExportController extends Controller
 		};
 
         $data = [
-            'evaluator' => $evaluator,
+            'evaluator' => $evaluator["name"],
             'project' => $project,
             'bugs' => $dbBugs,
 			'reportId' => $reportId
@@ -624,7 +622,7 @@ class ExportController extends Controller
 		Report::create([
 			"id" => $reportId,
 			"export_id" => $export->id,
-			"generated_by" => $evaluator,
+			"generated_by" => $evaluator["name"],
 			"url" => $filePath
 		]);
 
