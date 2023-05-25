@@ -30,6 +30,7 @@ use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\NotificationController;
 
 // Events
 use App\Events\TestEvent;
@@ -179,7 +180,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	Route::prefix('projects/{project}')->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
-		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::prefix('bugs')->group(function () {
+			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
+			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
+		});
 		Route::post('/exports', [ExportController::class, "store"])->name("project.export.store");
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
@@ -216,6 +220,12 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
+
+		// Notification prefixed routes
+		Route::prefix('notifications')->group(function () {
+			Route::get("/", [NotificationController::class, "index"])->name("user.notification.index");
+			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.invitation.delete");
+		});
 
 		Route::get("/start-trial", [UserController::class, "startTrial"])->name("user.start-trial");
 

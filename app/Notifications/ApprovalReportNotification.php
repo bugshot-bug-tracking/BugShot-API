@@ -36,7 +36,7 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -65,7 +65,10 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+			"type" => "ApprovalReportReceived",
+            "data" => [
+				"file_path" => $this->filePath
+			]
         ];
     }
 }

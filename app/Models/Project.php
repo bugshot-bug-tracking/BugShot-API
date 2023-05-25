@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @OA\Schema()

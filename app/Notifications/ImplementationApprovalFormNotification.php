@@ -37,7 +37,7 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -48,7 +48,7 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
      */
     public function toMail($notifiable)
     {
-        return (new ImplementationApprovalFormMailable($notifiable, $this->locale, $this->export, $this->url))
+        return (new ImplementationApprovalFormMailable($notifiable, $this->locale, $this->url))
         ->subject('BugShot - ' . __('email.implementation-approval-form-received', [], $this->locale))
         ->to($notifiable->email);
     }
@@ -62,7 +62,11 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
     public function toArray($notifiable)
     {
         return [
-            //
+			"type" => "ImplementationApprovalFormReceived",
+            "data" => [
+				"project_designation" => $this->export->project->designation,
+				"url" => $this->url
+			]
         ];
     }
 }
