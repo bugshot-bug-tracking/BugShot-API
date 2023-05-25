@@ -16,16 +16,20 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
 
     public $filePath;
 	public $fileName;
+	public $export;
+	public $evaluator;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($filePath)
+    public function __construct($filePath, $export, $evaluator)
     {
         $this->filePath = config("app.url") . "/storage" . $filePath;
 		$this->fileName = basename($filePath);
+		$this->export = $export;
+		$this->evaluator = $evaluator;
     }
 
     /**
@@ -67,6 +71,7 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
         return [
 			"type" => "ApprovalReportReceived",
             "data" => [
+				"evaluator_name" => $this->evaluator["name"],
 				"file_path" => $this->filePath
 			]
         ];
