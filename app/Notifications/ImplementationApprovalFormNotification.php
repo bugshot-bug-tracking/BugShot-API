@@ -26,7 +26,7 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
     {
         $this->export = $export;
 		$this->user = $user;
-		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($user["email"]) ."/" . base64_encode($user["name"]) . "/" . $export->id;
+		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($user->email) . "/" . base64_encode($user->first_name . " " . $user->last_name) . "/" . $export->id;
     }
 
     /**
