@@ -71,7 +71,7 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
         return [
 			"type" => "ApprovalReportReceived",
             "data" => [
-				"evaluator_name" => $this->evaluator["name"],
+				"evaluator_name" => base64_decode($this->evaluator["name"]),
 				"file_path" => $this->filePath
 			]
         ];
