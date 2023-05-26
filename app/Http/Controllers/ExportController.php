@@ -607,7 +607,7 @@ class ExportController extends Controller
 		};
 
         $data = [
-            'evaluator' => $evaluator["name"],
+            'evaluator' => $evaluator,
             'project' => $project,
             'bugs' => $dbBugs,
 			'reportId' => $reportId
@@ -622,7 +622,7 @@ class ExportController extends Controller
 		Report::create([
 			"id" => $reportId,
 			"export_id" => $export->id,
-			"generated_by" => $evaluator["name"],
+			"generated_by" => $evaluator,
 			"url" => $filePath
 		]);
 
