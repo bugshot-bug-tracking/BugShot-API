@@ -608,6 +608,7 @@ class ExportController extends Controller
 
         $data = [
             'evaluator' => $evaluator,
+			'company' => $project->company,
             'project' => $project,
             'bugs' => $dbBugs,
 			'reportId' => $reportId

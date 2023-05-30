@@ -102,7 +102,7 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
 			"type" => "InvitationReceived",
             "data" => [
 				"id" => $this->invitation->id,
-				"invited_to" => $this->invitation->invitable_type,
+				"invited_to_type" => $this->invitation->invitable_type,
 				"invited_to" => $this->invitation->invitable->designation,
 				"invited_by" => $this->invitation->sender->first_name . " " . $this->invitation->sender->last_name,
 				"created_at" => $this->invitation->created_at
