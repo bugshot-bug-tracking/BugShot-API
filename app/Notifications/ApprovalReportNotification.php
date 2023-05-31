@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use App\Mail\ApprovalReport as ApprovalReportMailable;
+use App\Models\Report;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,16 +19,18 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
 	public $fileName;
 	public $export;
 	public $evaluator;
+	public $report;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($filePath, $export, $evaluator)
+    public function __construct(Report $report, $export, $evaluator)
     {
-        $this->filePath = config("app.url") . "/storage" . $filePath;
-		$this->fileName = basename($filePath);
+		$this->report = $report;
+        $this->filePath = config("app.url") . "/storage" . $report->url;
+		$this->fileName = basename($report->filePath);
 		$this->export = $export;
 		$this->evaluator = $evaluator;
     }
@@ -72,7 +75,8 @@ class ApprovalReportNotification extends Notification implements ShouldQueue
 			"type" => "ApprovalReportReceived",
             "data" => [
 				"evaluator_name" => base64_decode($this->evaluator["name"]),
-				"file_path" => $this->filePath
+				"file_path" => $this->filePath,
+				"created_at" => $this->report->created_at
 			]
         ];
     }

@@ -31,6 +31,8 @@ use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Analytics\AnalyticController;
+use App\Http\Controllers\Analytics\LoadingTimeController;
 
 // Events
 use App\Events\TestEvent;
@@ -144,6 +146,15 @@ Route::middleware(['auth:sanctum'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
+
+	// Analytic routes
+	Route::prefix('/analytics')->group(function () {
+		Route::get("/overview", [AnalyticController::class, "getOverview"]);
+
+		Route::apiResource('/loading-times', LoadingTimeController::class)->except([
+			"update", "delete"
+		]);
+	});
 
 	// Search route
 	Route::get("/search", [SearchController::class, "search"])->name("search");

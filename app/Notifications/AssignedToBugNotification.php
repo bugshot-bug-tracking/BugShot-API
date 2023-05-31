@@ -18,9 +18,9 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $bug)
+    public function __construct(public $bug, public $sender, public $assignedAt)
     {
-        $this->bug = $bug;
+
     }
 
     /**
@@ -56,7 +56,18 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+			"type" => "AssignedToBug",
+            "data" => [
+				"assigned_by" => $this->sender->first_name . " " . $this->sender->last_name,
+				"bug" => [
+					"id" => $this->bug->id,
+					"designation" => $this->bug->id,
+				],
+				"organization_id" => $this->bug->project->company->organization->id,
+				"company_id" => $this->bug->project->company->id,
+				"project_id" => $this->bug->project->id,
+				"assigned_at" => $this->assignedAt
+			]
         ];
     }
 }
