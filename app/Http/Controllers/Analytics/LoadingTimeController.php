@@ -7,6 +7,7 @@ use App\Http\Requests\LoadingTimeStoreRequest;
 use App\Models\Client;
 use App\Models\LoadingTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Tag(
@@ -67,15 +68,17 @@ class LoadingTimeController extends Controller
 	 *)
 	 *
 	 **/
-	public function index() {
+	public function index()
+	{
 
-		$loadingTimes = array();
-		foreach(Client::all() as $client) {
-			$loadingTimes[$client->designation] = $client->loadingTimes->avg("load_duration");
-		}
+		$results = DB::table('loading_times')
+			->join('clients', 'loading_times.client_id', '=', 'clients.id')
+			->select('clients.designation', DB::raw('AVG(loading_times.loading_duration_raw) AS average_raw_duration'))
+			->groupBy('clients.id')
+			->get();
 
 		return response()->json([
-			"loadingTimes" => $loadingTimes
+			"loadingTimes" => $results
 		], 200);
 	}
 
@@ -157,7 +160,8 @@ class LoadingTimeController extends Controller
 	 *)
 	 *
 	 **/
-	public function store(LoadingTimeStoreRequest $request){
+	public function store(LoadingTimeStoreRequest $request)
+	{
 		return LoadingTime::create([
 			"user_id" => Auth::id(),
 			"client_id" => $request->get('client_id'),
