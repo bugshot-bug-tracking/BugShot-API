@@ -6,13 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @OA\Schema()
  */
 class Project extends Model
 {
-	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -27,6 +29,20 @@ class Project extends Model
      * @var bool
      */
     public $incrementing = false;
+
+	/**
+	 * Get the indexable data array for the model.
+	 *
+	 * @return array
+	 */
+	public function toSearchableArray()
+	{
+		return [
+			'id' => $this->id,
+			'designation' => $this->designation,
+			'url' => $this->url
+		];
+	}
 
 	/**
 	 * @OA\Property(
@@ -98,7 +114,7 @@ class Project extends Model
 	protected $touches = ['company'];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens'];
+	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens', 'exports'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -138,6 +154,14 @@ class Project extends Model
 	public function bugs()
 	{
 		return $this->hasMany(Bug::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function exports()
+	{
+		return $this->hasMany(Export::class);
 	}
 
 	/**

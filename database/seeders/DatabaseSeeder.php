@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
 		// for invitation statuses like pending or accepted
 		$this->call(InvitationStatusSeeder::class);
 
+		// for bug export statuses like pending or approved
+		$this->call(BugExportStatusSeeder::class);
+
         // Adds a default user
 		$this->call(UserSeeder::class);
 
@@ -53,7 +56,7 @@ class DatabaseSeeder extends Seeder
 
 		// Adds settings
 		$this->call(SettingSeeder::class);
-				
+
 		// Adds values
 		$this->call(ValueSeeder::class);
 	}

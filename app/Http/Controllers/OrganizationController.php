@@ -233,7 +233,7 @@ class OrganizationController extends Controller
 			// Also add the owner to the organization user role table in order to be able to store the subscription
 			$organizations->users()->attach(Auth::user()->id, ['role_id' => 0]);
 
-			$organizations = collect($organizations);
+            $organizations = Organization::where("user_id", Auth::id())->limit(1)->get();
 		}
 
 		return OrganizationResource::collection($organizations->sortBy('designation'));
@@ -280,6 +280,11 @@ class OrganizationController extends Controller
 	 *                  property="designation",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="The organizations wording for groups",
+	 *                  property="groups_wording",
+	 *                  type="string",
+	 *              ),
 	 *              required={"designation"}
 	 *          )
 	 *      )
@@ -319,7 +324,8 @@ class OrganizationController extends Controller
 		$organization = Organization::create([
 			"id" => $id,
 			"user_id" => $this->user->id,
-			"designation" => $request->designation
+			"designation" => $request->designation,
+			"groups_wording" => $request->groups_wording
 		]);
 
 		// Also add the owner to the organization user role table in order to be able to store the subscription
@@ -568,6 +574,11 @@ class OrganizationController extends Controller
 	 *              @OA\Property(
 	 *                  description="The organization name",
 	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The organizations wording for groups",
+	 *                  property="groups_wording",
 	 *                  type="string",
 	 *              ),
 	 *              required={"designation"}

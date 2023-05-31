@@ -67,6 +67,8 @@ class BugService
 			"designation" => $request->designation,
 			"description" => $request->description,
 			"url" => $request->url,
+			"time_estimation" => $request->time_estimation,
+			"approval_status_id" => 1,
 			"operating_system" => $request->operating_system,
 			"browser" => $request->browser,
 			"selector" => $request->selector,
@@ -135,22 +137,13 @@ class BugService
 
 	public function destroy(Status $status, Bug $bug, ScreenshotService $screenshotService, CommentService $commentService, AttachmentService $attachmentService)
 	{
+		$bug->update([
+			"archived_at" => now()
+		]);
+
 		$val = $bug->delete();
+
 		broadcast(new BugDeleted($bug))->toOthers();
-		// // Delete the respective screenshots
-		// foreach ($bug->screenshots as $screenshot) {
-		// 	$screenshotService->delete($screenshot);
-		// }
-
-		// // Delete the respective comments
-		// foreach ($bug->comments as $comment) {
-		// 	$commentService->delete($comment);
-		// }
-
-		// // Delete the respective attachments
-		// foreach ($bug->attachments as $attachment) {
-		// 	$attachmentService->delete($attachment);
-		// }
 
 		return response($val, 204);
 	}
@@ -173,6 +166,20 @@ class BugService
 			}
 
 			$newStatus = Status::find($request->status_id);
+
+			// Check if the new or the old status is done
+			if($newStatus->permanent == "done") {
+				// Start archiving process
+				$bug->update([
+					"done_at" => now()
+				]);
+			} else if($status->permanent == "done") {
+				// End archiving process
+				$bug->update([
+					"done_at" => NULL
+				]);
+			}
+
 			$newStatusBugs = $newStatus->bugs->where('order_number', '>=', $newOrderNumber);
 
 			// Increase all the order numbers that are greater than the original bug order number

@@ -2,7 +2,7 @@
 
 namespace App\Listeners;
 
-use App\Events\AssignedToBug;
+use App\Events\BugMembersUpdated;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\AssignedToBugNotification;
@@ -16,8 +16,8 @@ class SendAssignedToBugNotification implements ShouldQueue
      * @param  AssignedToBug  $event
      * @return void
      */
-    public function handle(AssignedToBug $event)
+    public function handle(BugMembersUpdated $event)
     {
-        $event->user->notify((new AssignedToBugNotification($event->bug))->locale(GetUserLocaleService::getLocale($event->user)));
+        $event->user->notify((new AssignedToBugNotification($event->bug, $event->sender, $event->assignedAt))->locale(GetUserLocaleService::getLocale($event->user)));
     }
 }

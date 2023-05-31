@@ -25,6 +25,11 @@ class BugResource extends JsonResource
 				"designation" => $this->designation,
 				"description" => $this->description,
 				"url" => $this->url,
+				"time_estimation" => $this->time_estimation,
+				"approval_status" => array(
+					"id" => $this->approval_status_id,
+					"designation" => $this->approvalStatus ? $this->approvalStatus->designation : NULL
+				),
 				"status_id" => $this->status_id,
 				"order_number" => $this->order_number,
 				"ai_id" => $this->ai_id,
@@ -35,11 +40,14 @@ class BugResource extends JsonResource
 				"selector" => $this->selector,
 				"resolution" => $this->resolution,
 				"deadline" => $this->deadline,
+				"done_at" => $this->done_at,
+				"archived_at" => $this->archived_at,
 				"created_at" => $this->created_at,
-				"updated_at" => $this->updated_at
+				"updated_at" => $this->updated_at,
+				"deleted_at" => $this->deleted_at
 			]
 		);
-		
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective attachments
@@ -68,7 +76,6 @@ class BugResource extends JsonResource
 
 		// Check if the response should contain status infos (interfaces)
 		if(array_key_exists('include-status-info', $header) && $header['include-status-info'][0] == "true") {
-			$users = $this->users;
 			$bug['attributes']['status_designation'] = Status::find($this->status_id)->designation;
 			$bug['attributes']['status_order_number'] = Status::find($this->status_id)->order_number;
 		}
