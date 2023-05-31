@@ -23,6 +23,7 @@
 				padding: 0;
 				-webkit-text-size-adjust: 100%;
 				-ms-text-size-adjust: 100%;
+				font-family: "Ubuntu",Helvetica, Arial,sans-serif;
 			}
 
 			table,
@@ -47,10 +48,10 @@
 			}
 
 			.priority {
-				background-color: #9ba5d7;
+				/* background-color: #9ba5d7; */
 				padding: 0.325rem;
 				border-radius: 1rem;
-				color: #fff;
+				color: #000;
 				text-align: center;
 				text-overflow: ellipsis;
 				white-space: nowrap;
@@ -63,7 +64,7 @@
 				background-color: #185ed8;
 			}
 			.priority.priority-important {
-				background-color: #ffb157;
+				/* color: #000000; */
 			}
 			.priority.priority-critical {
 				background-color: #f23636;
@@ -370,7 +371,7 @@
 															color: #000000;
 														"
 													>
-														Report contains {10}
+														Report contains {{ count($bugs) }}
 														bugs
 													</div>
 												</td>
@@ -438,7 +439,7 @@
 															>
 																Group
 															</td>
-															<td>{name}</td>
+															<td>{{ $company->designation }}</td>
 														</tr>
 														<tr
 															class="bs-bb"
@@ -455,7 +456,7 @@
 															>
 																Project
 															</td>
-															<td>{name}</td>
+															<td>{{ $project->designation }}</td>
 														</tr>
 														<tr
 															style="
@@ -470,16 +471,9 @@
 																"
 																rowspan="2"
 															>
-																Export for
+																Evaluated By
 															</td>
-															<td>{name}</td>
-														</tr>
-														<tr
-															style="
-																text-align: end;
-															"
-														>
-															<td>{email}</td>
+															<td>{{ $evaluator }}</td>
 														</tr>
 													</table>
 												</td>
@@ -676,7 +670,7 @@
 																		On:
 																	</td>
 																	<td>
-																		{date}
+																		{{ $bug["created_at"] }}
 																	</td>
 																</tr>
 																<tr>
@@ -694,7 +688,7 @@
 																		"
 																		colspan="5"
 																	>
-																		{url}
+																		{{ $bug["url"] }}
 																	</td>
 																</tr>
 																<tr>
@@ -718,7 +712,7 @@
 																		"
 																	>
 																		{{
-																		$bug["description"]
+																			$bug["description"]
 																		}}
 																	</td>
 																</tr>
@@ -739,23 +733,14 @@
 																	<td
 																		colspan="2"
 																	>
-																		<span
-																			class="priority priority-important"
-																			style="
-																				margin-left: 0.25rem;
-																				color: #ffffff;
-																			"
-																		>
-																			{{
-																			$bug["priority_id"]
-																			}}
-																		</span>
+																	{{
+																		$bug->priority->designation
+																	}}
 																	</td>
 																	<td
 																		style="
 																			font-weight: bold;
 																			white-space: nowrap;
-																			color: #ffffff;
 																		"
 																	>
 																		Status
@@ -763,16 +748,9 @@
 																	<td
 																		colspan="2"
 																	>
-																		<span
-																			class="priority"
-																			style="
-																				margin-left: 0.25rem;
-																			"
-																		>
-																			{{
-																			$bug["status_id"]
-																			}}
-																		</span>
+																	{{
+																		$bug->status->designation
+																	}}
 																	</td>
 																</tr>
 																<tr
@@ -797,7 +775,7 @@
 																		colspan="5"
 																	>
 																		{{
-																		$bug["deadline"]
+																			$bug["deadline"]
 																		}}
 																	</td>
 																</tr>
@@ -822,13 +800,14 @@
 																		"
 																		colspan="2"
 																	>
-																		{time}
+																		 {{ $bug["time_estimation"] }} min
 																	</td>
 																	<td
 																		colspan="2"
 																	>
 																		{{
-																		$bug["approval_status_id"]}}
+																		$bug->approvalStatus->designation
+																		}}
 																	</td>
 																</tr>
 															</table>
@@ -855,7 +834,7 @@
 																		colspan="2"
 																	>
 																		<img
-																			src="https://www.online-image-editor.com//styles/2014/images/example_image.png"
+																			src="{{ config("app.url") . "/storage" . $bug->screenshots[0]->url }}"
 																			style="
 																				height: 200px;
 																				width: 100%;
@@ -886,7 +865,7 @@
 																			color: #9ba5d7;
 																		"
 																	>
-																		{text}
+																		{{ $bug->operating_system }}
 																	</td>
 																</tr>
 																<tr>
@@ -898,7 +877,7 @@
 																			color: #9ba5d7;
 																		"
 																	>
-																		{text}
+																	{{ $bug->browser }}
 																	</td>
 																</tr>
 																<tr>
@@ -910,7 +889,7 @@
 																			color: #9ba5d7;
 																		"
 																	>
-																		{text}
+																	{{ $bug->resolution }}
 																	</td>
 																</tr>
 															</table>
@@ -1182,7 +1161,7 @@
 														</td>
 														<td align="right">
 															<span>
-																Page {x} of {y}
+
 															</span>
 														</td>
 													</table>

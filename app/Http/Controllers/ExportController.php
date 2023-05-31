@@ -487,26 +487,26 @@ class ExportController extends Controller
 			]);
 		}
 
-		$filePath = $this->generateExportPDF($request, $project, $export, $request->bugs, $request->evaluator);
+		$report = $this->generateExportPDF($request, $project, $export, $request->bugs, $request->evaluator);
 
 		foreach($request->recipients as $recipient) {
 			// Check if the recipient is a registered user or not
 			$user = User::where('email', $recipient["email"])->first();
 
 			if ($user != null) {
-				$user->notify((new ApprovalReportNotification($filePath, $export, $request->evaluator))->locale(GetUserLocaleService::getLocale($user)));
+				$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
-					->notify((new ApprovalReportUnregisteredUserNotification($filePath))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
+					->notify((new ApprovalReportUnregisteredUserNotification($report))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
 			}
 		}
 
 		// Notify the owner as well
-		$project->creator->notify((new ApprovalReportNotification($filePath, $export, $request->evaluator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator))->locale(GetUserLocaleService::getLocale($project->creator)));
 
 		return response()->json([
 			"data" => [
-				"pdf-download-path" => config("app.url") . "/storage" . $filePath
+				"pdf-download-path" => config("app.url") . "/storage" . $report->url
 			]
 		], 200);
 	}
@@ -608,6 +608,7 @@ class ExportController extends Controller
 
         $data = [
             'evaluator' => $evaluator,
+			'company' => $project->company,
             'project' => $project,
             'bugs' => $dbBugs,
 			'reportId' => $reportId
@@ -619,13 +620,13 @@ class ExportController extends Controller
 		$filePath = "/uploads/reports/" . $project->company->id . "/" . $project->id. "/" . $fileName;
 		Storage::disk('public')->put($filePath, $pdf->output());
 
-		Report::create([
+		$report = Report::create([
 			"id" => $reportId,
 			"export_id" => $export->id,
 			"generated_by" => $evaluator,
 			"url" => $filePath
 		]);
 
-        return $filePath;
+        return $report;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\AssignedToBug;
+use App\Events\BugMembersUpdated;
 use App\Listeners\SendAssignedToBugNotification;
 use App\Events\TaggedInComment;
 use App\Listeners\SendTaggedInCommentNotification;
@@ -22,7 +22,7 @@ class EventServiceProvider extends ServiceProvider
         TaggedInComment::class => [
             SendTaggedInCommentNotification::class,
         ],
-        AssignedToBug::class => [
+        BugMembersUpdated::class => [
             SendAssignedToBugNotification::class,
         ],
 		WebhookReceived::class => [
