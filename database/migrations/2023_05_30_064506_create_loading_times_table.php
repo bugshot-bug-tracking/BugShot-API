@@ -15,6 +15,13 @@ return new class extends Migration
     {
         Schema::create('loading_times', function (Blueprint $table) {
             $table->id();
+			$table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+			$table->unsignedBigInteger('client_id')->onDelete('cascade');
+            $table->foreign('client_id')->references('id')->on('clients');
+			$table->string('url');
+			$table->unsignedBigInteger('loading_duration_raw');
+			$table->unsignedBigInteger('loading_duration_fetched')->nullable();
             $table->timestamps();
         });
     }
