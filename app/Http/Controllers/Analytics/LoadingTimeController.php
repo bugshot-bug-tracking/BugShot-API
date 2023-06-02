@@ -8,6 +8,7 @@ use App\Models\Client;
 use App\Models\LoadingTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 
 /**
  * @OA\Tag(
@@ -70,16 +71,20 @@ class LoadingTimeController extends Controller
 	 **/
 	public function index()
 	{
+		$output = new stdClass();
+		$output->clients = array();
+		$clients = Client::all();
+		foreach ($clients as $client) {
+			$avg = $client->getAvgLoadingTime();
+			if(isset($avg)) {
+				$clientOutput = new stdClass();
+				$clientOutput->client = $client->designation;
+				$clientOutput->avg = $avg;
+				$output->clients[] = $clientOutput;
+			}
+		}
 
-		$results = DB::table('loading_times')
-			->join('clients', 'loading_times.client_id', '=', 'clients.id')
-			->select('clients.designation', DB::raw('AVG(loading_times.loading_duration_raw) AS average_raw_duration'))
-			->groupBy('clients.id')
-			->get();
-
-		return response()->json([
-			"loadingTimes" => $results
-		], 200);
+		return response()->json($output, 200);
 	}
 
 	/**
