@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema()
+ */
 class LoadingTime extends Model
 {
 	use HasFactory;
@@ -38,13 +41,6 @@ class LoadingTime extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="client_id",
-	 * 	type="integer",
-	 *  format="int64",
-	 * 	description="The id of the client that created the object."
-	 * )
-	 *
-	 * @OA\Property(
 	 * 	property="loading_duration_raw",
 	 * 	type="integer",
 	 *  format="int64",
@@ -53,8 +49,8 @@ class LoadingTime extends Model
 	 *
 	 * @OA\Property(
 	 * 	property="loading_duration_fetched",
-	 * 	type="string",
-	 *  format="date-time",
+	 * 	type="integer",
+	 *  format="int64",
 	 * 	description="The duration in ms of the loading time of the page including the fetched content."
 	 * )
 	 *
