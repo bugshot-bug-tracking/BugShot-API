@@ -25,6 +25,7 @@ return [
     'assigned-to-bug' => 'You were assigned to a bug',
 	'subscription-started' => 'Your new subscription',
 	'implementation-approval-form-received' => 'You received an Implementation Approval Form',
-	'approval-report-received' => 'You received an approval report'
+	'approval-report-received' => 'You received an approval report',
+	'comment-created' => 'New comment'
 
 ];
