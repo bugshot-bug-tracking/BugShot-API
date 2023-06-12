@@ -1,7 +1,7 @@
 @component('mail::message', ['locale' => $locale])
     <p>Hallo {{ $user->first_name }},</p>
     <p>
-        {{ $entryMessage }}<br /><br />
+        {{ $sender . " " . $entryMessage }}<br /><br />
         Gehe direkt zu Deinem Dashboard um die Einladung anzunehmen.<br />
         Klick dazu einfach auf den folgenden Button:
     </p>
