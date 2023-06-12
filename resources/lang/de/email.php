@@ -12,10 +12,10 @@ return [
     |
     */
 
-    'invited_to_organization' => 'Du hast eine Einladung zur :organization ":organizationDesignation" erhalten.',
-    'invited_to_company' => 'Du hast eine Einladung zur :company ":companyDesignation" erhalten.',
-    'invited_to_project' => 'Du hast eine Einladung zum :project ":projectDesignation" erhalten.',
-    'invited_to_bug' => 'Du wurdest dem :bug ":bugDesignation" als Bearbeiter zugewiesen.',
+    'invited_to_organization' => 'hat dich gerade zur :organization ":organizationDesignation" eingeladen.',
+    'invited_to_company' => 'hat dich gerade zur :company ":companyDesignation" eingeladen.',
+    'invited_to_project' => 'hat dich gerade zum :project ":projectDesignation" eingeladen.',
+    'invited_to_bug' => 'hat dich gerade dem :bug ":bugDesignation" als Bearbeiter zugewiesen.',
     'verification-successful' => 'Verifizierung erfolgreich',
     'invitation-received' => 'Einladung erhalten',
     'password-reset-link' => 'Passwortzurücksetzungslink',
@@ -25,6 +25,6 @@ return [
     'assigned-to-bug' => 'Du wurdest einem Bug zugewiesen',
 	'subscription-started' => 'Dein neues Abonnement',
 	'implementation-approval-form-received' => 'Du hast ein Umsetzungsfreigabe Formular erhalten',
-	'approval-report-received' => 'Du hast einen Umsetzungsbericht erhalten'
-
+	'approval-report-received' => 'Du hast einen Umsetzungsbericht erhalten',
+	'comment-created' => 'Neuer Kommentar'
 ];

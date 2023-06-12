@@ -1,7 +1,7 @@
 @component('mail::message', ['locale' => $locale])
     <p>Hello there,</p>
     <p>
-        {{ $entryMessage }}<br /><br />
+        {{ $sender . " " . $entryMessage }}<br /><br />
         To accept the invitation you have to register at {{ config('app.projectname') }} with this email address.<br />
         In order to do that, just click on the following button:
     </p>

@@ -1,9 +1,12 @@
 @component('mail::message', ['locale' => $locale])
     <p>Hallo {{ $user->first_name }},</p>
     <p>
-        {{ $sender . " " . $entryMessage }}<br /><br />
-        Gehe direkt zu Deinem Dashboard um die Einladung anzunehmen.<br />
-        Klick dazu einfach auf den folgenden Button:
+        {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} hat soeben einen Kommentar zu einem von dir erstellten Bug hinzugefügt.<br /><br />
+        <strong>Projekt</strong>: {{ $project->designation }}<br />
+        <strong>Bug</strong>: {{ $bug->designation }} (ID: {{ $bug->ai_id }})<br />
+        <strong>Kommentar</strong>: {{ $readableContent }}<br /><br />
+        Um auf den Kommentar zu antworten kannst Du einfach den entsprechenden Bug im Webpanel aufsuchen.<br />
+        Über den folgenden Button gelangst du ins Webpanel:
     </p>
     @component('mail::button', ['url' => config('app.webpanel_url')])
         Zum Dashboard
