@@ -34,6 +34,7 @@ use App\Notifications\ImplementationApprovalFormNotification;
 use App\Notifications\ImplementationApprovalFormUnregisteredUserNotification;
 use App\Notifications\ApprovalReportNotification;
 use App\Notifications\ApprovalReportUnregisteredUserNotification;
+use Illuminate\Support\Facades\Log;
 
 // Only owners and managers of the project are allowed to work with the exports
 
@@ -405,9 +406,18 @@ class ExportController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 * 				@OA\Property(
-	 * 					description="The name of the evaluator.",
-	 * 					property="evaluator",
-	 * 					type="string"
+     *                  property="evaluator",
+	 *                  type="object",
+	 *              	@OA\Property(
+	 *              	    description="The name of the evaluator.",
+	 *              	    property="name",
+	 *						type="string"
+	 *              	),
+	 *               	@OA\Property(
+	 *              	    description="The email of the evaluator.",
+	 *              	    property="email",
+	 *						type="string"
+	 *              	),
 	 * 				),
 	 *     			@OA\Property(
 	 *                  property="bugs",
@@ -623,7 +633,7 @@ class ExportController extends Controller
 		$report = Report::create([
 			"id" => $reportId,
 			"export_id" => $export->id,
-			"generated_by" => $evaluator,
+			"generated_by" => $evaluator["email"],
 			"url" => $filePath
 		]);
 

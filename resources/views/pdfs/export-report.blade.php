@@ -473,7 +473,7 @@
 															>
 																Evaluated By
 															</td>
-															<td>{{ $evaluator }}</td>
+															<td>{{ $evaluator["name"] }}</td>
 														</tr>
 													</table>
 												</td>
