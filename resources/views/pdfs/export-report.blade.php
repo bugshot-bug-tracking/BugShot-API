@@ -473,7 +473,7 @@
 															>
 																Evaluated By
 															</td>
-															<td>{{ $evaluator["name"] }}</td>
+															<td>{{ base64_decode($this->evaluator["name"]) }}</td>
 														</tr>
 													</table>
 												</td>
