@@ -633,7 +633,7 @@ class ExportController extends Controller
 		$report = Report::create([
 			"id" => $reportId,
 			"export_id" => $export->id,
-			"generated_by" => $evaluator["email"],
+			"generated_by" => base64_decode($evaluator["email"]),
 			"url" => $filePath
 		]);
 
