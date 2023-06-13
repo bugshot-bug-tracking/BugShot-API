@@ -39,6 +39,7 @@ class BugUpdateRequest extends FormRequest
                 "deadline" => ["date", "nullable"],
                 "order_number" => ["integer", "min:0"],
                 "status_id" => ["string", "exists:App\Models\Status,id"],
+				"time_estimation_type" => ["required", "string", "size:1", "in:w,d,h,m"],
             ];
         }
     }

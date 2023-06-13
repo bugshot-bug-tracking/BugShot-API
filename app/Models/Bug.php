@@ -107,6 +107,11 @@ class Bug extends Model
 	 * 	type="string",
 	 * 	description="The time estimation that of the bug."
 	 * )
+	 * @OA\Property(
+	 * 	property="time_estimation_type",
+	 * 	type="char",
+	 * 	description="The type of the time estimation, like w(week), d(day), h(hour), m(minute)."
+	 * )
 	 *
 	 * @OA\Property(
 	 * 	property="operating_system",
@@ -206,7 +211,7 @@ class Bug extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "time_estimation", "approval_status_id", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline", "done_at", "archived_at"];
+	protected $fillable = ["id", "project_id", "user_id", "designation", "description", "url", "time_estimation", "time_estimation_type", "approval_status_id", "status_id", "priority_id", "order_number", "ai_id", "client_id", "operating_system", "browser", "selector", "resolution", "deadline", "done_at", "archived_at"];
 
 	protected $touches = ["project", "status"];
 

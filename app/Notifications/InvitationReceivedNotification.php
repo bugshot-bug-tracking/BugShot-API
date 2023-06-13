@@ -24,8 +24,10 @@ use App\Models\Project;
 
 // Services
 use App\Services\GetUserLocaleService;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class InvitationReceivedNotification extends Notification implements ShouldQueue
+class InvitationReceivedNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
     use Queueable;
 
@@ -37,7 +39,7 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public $invitation)
+    public function __construct(public $invitation, public $user)
     {
         $this->resource = NULL;
         $this->message = NULL;
@@ -51,7 +53,7 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
+        return ['mail', 'database', 'broadcast'];
     }
 
     /**
@@ -108,5 +110,45 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
 				"created_at" => $this->invitation->created_at
 			]
         ];
+    }
+
+
+	/**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'notification.created';
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+			"type" => "InvitationReceived",
+            "data" => [
+				"id" => $this->invitation->id,
+				"invited_to_type" => $this->invitation->invitable_type,
+				"invited_to" => $this->invitation->invitable->designation,
+				"invited_by" => $this->invitation->sender->first_name . " " . $this->invitation->sender->last_name,
+				"created_at" => $this->invitation->created_at
+			]
+        ];
+    }
+
+    /**
+     * Get the channels the event should broadcast on.
+     *
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn()
+    {
+        return new PrivateChannel('user.' . $this->user->id);
     }
 }

@@ -18,15 +18,6 @@ class AssignedToBug
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * The event's broadcast name.
-     *
-     * @return string
-     */
-    public function broadcastAs()
-    {
-        return 'assigned.to.bug';
-    }
 
     /**
      * Create a new event instance.
@@ -35,6 +26,16 @@ class AssignedToBug
      */
     public function __construct(public User $user, public Bug $bug)
     {
+    }
+
+    /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs()
+    {
+        return 'assigned.to.bug';
     }
 
     /**
