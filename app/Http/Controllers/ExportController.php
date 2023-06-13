@@ -494,7 +494,7 @@ class ExportController extends Controller
 			$user = User::where('email', $recipient["email"])->first();
 
 			if ($user != null) {
-				$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator))->locale(GetUserLocaleService::getLocale($user)));
+				$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $user))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
 					->notify((new ApprovalReportUnregisteredUserNotification($report))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
