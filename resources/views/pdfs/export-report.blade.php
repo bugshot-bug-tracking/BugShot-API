@@ -435,6 +435,7 @@
 																style="
 																	font-weight: bold;
 																	text-align: start;
+																	padding-right: 8px;
 																"
 															>
 																Group
@@ -452,7 +453,8 @@
 																style="
 																	font-weight: bold;
 																	text-align: start;
-																"
+																	padding-right: 8px;
+															"
 															>
 																Project
 															</td>
@@ -462,12 +464,14 @@
 															style="
 																line-height: 40px;
 																text-align: end;
+																white-space: nowrap;
 															"
 														>
 															<td
 																style="
 																	font-weight: bold;
 																	text-align: start;
+																	padding-right: 8px;
 																"
 																rowspan="2"
 															>
@@ -685,6 +689,10 @@
 																	<td
 																		style="
 																			color: #9ba5d7;
+																			white-space: nowrap;
+																			overflow: hidden;
+																			text-overflow: ellipsis;
+																			max-width: 70ch;
 																		"
 																		colspan="5"
 																	>
@@ -800,7 +808,7 @@
 																		"
 																		colspan="2"
 																	>
-																		 {{ $bug["time_estimation"] }} min
+																		 {{ $bug["time_estimation"] ?? "-" }} min
 																	</td>
 																	<td
 																		colspan="2"
@@ -833,6 +841,7 @@
 																		"
 																		colspan="2"
 																	>
+																	@if(!empty($bug->screenshots[0]))
 																		<img
 																			src="{{ config("app.url") . "/storage" . $bug->screenshots[0]->url }}"
 																			style="
@@ -842,6 +851,19 @@
 																				min-width: 200px;
 																			"
 																		/>
+																	@else
+
+																		<img
+                                                                                                                                                        src="data:image/svg+xml;base64,PHN2ZyBpZD0iYjFkNDZiNGItNjVhZS00YmUzLTkzYzItZDZkMzFiMTg0YmJhIiBkYXRhLW5hbWU9IkxheWVyIDEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiB2aWV3Qm94PSIwIDAgNDAgNDAiPjxwYXRoIGlkPSJhZjE5MTRjMy0wMDI0LTQ1NzktYjVkZC05NThmYmE4MDA2MjQiIGRhdGEtbmFtZT0iUGF0aCAxNDAiIGQ9Ik0yNi45MywxOC4zM2E3LjIzLDcuMjMsMCwwLDAtNS4yOS01LjQydjMuNTFIMTguMzdWMTIuOTFhNy4yMyw3LjIzLDAsMCwwLTUuMjksNS40MkgxNi41djMuMzRIMTMuMDhhNy4yMyw3LjIzLDAsMCwwLDUuMjksNS40MlYyMy41OGgzLjI3djMuNTFhNy4yMyw3LjIzLDAsMCwwLDUuMjktNS40MkgyMy41VjE4LjMzWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSIgZmlsbD0iIzE4ZDk5MiIvPjxwYXRoIGlkPSJmM2FjNTcwZC0xNTE5LTRmZDItYjFjNS03NTZkNmJkNmIzZjciIGRhdGEtbmFtZT0iUGF0aCAxNDEiIGQ9Ik0yMS42Myw5LjVhMTAuNTQsMTAuNTQsMCwwLDEsOC42Miw4LjgzaDMuNjNWMTQuNDJsNS42NC01Ljc4YTEuNywxLjcsMCwwLDAsMC0yLjM3TDMzLjQsMCwzMS4wOSwyLjM3bDUsNS4wOS0zLjgxLDMuOS01LTUuMDlhMS42MSwxLjYxLDAsMCwwLTEuMTUtLjQ5SDIxLjY0WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSIgZmlsbD0iIzE4ZDk5MiIvPjxwYXRoIGlkPSJhYmM4Y2U1NS03MWQ3LTQ4NTYtYjQ4Zi04NDQ2MzM2YjAyMDAiIGRhdGEtbmFtZT0iUGF0aCAxNDIiIGQ9Ik0zMy44OCwyNS41OFYyMS42N0gzMC4yNWExMC41MiwxMC41MiwwLDAsMS04LjYyLDguODN2My43Mmg0LjQ5YTEuNjQsMS42NCwwLDAsMCwxLjE2LS40OWw1LTUuMDksMy44MiwzLjkxLTUsNS4wOUwzMy40LDQwbDYuMTItNi4yN2ExLjcsMS43LDAsMCwwLDAtMi4zN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgMCkiIGZpbGw9IiMxOGQ5OTIiLz48cGF0aCBpZD0iYWM0ZjBhODctNDIyOC00ZjFkLTliNjctMWM2ZDc4ZmIzMzJiIiBkYXRhLW5hbWU9IlBhdGggMTQzIiBkPSJNMTguMzcsMzAuNWExMC41MiwxMC41MiwwLDAsMS04LjYyLTguODNINi4xMnYzLjkxTC40OCwzMS4zNmExLjcsMS43LDAsMCwwLDAsMi4zN0w2LjYsNDBsMi4zMS0yLjM2LTUtNS4wOSwzLjgyLTMuOTEsNSw1LjA5YTEuNjQsMS42NCwwLDAsMCwxLjE2LjQ5aDQuNDlaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDApIiBmaWxsPSIjMThkOTkyIi8+PHBhdGggaWQ9ImE0ZmNhMGVlLTdmM2MtNGQ2MS1iMjMwLWIwODVkOGU4NTc1OSIgZGF0YS1uYW1lPSJQYXRoIDE0NCIgZD0iTTYuMTIsMTQuNDJ2My45MUg5Ljc1QTEwLjU0LDEwLjU0LDAsMCwxLDE4LjM3LDkuNVY1Ljc4SDEzLjg4YTEuNjQsMS42NCwwLDAsMC0xLjE2LjQ5bC01LDUuMDlMMy45NCw3LjQ2bDUtNS4wOUw2LjYsMCwuNDgsNi4yN2ExLjY5LDEuNjksMCwwLDAsMCwyLjM2WiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSIgZmlsbD0iIzE4ZDk5MiIvPjwvc3ZnPg=="
+                                                                                                                                                        style="
+                                                                                                                                                                height: 64px;
+                                                                                                                                                                width: 64px;
+                                                                                                                                                                object-fit: scale-down;
+                                                                                                                                                                min-width: 0px;
+																				padding: 68px
+                                                                                                                                                        "
+                                                                                                                                                />
+																	@endif
 																	</td>
 																</tr>
 																<tr>
