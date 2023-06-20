@@ -7,9 +7,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\TaggedInComment as TaggedInCommentMailable;
+use App\Mail\CommentCreated as CommentCreatedMailable;
 
-class TaggedInCommentNotification extends Notification implements ShouldQueue
+class CommentCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -44,8 +44,8 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new TaggedInCommentMailable($notifiable, $this->locale, $this->comment))
-        ->subject('BugShot - ' . __('email.tagged-in-comment', [], $this->locale))
+        return (new CommentCreatedMailable($notifiable, $this->locale, $this->comment))
+        ->subject('BugShot - ' . __('email.comment-created', [], $this->locale))
         ->to($notifiable->email);
     }
 
@@ -58,7 +58,7 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-			"type" => "TaggedInComment",
+			"type" => "CommentCreated",
             "data" => [
 				"creator_name" => $this->comment->user->first_name . " " . $this->comment->user->last_name,
 				"organization_id" => $this->comment->bug->project->company->organization->id,

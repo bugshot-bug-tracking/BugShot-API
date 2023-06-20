@@ -18,6 +18,7 @@ class InvitationReceivedUnregisteredUser extends Mailable
 	public $locale;
     public $invitation;
     public $entryMessage;
+	public $sender;
 
     /**
      * Create a new message instance.
@@ -27,6 +28,7 @@ class InvitationReceivedUnregisteredUser extends Mailable
     public function __construct($locale, Invitation $invitation, $message)
     {
 		$this->locale = $locale;
+		$this->sender = $invitation->sender->first_name . " " . $invitation->sender->last_name;
         $this->invitation = $invitation;
         $this->entryMessage = $message;
     }

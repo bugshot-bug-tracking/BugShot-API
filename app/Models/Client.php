@@ -18,7 +18,7 @@ class Client extends Model
 {
     /**
      * The "type" of the auto-incrementing ID.
-     * 
+     *
      * @var string
      */
     protected $keyType = 'integer';
@@ -43,4 +43,21 @@ class Client extends Model
     {
         return $this->hasMany(Version::class);
     }
+
+	/**
+     * @var integer
+     */
+	public function getAvgLoadingTime(){
+		$loadingtimeList = LoadingTime::all()->where('client_id', '=', $this->id);
+		$count = Count($loadingtimeList);
+		if($count > 0){
+			$accumulated = 0;
+			foreach($loadingtimeList as $item){
+				$accumulated += $item->loading_duration_raw;
+			}
+			return round($accumulated / $count);
+		} else {
+			return null;
+		}
+	}
 }

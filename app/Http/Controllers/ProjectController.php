@@ -1971,4 +1971,132 @@ class ProjectController extends Controller
 
 		return $projectService->invite($request, $project, $invitationService, $this);
 	}
+
+
+	/**
+	 * Move bugs to new project.
+	 *
+	 * @param  Request  $request
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/{project_id}/bugs/move-to-new-project",
+	 *	tags={"Project"},
+	 *	summary="Move bugs to new project.",
+	 *	operationId="moveBugsToNewProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new project",
+	 *                  property="target_project_id",
+	 *                  type="string",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="bugs",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *    						description="The id of the bug",
+	 *              		    property="id",
+	 *              		    type="string"
+	 *              		),
+	 * 					)
+	 *              ),
+	 *              required={"target_project_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveBugsToDifferentProject(Request $request, Project $project)
+	{
+		// Check if the user is authorized to move bugs to another project
+		$this->authorize('moveBugs', $project);
+
+		$targetProject = Project::find($request->target_project_id);
+		$bugs = $request->bugs;
+		$targetProjetMembers = $targetProject->users;
+
+		foreach($bugs as $bug) {
+			$bug = Bug::find($bug["id"]);
+
+			// Check if the bug is not part of the original project anymore
+			if($project->bugs->contains($bug)) {
+				$bugAssignees = $bug->users;
+				$targetStatusId = $targetProject->statuses()->where("permanent", "backlog")->pluck("id")->first();
+
+				// Remove the assignees from the bug that are not part of the new project
+				$diffUsers = $bugAssignees->diff($targetProjetMembers)->pluck("id");
+				$bug->users()->detach($diffUsers);
+
+				$bug->update([
+					"project_id" => $targetProject->id,
+					"status_id" => $targetStatusId
+				]);
+			}
+		}
+
+		return response()->json("Bugs successfully moved to project " . $targetProject->id, 200);
+	}
 }

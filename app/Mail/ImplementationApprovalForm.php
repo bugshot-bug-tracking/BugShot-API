@@ -18,7 +18,6 @@ class ImplementationApprovalForm extends Mailable
 
     public $user;
 	public $locale;
-    public $export;
 	public $url;
 
     /**
@@ -26,11 +25,10 @@ class ImplementationApprovalForm extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale, Export $export, $url)
+    public function __construct(User $notifiable, $locale, $url)
     {
         $this->locale = $locale;
         $this->user = $notifiable;
-        $this->export = $export;
 		$this->url = $url;
     }
 

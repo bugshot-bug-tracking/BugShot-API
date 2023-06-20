@@ -51,6 +51,13 @@ class Organization extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="groups_wording",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The organizations wording for groups."
+	 * )
+	 *
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -73,7 +80,7 @@ class Organization extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "user_id", "designation"];
+	protected $fillable = ["id", "user_id", "designation", "groups_wording"];
 
 	// Cascade the soft deletion to the given child resources
 	protected $cascadeDeletes = ['companies', 'invitations', 'billingAddress'];
