@@ -7,22 +7,22 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Mail\CommentCreated as CommentCreatedMailable;
+use App\Mail\ProjectSummary as ProjectSummaryMailable;
 
-class ProjectSummaryNotification extends Notification implements ShouldQueue
+class ProjectSummaryNotification extends Notification
 {
     use Queueable;
 
-	public $comment;
-	// TODO: Refactor this class from commen to project
+	public $project;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($comment)
+    public function __construct($project)
     {
-        $this->comment = $comment;
+        $this->project = $project;
     }
 
     /**
@@ -44,8 +44,8 @@ class ProjectSummaryNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new CommentCreatedMailable($notifiable, $this->locale, $this->comment))
-        ->subject('BugShot - ' . __('email.comment-created', [], $this->locale))
+        return (new ProjectSummaryMailable($notifiable, $this->locale, $this->project))
+        ->subject('BugShot - ' . __('email.project-summary', [], $this->locale))
         ->to($notifiable->email);
     }
 
@@ -57,17 +57,6 @@ class ProjectSummaryNotification extends Notification implements ShouldQueue
      */
     public function toArray($notifiable)
     {
-        return [
-			"type" => "CommentCreated",
-            "data" => [
-				"creator_name" => $this->comment->user->first_name . " " . $this->comment->user->last_name,
-				"organization_id" => $this->comment->bug->project->company->organization->id,
-				"company_id" => $this->comment->bug->project->company->id,
-				"project_id" => $this->comment->bug->project->id,
-				"bug_id" => $this->comment->bug->id,
-				"comment_id" => $this->comment->id,
-				"created_at" => $this->comment->created_at
-			]
-        ];
+		//
     }
 }
