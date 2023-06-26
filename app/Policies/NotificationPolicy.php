@@ -29,9 +29,9 @@ class NotificationPolicy
      * @param  \App\Models\Notification  $notification
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny($notification)
+    public function viewAny($notification, User $requestedUser)
     {
-        return false;
+        return $notification->notifiable == $requestedUser->id;
     }
 
     /**
