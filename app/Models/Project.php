@@ -156,6 +156,14 @@ class Project extends Model
 		return $this->hasMany(Bug::class);
 	}
 
+    /**
+     * Get all of the comments for the project.
+     */
+    public function comments(): HasManyThrough
+    {
+        return $this->hasManyThrough(Comment::class, Bug::class);
+    }
+
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
