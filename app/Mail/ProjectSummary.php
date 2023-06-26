@@ -38,7 +38,7 @@ class ProjectSummary extends Mailable
         $this->user = $notifiable;
         $this->project = $project;
 		// TODO: Get comments that where updated
-		dd($project->bugs->comments);
+		dd($project->bugs);
         $this->commentCreator = User::find($comment->user_id);
         $this->bug = Bug::find($comment->bug_id);
         $this->project = Project::find($this->bug->project_id);
