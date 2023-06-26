@@ -13,6 +13,7 @@ use App\Services\GetUserLocaleService;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
@@ -20,7 +21,7 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -109,6 +110,9 @@ class User extends Authenticatable implements MustVerifyEmail
 		'subscription_item_id',
 		'trial_end_date',
 	];
+
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['createdOrganizations', 'createdCompanies', 'createdProjects', 'billingAddress', 'settings'];
 
 	/**
 	 * The attributes that should be hidden for serialization.
