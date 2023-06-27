@@ -26,6 +26,7 @@ return [
 	'subscription-started' => 'Your new subscription',
 	'implementation-approval-form-received' => 'You received an Implementation Approval Form',
 	'approval-report-received' => 'You received an approval report',
-	'comment-created' => 'New comment'
+	'comment-created' => 'New comment',
+	'project-summary' => 'Project summary'
 
 ];
