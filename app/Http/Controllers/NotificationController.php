@@ -192,7 +192,7 @@ class NotificationController extends Controller
 	public function destroy(User $user, $notification)
 	{
 		// Check if the user is authorized to delete the notification
-		$this->authorize('delete', [Notification::class, $user]);
+		$this->authorize('delete', [Notification::class, $notification]);
 
 		// Softdelete the notification
 		$val = $user->notifications()->find($notification)->delete();

@@ -21,11 +21,11 @@ class ProjectSummary extends Mailable
 
     public $user;
 	public $locale;
-    public $comment;
-    public $commentCreator;
-    public $bug;
+    public $comments;
+    public $bugs;
+	public $doneBugs;
     public $project;
-    public $readableContent;
+	public $readableContent;
 
     /**
      * Create a new message instance.
@@ -37,11 +37,9 @@ class ProjectSummary extends Mailable
         $this->locale = $locale;
         $this->user = $notifiable;
         $this->project = $project;
-		// TODO: Get comments that where updated
-		dd($project->bugs);
-        $this->commentCreator = User::find($comment->user_id);
-        $this->bug = Bug::find($comment->bug_id);
-        $this->project = Project::find($this->bug->project_id);
+		$this->comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+		$this->doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
+		$this->bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
     }
 
     /**
@@ -51,20 +49,35 @@ class ProjectSummary extends Mailable
      */
     public function build()
     {
-		// String replace the content so the tags are readable
-		$this->readableContent = $this->comment->content;
+		$this->comments->map(function(object $item, int $key) {
+			// $readableContent = preg_match_all(
+			// 	'/(?:<([0-9]+)\$(.*?)>)/',
+			// 	$item->content,
+			// 	$matches
+			// );
 
-		preg_match_all(
-            '/(?:<([0-9]+)\$(.*?)>)/',
-            $this->readableContent,
-            $matches
-        );
+			// foreach($matches[0] as $key=>$match) {
+			// 	$readableContent = str_replace($match, substr_replace($matches[1][$key], "", -1), $readableContent);
 
-		foreach($matches[0] as $key=>$match) {
-			$this->readableContent = str_replace($match, substr_replace($matches[1][$key], "", -1), $this->readableContent);
-		}
+			// }
+			// dd($readableContent);
+
+			$this->readableContent = $item->content;
+
+			preg_match_all(
+				'/(?:<([0-9]+)\$(.*?)>)/',
+				$this->readableContent,
+				$matches
+			);
+
+			foreach($matches[0] as $key=>$match) {
+				$this->readableContent = str_replace($match, $matches[2][$key], $this->readableContent);
+			}
+
+			return $item["content"] = $this->readableContent;
+		});
 
         return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . $this->locale . '.comment-created');
+        ->markdown('emails.' . $this->locale . '.project-summary');
     }
 }

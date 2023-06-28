@@ -12,7 +12,7 @@ class NotificationPolicy
     /**
      * Perform pre-authorization checks.
      *
-     * @param  \App\Models\Notification  $notification
+     * @param  $notification
      * @param  string  $ability
      * @return void|bool
      */
@@ -26,32 +26,36 @@ class NotificationPolicy
     /**
      * Determine whether the notification can view any models.
      *
-     * @param  \App\Models\Notification  $notification
+	 * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny($notification, User $requestedUser)
+    public function viewAny(User $user)
     {
-        return $notification->notifiable == $requestedUser->id;
+		return true;
     }
 
     /**
      * Determine whether the notification can view the model.
      *
-     * @param  \App\Models\Notification  $notification
+	 * @param  \App\Models\User  $user
+     * @param  $notification
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view($notification, User $user)
+    public function view(User $user, $notification)
     {
-        return $notification->notifiable_id == $user->id;
+		$notification = $user->notifications()->find($notification);
+
+        return $notification ? true : false;
     }
 
     /**
      * Determine whether the notification can create models.
      *
-     * @param  \App\Models\Notification  $notification
+	 * @param  \App\Models\User  $user
+     * @param  $notification
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create($notification)
+    public function create(User $user)
     {
         return false;
     }
@@ -59,22 +63,28 @@ class NotificationPolicy
     /**
      * Determine whether the notification can update the model.
      *
-     * @param  \App\Models\Notification  $notification
+	 * @param  \App\Models\User  $user
+     * @param  $notification
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update($notification, User $user)
+    public function update(User $user, $notification)
     {
-        return $notification->notifiable_id == $user->id;
+		$notification = $user->notifications()->find($notification);
+
+        return $notification ? true : false;
     }
 
     /**
      * Determine whether the notification can delete the model.
      *
-     * @param  \App\Models\Notification  $notification
+	 * @param  \App\Models\User  $user
+     * @param  $notification
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete($notification, User $user)
+    public function delete(User $user, $notification)
     {
-        return $notification->notifiable_id == $user->id;
+		$notification = $user->notifications()->find($notification);
+
+        return $notification ? true : false;
     }
 }
