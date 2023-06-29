@@ -852,12 +852,13 @@ class StatusController extends Controller
 				'status_id' => $status->id,
 				'order_number' => $orderNumber++
 			]);
+
+			if($status->permanent == 'done') {
+				$bug->update([
+					"done_at" => now()
+				]);
+			}
 		}
 
-		if($status->permanent == 'done') {
-			$bug->update([
-				"done_at" => now()
-			]);
-		}
 	}
 }

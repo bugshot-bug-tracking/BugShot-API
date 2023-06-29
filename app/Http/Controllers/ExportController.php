@@ -512,7 +512,7 @@ class ExportController extends Controller
 		}
 
 		// Notify the owner as well
-		$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
 
 		return response()->json([
 			"data" => [
