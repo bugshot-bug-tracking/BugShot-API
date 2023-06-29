@@ -687,56 +687,71 @@ class UserController extends Controller
 	 **/
 	public function checkProject(CheckProjectRequest $request, User $user)
 	{
-		// Check if the user is authorized to view the image of a user
+		// Check if the user is authorized to view the project
 		$this->authorize('checkProject', $user);
 
-		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
+		// Get all projects where the user is a part of or has created
+		$projects = $user->projects->merge($user->createdProjects);
 
-		//Get all Projects that have the same url where the user is involved in (1) / has created (2)
+		// Initialize collections for exact and additional projects
+		$exactProjects = collect();
 		$additionalProjects = collect();
-		//Get all projects where the user is a part of
-		foreach ($user->projects as $tempProject) {
-			//from direct url
-			if ($tempProject->url == $request->url) {
-				$additionalProjects[] = $tempProject;
-			} else {
-				//from all urls in Project
-				foreach ($tempProject->urls() as $url) {
-					if ($url == $request->url) {
-						$additionalProjects[] = $tempProject;
-						break;
-					}
-				}
+
+		// Iterate through each project
+		foreach ($projects as $tempProject) {
+			// Merge the project URL and its associated URLs into a single array
+			$projectUrls = [$tempProject->url, ...$tempProject->urls->pluck('url')->toArray()];
+
+			// Check if the requested URL is an exact match for any project URL
+			if (in_array($request->url, $projectUrls)) {
+				$exactProjects->push($tempProject);
+				$additionalProjects->push($tempProject);
 			}
-		}
-		foreach ($user->createdProjects as $tempProject) {
-			if ($tempProject->url == $request->url) {
-				$additionalProjects[] = $tempProject;
-			} else {
-				foreach ($tempProject->urls() as $url) {
-					if ($url == $request->url) {
-						$additionalProjects[] = $tempProject;
-						break;
-					}
+
+			// Check if the requested URL matches the project URL origin or a wildcard URL pattern
+			foreach ($projectUrls as $url) {
+				if ($this->checkUrlOrigin($request->url, $url) || (str_contains($url, "*") && $this->matchWildcardUrl($request->url, $url))) {
+					$additionalProjects->push($tempProject);
+					break;
 				}
 			}
 		}
 
-		//redundancy check
-		// $returnProjects = collect();
-		// foreach ($additionalProjects as $tempProject) {
-		// 	$exists = false;
-		// 	foreach ($returnProjects as $existProject) {
-		// 		if ($existProject->id == $tempProject->id) {
-		// 			$exists = true;
-		// 		}
-		// 	}
-		// 	if (!$exists) {
-		// 		$returnProjects[] = $tempProject;
-		// 	}
-		// }
+		// Remove duplicate additional projects
+		$uniqueProjects = $additionalProjects->unique('id');
 
-		return ProjectResource::collection($additionalProjects);
+		// Return JSON response with exact and additional projects
+		return response()->json([
+			'data' => [
+				'exact' => ProjectResource::collection($exactProjects),
+				'additional' => ProjectResource::collection($uniqueProjects),
+			],
+		]);
+	}
+
+	// Check if two URLs have the same origin (scheme and host)
+	private function checkUrlOrigin($url1, $url2)
+	{
+		if ($url1 && $url2) {
+			$parsedUrl1 = parse_url($url1);
+			$parsedUrl2 = parse_url($url2);
+			
+			if ($parsedUrl1 && $parsedUrl2) {
+				// Check if both URLs have the same scheme and host
+				return $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
+			}
+		}
+
+    	return false;	
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrl($url, $pattern)
+	{
+		// Replace * with a regular expression pattern that matches any characters
+		$pattern = str_replace('\*', '.*', preg_quote($pattern, '/'));
+		// Use regular expression string matching to determine if the URL matches the pattern
+		return preg_match('/^' . $pattern . '$/', $url);
 	}
 
 	/**
