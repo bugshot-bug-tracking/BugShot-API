@@ -705,7 +705,6 @@ class UserController extends Controller
 			// Check if the requested URL is an exact match for any project URL
 			if (in_array($request->url, $projectUrls)) {
 				$exactProjects->push($tempProject);
-				$additionalProjects->push($tempProject);
 			}
 
 			// Check if the requested URL matches the project URL origin or a wildcard URL pattern
@@ -719,6 +718,9 @@ class UserController extends Controller
 
 		// Remove duplicate additional projects
 		$uniqueProjects = $additionalProjects->unique('id');
+		
+		// Remove exact projects from additional projects
+		$uniqueProjects = $uniqueProjects->diff($exactProjects);
 
 		// Return JSON response with exact and additional projects
 		return response()->json([
