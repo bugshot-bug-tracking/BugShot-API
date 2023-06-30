@@ -731,20 +731,25 @@ class UserController extends Controller
 		]);
 	}
 
-	// Check if two URLs have the same origin (scheme and host)
-	private function checkUrlOrigin($url1, $url2)
+	/**
+	 * Check if two URLs have the same origin (scheme and host)
+	 *
+	 * @param string $url1 The first URL
+	 * @param string $url2 The second URL
+	 * @return bool True if both URLs have the same origin, otherwise false
+	 */	private function checkUrlOrigin($url1, $url2)
 	{
-		if ($url1 && $url2) {
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url1 || !$url2 || str_contains($url1, "*") || str_contains($url2, "*")) {
+			return false; // Return false if any of the conditions is true
+		}
+		
+		// Parse the URLs
 		$parsedUrl1 = parse_url($url1);
 		$parsedUrl2 = parse_url($url2);
 		
-			if ($parsedUrl1 && $parsedUrl2) {
-				// Check if both URLs have the same scheme and host
-				return $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
-			}
-		}
-
-    	return false;	
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
 	}
 
 	// Match a URL against a wildcard URL pattern
