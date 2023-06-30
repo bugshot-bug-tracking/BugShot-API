@@ -702,8 +702,8 @@ class UserController extends Controller
 			// Merge the project URL and its associated URLs into a single array
 			$projectUrls = [$tempProject->url, ...$tempProject->urls->pluck('url')->toArray()];
 
-			// Check if the requested URL is an exact match for any project URL
-			if (in_array($request->url, $projectUrls)) {
+			// Check if the requested URL is an exact match for any project URL ignoring the trailing / from both parts
+			if (in_array(rtrim($request->url, '/'), array_map('rtrim', $projectUrls, array_fill(0, count($projectUrls), '/')))) {
 				$exactProjects->push($tempProject);
 			}
 
@@ -735,9 +735,9 @@ class UserController extends Controller
 	private function checkUrlOrigin($url1, $url2)
 	{
 		if ($url1 && $url2) {
-			$parsedUrl1 = parse_url($url1);
-			$parsedUrl2 = parse_url($url2);
-			
+		$parsedUrl1 = parse_url($url1);
+		$parsedUrl2 = parse_url($url2);
+		
 			if ($parsedUrl1 && $parsedUrl2) {
 				// Check if both URLs have the same scheme and host
 				return $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
@@ -751,9 +751,9 @@ class UserController extends Controller
 	private function matchWildcardUrl($url, $pattern)
 	{
 		// Replace * with a regular expression pattern that matches any characters
-		$pattern = str_replace('\*', '.*', preg_quote($pattern, '/'));
+		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/'), '/'));
 		// Use regular expression string matching to determine if the URL matches the pattern
-		return preg_match('/^' . $pattern . '$/', $url);
+		return preg_match('/^' . $pattern . '\/*$/', $url);
 	}
 
 	/**
