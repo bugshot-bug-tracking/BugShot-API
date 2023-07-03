@@ -7,29 +7,44 @@
 		Neue Kommentare: {{ count($comments) }}<br />
 		Abgeschlossene Tasks: {{ count($doneBugs) }}<br /><br />
 		Untenstehend findest du eine detaillierte Aufstellung der Aktivitäten:<br /><br />
-		<strong>Neue Tasks</strong><br />
-		@foreach ($bugs as $bug)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $bug->ai_id }}
-			@endcomponent
-			{{ $bug->designation }}<br />
-		@endforeach<br /><br />
-		<strong>Neue Kommentare</strong><br />
-		@foreach ($comments as $comment)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $comment->bug->ai_id }}
-			@endcomponent
-			{{ $comment->bug->designation }}<br />
-			{{ $comment->user->first_name . " " . $comment->user->last_name }} schrieb:<br />
-			{{ $comment->content }}<br />
-		@endforeach<br /><br />
-		<strong>Erledigte Tasks</strong><br />
-		@foreach ($doneBugs as $doneBug)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $doneBug->ai_id }}
-			@endcomponent
-			{{ $doneBug->designation }}<br />
-		@endforeach<br /><br />
+		<table>
+			<tr>
+				<td>
+					<strong>Neue Tasks</strong><br />
+					@foreach ($bugs as $bug)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $bug->ai_id])
+							{{ $bug->designation }}<br />
+						@endcomponent
+					@endforeach
+				</td>
+			</tr>
+		</table><br />
+		<table>
+			<tr>
+				<td>
+					<strong>Neue Kommentare</strong><br />
+					@foreach ($comments as $comment)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $comment->bug->ai_id])
+							{{ $comment->bug->designation }}<br />
+							{{ $comment->user->first_name . " " . $comment->user->last_name }} schrieb:<br />
+							{{ $comment->content }}<br />
+						@endcomponent
+					@endforeach<br /><br />
+				</td>
+			</tr>
+		</table><br />
+		<table>
+			<tr>
+				<td>
+					<strong>Erledigte Tasks</strong><br />
+					@foreach ($doneBugs as $doneBug)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $doneBug->ai_id])
+							{{ $doneBug->designation }}<br />
+						@endcomponent
+					@endforeach<br /><br />
+				</td>
+			</tr>
+		</table><br /><br />
     </p>
     @component('mail::button', ['url' => config('app.webpanel_url')])
         Zum Dashboard
