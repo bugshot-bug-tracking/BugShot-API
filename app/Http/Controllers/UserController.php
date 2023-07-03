@@ -771,7 +771,7 @@ class UserController extends Controller
 	private function matchWildcardUrl($url, $pattern)
 	{
 		// Replace * with a regular expression pattern that matches any characters
-		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/*'), '/'));
+		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/'), '/'));
 		// Use regular expression string matching to determine if the URL matches the pattern
 		return preg_match('/^' . $pattern . '\/*$/', $url);
 	}
