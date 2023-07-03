@@ -33,7 +33,9 @@ class BugStoreRequest extends FormRequest
 			"selector" => ["max:65535", "string", "nullable"],
 			"resolution" => ["max:255", "string", "nullable"],
 			"deadline" => ["date", "nullable"],
-			"order_number" => ["integer", "min:0"]
+			"order_number" => ["integer", "min:0"],
+			"time_estimation" => ["integer", "min:0", "nullable"],
+			"time_estimation_type" => ["string", "size:1", "in:w,d,h,m"],
 		];
     }
 }

@@ -26,6 +26,10 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\SettingRequest;
 use App\Http\Requests\UserBillingAddressStoreRequest;
+use App\Models\OrganizationUserRole;
+use App\Models\CompanyUserRole;
+use App\Models\ProjectUserRole;
+use App\Models\BugUserRole;
 
 /**
  * @OA\Tag(
@@ -240,6 +244,11 @@ class UserController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-subscriptions",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-notifications",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -514,6 +523,12 @@ class UserController extends Controller
 
 		// Delete the respective image if present
 		$imageService->delete($user->image);
+
+		// Remove user from all resources he is part of
+		OrganizationUserRole::where("user_id", $user->id)->delete();
+		CompanyUserRole::where("user_id", $user->id)->delete();
+		ProjectUserRole::where("user_id", $user->id)->delete();
+		BugUserRole::where("user_id", $user->id)->delete();
 
 		return response($val, 204);
 	}

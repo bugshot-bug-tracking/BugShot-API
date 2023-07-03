@@ -33,7 +33,7 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -58,7 +58,16 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+			"type" => "TaggedInComment",
+            "data" => [
+				"creator_name" => $this->comment->user->first_name . " " . $this->comment->user->last_name,
+				"organization_id" => $this->comment->bug->project->company->organization->id,
+				"company_id" => $this->comment->bug->project->company->id,
+				"project_id" => $this->comment->bug->project->id,
+				"bug_id" => $this->comment->bug->id,
+				"comment_id" => $this->comment->id,
+				"created_at" => $this->comment->created_at
+			]
         ];
     }
 }

@@ -20,6 +20,7 @@ class InvitationReceived extends Mailable
 	public $locale;
     public $invitation;
     public $entryMessage;
+	public $sender;
 
     /**
      * Create a new message instance.
@@ -30,6 +31,7 @@ class InvitationReceived extends Mailable
     {
         $this->locale = $locale;
         $this->user = $notifiable;
+		$this->sender = $invitation->sender->first_name . " " . $invitation->sender->last_name;
         $this->invitation = $invitation;
         $this->entryMessage = $message;
     }
