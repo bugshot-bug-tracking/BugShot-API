@@ -48,3 +48,11 @@ use App\Mail\VerifyEmailAddress;
 //     $url = 'www.test.de/12345';
 //     return new App\Mail\VerifyEmailAddress($user, $url);
 // });
+
+Route::get('/mailable/project-summary', function () {
+
+	$user = App\Models\User::find(1);
+	$project = App\Models\Project::find("CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC");
+
+    return new App\Mail\ProjectSummary($user, "de", $project);
+});

@@ -1,46 +1,61 @@
 @component('mail::message', ['locale' => $locale])
-    <p>Hallo {{ $user->first_name }},</p>
+    <p>Hello {{ $user->first_name }},</p>
     <p>
-        es gibt Neuigkeiten in einem der Projekte in dem du mitwirkst.<br /><br />
-		<strong>Die letzten Aktivitäten im Projekt {{ $project->designation }}</strong><br />
-		Neue Tasks: {{ count($bugs) }}<br />
-		Neue Kommentare: {{ count($comments) }}<br />
-		Abgeschlossene Tasks: {{ count($doneBugs) }}<br /><br />
-		Untenstehend findest du eine detaillierte Aufstellung der Aktivitäten:<br /><br />
-		<strong>Neue Tasks</strong><br />
-		@foreach ($bugs as $bug)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $bug->ai_id }}
-			@endcomponent
-			{{ $bug->designation }}<br />
-		@endforeach<br /><br />
-		<strong>Neue Kommentare</strong><br />
-		@foreach ($comments as $comment)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $comment->bug->ai_id }}
-			@endcomponent
-			{{ $comment->bug->designation }}<br />
-			{{ $comment->user->first_name . " " . $comment->user->last_name }} schrieb:<br />
-			{{ $comment->content }}<br />
-		@endforeach<br /><br />
-		<strong>Erledigte Tasks</strong><br />
-		@foreach ($doneBugs as $doneBug)
-			@component('mail::button', ['url' => config('app.webpanel_url')])
-				#{{ $doneBug->ai_id }}
-			@endcomponent
-			{{ $doneBug->designation }}<br />
-		@endforeach<br /><br />
+        There is news in one of the projects you are involved in.<br /><br />
+		<strong>The latest activities in the project {{ $project->designation }}</strong><br />
+		New tasks: {{ count($bugs) }}<br />
+		New comments: {{ count($comments) }}<br />
+		Completed tasks: {{ count($doneBugs) }}<br /><br />
+		Below you will find a detailed list of activities:<br /><br />
+		<table>
+			<tr>
+				<td>
+					<strong>New tasks</strong><br />
+					@foreach ($bugs as $bug)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $bug->ai_id])
+							{{ $bug->designation }}<br />
+						@endcomponent
+					@endforeach
+				</td>
+			</tr>
+		</table><br />
+		<table>
+			<tr>
+				<td>
+					<strong>New comments</strong><br />
+					@foreach ($comments as $comment)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $comment->bug->ai_id])
+							{{ $comment->bug->designation }}<br />
+							{{ $comment->user->first_name . " " . $comment->user->last_name }} wrote:<br />
+							{{ $comment->content }}<br />
+						@endcomponent
+					@endforeach<br /><br />
+				</td>
+			</tr>
+		</table><br />
+		<table>
+			<tr>
+				<td>
+					<strong>Completed tasks</strong><br />
+					@foreach ($doneBugs as $doneBug)
+						@component('mail::listitem', ['url' => config('app.webpanel_url'), 'id' => $doneBug->ai_id])
+							{{ $doneBug->designation }}<br />
+						@endcomponent
+					@endforeach<br /><br />
+				</td>
+			</tr>
+		</table><br /><br />
     </p>
     @component('mail::button', ['url' => config('app.webpanel_url')])
-        Zum Dashboard
+        Go to Dashboard
     @endcomponent
     @component('mail::paragraph')
-        Falls das nicht klappt, kannst Du auch einfach die folgende URL in deinen Browser kopieren:
+	If that doesn't work, you can also just copy the following URL into your browser:
     @endcomponent
     <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a><br /><br />
     <p>
-        Fehlerfreie Grüße,
+        Error-free Greetings,
         <br />
-        dein {{ config('app.projectname') }} Team
+        your {{ config('app.projectname') }} team
     </p>
 @endcomponent

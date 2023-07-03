@@ -50,18 +50,6 @@ class ProjectSummary extends Mailable
     public function build()
     {
 		$this->comments->map(function(object $item, int $key) {
-			// $readableContent = preg_match_all(
-			// 	'/(?:<([0-9]+)\$(.*?)>)/',
-			// 	$item->content,
-			// 	$matches
-			// );
-
-			// foreach($matches[0] as $key=>$match) {
-			// 	$readableContent = str_replace($match, substr_replace($matches[1][$key], "", -1), $readableContent);
-
-			// }
-			// dd($readableContent);
-
 			$this->readableContent = $item->content;
 
 			preg_match_all(
