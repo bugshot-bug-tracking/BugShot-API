@@ -798,7 +798,6 @@ class UserController extends Controller
 		
 		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
 		return $parsedUrl1 && $parsedUrl2 && $this->matchWildcardUrl($parsedUrl1['host'], $parsedUrl2["host"]);
-		}
 	}
 
 	/**
