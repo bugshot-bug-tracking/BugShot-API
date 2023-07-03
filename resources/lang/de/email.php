@@ -26,5 +26,6 @@ return [
 	'subscription-started' => 'Dein neues Abonnement',
 	'implementation-approval-form-received' => 'Du hast ein Umsetzungsfreigabe Formular erhalten',
 	'approval-report-received' => 'Du hast einen Umsetzungsbericht erhalten',
-	'comment-created' => 'Neuer Kommentar'
+	'comment-created' => 'Neuer Kommentar',
+	'project-summary' => 'Projekt Zusammenfassung'
 ];
