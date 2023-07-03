@@ -701,17 +701,32 @@ class UserController extends Controller
 		foreach ($projects as $tempProject) {
 			// Merge the project URL and its associated URLs into a single array
 			$projectUrls = [$tempProject->url, ...$tempProject->urls->pluck('url')->toArray()];
-
-			// Check if the requested URL is an exact match for any project URL ignoring the trailing / from both parts
-			if (in_array(rtrim($request->url, '/'), array_map('rtrim', $projectUrls, array_fill(0, count($projectUrls), '/')))) {
-				$exactProjects->push($tempProject);
-			}
-
+			
 			// Check if the requested URL matches the project URL origin or a wildcard URL pattern
 			foreach ($projectUrls as $url) {
-				if ($this->checkUrlOrigin($request->url, $url) || (str_contains($url, "*") && $this->matchWildcardUrl($request->url, $url))) {
-					$additionalProjects->push($tempProject);
-					break;
+				// Check if the URL contains a wildcard character *
+				if(str_contains($url, "*")){
+					// If the URL matches the wildcard URL pattern, add the project to the additionalProjects collection
+					if($this->matchWildcardUrl($request->url, $url) || $this->matchWildcardUrlOrigin($request->url, $url) )
+					{
+						$additionalProjects->push($tempProject);
+						break;
+					}
+				}
+				else{
+					// If the URL is an exact match, add the project to the exactProjects collection
+					if(rtrim($request->url, '/') === rtrim($url, '/'))
+					{
+						$exactProjects->push($tempProject);
+						break;
+					}
+					else{
+						// If the URL origin matches the project url origin, add the project to the additionalProjects collection
+						if($this->checkUrlOrigin($request->url, $url)){
+							$additionalProjects->push($tempProject);
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -740,7 +755,7 @@ class UserController extends Controller
 	 */	private function checkUrlOrigin($url1, $url2)
 	{
 		// Check if the URLs are not empty or if they contain wildcard characters
-		if (!$url1 || !$url2 || str_contains($url1, "*") || str_contains($url2, "*")) {
+		if (!$url1 || !$url2) {
 			return false; // Return false if any of the conditions is true
 		}
 		
@@ -756,9 +771,34 @@ class UserController extends Controller
 	private function matchWildcardUrl($url, $pattern)
 	{
 		// Replace * with a regular expression pattern that matches any characters
-		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/'), '/'));
+		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/*'), '/'));
 		// Use regular expression string matching to determine if the URL matches the pattern
 		return preg_match('/^' . $pattern . '\/*$/', $url);
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrlOrigin($url, $pattern)
+	{
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url || !$pattern) {
+			return false; // Return false if any of the conditions is true
+		}
+
+		$url_with_protocol = '';
+		if(str_starts_with($pattern, "*")){
+			$url_with_protocol = str_replace("*://", "http://", $pattern);
+		}
+		else{
+			$url_with_protocol = $pattern;
+		}
+		
+		// Parse the URLs
+		$parsedUrl1 = parse_url($url);
+		$parsedUrl2 = parse_url($url_with_protocol);
+		
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $this->matchWildcardUrl($parsedUrl1['host'], $parsedUrl2["host"]);
+		}
 	}
 
 	/**
