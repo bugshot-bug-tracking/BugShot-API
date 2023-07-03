@@ -31,8 +31,8 @@ class SendDailyProjectSummary extends Command
      */
     public function handle()
     {
-		// $projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
-		$projects = Project::all(); // ONLY DEV
+		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
+		// $projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {
 			$project->creator->notify((new ProjectSummaryNotification($project))->locale(GetUserLocaleService::getLocale($project->creator)));
 		}
