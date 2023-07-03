@@ -25,7 +25,7 @@ class UrlStoreRequest extends FormRequest
     public function rules()
     {
 		return [
-			"url" => ["required", "string", "min:1", "max:255"]
+			"url" => ["required", "string", "min:1", "max:65535"]
 		];
     }
 }
