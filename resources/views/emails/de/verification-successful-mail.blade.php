@@ -16,17 +16,14 @@
     @endcomponent
     <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a>
     <br /><br />
-
     <p>
-        Hier findest du alle Browser-Extensions und mehr: {{ config('app.webpanel_url') . '/user/settings' }}
-
-        Hier findest du hilfreiche Dokumente: https://www.bugshot.de/hilfreiche-dokumente
-
+        Hier findest du alle Browser-Extensions und mehr:  <a href="{{ config('app.webpanel_url') . '/user/settings' }}">{{ config('app.webpanel_url') . '/user/settings' }}</a>
+        <br /><br />
+        Hier findest du hilfreiche Dokumente: <a href="https://www.bugshot.de/hilfreiche-dokumente">https://www.bugshot.de/hilfreiche-dokumente</a>
+        <br /><br />
         Du hast Fragen, Feedback, Wünsche oder einen Bug gefunden? Schreib uns gerne an hello@bugshot.de.
     </p>
-
     <br /><br />
-
     <p>
         Bugfreie Grüße schickt dir,
         <br />
