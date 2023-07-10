@@ -29,7 +29,7 @@ class UrlUpdateRequest extends FormRequest
             return [];
         } else {
             return [
-                "url" => ["required", "string", "min:1", "max:255"]
+                "url" => ["required", "string", "min:1", "max:65535"]
             ];
         }
     }

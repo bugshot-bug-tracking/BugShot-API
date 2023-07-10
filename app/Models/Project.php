@@ -193,7 +193,7 @@ class Project extends Model
      */
 	public function urls()
 	{
-		return $this->morphMany(Url::class, 'urlable');
+		return $this->morphMany(Url::class, 'urlable')->orderBy('created_at', 'asc');
 	}
 
 	/**
