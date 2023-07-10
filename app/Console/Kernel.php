@@ -35,8 +35,11 @@ class Kernel extends ConsoleKernel
 				Log::info("Daemon started successfully.");
 			}); // Restarts the job daemon
 
+		Log::info("Archiving bugs.");
         $schedule->command('bugs:archive')->hourly();
+		Log::info("Clearing auths bugs.");
         $schedule->command('auth:clear-resets')->daily();
+		Log::info("Retry failed jobs.");
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
     }
 
