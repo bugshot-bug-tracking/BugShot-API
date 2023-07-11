@@ -529,7 +529,7 @@ class UserController extends Controller
 		CompanyUserRole::where("user_id", $user->id)->delete();
 		ProjectUserRole::where("user_id", $user->id)->delete();
 		BugUserRole::where("user_id", $user->id)->delete();
-
+		// TODO: Cancel subscription at next period
 		return response($val, 204);
 	}
 
