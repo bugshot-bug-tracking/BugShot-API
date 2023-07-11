@@ -26,7 +26,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 		Log::info("Running scheduler.");
+        Log::info("Send project summary");
 		$schedule->command('projects:send-summary')->daily();
+        Log::info("Restart daemon");
 		$schedule->exec('php artisan queue:restart')
 			->daily()
 			->then(function () use ($schedule) {
