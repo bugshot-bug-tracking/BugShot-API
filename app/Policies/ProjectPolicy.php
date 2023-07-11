@@ -271,7 +271,7 @@ class ProjectPolicy
    */
   public function moveBugs(User $user, Project $project)
   {
-    if(!$user->licenseActive()){return false;}
+    // if(!$user->licenseActive()){return false;}
 
     // Check if user is the manager or owner of the project
     if ($user->isPriviliegated('projects', $project)) {
