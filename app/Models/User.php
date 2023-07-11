@@ -332,6 +332,10 @@ class User extends Authenticatable implements MustVerifyEmail
 				return true;
 				break;
 
+			case 0:
+				return true;
+				break;
+
 			default:
 				return false;
 				break;
