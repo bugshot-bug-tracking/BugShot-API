@@ -26,7 +26,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 		Log::info("Running scheduler.");
+        Log::info("Send project summary");
 		$schedule->command('projects:send-summary')->daily();
+        Log::info("Restart daemon");
 		$schedule->exec('php artisan queue:restart')
 			->daily()
 			->then(function () use ($schedule) {
@@ -35,8 +37,11 @@ class Kernel extends ConsoleKernel
 				Log::info("Daemon started successfully.");
 			}); // Restarts the job daemon
 
+		Log::info("Archiving bugs.");
         $schedule->command('bugs:archive')->hourly();
+		Log::info("Clearing auths bugs.");
         $schedule->command('auth:clear-resets')->daily();
+		Log::info("Retry failed jobs.");
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
     }
 

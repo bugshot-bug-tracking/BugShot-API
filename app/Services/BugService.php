@@ -68,6 +68,7 @@ class BugService
 			"description" => $request->description,
 			"url" => $request->url,
 			"time_estimation" => $request->time_estimation,
+			"time_estimation_type" => $request->time_estimation_type ?? 'm',
 			"approval_status_id" => null,
 			"operating_system" => $request->operating_system,
 			"browser" => $request->browser,

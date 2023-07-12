@@ -529,7 +529,7 @@ class UserController extends Controller
 		CompanyUserRole::where("user_id", $user->id)->delete();
 		ProjectUserRole::where("user_id", $user->id)->delete();
 		BugUserRole::where("user_id", $user->id)->delete();
-
+		// TODO: Cancel subscription at next period
 		return response($val, 204);
 	}
 
@@ -687,56 +687,117 @@ class UserController extends Controller
 	 **/
 	public function checkProject(CheckProjectRequest $request, User $user)
 	{
-		// Check if the user is authorized to view the image of a user
+		// Check if the user is authorized to view the project
 		$this->authorize('checkProject', $user);
 
-		// $userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
+		// Get all projects where the user is a part of or has created
+		$projects = $user->projects->merge($user->createdProjects);
 
-		//Get all Projects that have the same url where the user is involved in (1) / has created (2)
+		// Initialize collections for exact and additional projects
+		$exactProjects = collect();
 		$additionalProjects = collect();
-		//Get all projects where the user is a part of
-		foreach ($user->projects as $tempProject) {
-			//from direct url
-			if ($tempProject->url == $request->url) {
-				$additionalProjects[] = $tempProject;
-			} else {
-				//from all urls in Project
-				foreach ($tempProject->urls() as $url) {
-					if ($url == $request->url) {
-						$additionalProjects[] = $tempProject;
+
+		// Iterate through each project
+		foreach ($projects as $tempProject) {
+			// Merge the project URL and its associated URLs into a single array
+			$projectUrls = [$tempProject->url, ...$tempProject->urls->pluck('url')->toArray()];
+			
+			// Check if the requested URL matches the project URL origin or a wildcard URL pattern
+			foreach ($projectUrls as $url) {
+				// Check if the URL contains a wildcard character *
+				if(str_contains($url, "*")){
+					// If the URL matches the wildcard URL pattern, add the project to the additionalProjects collection
+					if($this->matchWildcardUrl($request->url, $url) || $this->matchWildcardUrlOrigin($request->url, $url) )
+					{
+						$additionalProjects->push($tempProject);
 						break;
 					}
 				}
-			}
-		}
-		foreach ($user->createdProjects as $tempProject) {
-			if ($tempProject->url == $request->url) {
-				$additionalProjects[] = $tempProject;
-			} else {
-				foreach ($tempProject->urls() as $url) {
-					if ($url == $request->url) {
-						$additionalProjects[] = $tempProject;
+				else{
+					// If the URL is an exact match, add the project to the exactProjects collection
+					if(rtrim($request->url, '/') === rtrim($url, '/'))
+					{
+						$exactProjects->push($tempProject);
 						break;
+					}
+					else{
+						// If the URL origin matches the project url origin, add the project to the additionalProjects collection
+						if($this->checkUrlOrigin($request->url, $url)){
+							$additionalProjects->push($tempProject);
+							break;
+						}
 					}
 				}
 			}
 		}
 
-		//redundancy check
-		// $returnProjects = collect();
-		// foreach ($additionalProjects as $tempProject) {
-		// 	$exists = false;
-		// 	foreach ($returnProjects as $existProject) {
-		// 		if ($existProject->id == $tempProject->id) {
-		// 			$exists = true;
-		// 		}
-		// 	}
-		// 	if (!$exists) {
-		// 		$returnProjects[] = $tempProject;
-		// 	}
-		// }
+		// Remove duplicate additional projects
+		$uniqueProjects = $additionalProjects->unique('id');
+		
+		// Remove exact projects from additional projects
+		$uniqueProjects = $uniqueProjects->diff($exactProjects);
 
-		return ProjectResource::collection($additionalProjects);
+		// Return JSON response with exact and additional projects
+		return response()->json([
+			'data' => [
+				'exact' => ProjectResource::collection($exactProjects),
+				'additional' => ProjectResource::collection($uniqueProjects),
+			],
+		]);
+	}
+
+	/**
+	 * Check if two URLs have the same origin (scheme and host)
+	 *
+	 * @param string $url1 The first URL
+	 * @param string $url2 The second URL
+	 * @return bool True if both URLs have the same origin, otherwise false
+	 */	private function checkUrlOrigin($url1, $url2)
+	{
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url1 || !$url2) {
+			return false; // Return false if any of the conditions is true
+		}
+		
+		// Parse the URLs
+		$parsedUrl1 = parse_url($url1);
+		$parsedUrl2 = parse_url($url2);
+		
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrl($url, $pattern)
+	{
+		// Replace * with a regular expression pattern that matches any characters
+		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/'), '/'));
+		// Use regular expression string matching to determine if the URL matches the pattern
+		return preg_match('/^' . $pattern . '\/*$/', $url);
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrlOrigin($url, $pattern)
+	{
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url || !$pattern) {
+			return false; // Return false if any of the conditions is true
+		}
+
+		$url_with_protocol = '';
+		if(str_starts_with($pattern, "*")){
+			$url_with_protocol = str_replace("*://", "http://", $pattern);
+		}
+		else{
+			$url_with_protocol = $pattern;
+		}
+		
+		// Parse the URLs
+		$parsedUrl1 = parse_url($url);
+		$parsedUrl2 = parse_url($url_with_protocol);
+		
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $this->matchWildcardUrl($parsedUrl1['host'], $parsedUrl2["host"]);
 	}
 
 	/**

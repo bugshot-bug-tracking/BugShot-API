@@ -116,6 +116,7 @@ class SearchController extends Controller
 
     public function searchBugs($searchString) {
 
+		// TODO: Extend it so the user also returns bugs of projects in whiches company or organization he is manager/owner
         $projectIds = Auth::user()->projects()->select("id");
         $searchResults = Bug::whereIn("project_id", $projectIds)
             ->where(function($query) use ($searchString) {
@@ -132,10 +133,25 @@ class SearchController extends Controller
     public function searchProjects($searchString) {
 
         $searchResults = Project::search($searchString)
-        ->query(function ($query) {
-            $query->join('project_user_roles', 'projects.id', 'project_user_roles.project_id')
-                ->where('project_user_roles.user_id', '=', Auth::id());
-        })
+		->query(function ($query) {
+			// Find projects where the user is directly associated
+			$query->whereHas('users', function ($subQuery) {
+				$subQuery->where('user_id', Auth::id());
+			})
+			// Find projects where the user has manager or owner role in the parent company or organization
+			->orWhereHas('company', function ($subQuery) {
+				$subQuery->whereHas('users', function ($subSubQuery) {
+					$subSubQuery->where('user_id', Auth::id())
+						->where('role_id', '<' , 2);
+				})
+				->orWhereHas('organization', function ($subQuery) {
+					$subQuery->whereHas('users', function ($subSubQuery) {
+						$subSubQuery->where('user_id', Auth::id())
+							->where('role_id', '<' , 2);
+					});
+				});
+			});
+		})
         ->paginate(3);
 
         return new ProjectSearchCollection($searchResults);
@@ -144,10 +160,19 @@ class SearchController extends Controller
     public function searchCompanies($searchString) {
 
         $searchResults = Company::search($searchString)
-        ->query(function ($query) {
-            $query->join('company_user_roles', 'companies.id', 'company_user_roles.company_id')
-                ->where('company_user_roles.user_id', '=', Auth::id());
-        })
+		->query(function ($query) {
+			// Find projects where the user is directly associated
+			$query->whereHas('users', function ($subQuery) {
+				$subQuery->where('user_id', Auth::id());
+			})
+			// Find projects where the user has manager or owner role in the organization
+			->orWhereHas('organization', function ($subQuery) {
+				$subQuery->whereHas('users', function ($subSubQuery) {
+					$subSubQuery->where('user_id', Auth::id())
+						->where('role_id', '<' , 2);
+				});
+			});
+		})
         ->paginate(3);
 
         return new CompanySearchCollection($searchResults);

@@ -2092,7 +2092,8 @@ class ProjectController extends Controller
 
 				$bug->update([
 					"project_id" => $targetProject->id,
-					"status_id" => $targetStatusId
+					"status_id" => $targetStatusId,
+					"ai_id" => 	$targetProject->bugs()->max("ai_id") + 1
 				]);
 			}
 		}
