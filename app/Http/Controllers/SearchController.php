@@ -124,7 +124,7 @@ class SearchController extends Controller
 				->orWhereHas('project', function ($subQuery) {
 					$subQuery->whereHas('users', function ($subSubQuery) {
 						$subSubQuery->where('user_id', Auth::id())
-							->where('role_id', '<' , 2);
+							->where('role_id', '<' , 999); // Basically just part of the project
 					})
 					->orWhere('user_id', Auth::id())
 					->orWhereHas('company', function ($subQuery) {
