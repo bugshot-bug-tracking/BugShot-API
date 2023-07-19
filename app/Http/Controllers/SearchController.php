@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Query\Builder;
 
 // Models
 use App\Models\Company;
@@ -116,64 +117,96 @@ class SearchController extends Controller
 
     public function searchBugs($searchString) {
 
-		// TODO: Extend it so the user also returns bugs of projects in whiches company or organization he is manager/owner
-        $projectIds = Auth::user()->projects()->select("id");
-        $searchResults = Bug::whereIn("project_id", $projectIds)
-            ->where(function($query) use ($searchString) {
-                $query->where("bugs.id", "LIKE", "%" . $searchString . "%")
-                ->orWhere("bugs.designation", "LIKE", "%" . $searchString . "%")
-                ->orWhere("bugs.description", "LIKE", "%" . $searchString . "%")
-                ->orWhere("bugs.url", "LIKE", "%" . $searchString . "%");
-            })
-            ->paginate(3);
+		$searchResults = Bug::select('id', 'project_id', 'designation', 'description', 'url')->where(
+			function ($query) {
+				$query->whereIn('id', Auth::user()->bugs()->select('id'))
+				->orWhere('user_id', Auth::id())
+				->orWhereHas('project', function ($subQuery) {
+					$subQuery->whereHas('users', function ($subSubQuery) {
+						$subSubQuery->where('user_id', Auth::id())
+							->where('role_id', '<' , 999); // Basically just part of the project
+					})
+					->orWhere('user_id', Auth::id())
+					->orWhereHas('company', function ($subQuery) {
+						$subQuery->whereHas('users', function ($subSubQuery) {
+							$subSubQuery->where('user_id', Auth::id())
+								->where('role_id', '<' , 2);
+						})
+						->orWhere('user_id', Auth::id())
+						->orWhereHas('organization', function ($subQuery) {
+							$subQuery->whereHas('users', function ($subSubQuery) {
+								$subSubQuery->where('user_id', Auth::id())
+									->where('role_id', '<' , 2);
+							})
+							->orWhere('user_id', Auth::id());
+						});
+					});
+				});
+			}
+		)
+		->where(function($query) use ($searchString) {
+			$query->where("bugs.id", "LIKE", "%" . $searchString . "%")
+			->orWhere("bugs.designation", "LIKE", "%" . $searchString . "%")
+			->orWhere("bugs.description", "LIKE", "%" . $searchString . "%")
+			->orWhere("bugs.url", "LIKE", "%" . $searchString . "%");
+		})
+		->paginate(3);
 
 		return new BugSearchCollection($searchResults);
     }
 
     public function searchProjects($searchString) {
 
-        $searchResults = Project::search($searchString)
-		->query(function ($query) {
-			// Find projects where the user is directly associated
-			$query->whereHas('users', function ($subQuery) {
-				$subQuery->where('user_id', Auth::id());
-			})
-			// Find projects where the user has manager or owner role in the parent company or organization
-			->orWhereHas('company', function ($subQuery) {
-				$subQuery->whereHas('users', function ($subSubQuery) {
-					$subSubQuery->where('user_id', Auth::id())
-						->where('role_id', '<' , 2);
-				})
-				->orWhereHas('organization', function ($subQuery) {
+		$searchResults = Project::select('id', 'designation', 'url', 'company_id')->where(
+			function ($query) {
+				$query->whereIn('id', Auth::user()->projects()->select('id'))
+				->orWhere('user_id', Auth::id())
+				->orWhereHas('company', function ($subQuery) {
 					$subQuery->whereHas('users', function ($subSubQuery) {
 						$subSubQuery->where('user_id', Auth::id())
 							->where('role_id', '<' , 2);
+					})
+					->orWhere('user_id', Auth::id())
+					->orWhereHas('organization', function ($subQuery) {
+						$subQuery->whereHas('users', function ($subSubQuery) {
+							$subSubQuery->where('user_id', Auth::id())
+								->where('role_id', '<' , 2);
+						})
+						->orWhere('user_id', Auth::id());
 					});
 				});
-			});
+			}
+		)
+		->where(function($query) use ($searchString) {
+			$query->where("projects.id", "LIKE", "%" . $searchString . "%")
+			->orWhere("projects.designation", "LIKE", "%" . $searchString . "%")
+			->orWhere("projects.url", "LIKE", "%" . $searchString . "%");
 		})
-        ->paginate(3);
+		->paginate(3);
 
         return new ProjectSearchCollection($searchResults);
     }
 
     public function searchCompanies($searchString) {
 
-        $searchResults = Company::search($searchString)
-		->query(function ($query) {
-			// Find projects where the user is directly associated
-			$query->whereHas('users', function ($subQuery) {
-				$subQuery->where('user_id', Auth::id());
-			})
-			// Find projects where the user has manager or owner role in the organization
-			->orWhereHas('organization', function ($subQuery) {
-				$subQuery->whereHas('users', function ($subSubQuery) {
-					$subSubQuery->where('user_id', Auth::id())
-						->where('role_id', '<' , 2);
+		$searchResults = Company::select('id', 'designation', 'organization_id')->where(
+			function ($query) {
+				$query->whereIn('id', Auth::user()->companies()->select('id'))
+				->orWhere('user_id', Auth::id())
+				->orWhereHas('organization', function ($subQuery) {
+					$subQuery->whereHas('users', function ($subSubQuery) {
+						$subSubQuery->where('user_id', Auth::id())
+							->where('role_id', '<' , 2);
+					})
+					->orWhere('user_id', Auth::id());
 				});
-			});
+			}
+		)
+		->where(function($query) use ($searchString) {
+			$query->where("companies.id", "LIKE", "%" . $searchString . "%")
+			->orWhere("companies.designation", "LIKE", "%" . $searchString . "%");
 		})
-        ->paginate(3);
+		->paginate(3);
 
         return new CompanySearchCollection($searchResults);
     }
