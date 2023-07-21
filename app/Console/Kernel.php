@@ -25,19 +25,24 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-		Log::info("Running scheduler.");
-		$schedule->command('bugs:archive')->hourly();
+		Log::info("Running scheduler ---");
+		Log::info("Restarting queue");
 		$schedule->exec('php artisan queue:restart')
 			->daily()
 			->then(function () use ($schedule) {
-				Log::info("Queue restarted. Starting daemon now.");
+				Log::info("Queue restarted. Starting daemon now");
 				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
-				Log::info("Daemon started successfully.");
+				Log::info("Daemon started successfully");
 			}); // Restarts the job daemon
-
-        $schedule->command('bugs:archive')->hourly();
+		Log::info("Archiving bugs");
+		$schedule->command('bugs:archive')->hourly();
+		Log::info("Sending project summaries");
+        $schedule->command('projects:send-summary')->dailyAt('06:30');
+		Log::info("Clearing auths");
         $schedule->command('auth:clear-resets')->daily();
+		Log::info("Retrying failed jobs");
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
+		Log::info("Scheduler finished running ---");
     }
 
     /**
