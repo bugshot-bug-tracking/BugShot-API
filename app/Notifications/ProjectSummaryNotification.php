@@ -13,16 +13,22 @@ class ProjectSummaryNotification extends Notification
 {
     use Queueable;
 
-	public $project;
+    public $comments;
+    public $bugs;
+	public $doneBugs;
+    public $project;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($project)
+    public function __construct($project, $comments, $doneBugs, $bugs)
     {
         $this->project = $project;
+		$this->comments = $comments;
+		$this->doneBugs = $doneBugs;
+		$this->bugs = $bugs;
     }
 
     /**
@@ -44,7 +50,7 @@ class ProjectSummaryNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new ProjectSummaryMailable($notifiable, $this->locale, $this->project))
+        return (new ProjectSummaryMailable($notifiable, $this->locale, $this->project, $this->comments, $this->doneBugs, $this->bugs))
         ->subject('BugShot - ' . __('email.project-summary', [], $this->locale))
         ->to($notifiable->email);
     }
@@ -57,6 +63,8 @@ class ProjectSummaryNotification extends Notification
      */
     public function toArray($notifiable)
     {
-		//
+        return [
+            //
+        ];
     }
 }

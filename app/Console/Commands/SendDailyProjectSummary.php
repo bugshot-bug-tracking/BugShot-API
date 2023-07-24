@@ -34,7 +34,15 @@ class SendDailyProjectSummary extends Command
 		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
 		// $projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {
-			$project->creator->notify((new ProjectSummaryNotification($project))->locale(GetUserLocaleService::getLocale($project->creator)));
+
+			$comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+			$doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
+			$bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
+
+			// Check if at least one entity is not empty
+			if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
+				$project->creator->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($project->creator)));
+			}
 		}
     }
 }

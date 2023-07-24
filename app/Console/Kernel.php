@@ -37,10 +37,10 @@ class Kernel extends ConsoleKernel
 		Log::info("Archiving bugs");
 		$schedule->command('bugs:archive')->hourly();
 		Log::info("Sending project summaries");
-        $schedule->command('projects:send-summary')->dailyAt('06:30');
+        $schedule->command('projects:send-summary')->dailyAt('06:00');
 		Log::info("Clearing auths");
         $schedule->command('auth:clear-resets')->daily();
-		Log::info("Retrying failed jobs");
+		Log::info("Retrying");
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
 		Log::info("Scheduler finished running ---");
     }
