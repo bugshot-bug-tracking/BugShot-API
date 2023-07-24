@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Bug;
 use App\Models\Project;
 use App\Models\Comment;
+use App\Models\Company;
 use App\Services\GetUserLocaleService;
 
 class TaggedInComment extends Mailable
@@ -25,6 +26,7 @@ class TaggedInComment extends Mailable
     public $bug;
     public $project;
     public $readableContent;
+	public $projectBaseUrl;
 
     /**
      * Create a new message instance.
@@ -39,6 +41,9 @@ class TaggedInComment extends Mailable
         $this->commentCreator = User::find($comment->user_id);
         $this->bug = Bug::find($comment->bug_id);
         $this->project = Project::find($this->bug->project_id);
+		$companyId = $this->project->company->id;
+		$organizationId = Company::find($companyId)->organization->id;
+		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $organizationId . "/company/" . $companyId . "/project/" . $this->project->id;
     }
 
     /**
