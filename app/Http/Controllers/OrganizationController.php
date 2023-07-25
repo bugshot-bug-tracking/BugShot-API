@@ -227,7 +227,7 @@ class OrganizationController extends Controller
 			$organizations = Organization::create([
 				"id" => $this->setId($request),
 				"user_id" => Auth::user()->id,
-				"designation" => __('data.my-organization', [], GetUserLocaleService::getLocale(Auth::user())) . " (" . Auth::user()->first_name . " " . Auth::user()->last_name . ")"
+				"designation" => Auth::user()->first_name . " " . Auth::user()->last_name . "'s " . __('data.organization', [], GetUserLocaleService::getLocale(Auth::user()))
 			]);
 
 			// Also add the owner to the organization user role table in order to be able to store the subscription
