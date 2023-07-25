@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Project;
 use App\Services\GetUserLocaleService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
 use App\Notifications\ProjectSummaryNotification;
 
@@ -31,6 +32,7 @@ class SendDailyProjectSummary extends Command
      */
     public function handle()
     {
+		Log::info("Retrieving updated projects");
 		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
 		// $projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {

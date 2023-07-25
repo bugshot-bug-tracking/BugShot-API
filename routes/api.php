@@ -58,6 +58,9 @@ use Illuminate\Support\Facades\Broadcast;
 Route::get('/scheduler/run', function() {
 	Artisan::call('schedule:run');
 });
+Route::middleware('throttle:1,1440')->get('/projects/send-summary', function() {
+	Artisan::call('projects:send-summary');
+});
 
 /*
 |--------------------------------------------------------------------------
