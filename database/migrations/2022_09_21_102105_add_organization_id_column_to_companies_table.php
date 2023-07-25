@@ -3,13 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\User;
-use App\Models\Company;
-use App\Models\CompanyUserRole;
-use Illuminate\Support\Str;
-use App\Models\Organization;
-use App\Services\GetUserLocaleService;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -26,36 +19,6 @@ return new class extends Migration
                 $table->foreign('organization_id')->references('id')->on('organizations')->onDelete('set null');
             });
         });
-
-        // Only execute once for the existing live data
-        $users = User::all();
-        foreach ($users as $user) {
-
-            $id = (string) Str::uuid();
-            $organization = Organization::create([
-                "id" => $id,
-                "user_id" => $user->id,
-                "designation" => $user->first_name . " " . $user->last_name . "'s " . __('data.organization', [], GetUserLocaleService::getLocale($user))
-            ]);
-
-            $companies = $user->createdCompanies;
-            if ($companies->isNotEmpty()) {
-                foreach ($companies as $company) {
-                    $company->update([
-                        "organization_id" => $organization->id
-                    ]);
-
-                    $companyUserRole = CompanyUserRole::where("user_id", $company->creator->id)
-                        ->where("company_id", $company->id)->first();
-                    if ($companyUserRole) {
-                        DB::table('company_user_roles')
-                            ->where("user_id", $company->creator->id)
-                            ->where("company_id", $company->id)
-                            ->delete();
-                    }
-                }
-            }
-        }
     }
 
     /**
