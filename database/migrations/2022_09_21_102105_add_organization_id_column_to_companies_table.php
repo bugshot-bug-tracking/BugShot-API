@@ -35,7 +35,7 @@ return new class extends Migration
             $organization = Organization::create([
                 "id" => $id,
                 "user_id" => $user->id,
-                "designation" => __('data.my-organization', [], GetUserLocaleService::getLocale($user)) . " (" . $user->first_name . " " . $user->last_name . ")"
+                "designation" => $user->first_name . " " . $user->last_name . "'s " . __('data.organization', [], GetUserLocaleService::getLocale($user))
             ]);
 
             $companies = $user->createdCompanies;
