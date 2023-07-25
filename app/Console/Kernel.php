@@ -37,8 +37,8 @@ class Kernel extends ConsoleKernel
 			}); // Restarts the job daemon
 		Log::info("Archiving bugs");
 		$schedule->command('bugs:archive')->hourly();
-		Log::info("Sending project summaries");
-        $schedule->command('projects:send-summary')->dailyAt('06:00');
+		// Log::info("Sending project summaries");
+        // $schedule->command('projects:send-summary')->dailyAt('06:00');
 		Log::info("Clearing auths");
         $schedule->command('auth:clear-resets')->daily();
 		Log::info("Retrying");
