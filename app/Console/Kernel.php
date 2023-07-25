@@ -14,7 +14,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\ArchiveBugs::class,
+        Commands\SendDailyProjectSummary::class
     ];
 
     /**
