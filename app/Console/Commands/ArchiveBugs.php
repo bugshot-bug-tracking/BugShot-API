@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Bug;
 
 class ArchiveBugs extends Command
@@ -30,6 +31,7 @@ class ArchiveBugs extends Command
      */
     public function handle()
     {
+		Log::info("Retrieving bugs to archive");
 		$bugs = Bug::where("archived_at", NULL)
 					->whereNot("deleted_at", NULL)
 					->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
