@@ -1365,7 +1365,7 @@ class ProjectController extends Controller
 		$this->authorize('viewAny', [Bug::class, $project]);
 
 		// Get the bugs that belong to the given url
-		$bugs = $project->bugs()->where("url", "=", $request->url)->has('screenshots.markers')->get();
+		$bugs = $project->bugs()->where("url", "=", $request->url)->whereNull('done_at')->has('screenshots.markers')->get();
 
 		return ProjectMarkerResource::collection($bugs);
 	}
