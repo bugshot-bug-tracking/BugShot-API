@@ -28,7 +28,7 @@ class StatusUpdateRequest extends FormRequest
         } else {
             return [
                 "designation" => ["required", "string", "min:1", "max:255"],
-                "order_number" => ["required", "integer", "min:1"],
+                "order_number" => ["required", "integer"],
                 "timestamp" => ["date"]
             ];
         }

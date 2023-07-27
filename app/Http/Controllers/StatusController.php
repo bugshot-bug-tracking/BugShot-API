@@ -688,25 +688,31 @@ class StatusController extends Controller
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
-		// Check if the order of the status has to be synchronized
-		$order_number =  $request->order_number;
-		if ($request->order_number != $status->getOriginal('order_number')) {
-
-			//Prevent higher order numbers
-			$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
-
-			$this->synchronizeStatusOrder($order_number, $status, $project);
+		if($status->permanent === NULL)
+		{
+			// Check if the order of the status has to be synchronized
+			$order_number =  $request->order_number;
+			if ($request->order_number != $status->getOriginal('order_number')) {
+				
+				//Prevent higher order numbers
+				$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
+				
+				$this->synchronizeStatusOrder($order_number, $status, $project);
+			}
+			
+			// Update the status
+			$status->update([
+				"designation" => isset($request->designation) ? $request->designation : $status->designation,
+				"order_number" => isset($request->order_number) ? $order_number : $status->order_number
+			]);
 		}
-
-		// Update the status
-		$status->update([
-			"designation" => isset($request->designation) ? $request->designation : $status->designation,
-			"order_number" => isset($request->order_number) ? $order_number : $status->order_number
-		]);
-		$status->update([
-			"project_id" => $project->id
-		]);
-
+		else{
+			// Update the status
+			$status->update([
+				"designation" => isset($request->designation) ? $request->designation : $status->designation,
+			]);
+		}
+	
 		broadcast(new StatusUpdated($status))->toOthers();
 
 		return new StatusResource($status);
