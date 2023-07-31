@@ -23,7 +23,7 @@ class BugMembersUpdated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public User $user, public Bug $bug, public User $sender, public $assignedAt)
+    public function __construct(public Bug $bug)
     {
         //
     }
