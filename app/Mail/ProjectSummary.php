@@ -9,11 +9,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 
 use App\Models\User;
-use App\Models\Bug;
-use App\Models\Project;
-use App\Models\Comment;
 use App\Services\GetUserLocaleService;
-use Carbon\Carbon;
 
 class ProjectSummary extends Mailable
 {
@@ -32,14 +28,14 @@ class ProjectSummary extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale, Project $project)
+    public function __construct(User $notifiable, $locale, $project, $comments, $doneBugs, $bugs)
     {
         $this->locale = $locale;
         $this->user = $notifiable;
         $this->project = $project;
-		$this->comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
-		$this->doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
-		$this->bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
+		$this->comments = $comments;
+		$this->doneBugs = $doneBugs;
+		$this->bugs = $bugs;
     }
 
     /**
@@ -65,7 +61,7 @@ class ProjectSummary extends Mailable
 			return $item["content"] = $this->readableContent;
 		});
 
-        return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . $this->locale . '.project-summary');
+		return $this->from(config('mail.noreply'))
+		->markdown('emails.' . $this->locale . '.project-summary');
     }
 }

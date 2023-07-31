@@ -1439,7 +1439,7 @@ class BugController extends Controller
 		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
 
 		//AssignedToBug::dispatch($targetUser, $bug);
-		broadcast(new BugMembersUpdated($targetUser, $bug, Auth::user(), now()))->toOthers();
+		broadcast(new BugMembersUpdated($bug))->toOthers();
 
 		return response()->json("", 204);
 	}

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Project;
 use App\Services\GetUserLocaleService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Console\Command;
 use App\Notifications\ProjectSummaryNotification;
 
@@ -31,10 +32,19 @@ class SendDailyProjectSummary extends Command
      */
     public function handle()
     {
+		Log::info("Retrieving updated projects");
 		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
 		// $projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {
-			$project->creator->notify((new ProjectSummaryNotification($project))->locale(GetUserLocaleService::getLocale($project->creator)));
+
+			$comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+			$doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
+			$bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
+
+			// Check if at least one entity is not empty
+			if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
+				$project->creator->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($project->creator)));
+			}
 		}
     }
 }
