@@ -198,6 +198,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
 			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
 		});
+		Route::post('/move-to-new-company', [ProjectController::class, "moveProjectToNewCompany"])->name("project.move-to-new-company");
 		Route::post('/exports', [ExportController::class, "store"])->name("project.export.store");
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
