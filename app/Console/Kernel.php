@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
 		Log::info("Running scheduler ---");
 		Log::info("Restarting queue");
 		$schedule->exec('php artisan queue:restart')
-			->daily()
+			->everySixHours($minutes = 0)
 			->then(function () use ($schedule) {
 				Log::info("Queue restarted. Starting daemon now");
 				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');

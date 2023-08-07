@@ -108,6 +108,11 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -445,6 +450,11 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -565,6 +575,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -1085,6 +1100,11 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -1156,11 +1176,28 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
 
+		$header = $request->header();
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("project_id", $project->id)
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
+			}
 		} else {
-			$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("project_id", $project->id)
+						->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
+			}
 		}
 
 		return BugResource::collection($bugs);
@@ -1205,6 +1242,11 @@ class ProjectController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -1278,10 +1320,20 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
 
-		// Get all archived bugs
-		$bugs = $project->bugs()->whereNot("archived_at", NULL)
+		$header = $request->header();
+
+		if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+			$bugs = Auth::user()->bugs()
+					->where("project_id", $project->id)
+					->whereNot("archived_at", NULL)
 					->withTrashed()
 					->get();
+		} else {
+			// Get all archived bugs
+			$bugs = $project->bugs()->whereNot("archived_at", NULL)
+					->withTrashed()
+					->get();
+		}
 
 		return ArchivedBugResource::collection($bugs);
 	}

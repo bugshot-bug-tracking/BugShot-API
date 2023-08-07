@@ -100,6 +100,11 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -438,6 +443,11 @@ class CompanyController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
