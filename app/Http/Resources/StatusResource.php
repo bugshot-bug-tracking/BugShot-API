@@ -32,8 +32,17 @@ class StatusResource extends JsonResource
 
 		// Check if the response should contain the respective bugs
 		if(array_key_exists('include-bugs', $header) && $header['include-bugs'][0] == "true") {
-			$bugs = $this->bugs()->where("bugs.archived_at", NULL)->get();
-			$status['attributes']['bugs'] = BugResource::collection($bugs);
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("status_id", $this->id)
+						->where("bugs.archived_at", NULL)
+						->get();
+
+				$status['attributes']['bugs'] = BugResource::collection($bugs);
+			} else {
+				$bugs = $this->bugs()->where("bugs.archived_at", NULL)->get();
+				$status['attributes']['bugs'] = BugResource::collection($bugs);
+			}
 		}
 
 		return $status;
