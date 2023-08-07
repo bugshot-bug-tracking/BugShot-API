@@ -82,6 +82,11 @@ class BugController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -144,13 +149,29 @@ class BugController extends Controller
 		$this->authorize('viewAny', [Bug::class, $status->project]);
 
 		// Get timestamp
+		$header = $request->header();
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if ($timestamp == NULL) {
-			$bugs = $status->bugs()->where("bugs.archived_at", NULL)->get();
+		if ($request->timestamp == NULL) {
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("status_id", $status->id)
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $status->bugs()->where("bugs.archived_at", NULL)->get();
+			}
 		} else {
-			$bugs = $status->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp))->where("bugs.archived_at", NULL)->get();
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("status_id", $status->id)
+						->where("updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $status->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp))->where("bugs.archived_at", NULL)->get();
+			}
 		}
 
 		return BugResource::collection($bugs);

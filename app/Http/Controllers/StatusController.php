@@ -74,6 +74,21 @@ class StatusController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -181,6 +196,11 @@ class StatusController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -402,6 +422,11 @@ class StatusController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -510,6 +535,11 @@ class StatusController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -693,13 +723,13 @@ class StatusController extends Controller
 			// Check if the order of the status has to be synchronized
 			$order_number =  $request->order_number;
 			if ($request->order_number != $status->getOriginal('order_number')) {
-				
+
 				//Prevent higher order numbers
 				$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
-				
+
 				$this->synchronizeStatusOrder($order_number, $status, $project);
 			}
-			
+
 			// Update the status
 			$status->update([
 				"designation" => isset($request->designation) ? $request->designation : $status->designation,
@@ -712,7 +742,7 @@ class StatusController extends Controller
 				"designation" => isset($request->designation) ? $request->designation : $status->designation,
 			]);
 		}
-	
+
 		broadcast(new StatusUpdated($status))->toOthers();
 
 		return new StatusResource($status);
