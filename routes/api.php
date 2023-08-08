@@ -101,6 +101,7 @@ Route::get('/mail', function () {
 
 Route::prefix('auth')->group(function () {
 	// Register Routes
+	Route::post('/check-email', [AuthController::class, "checkIfMailAlreadyExists"])->middleware('check.version')->name("email.check");
 	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
 	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
 	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');

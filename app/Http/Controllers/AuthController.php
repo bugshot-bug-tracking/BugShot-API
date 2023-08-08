@@ -40,6 +40,7 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Notifications\UserRegisteredNotification;
+use App\Http\Requests\CheckEmailRequest;
 
 /**
  * @OA\Tag(
@@ -48,6 +49,72 @@ use App\Notifications\UserRegisteredNotification;
  */
 class AuthController extends Controller
 {
+	/**
+	 * @OA\Post(
+	 *	path="/auth/check-email",
+	 *	tags={"Auth"},
+	 *	summary="Check if the given email address is already in use.",
+	 *	operationId="checkEmail",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 *              required={"email"}
+	 *          )
+	 *      )
+	 *  ),
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function checkIfMailAlreadyExists(CheckEmailRequest $request)
+	{
+		return response()->json("Email address is valid", 200);
+	}
 
 	/**
 	 * @OA\Post(
