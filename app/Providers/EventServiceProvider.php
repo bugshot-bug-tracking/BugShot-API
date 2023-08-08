@@ -10,6 +10,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use Laravel\Cashier\Events\WebhookReceived;
 use App\Listeners\StripeEventListener;
+use App\Observers\NotificationObserver;
+use Illuminate\Notifications\DatabaseNotification as Notification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -37,6 +39,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+		Notification::observe(NotificationObserver::class);
     }
 }
