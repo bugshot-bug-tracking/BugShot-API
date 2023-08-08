@@ -18,7 +18,13 @@ class SubscriptionResource extends JsonResource
 	public function toArray($request)
 	{
 		$stripe = new StripeClient(config('app.stripe_api_secret'));
-		$subscriptionItems = $stripe->subscriptionItems->all(['subscription' => $this->stripe_id]);
+
+        try {
+            $subscriptionItems = $stripe->subscriptionItems->all(['subscription' => $this->stripe_id]);
+        } catch (\Throwable $th) {
+            return [];
+        }
+
 		foreach($subscriptionItems as $subscriptionItem) {
 			$subscriptionItem->parent_product = $stripe->products->retrieve(
 				$subscriptionItem->plan->product,
