@@ -240,7 +240,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		// Notification prefixed routes
 		Route::prefix('notifications')->group(function () {
 			Route::get("/", [NotificationController::class, "index"])->name("user.notification.index");
-			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.invitation.delete");
+			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.notification.delete");
+			Route::delete("/", [NotificationController::class, "destroyAll"])->name("user.notifications.delete");
 		});
 
 		Route::get("/start-trial", [UserController::class, "startTrial"])->name("user.start-trial");
