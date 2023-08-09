@@ -5,7 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class NotificationPolicy
+class DatabaseNotificationPolicy
 {
     use HandlesAuthorization;
 
@@ -24,7 +24,7 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the notification can view any models.
+     * Determine whether the user can view any models.
      *
 	 * @param  \App\Models\User  $user
      * @return \Illuminate\Auth\Access\Response|bool
@@ -35,7 +35,7 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the notification can view the model.
+     * Determine whether the user can view the model.
      *
 	 * @param  \App\Models\User  $user
      * @param  $notification
@@ -49,7 +49,7 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the notification can create models.
+     * Determine whether the user can create models.
      *
 	 * @param  \App\Models\User  $user
      * @param  $notification
@@ -61,7 +61,7 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the notification can update the model.
+     * Determine whether the user can update the model.
      *
 	 * @param  \App\Models\User  $user
      * @param  $notification
@@ -75,7 +75,7 @@ class NotificationPolicy
     }
 
     /**
-     * Determine whether the notification can delete the model.
+     * Determine whether the user can delete the model.
      *
 	 * @param  \App\Models\User  $user
      * @param  $notification
@@ -83,8 +83,20 @@ class NotificationPolicy
      */
     public function delete(User $user, $notification)
     {
-		$notification = $user->notifications()->find($notification);
+		$notification = $user->notifications()->find($notification->id);
 
         return $notification ? true : false;
+    }
+
+	/**
+     * Determine whether the user can delete the models.
+     *
+	 * @param  \App\Models\User  $user
+     * @param  $notification
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function deleteAll(User $user, $notification)
+    {
+		return true;
     }
 }
