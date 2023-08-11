@@ -40,6 +40,13 @@ return [
     'env' => env('APP_ENV', 'production'),
 
     /*
+    | Variable to determine the max stack size of the jobs table.
+	| If the stack size is reached, the admin will be notified.
+    */
+
+    'max_job_stack_size' => env('MAX_JOB_STACK_SIZE', 10),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------

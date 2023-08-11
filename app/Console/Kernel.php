@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Mail\MaxJobStackSizeReached;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +11,9 @@ use App\Models\Project;
 use App\Services\GetUserLocaleService;
 use Carbon\Carbon;
 use App\Notifications\ProjectSummaryNotification;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
@@ -79,6 +83,12 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('auth:clear-resets')->daily();
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
+
+		// Count the job table entries to see if they stack up
+		$jobCount = DB::table('jobs')->count();
+		if($jobCount > config("app.max_job_stack_size")) {
+			Mail::to(config("mail.reply_to.address"))->send(new MaxJobStackSizeReached($jobCount));
+		}
     }
 
     /**
