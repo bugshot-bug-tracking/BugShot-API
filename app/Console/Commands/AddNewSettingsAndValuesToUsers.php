@@ -39,41 +39,27 @@ class AddNewSettingsAndValuesToUsers extends Command
 			$users = User::all();
 
 			foreach($users as $user) {
+				// TODO: Fix problem why the script creates the entries even if they already exist
 				$userSettings = $user->settings();
+				// dd(!$userSettings->wherePivot("setting_id", 18)->exists());
 
 				if(!$userSettings->wherePivot("setting_id", 17)->exists()) {
 					$user->settings()->attach([17 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 18)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 18)->exists()) {
 					$user->settings()->attach([18 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 19)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 19)->exists()) {
 					$user->settings()->attach([19 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 20)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 20)->exists()) {
 					$user->settings()->attach([20 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 21)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 21)->exists()) {
 					$user->settings()->attach([21 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 22)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 22)->exists()) {
 					$user->settings()->attach([22 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 23)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 23)->exists()) {
 					$user->settings()->attach([23 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 24)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 24)->exists()) {
 					$user->settings()->attach([24 => ['value_id' => 42]]);
-				}
-
-				if(!$userSettings->wherePivot("setting_id", 25)->exists()) {
+				} elseif (!$userSettings->wherePivot("setting_id", 25)->exists()) {
 					$user->settings()->attach([25 => ['value_id' => 42]]);
 				}
 			}
