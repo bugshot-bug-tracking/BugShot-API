@@ -52,7 +52,12 @@ class ValueSeeder extends Seeder
 			['designation' => 'custom_notifications_new_tag_in_comment'], // custom_notifications sub value
 			['designation' => 'light_mode'],
 			['designation' => 'dark_mode'],
-			['designation' => 'system']
+			['designation' => 'system'],
+
+			// Added 21.08.23
+			['designation' => 'custom_notifications_daily_summary'], // custom_notifications sub value
+			['designation' => 'custom_notifications_invitation_received'], // custom_notifications sub value
+			['designation' => 'custom_notifications_tagged_in_comment'], // custom_notifications sub value
 		];
 
 		Value::insert($values);
