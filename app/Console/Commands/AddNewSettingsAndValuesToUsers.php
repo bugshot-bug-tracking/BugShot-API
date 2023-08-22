@@ -8,8 +8,10 @@ use App\Models\Company;
 use App\Models\CompanyUserRole;
 use Illuminate\Support\Str;
 use App\Models\Organization;
+use App\Models\SettingUserValue;
 use App\Services\GetUserLocaleService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AddNewSettingsAndValuesToUsers extends Command
 {
@@ -39,28 +41,14 @@ class AddNewSettingsAndValuesToUsers extends Command
 			$users = User::all();
 
 			foreach($users as $user) {
-				// TODO: Fix problem why the script creates the entries even if they already exist
-				$userSettings = $user->settings();
-				// dd(!$userSettings->wherePivot("setting_id", 18)->exists());
+				$settingIds = array(17, 18, 19, 20, 21, 22, 23, 24, 25);
 
-				if(!$userSettings->wherePivot("setting_id", 17)->exists()) {
-					$user->settings()->attach([17 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 18)->exists()) {
-					$user->settings()->attach([18 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 19)->exists()) {
-					$user->settings()->attach([19 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 20)->exists()) {
-					$user->settings()->attach([20 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 21)->exists()) {
-					$user->settings()->attach([21 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 22)->exists()) {
-					$user->settings()->attach([22 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 23)->exists()) {
-					$user->settings()->attach([23 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 24)->exists()) {
-					$user->settings()->attach([24 => ['value_id' => 42]]);
-				} elseif (!$userSettings->wherePivot("setting_id", 25)->exists()) {
-					$user->settings()->attach([25 => ['value_id' => 42]]);
+				foreach($settingIds as $settingId) {
+					$settingUserValue = SettingUserValue::where("user_id", $user->id)->where("setting_id", $settingId)->first();
+
+					if($settingUserValue == NULL) {
+						$user->settings()->attach([$settingId => ['value_id' => 42]]);
+					}
 				}
 			}
 		});
