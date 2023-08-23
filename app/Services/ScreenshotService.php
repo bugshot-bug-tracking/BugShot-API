@@ -8,6 +8,7 @@ use App\Http\Resources\BugResource;
 use App\Http\Resources\ScreenshotInterfaceResource;
 use App\Http\Resources\ScreenshotResource;
 use App\Jobs\TriggerInterfacesJob;
+use App\Jobs\CompressImage;
 use App\Models\Client;
 use App\Models\Screenshot;
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +57,7 @@ class ScreenshotService
 
         try {
             if (config("app.tinypng_active")) {
-                $this->compressImage("storage" . $filePath);
+				CompressImage::dispatch("/app/public" . $filePath);
             }
         } catch (\Exception $e) {
             Log::info($e);
@@ -89,14 +90,12 @@ class ScreenshotService
 
         return $val;
     }
-
     // Compress the image via tinypng
     public function compressImage($filePath)
     {
         $source = \Tinify\fromFile($filePath);
         $source->toFile($filePath);
     }
-
     public function createInterfaceModel($screenshot, $base64)
     {
         $sendobj = clone $screenshot;

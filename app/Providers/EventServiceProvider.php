@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Events\AssignedToBug;
+use App\Events\BugMembersUpdated;
 use App\Listeners\SendAssignedToBugNotification;
 use App\Events\TaggedInComment;
 use App\Listeners\SendTaggedInCommentNotification;
@@ -10,6 +10,8 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Support\Facades\Event;
 use Laravel\Cashier\Events\WebhookReceived;
 use App\Listeners\StripeEventListener;
+use App\Observers\NotificationObserver;
+use Illuminate\Notifications\DatabaseNotification as Notification;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,7 +24,7 @@ class EventServiceProvider extends ServiceProvider
         TaggedInComment::class => [
             SendTaggedInCommentNotification::class,
         ],
-        AssignedToBug::class => [
+        BugMembersUpdated::class => [
             SendAssignedToBugNotification::class,
         ],
 		WebhookReceived::class => [
@@ -37,6 +39,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+		Notification::observe(NotificationObserver::class);
     }
 }

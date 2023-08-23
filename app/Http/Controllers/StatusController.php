@@ -74,6 +74,21 @@ class StatusController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -181,6 +196,11 @@ class StatusController extends Controller
 	 *
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -402,6 +422,11 @@ class StatusController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -510,6 +535,11 @@ class StatusController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -688,24 +718,30 @@ class StatusController extends Controller
 		// Check if the user is authorized to update the status
 		$this->authorize('update', [Status::class, $project]);
 
-		// Check if the order of the status has to be synchronized
-		$order_number =  $request->order_number;
-		if ($request->order_number != $status->getOriginal('order_number')) {
-			
-			//Prevent higher order numbers
-			$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
+		if($status->permanent === NULL)
+		{
+			// Check if the order of the status has to be synchronized
+			$order_number =  $request->order_number;
+			if ($request->order_number != $status->getOriginal('order_number')) {
 
-			$this->synchronizeStatusOrder($order_number, $status, $project);
+				//Prevent higher order numbers
+				$order_number = $request->order_number > $project->statuses->count() ? $project->statuses->count() - 2 : $request->order_number;
+
+				$this->synchronizeStatusOrder($order_number, $status, $project);
+			}
+
+			// Update the status
+			$status->update([
+				"designation" => isset($request->designation) ? $request->designation : $status->designation,
+				"order_number" => isset($request->order_number) ? $order_number : $status->order_number
+			]);
 		}
-
-		// Update the status
-		$status->update([
-			"designation" => isset($request->designation) ? $request->designation : $status->designation,
-			"order_number" => isset($request->order_number) ? $order_number : $status->order_number
-		]);
-		$status->update([
-			"project_id" => $project->id
-		]);
+		else{
+			// Update the status
+			$status->update([
+				"designation" => isset($request->designation) ? $request->designation : $status->designation,
+			]);
+		}
 
 		broadcast(new StatusUpdated($status))->toOthers();
 
@@ -790,7 +826,7 @@ class StatusController extends Controller
 		// Check if the user is authorized to delete the status
 		$this->authorize('delete', [Status::class, $project]);
 
-		// Move the bugs into a new status 
+		// Move the bugs into a new status
 		if ($request->header('move') != NULL) {
 			$this->moveBugsIntoNewStatus($status->bugs, $request->header('move'));
 		}
@@ -852,6 +888,13 @@ class StatusController extends Controller
 				'status_id' => $status->id,
 				'order_number' => $orderNumber++
 			]);
+
+			if($status->permanent == 'done') {
+				$bug->update([
+					"done_at" => now()
+				]);
+			}
 		}
+
 	}
 }

@@ -25,6 +25,7 @@ class UserResource extends JsonResource
 				'first_name' => $this->first_name,
 				'last_name' => $this->last_name,
 				'email' => $this->email,
+				'admin' => $this->isAdministrator(),
 				'trial_end_date' => $this->trial_end_date,
 			]
 		);
@@ -49,6 +50,11 @@ class UserResource extends JsonResource
 				$user['attributes']['subscriptions'] = $subscriptionItems;
 				// $user['attributes']['subscriptions'] = SubscriptionItemResource::collection($subscriptionItems);
 			}
+		}
+
+		// Check if the response should contain the respective notifications of the user
+		if(array_key_exists('include-notifications', $header) && $header['include-notifications'][0] == "true") {
+			$user['attributes']['notifications'] = NotificationResource::collection($this->notifications);
 		}
 
 		return $user;

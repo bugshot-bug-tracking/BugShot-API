@@ -4,6 +4,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 // Controllers
 use App\Http\Controllers\AttachmentController;
@@ -27,6 +28,11 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\UrlController;
 use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
+use App\Http\Controllers\SearchController;
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Analytics\AnalyticController;
+use App\Http\Controllers\Analytics\LoadingTimeController;
 
 // Events
 use App\Events\TestEvent;
@@ -44,6 +50,17 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Cronjob Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/scheduler/run', function() {
+	Artisan::call('schedule:run');
+});
+Route::middleware('throttle:1,1440')->get('/projects/send-summary', function() {
+	Artisan::call('projects:send-summary');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +101,7 @@ Route::get('/mail', function () {
 
 Route::prefix('auth')->group(function () {
 	// Register Routes
+	Route::post('/check-email', [AuthController::class, "checkIfMailAlreadyExists"])->middleware('check.version')->name("email.check");
 	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
 	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
 	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
@@ -107,6 +125,15 @@ Route::post('/feedbacks', [FeedbackController::class, "store"])->middleware('che
 // Get Desktop installer
 Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDesktopClient"])->name('download.client.desktop');
 
+Route::prefix('projects/{project}')->group(function () {
+	Route::apiResource('/exports', ExportController::class)->except(
+		"show", "store"
+	);
+});
+
+// Export prefixed routes
+Route::get("exports/{export}", [ExportController::class, "show"])->name("export.show");
+
 /*
 |--------------------------------------------------------------------------
 | Private API Routes
@@ -123,6 +150,18 @@ Route::middleware(['auth:sanctum'])->group(
 );
 
 Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
+
+	// Analytic routes
+	Route::prefix('/analytics')->group(function () {
+		Route::get("/overview", [AnalyticController::class, "getOverview"]);
+
+		Route::apiResource('/loading-times', LoadingTimeController::class)->except([
+			"update", "delete"
+		]);
+	});
+
+	// Search route
+	Route::get("/search", [SearchController::class, "search"])->name("search");
 
 	// Organization resource routes
 	Route::apiResource('/organizations', OrganizationController::class);
@@ -156,7 +195,13 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	Route::prefix('projects/{project}')->group(function () {
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
-		Route::get('/bugs', [ProjectController::class, "bugs"])->name("project.bugs");
+		Route::prefix('bugs')->group(function () {
+			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
+			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
+		});
+		Route::post('/move-to-new-company', [ProjectController::class, "moveProjectToNewCompany"])->name("project.move-to-new-company");
+		Route::post('/exports', [ExportController::class, "store"])->name("project.export.store");
+		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
 		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
@@ -168,6 +213,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
 		Route::apiResource('/bugs', BugController::class);
+		Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
 	});
 
 	// Bug prefixed routes
@@ -190,6 +236,13 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// User prefixed routes
 	Route::prefix('/users/{user}')->group(function () {
+
+		// Notification prefixed routes
+		Route::prefix('notifications')->group(function () {
+			Route::get("/", [NotificationController::class, "index"])->name("user.notification.index");
+			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.notification.delete");
+			Route::delete("/", [NotificationController::class, "destroyAll"])->name("user.notifications.delete");
+		});
 
 		Route::get("/start-trial", [UserController::class, "startTrial"])->name("user.start-trial");
 
@@ -306,13 +359,10 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 	}
 );
 
-
-
 /*
 |--------------------------------------------------------------------------
-| Script routes
+| Cronjob routes
 |--------------------------------------------------------------------------
 */
 
 Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
-

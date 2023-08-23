@@ -14,6 +14,7 @@ use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Comment;
 use App\Models\User;
+use App\Notifications\CommentCreatedNotification;
 
 class CommentService
 {
@@ -48,6 +49,11 @@ class CommentService
 		foreach ($request->tagged as $tagged) {
 			$user = User::find($tagged['user_id']);
 			$user ? TaggedInComment::dispatch($user, $comment) : true;
+		}
+
+		// Notify the creator of the bug if he is not one of the tagged users or the creator of the comment
+		if(!in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
+			$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
 		}
 
 		// Broadcast the event

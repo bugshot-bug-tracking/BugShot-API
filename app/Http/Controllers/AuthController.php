@@ -40,6 +40,7 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Notifications\UserRegisteredNotification;
+use App\Http\Requests\CheckEmailRequest;
 
 /**
  * @OA\Tag(
@@ -48,6 +49,72 @@ use App\Notifications\UserRegisteredNotification;
  */
 class AuthController extends Controller
 {
+	/**
+	 * @OA\Post(
+	 *	path="/auth/check-email",
+	 *	tags={"Auth"},
+	 *	summary="Check if the given email address is already in use.",
+	 *	operationId="checkEmail",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="email",
+	 *                  type="string",
+	 *              ),
+	 *              required={"email"}
+	 *          )
+	 *      )
+	 *  ),
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/User"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function checkIfMailAlreadyExists(CheckEmailRequest $request)
+	{
+		return response()->json("Email address is valid", 200);
+	}
 
 	/**
 	 * @OA\Post(
@@ -746,7 +813,18 @@ class AuthController extends Controller
 			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
 			14 => ['value_id' => 21], // user_settings_receive_mail_notifications: receive_notifications_everywhere
 			15 => ['value_id' => 23], // user_settings_select_notifications: every_notification
-			16 => ['value_id' => 25] // user_settings_darkmode: light_mode
+			16 => ['value_id' => 25], // user_settings_darkmode: light_mode
+
+			// Added 21.08.23
+			17 => ['value_id' => 42], // custom_notifications_new_bug_added: active
+			18 => ['value_id' => 42], // custom_notifications_bug_change_of_status: active
+			19 => ['value_id' => 42], // custom_notifications_report_created_deleted: active
+			20 => ['value_id' => 42], // custom_notifications_report_finished: active
+			21 => ['value_id' => 42], // custom_notifications_assignation_to_client_project_task: active
+			22 => ['value_id' => 42], // custom_notifications_new_comments_and_replies: active
+			23 => ['value_id' => 42], // custom_notifications_new_tag_in_comment: active
+			24 => ['value_id' => 42], // show_custom_show_secondary_view_all_projects_button: active
+			25 => ['value_id' => 42] // show_custom_show_edit_priority_button: active
 		]);
 	}
 

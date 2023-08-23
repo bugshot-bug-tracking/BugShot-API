@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 
 // Resources
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ArchivedBugResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
@@ -32,8 +33,11 @@ use App\Services\ApiCallService;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\Company;
+use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
+use App\Models\Organization;
+use App\Models\OrganizationUserRole;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
@@ -100,6 +104,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -343,6 +352,9 @@ class ProjectController extends Controller
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
 		]);
 
+		// Also add the owner to the project user role table
+		$this->user->projects()->attach($project->id, ['role_id' => 0]);
+
 		// Check if the project comes with an image (or a color)
 		$image = NULL;
 		if ($request->base64 != NULL) {
@@ -434,6 +446,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -558,6 +575,11 @@ class ProjectController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -1078,6 +1100,11 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -1149,14 +1176,166 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
 
+		$header = $request->header();
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			$bugs = $project->bugs;
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("project_id", $project->id)
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
+			}
 		} else {
-			$bugs = $project->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("project_id", $project->id)
+						->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
+			}
 		}
 
 		return BugResource::collection($bugs);
+	}
+
+	/**
+	 * Display a list of bugs that belong to the project and were archived.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/archived-bugs",
+	 *	tags={"Project"},
+	 *	summary="All project archived bugs.",
+	 *	operationId="allProjectsArchivedBugs",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-project-role",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Bug")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function archivedBugs(Request $request, Project $project)
+	{
+		// Check if the user is authorized to list the bugs of the project
+		$this->authorize('viewAny', [Bug::class, $project]);
+
+		$header = $request->header();
+
+		if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+			$bugs = Auth::user()->bugs()
+					->where("project_id", $project->id)
+					->whereNot("archived_at", NULL)
+					->withTrashed()
+					->get();
+		} else {
+			// Get all archived bugs
+			$bugs = $project->bugs()->whereNot("archived_at", NULL)
+					->withTrashed()
+					->get();
+		}
+
+		return ArchivedBugResource::collection($bugs);
 	}
 
 	/**
@@ -1240,7 +1419,7 @@ class ProjectController extends Controller
 		$this->authorize('viewAny', [Bug::class, $project]);
 
 		// Get the bugs that belong to the given url
-		$bugs = $project->bugs()->where("url", "=", $request->url)->has('screenshots.markers')->get();
+		$bugs = $project->bugs()->where("url", "=", $request->url)->whereNull('done_at')->has('screenshots.markers')->get();
 
 		return ProjectMarkerResource::collection($bugs);
 	}
@@ -1845,5 +2024,266 @@ class ProjectController extends Controller
 		$project = $request->get('project');
 
 		return $projectService->invite($request, $project, $invitationService, $this);
+	}
+
+
+	/**
+	 * Move bugs to new project.
+	 *
+	 * @param  Request  $request
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/{project_id}/bugs/move-to-new-project",
+	 *	tags={"Project"},
+	 *	summary="Move bugs to new project.",
+	 *	operationId="moveBugsToNewProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new project",
+	 *                  property="target_project_id",
+	 *                  type="string",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="bugs",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *    						description="The id of the bug",
+	 *              		    property="id",
+	 *              		    type="string"
+	 *              		),
+	 * 					)
+	 *              ),
+	 *              required={"target_project_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveBugsToDifferentProject(Request $request, Project $project)
+	{
+		// Check if the user is authorized to move bugs to another project
+		$this->authorize('moveBugs', $project);
+
+		$targetProject = Project::find($request->target_project_id);
+		$bugs = $request->bugs;
+		$targetProjetMembers = $targetProject->users;
+
+		foreach($bugs as $bug) {
+			$bug = Bug::find($bug["id"]);
+
+			// Check if the bug is not part of the original project anymore
+			if($project->bugs->contains($bug)) {
+				$bugAssignees = $bug->users;
+				$targetStatusId = $targetProject->statuses()->where("permanent", "backlog")->pluck("id")->first();
+
+				// Remove the assignees from the bug that are not part of the new project
+				$diffUsers = $bugAssignees->diff($targetProjetMembers)->pluck("id");
+				$bug->users()->detach($diffUsers);
+
+				$bug->update([
+					"project_id" => $targetProject->id,
+					"status_id" => $targetStatusId,
+					"ai_id" => 	$targetProject->bugs()->max("ai_id") + 1
+				]);
+			}
+		}
+
+		return response()->json("Bugs successfully moved to project " . $targetProject->id, 200);
+	}
+
+	/**
+	 * Move project to a new company.
+	 *
+	 * @param  Request  $request
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/{project_id}/move-to-new-company",
+	 *	tags={"Project"},
+	 *	summary="Move project to new company.",
+	 *	operationId="moveProjectToNewCompany",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new company",
+	 *                  property="target_company_id",
+	 *                  type="string",
+	 *              ),
+	 *              required={"target_company_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveProjectToNewCompany(Request $request, Project $project)
+	{
+		// Check if the user is authorized to move the project to another company
+		$this->authorize('moveProject', $project);
+
+		$targetCompany = Company::find($request->target_company_id);
+
+		// Check if the user is authorized to move the project to this exact company
+		$this->authorize('create', [Project::class, $targetCompany]);
+
+		// Check if the target company lies in a new organization
+		if($project->company->organization_id !== $targetCompany->organization_id) {
+			// Check which of the project members is not part of the new company
+			$usersNotInTargetCompany = $project->users->diff($targetCompany->users);
+			foreach($usersNotInTargetCompany as $user) {
+				// Check if the user is already part of this company
+				if ($user->companies->find($targetCompany) == NULL) {
+					$user->companies()->attach($targetCompany->id, ['role_id' => 2]); // Team
+				}
+			}
+
+			$targetOrganization = $targetCompany->organization;
+			// Check which of the project members is not part of the new organization
+			$usersNotInTargetOrga = $project->users->diff($targetOrganization->users);
+			foreach($usersNotInTargetOrga as $user) {
+				// Check if the user is already part of this organization
+				if ($user->organizations->find($project->company->organization) == NULL) {
+					$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->whereNot("subscription_item_id", NULL)->first();
+
+					if($organizationUserRole != NULL) {
+						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+					} else {
+						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+					}
+				}
+			}
+		}
+
+		$project->update([
+			"company_id" => $targetCompany->id
+		]);
+		// dd("all users in target company");
+		// TODO: Go on from here
+
+		return response()->json("Project successfully moved to company " . $targetCompany->id, 200);
 	}
 }

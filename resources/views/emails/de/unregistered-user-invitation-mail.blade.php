@@ -1,7 +1,7 @@
 @component('mail::message', ['locale' => $locale])
     <p>Hallo,</p>
     <p>
-        {{ $entryMessage }}<br /><br />
+        {{ $sender . " " . $entryMessage }}<br /><br />
         Um die Einladung anzunehmen musst du dich mit dieser E-Mail Adresse bei BugShot registrieren.<br />
         Klick dazu einfach auf den folgenden Button:
     </p>

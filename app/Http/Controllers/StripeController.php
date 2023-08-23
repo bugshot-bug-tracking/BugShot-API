@@ -946,11 +946,12 @@ class StripeController extends Controller
 		$subscriptionItemId = $request->subscription_item_id;
 		$quantity = $request->quantity;
 		$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
-		$subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
+
 		if($request->type == 'increment') {
 			// Add $quantity to the subscription's current quantity
-			$subscription = $billingAddress->subscription($subscription->name)->incrementQuantity($quantity, $request->price_api_id);
+			$subscription = $subscription->incrementQuantity($quantity, $request->price_api_id);
 		} else {
+            $subscriptionItem = $subscription->items()->where('stripe_id', $subscriptionItemId)->first();
 			$totalAssignments = $this->getAmountOfAssignments($subscriptionItemId);
 
 			// If all quantities of this subscription are assigned to users, it cannot be decreased
@@ -958,7 +959,7 @@ class StripeController extends Controller
 				return response()->json(["message" => __('application.subscription-quantity-not-sufficient')], 400);
 			} else {
 				// Subtract $quantity from the subscription's current quantity
-				$subscription = $billingAddress->subscription($subscription->name)->decrementQuantity($quantity, $request->price_api_id);
+				$subscription = $subscription->decrementQuantity($quantity, $request->price_api_id);
 			}
 		}
 

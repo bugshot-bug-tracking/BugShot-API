@@ -10,6 +10,7 @@ use Carbon\Carbon;
 
 // Resources
 use App\Http\Resources\BugResource;
+use App\Http\Resources\ArchivedBugResource;
 use App\Http\Resources\BugUserRoleResource;
 
 // Services
@@ -23,6 +24,7 @@ use App\Services\ApiCallService;
 use App\Models\Bug;
 use App\Models\User;
 use App\Models\Status;
+use App\Models\Project;
 use App\Models\BugUserRole;
 
 // Requests
@@ -78,6 +80,11 @@ class BugController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Status/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="only-assigned-bugs",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -142,13 +149,29 @@ class BugController extends Controller
 		$this->authorize('viewAny', [Bug::class, $status->project]);
 
 		// Get timestamp
+		$header = $request->header();
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if ($timestamp == NULL) {
-			$bugs = $status->bugs;
+		if ($request->timestamp == NULL) {
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("status_id", $status->id)
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $status->bugs()->where("bugs.archived_at", NULL)->get();
+			}
 		} else {
-			$bugs = $status->bugs->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+						->where("status_id", $status->id)
+						->where("updated_at", ">", date("Y-m-d H:i:s", $timestamp))
+						->where("archived_at", NULL)
+						->get();
+			} else {
+				$bugs = $status->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp))->where("bugs.archived_at", NULL)->get();
+			}
 		}
 
 		return BugResource::collection($bugs);
@@ -224,6 +247,10 @@ class BugController extends Controller
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
+	 *                  property="time_estimation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
 	 *                  property="browser",
 	 *                  type="string",
 	 *              ),
@@ -265,6 +292,11 @@ class BugController extends Controller
 	 *              		),
 	 *  					@OA\Property(
 	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
@@ -380,6 +412,10 @@ class BugController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *   			@OA\Property(
+	 *                  property="time_estimation",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  property="priority_id",
 	 *                  type="integer",
@@ -431,6 +467,11 @@ class BugController extends Controller
 	 *              		),
 	 *  					@OA\Property(
 	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
 	 *              		    type="integer",
 	 *              		    format="int32",
 	 *              		),
@@ -604,6 +645,125 @@ class BugController extends Controller
 		return new BugResource($bug);
 	}
 
+		/**
+	 * Display the specified resource.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/statuses/{status_id}/archived-bugs/{bug_id}",
+	 *	tags={"Bug"},
+	 *	summary="Show one archived bug.",
+	 *	operationId="showArchivedBug",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 * 	@OA\Parameter(
+	 *		name="status_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Status/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-screenshots",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-markers",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-comments",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *  @OA\Parameter(
+	 *		name="include-bug-users",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-attachment-base64",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function showArchivedBug($status_id, $bug_id)
+	{
+		$status = Status::where("id", $status_id)
+			->withTrashed()
+			->first();
+
+		// Check if the user is authorized to view the bug
+		$this->authorize('view', [Bug::class, $status->project]);
+
+		$bug = Bug::where("id", $bug_id)
+			->withTrashed()
+			->first();
+
+		return new ArchivedBugResource($bug);
+	}
+
 	/**
 	 * Display the specified resource.
 	 *
@@ -639,7 +799,7 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 
+	 *
 	 *	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -774,16 +934,6 @@ class BugController extends Controller
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *  			@OA\Property(
-	 *                  property="user_id",
-	 *                  type="integer",
-	 *                  format="int64",
-	 *              ),
-	 *  			@OA\Property(
-	 *                  property="project_id",
-	 * 					type="string",
-	 *  				maxLength=255,
-	 *              ),
 	 *              @OA\Property(
 	 *                  description="The bug name",
 	 *                  property="designation",
@@ -797,6 +947,10 @@ class BugController extends Controller
 	 *              @OA\Property(
 	 *                  description="The bug url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="time_estimation",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
@@ -873,7 +1027,6 @@ class BugController extends Controller
 	 *	),
 	 * )
 	 **/
-
 	public function update(BugUpdateRequest $request, Status $status, Bug $bug, BugService $bugService, ApiCallService $apiCallService)
 	{
 		// Check if the user is authorized to update the bug
@@ -964,6 +1117,10 @@ class BugController extends Controller
 	 *              @OA\Property(
 	 *                  description="The bug url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="time_estimation",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(

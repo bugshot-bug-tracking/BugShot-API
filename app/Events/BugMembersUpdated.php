@@ -11,6 +11,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
+use App\Models\User;
+use App\Models\Bug;
+
 class BugMembersUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -20,7 +23,7 @@ class BugMembersUpdated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public $bug)
+    public function __construct(public Bug $bug)
     {
         //
     }

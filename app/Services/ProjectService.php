@@ -78,11 +78,8 @@ class ProjectService
 		// Check if the user has already been invited to the project or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
-        if(!isset($recipient)) {
-			return response()->json(["data" => [
-				"message" => __('application.project-user-not-found')
-			]], 409);
-		}else if(!$project->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $project->users->contains($recipient)) {
+
+        if(!$project->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $project->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.project-user-already-invited')
 			]], 409);

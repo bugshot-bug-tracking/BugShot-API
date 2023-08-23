@@ -6,7 +6,7 @@
         The time has come: Soon you will have more time for the good things in life!
         To use {{ config('app.projectname') }} and thus our full potential, you only need to verify your email address.
         <br /><br />
-        In order to do that, just click on the following button:
+        Simply click on this button:
     </p>
     @component('mail::button', ['url' => $url])
         Verify now
@@ -16,8 +16,8 @@
     @endcomponent
     <a href="{{ $url }}" class="plain-link">{{ $url }}</a><br /><br />
     <p>
-        Error-free Greetings,
+        Bugfree greetings,
         <br />
-        your {{ config('app.projectname') }} team
+        The {{ config('app.projectname') }} team
     </p>
 @endcomponent

@@ -10,9 +10,11 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
 use App\Services\GetUserLocaleService;
+use App\Traits\HasSettings;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 /**
  * @OA\Schema()
@@ -20,7 +22,7 @@ use Laravel\Cashier\Billable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+	use Billable, HasSettings, HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
 
 	/**
 	 * @OA\Property(
@@ -110,6 +112,9 @@ class User extends Authenticatable implements MustVerifyEmail
 		'trial_end_date',
 	];
 
+	// Cascade the soft deletion to the given child resources
+	protected $cascadeDeletes = ['createdOrganizations', 'createdCompanies', 'createdProjects', 'billingAddress', 'settings'];
+
 	/**
 	 * The attributes that should be hidden for serialization.
 	 *
@@ -184,6 +189,14 @@ class User extends Authenticatable implements MustVerifyEmail
 	{
 		return $this->hasMany(Project::class, 'user_id');
 	}
+
+    /**
+     * Get all of the bugs of the users projects.
+     */
+    public function projectsBugs()
+    {
+        return $this->hasManyThrough(Bug::class, Project::class);
+    }
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -317,6 +330,10 @@ class User extends Authenticatable implements MustVerifyEmail
 
 		switch ($userResourceRoleId) {
 			case 1:
+				return true;
+				break;
+
+			case 0:
 				return true;
 				break;
 
