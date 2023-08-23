@@ -813,7 +813,18 @@ class AuthController extends Controller
 			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
 			14 => ['value_id' => 21], // user_settings_receive_mail_notifications: receive_notifications_everywhere
 			15 => ['value_id' => 23], // user_settings_select_notifications: every_notification
-			16 => ['value_id' => 25] // user_settings_darkmode: light_mode
+			16 => ['value_id' => 25], // user_settings_darkmode: light_mode
+
+			// Added 21.08.23
+			17 => ['value_id' => 42], // custom_notifications_new_bug_added: active
+			18 => ['value_id' => 42], // custom_notifications_bug_change_of_status: active
+			19 => ['value_id' => 42], // custom_notifications_report_created_deleted: active
+			20 => ['value_id' => 42], // custom_notifications_report_finished: active
+			21 => ['value_id' => 42], // custom_notifications_assignation_to_client_project_task: active
+			22 => ['value_id' => 42], // custom_notifications_new_comments_and_replies: active
+			23 => ['value_id' => 42], // custom_notifications_new_tag_in_comment: active
+			24 => ['value_id' => 42], // show_custom_show_secondary_view_all_projects_button: active
+			25 => ['value_id' => 42] // show_custom_show_edit_priority_button: active
 		]);
 	}
 

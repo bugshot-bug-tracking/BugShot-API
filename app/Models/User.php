@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\CanResetPassword;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\ResetPasswordLinkNotification;
 use App\Services\GetUserLocaleService;
+use App\Traits\HasSettings;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Cashier\Billable;
@@ -21,7 +22,7 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-	use Billable, HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
+	use Billable, HasSettings, HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
 
 	/**
 	 * @OA\Property(

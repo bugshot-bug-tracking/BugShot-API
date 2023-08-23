@@ -35,24 +35,17 @@ class ValueSeeder extends Seeder
 			['designation' => 'show_all'],
 			['designation' => 'show_basic'],
 			['designation' => 'show_custom'],
-			['designation' => 'show_custom_show_secondary_view_all_projects_button'], // show_custom sub value
-			['designation' => 'show_custom_show_edit_priority_button'], // show_custom sub value
-			['designation' => 'show_custom_show_edit_deadline_button'], // show_custom sub value
-			['designation' => 'show_custom_show_edit_status_button'], // show_custom sub value
 			['designation' => 'receive_notifications_via_app'],
 			['designation' => 'receive_notifications_via_mail'],
 			['designation' => 'every_notification'],
 			['designation' => 'custom_notifications'],
-			['designation' => 'custom_notifications_new_bug_added'], // custom_notifications sub value
-			['designation' => 'custom_notifications_bug_change_of_status'], // custom_notifications sub value
-			['designation' => 'custom_notifications_report_created_deleted'], // custom_notifications sub value
-			['designation' => 'custom_notifications_report_finished'], // custom_notifications sub value
-			['designation' => 'custom_notifications_assignation_to_client_project_task'], // custom_notifications sub value
-			['designation' => 'custom_notifications_new_comments_and_replies'], // custom_notifications sub value
-			['designation' => 'custom_notifications_new_tag_in_comment'], // custom_notifications sub value
 			['designation' => 'light_mode'],
 			['designation' => 'dark_mode'],
-			['designation' => 'system']
+			['designation' => 'system'],
+
+			// Added 21.08.23
+			['designation' => 'active'],
+			['designation' => 'inactive'],
 		];
 
 		Value::insert($values);
