@@ -47,7 +47,7 @@ class AddNewSettingsAndValuesToUsers extends Command
 					$settingUserValue = SettingUserValue::where("user_id", $user->id)->where("setting_id", $settingId)->first();
 
 					if($settingUserValue == NULL) {
-						$user->settings()->attach([$settingId => ['value_id' => 42]]);
+						$user->settings()->attach([$settingId => ['value_id' => 11]]);
 					}
 				}
 			}
