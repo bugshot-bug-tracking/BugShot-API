@@ -12,3 +12,7 @@ Values: activated/deactivated
 Custom notification "Assigned to bug":
 Setting: custom_notifications_assigned_to_bug
 Values: activated/deactivated
+
+Custom notification "Daily summary":
+Setting: custom_notifications_daily_summary
+Values: activated/deactivated
