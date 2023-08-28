@@ -1,0 +1,14 @@
+// The following settings can be added to the frontend now and will actually have an impact on the app
+
+What notifications the user wants to receive:
+Setting: user_settings_select_notifications
+Values: every_notification/custom_notifications
+
+// If he chooses custome_notifications he can activate/deactivate the following options
+Custom notification "Tagged on comment":
+Setting: custom_notifications_tagged_in_comment
+Values: activated/deactivated
+
+Custom notification "Assigned to bug":
+Setting: custom_notifications_assigned_to_bug
+Values: activated/deactivated

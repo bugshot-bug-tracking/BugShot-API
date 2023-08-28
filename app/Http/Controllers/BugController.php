@@ -1457,10 +1457,17 @@ class BugController extends Controller
 		$this->authorize('assignUser', [Bug::class, $bug->project]);
 
 		$targetUser = User::find($request->user_id);
+
+		if ($bug->users->contains($targetUser)) {
+			return response()->json(["data" => [
+				"message" => __('application.user-already-assigned-to-bug')
+			]], 409);
+		}
+
 		$targetUser->bugs()->attach($bug->id, ['role_id' => 2]);
 
 		//AssignedToBug::dispatch($targetUser, $bug);
-		broadcast(new BugMembersUpdated($bug))->toOthers();
+		broadcast(new BugMembersUpdated($targetUser, $this->user, $bug))->toOthers();
 
 		return response()->json("", 204);
 	}
@@ -1607,7 +1614,7 @@ class BugController extends Controller
 		$this->authorize('removeUser', [Bug::class, $bug->project]);
 
 		$val = $bug->users()->detach($user);
-		broadcast(new BugMembersUpdated($bug))->toOthers();
+		broadcast(new BugMembersUpdated($user, $bug))->toOthers();
 
 		return response($val, 204);
 	}
