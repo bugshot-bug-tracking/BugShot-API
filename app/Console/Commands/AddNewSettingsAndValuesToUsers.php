@@ -41,7 +41,7 @@ class AddNewSettingsAndValuesToUsers extends Command
 			$users = User::all();
 
 			foreach($users as $user) {
-				$settingIds = array(17, 18, 19, 20, 21, 22, 23, 24, 25);
+				$settingIds = array(17, 18, 19, 20, 21, 22, 23, 24, 25, 26);
 
 				foreach($settingIds as $settingId) {
 					$settingUserValue = SettingUserValue::where("user_id", $user->id)->where("setting_id", $settingId)->first();

@@ -30,5 +30,6 @@ return [
 	'api-token-already-exists' => 'Die ausgewählte Resource verfügt bereits über ein API Token',
 	'unsufficient-permissions' => 'Du hast nicht die Berechtigungen um diese Aktion auszuführen',
 	'subscription-revoked-successfully' => 'Die Lizenz wurde dem User erfolgreich entzogen',
-	'cannot-delete-last-organization' => 'Die letzte Organisation kann nicht gelöscht werden'
+	'cannot-delete-last-organization' => 'Die letzte Organisation kann nicht gelöscht werden',
+	'user-already-assigned-to-bug' => 'User wurde dem Bug bereits zugewiesen',
 ];

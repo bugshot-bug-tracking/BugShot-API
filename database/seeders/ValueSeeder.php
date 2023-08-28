@@ -42,10 +42,6 @@ class ValueSeeder extends Seeder
 			['designation' => 'light_mode'],
 			['designation' => 'dark_mode'],
 			['designation' => 'system'],
-
-			// Added 21.08.23
-			['designation' => 'active'],
-			['designation' => 'inactive'],
 		];
 
 		Value::insert($values);

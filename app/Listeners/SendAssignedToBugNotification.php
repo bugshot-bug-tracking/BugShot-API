@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Notifications\AssignedToBugNotification;
 use App\Services\GetUserLocaleService;
+use Illuminate\Support\Facades\Auth;
 
 class SendAssignedToBugNotification implements ShouldQueue
 {
@@ -18,6 +19,8 @@ class SendAssignedToBugNotification implements ShouldQueue
      */
     public function handle(BugMembersUpdated $event)
     {
-        $event->user->notify((new AssignedToBugNotification($event->bug, $event->sender, $event->assignedAt))->locale(GetUserLocaleService::getLocale($event->user)));
-    }
+		if($event->user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $event->user->getSettingValueByName("custom_notifications_assigned_to_bug") == "activated") {
+        	$event->user->notify((new AssignedToBugNotification($event->bug, $event->sender, now()->format('d.m.Y H:i')))->locale(GetUserLocaleService::getLocale($event->user)));
+		}
+	}
 }
