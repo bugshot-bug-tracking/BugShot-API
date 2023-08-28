@@ -14,69 +14,69 @@ class SettingSeeder extends Seeder
 	 */
 	public function run()
 	{
-		// Setting::create([
-		// 	"designation" => "company_filter_alphabetical"
-		// ]);
+		Setting::create([
+			"designation" => "company_filter_alphabetical"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "company_filter_creation"
-		// ]);
+		Setting::create([
+			"designation" => "company_filter_creation"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "company_filter_last_updated"
-		// ]);
+		Setting::create([
+			"designation" => "company_filter_last_updated"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "project_filter_alphabetical"
-		// ]);
+		Setting::create([
+			"designation" => "project_filter_alphabetical"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "project_filter_creation"
-		// ]);
+		Setting::create([
+			"designation" => "project_filter_creation"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "project_filter_last_updated"
-		// ]);
+		Setting::create([
+			"designation" => "project_filter_last_updated"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "bug_filter_alphabetical"
-		// ]);
+        Setting::create([
+			"designation" => "bug_filter_alphabetical"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "bug_filter_creation"
-		// ]);
+		Setting::create([
+			"designation" => "bug_filter_creation"
+		]);
 
-		// Setting::create([
-		// 	"designation" => "bug_filter_priority"
-		// ]);
+		Setting::create([
+			"designation" => "bug_filter_priority"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "bug_filter_deadline"
-		// ]);
+        Setting::create([
+			"designation" => "bug_filter_deadline"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "bug_filter_assigned_to"
-		// ]);
+        Setting::create([
+			"designation" => "bug_filter_assigned_to"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "user_settings_interface_language"
-		// ]);
+        Setting::create([
+			"designation" => "user_settings_interface_language"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "user_settings_show_ui_elements"
-		// ]);
+        Setting::create([
+			"designation" => "user_settings_show_ui_elements"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "user_settings_receive_mail_notifications"
-		// ]);
+        Setting::create([
+			"designation" => "user_settings_receive_mail_notifications"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "user_settings_select_notifications"
-		// ]);
+        Setting::create([
+			"designation" => "user_settings_select_notifications"
+		]);
 
-        // Setting::create([
-		// 	"designation" => "user_settings_darkmode"
-		// ]);
+        Setting::create([
+			"designation" => "user_settings_darkmode"
+		]);
 
 		// Added 21.08.2023
         Setting::create([
@@ -133,6 +133,11 @@ class SettingSeeder extends Seeder
 
 		Setting::create([
 			"designation" => "custom_notifications_tagged_in_comment"
+		]);
+
+		// Added 28.08.2023
+		Setting::create([
+			"designation" => "custom_notifications_assigned_to_bug"
 		]);
 	}
 }

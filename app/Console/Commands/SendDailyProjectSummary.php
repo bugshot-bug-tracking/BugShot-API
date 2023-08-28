@@ -43,7 +43,11 @@ class SendDailyProjectSummary extends Command
 
 			// Check if at least one entity is not empty
 			if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
-				$project->creator->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($project->creator)));
+				foreach($project->users as $user) {
+					if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
+						$user->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($user)));
+					}
+				}
 			}
 		}
     }

@@ -29,12 +29,12 @@ class AssignedToBug extends Mailable
      *
      * @return void
      */
-    public function __construct(User $notifiable, $locale, Bug $bug)
+    public function __construct(User $notifiable, $sender, $locale, Bug $bug)
     {
         $this->locale = $locale;
         $this->user = $notifiable;
+		$this->initiator = $sender;
         $this->bug = $bug;
-        $this->initiator = Auth::user();
         $this->project = Project::find($this->bug->project_id);
     }
 

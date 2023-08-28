@@ -30,5 +30,6 @@ return [
 	'api-token-already-exists' => 'The selected resource already has an api token',
 	'unsufficient-permissions' => 'You do not have the permissions to perform this action',
 	'subscription-revoked-successfully' => 'The license was successfully revoked from the user',
-	'cannot-delete-last-organization' => 'The last organization cannot be deleted'
+	'cannot-delete-last-organization' => 'The last organization cannot be deleted',
+	'user-already-assigned-to-bug' => 'User is already assigned to this bug',
 ];

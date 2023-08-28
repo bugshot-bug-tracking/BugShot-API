@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-use App\Events\BugMembersUpdated;
 use App\Events\CompanyMembersUpdated;
 use App\Events\InvitationDeleted;
 use App\Events\OrganizationMembersUpdated;
 use App\Events\ProjectMembersUpdated;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 // Resources
