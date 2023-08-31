@@ -527,7 +527,10 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this organization
 		if ($user->organizations->find($company->organization) == NULL) {
-			$this->attachUserToOrganization($company->organization, $user, 2); // Team
+			if($invitation->role_id < 3)			
+				$this->attachUserToOrganization($company->organization, $user, 2); // Team
+			else
+				$this->attachUserToOrganization($company->organization, $user, 3); // Client
 		}
 
 		$invitation->update(["status_id" => 2]);
@@ -560,12 +563,18 @@ class InvitationController extends Controller
 
 		// Check if the user is already part of this company
 		if ($user->companies->find($project->company) == NULL) {
-			$user->companies()->attach($project->company->id, ['role_id' => 2]); // Team
+			if($invitation->role_id < 3)
+				$user->companies()->attach($project->company->id, ['role_id' => 2]); // Team
+			else
+				$user->companies()->attach($project->company->id, ['role_id' => 3]); // Client
 		}
 
 		// Check if the user is already part of this organization
 		if ($user->organizations->find($project->company->organization) == NULL) {
-			$this->attachUserToOrganization($project->company->organization, $user, 2);
+			if($invitation->role_id < 3)
+				$this->attachUserToOrganization($project->company->organization, $user, 2); // Team
+			else
+				$this->attachUserToOrganization($project->company->organization, $user, 3); // Client
 		}
 
 		$invitation->update(["status_id" => 2]);
