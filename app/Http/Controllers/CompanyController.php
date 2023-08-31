@@ -100,9 +100,26 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -447,9 +464,26 @@ class CompanyController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",

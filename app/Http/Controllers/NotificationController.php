@@ -91,7 +91,7 @@ class NotificationController extends Controller
 	public function index(Request $request, User $user)
 	{
 		// Check if the user is authorized to list the notifications of the user
-		$this->authorize('viewAny', [Notification::class, $user]);
+		$this->authorize('viewAny', [DatabaseNotification::class, $user]);
 
 		return NotificationResource::collection($user->notifications);
 	}
@@ -241,7 +241,7 @@ class NotificationController extends Controller
 	public function destroyAll(User $user)
 	{
 		// Check if the user is authorized to delete the notifications
-		$this->authorize('deleteAll', [Notification::class, $user]);
+		$this->authorize('deleteAll', [DatabaseNotification::class, $user]);
 
 		// Delete the notifications
 		$val = $user->notifications()->delete();
