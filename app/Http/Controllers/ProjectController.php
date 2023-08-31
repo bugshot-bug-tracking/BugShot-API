@@ -38,6 +38,7 @@ use App\Models\ProjectUserRole;
 use App\Models\Status;
 use App\Models\Organization;
 use App\Models\OrganizationUserRole;
+use App\Models\Priority;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
@@ -108,9 +109,26 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -450,9 +468,26 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -579,9 +614,26 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -1100,9 +1152,26 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -1180,25 +1249,51 @@ class ProjectController extends Controller
 
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 				$bugs = Auth::user()->bugs()
-						->where("project_id", $project->id)
-						->where("archived_at", NULL)
-						->get();
+					->where("project_id", $project->id)
+					->where("archived_at", NULL);
 			} else {
-				$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
+				$bugs = $project->bugs()->where("bugs.archived_at", NULL);
 			}
 		} else {
-			if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 				$bugs = Auth::user()->bugs()
-						->where("project_id", $project->id)
-						->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
-						->where("archived_at", NULL)
-						->get();
+					->where("project_id", $project->id)
+					->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
+					->where("archived_at", NULL);
 			} else {
-				$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
+				$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL);
 			}
 		}
+
+		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			$searchTermPrefix = "";
+		} else {
+			$searchTermPrefix = "bugs.";
+		}
+
+		// Add filters
+		$bugs = $bugs->when(array_key_exists('filter-bugs-by-deadline', $header) && !empty($header['filter-bugs-by-deadline'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$deadline = $header['filter-bugs-by-deadline'][0];
+			$array = explode('|', $deadline);
+			$operator = $array[0];
+			$date = date("Y-m-d H:i:s", $array[1]);
+
+			return $query->where($searchTermPrefix . "deadline", $operator, $date);
+		})
+		->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$creatorId = $header['filter-bugs-by-creator-id'][0];
+
+			return $query->where($searchTermPrefix . "user_id", $creatorId);
+		})
+		->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$designation = $header['filter-bugs-by-priority'][0];
+			$priority = Priority::where('designation', $designation)->firstOrFail();
+
+			return $query->where($searchTermPrefix . "priority_id", $priority->id);
+		})
+		->get();
 
 		return BugResource::collection($bugs);
 	}
@@ -1244,7 +1339,7 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
-	 *		name="only-assigned-bugs",
+	 *		name="filter-bugs-by-assigned",
 	 *		required=false,
 	 *		in="header"
 	 *	),
@@ -1322,7 +1417,7 @@ class ProjectController extends Controller
 
 		$header = $request->header();
 
-		if(array_key_exists('only-assigned-bugs', $header) && $header['only-assigned-bugs'][0] == "true") {
+		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 			$bugs = Auth::user()->bugs()
 					->where("project_id", $project->id)
 					->whereNot("archived_at", NULL)
