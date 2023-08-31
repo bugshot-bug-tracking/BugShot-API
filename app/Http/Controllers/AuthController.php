@@ -753,11 +753,10 @@ class AuthController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 *  			@OA\Property(
-	 *                  property="user_id",
-	 * 					type="integer",
-	 *  				format="int64",
+	 *                  property="user_email",
+	 * 					type="string",
 	 *              ),
-	 *              required={"user_id"}
+	 *              required={"user_email"}
 	 *          )
 	 *      )
 	 *  ),
@@ -787,7 +786,7 @@ class AuthController extends Controller
 	 **/
 	public function resendVerificationMail(Request $request)
 	{
-		$user = User::find($request->user_id);
+		$user = User::where('email', $request->user_email)->first();
 		$url = $this->createVerificationUrl($user);
 
 		$user->notify((new VerifyEmailAddressNotification($url))->locale(GetUserLocaleService::getLocale($user)));
