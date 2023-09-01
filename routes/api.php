@@ -101,6 +101,7 @@ Route::get('/mail', function () {
 
 Route::prefix('auth')->group(function () {
 	// Register Routes
+	Route::post('/check-email', [AuthController::class, "checkIfMailAlreadyExists"])->middleware('check.version')->name("email.check");
 	Route::post('/register', [AuthController::class, "register"])->middleware('check.version')->name("register");
 	Route::get('/email/verify/{id}/{hash}', [AuthController::class, "verifyEmail"])->middleware('signed')->name('verification.verify');
 	Route::post('/email/verification-notification', [AuthController::class, "resendVerificationMail"])->middleware('throttle:6,1')->name('verification.send');
@@ -198,6 +199,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
 			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
 		});
+		Route::post('/move-to-new-company', [ProjectController::class, "moveProjectToNewCompany"])->name("project.move-to-new-company");
 		Route::post('/exports', [ExportController::class, "store"])->name("project.export.store");
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
@@ -238,7 +240,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		// Notification prefixed routes
 		Route::prefix('notifications')->group(function () {
 			Route::get("/", [NotificationController::class, "index"])->name("user.notification.index");
-			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.invitation.delete");
+			Route::delete("/{notification}", [NotificationController::class, "destroy"])->name("user.notification.delete");
+			Route::delete("/", [NotificationController::class, "destroyAll"])->name("user.notifications.delete");
 		});
 
 		Route::get("/start-trial", [UserController::class, "startTrial"])->name("user.start-trial");

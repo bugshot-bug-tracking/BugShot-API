@@ -42,7 +42,7 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new AssignedToBugMailable($notifiable, $this->locale, $this->bug))
+        return (new AssignedToBugMailable($notifiable, $this->sender, $this->locale, $this->bug))
         ->subject('BugShot - ' . __('email.assigned-to-bug', [], $this->locale))
         ->to($notifiable->email);
     }

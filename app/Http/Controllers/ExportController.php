@@ -297,6 +297,11 @@ class ExportController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-project-users",
 	 *		required=false,
 	 *		in="header"

@@ -279,6 +279,23 @@ class ProjectPolicy
     };
   }
 
+	/**
+   	* Determine whether the user can move a project to a new company
+   	*
+   	* @param  \App\Models\User  $user
+   	* @param  \App\Models\Project  $project
+   	* @return \Illuminate\Auth\Access\Response|bool
+   	*/
+  	public function moveProject(User $user, Project $project)
+  	{
+  	  	if(!$user->licenseActive()){return false;}
+
+  	  	// Check if user is the manager or owner of the project or above
+  	  	if ($user->isPriviliegated('projects', $project)) {
+  	  	  	return true;
+  	  	};
+  	}
+
   /**
    * Determine whether the user can store an url for the project
    *

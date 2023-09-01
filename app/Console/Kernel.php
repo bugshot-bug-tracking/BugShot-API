@@ -2,9 +2,18 @@
 
 namespace App\Console;
 
+use App\Mail\MaxJobStackSizeReached;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\Log;
+use App\Models\Bug;
+use App\Models\Project;
+use App\Services\GetUserLocaleService;
+use Carbon\Carbon;
+use App\Notifications\ProjectSummaryNotification;
+use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class Kernel extends ConsoleKernel
 {
@@ -27,23 +36,65 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 		Log::info("Running scheduler ---");
-		Log::info("Restarting queue");
+
+        // Restart queue and daemon
 		$schedule->exec('php artisan queue:restart')
-			->daily()
+			->everySixHours($minutes = 0)
 			->then(function () use ($schedule) {
-				Log::info("Queue restarted. Starting daemon now");
+				// Restarts the job daemon
 				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
-				Log::info("Daemon started successfully");
-			}); // Restarts the job daemon
-		Log::info("Archiving bugs");
-		$schedule->command('bugs:archive')->hourly();
-		// Log::info("Sending project summaries");
-        // $schedule->command('projects:send-summary')->dailyAt('06:00');
-		Log::info("Clearing auths");
+			});
+
+		// Archive bugs
+		$schedule->call(function () {
+			Log::info("Retrieving bugs to archive");
+			$bugs = Bug::where("archived_at", NULL)
+						->whereNot("deleted_at", NULL)
+						->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
+						->withTrashed()
+						->get();
+
+			foreach($bugs as $bug) {
+				$bug->update([
+					"archived_at" => now()
+				]);
+			}
+
+			Log::info('Bugs archived successfully!');
+		})->everyTwoMinutes();
+
+        // Send project summary
+        $schedule->call(function() {
+            Log::info("Retrieving updated projects");
+            $projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
+            // $projects = Project::all(); // ONLY DEV
+            foreach($projects as $project) {
+
+                $comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+                $doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
+                $bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
+
+                // Check if at least one entity is not empty
+                if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
+					foreach($project->users as $user) {
+						if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
+							$user->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($user)));
+						}
+					}
+                }
+            }
+        })->dailyAt('06:00');
+
         $schedule->command('auth:clear-resets')->daily();
-		Log::info("Retrying");
 		$schedule->command('queue:retry all')->everyFifteenMinutes();
-		Log::info("Scheduler finished running ---");
+
+		// Count the job table entries to see if they stack up
+		$schedule->call(function() {
+			$jobCount = DB::table('jobs')->count();
+			if($jobCount > config("app.max_job_stack_size")) {
+				Mail::to(config("mail.reply_to.address"))->send(new MaxJobStackSizeReached($jobCount));
+			}
+		})->hourly();
     }
 
     /**
