@@ -1662,7 +1662,7 @@ class BugController extends Controller
 		$this->authorize('removeUser', [Bug::class, $bug->project]);
 
 		$val = $bug->users()->detach($user);
-		broadcast(new BugMembersUpdated($user, $bug))->toOthers();
+		broadcast(new BugMembersUpdated($user, $this->user, $bug))->toOthers();
 
 		return response($val, 204);
 	}
