@@ -21,6 +21,7 @@ class ProjectSummary extends Mailable
     public $bugs;
 	public $doneBugs;
     public $project;
+	public $groupsWording;
 	public $readableContent;
 
     /**
@@ -36,6 +37,10 @@ class ProjectSummary extends Mailable
 		$this->comments = $comments;
 		$this->doneBugs = $doneBugs;
 		$this->bugs = $bugs;
+
+		$company = $project->company;
+		$organization = $company->organization;
+		$this->groupsWording = $organization->groups_wording;
     }
 
     /**
