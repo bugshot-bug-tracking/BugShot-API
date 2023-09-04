@@ -33,17 +33,21 @@ class SendDailyProjectSummary extends Command
     public function handle()
     {
 		Log::info("Retrieving updated projects");
-		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
-		// $projects = Project::all(); // ONLY DEV
+		// $projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
+		$projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {
 
-			$comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+			$comments = $project->comments()->whereDate('comments.updated_at', '>=', Carbon::now()->subDay())->get();
 			$doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
 			$bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
 
 			// Check if at least one entity is not empty
 			if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
-				$project->creator->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($project->creator)));
+				foreach($project->users as $user) {
+					if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
+						$user->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($user)));
+					}
+				}
 			}
 		}
     }

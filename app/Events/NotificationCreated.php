@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\Http\Resources\UserResource;
+use App\Http\Resources\BugResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,10 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-use App\Models\User;
-use App\Models\Bug;
-
-class BugMembersUpdated implements ShouldBroadcast
+class NotificationCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -23,9 +20,8 @@ class BugMembersUpdated implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(public User $user, public User $sender, public Bug $bug)
+    public function __construct(public $user)
     {
-        //
     }
 
     /**
@@ -35,9 +31,8 @@ class BugMembersUpdated implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'members.updated';
+        return 'notification.created';
     }
-
 
     /**
      * Determine if this event should broadcast.
@@ -57,7 +52,7 @@ class BugMembersUpdated implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => UserResource::collection($this->bug->users)
+            'data' => 'A new notification was created'
         ];
     }
 
@@ -68,6 +63,6 @@ class BugMembersUpdated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('bug.' . $this->bug->id);
+        return new PrivateChannel('user.' . $this->user->id);
     }
 }

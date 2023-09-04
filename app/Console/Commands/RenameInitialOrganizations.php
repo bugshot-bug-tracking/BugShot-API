@@ -37,15 +37,14 @@ class RenameInitialOrganizations extends Command
         // Only execute once for the existing live data
         $users = User::all();
         foreach ($users as $user) {
-
-			$user->organizations()
-				->where('designation', 'like', '%My Organization (%')
+			$user->createdOrganizations()
+				->where('designation', 'like', "%'s Organization%")
 				->update([
 					'designation' => $user->first_name . " " . $user->last_name . "'s " . Str::title(__('data.organization', [], GetUserLocaleService::getLocale($user)))
 				]);
 
-			$user->organizations()
-				->where('designation', 'like', '%Meine Organisation (%')
+			$user->createdOrganizations()
+				->where('designation', 'like', "%'s Organisation%")
 				->update([
 					'designation' => $user->first_name . " " . $user->last_name . "'s " . Str::title(__('data.organization', [], GetUserLocaleService::getLocale($user)))
 				]);

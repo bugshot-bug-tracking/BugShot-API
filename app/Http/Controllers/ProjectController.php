@@ -36,6 +36,9 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
+use App\Models\Organization;
+use App\Models\OrganizationUserRole;
+use App\Models\Priority;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
@@ -104,6 +107,28 @@ class ProjectController extends Controller
 	 *		name="include-bugs",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -443,6 +468,28 @@ class ProjectController extends Controller
 	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -565,6 +612,28 @@ class ProjectController extends Controller
 	 *		name="include-bugs",
 	 *		required=false,
 	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -1083,6 +1152,28 @@ class ProjectController extends Controller
 	 *		)
 	 *	),
 	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-deadline",
+	 *		required=false,
+	 *		in="header",
+	 *      example=">|1693393188"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-creator-id",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-priority",
+	 *		required=false,
+	 *		in="header",
+	 *      example="Minor"
+	 *	),
+	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
 	 *		required=false,
 	 *		in="header"
@@ -1154,12 +1245,55 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
 
+		$header = $request->header();
+
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			$bugs = $project->bugs()->where("bugs.archived_at", NULL)->get();
+			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+					->where("project_id", $project->id)
+					->where("archived_at", NULL);
+			} else {
+				$bugs = $project->bugs()->where("bugs.archived_at", NULL);
+			}
 		} else {
-			$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL)->get();
+			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+				$bugs = Auth::user()->bugs()
+					->where("project_id", $project->id)
+					->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
+					->where("archived_at", NULL);
+			} else {
+				$bugs = $project->bugs()->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))->where("bugs.archived_at", NULL);
+			}
 		}
+
+		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			$searchTermPrefix = "";
+		} else {
+			$searchTermPrefix = "bugs.";
+		}
+
+		// Add filters
+		$bugs = $bugs->when(array_key_exists('filter-bugs-by-deadline', $header) && !empty($header['filter-bugs-by-deadline'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$deadline = $header['filter-bugs-by-deadline'][0];
+			$array = explode('|', $deadline);
+			$operator = $array[0];
+			$date = date("Y-m-d H:i:s", $array[1]);
+
+			return $query->where($searchTermPrefix . "deadline", $operator, $date);
+		})
+		->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$creatorId = $header['filter-bugs-by-creator-id'][0];
+
+			return $query->where($searchTermPrefix . "user_id", $creatorId);
+		})
+		->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
+			$designation = $header['filter-bugs-by-priority'][0];
+			$priority = Priority::where('designation', $designation)->firstOrFail();
+
+			return $query->where($searchTermPrefix . "priority_id", $priority->id);
+		})
+		->get();
 
 		return BugResource::collection($bugs);
 	}
@@ -1203,6 +1337,11 @@ class ProjectController extends Controller
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
 	 *		)
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="filter-bugs-by-assigned",
+	 *		required=false,
+	 *		in="header"
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="include-screenshots",
@@ -1276,10 +1415,20 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the bugs of the project
 		$this->authorize('viewAny', [Bug::class, $project]);
 
-		// Get all archived bugs
-		$bugs = $project->bugs()->whereNot("archived_at", NULL)
+		$header = $request->header();
+
+		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			$bugs = Auth::user()->bugs()
+					->where("project_id", $project->id)
+					->whereNot("archived_at", NULL)
 					->withTrashed()
 					->get();
+		} else {
+			// Get all archived bugs
+			$bugs = $project->bugs()->whereNot("archived_at", NULL)
+					->withTrashed()
+					->get();
+		}
 
 		return ArchivedBugResource::collection($bugs);
 	}
@@ -2099,5 +2248,137 @@ class ProjectController extends Controller
 		}
 
 		return response()->json("Bugs successfully moved to project " . $targetProject->id, 200);
+	}
+
+	/**
+	 * Move project to a new company.
+	 *
+	 * @param  Request  $request
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/{project_id}/move-to-new-company",
+	 *	tags={"Project"},
+	 *	summary="Move project to new company.",
+	 *	operationId="moveProjectToNewCompany",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new company",
+	 *                  property="target_company_id",
+	 *                  type="string",
+	 *              ),
+	 *              required={"target_company_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveProjectToNewCompany(Request $request, Project $project)
+	{
+		// Check if the user is authorized to move the project to another company
+		$this->authorize('moveProject', $project);
+
+		$targetCompany = Company::find($request->target_company_id);
+
+		// Check if the user is authorized to move the project to this exact company
+		$this->authorize('create', [Project::class, $targetCompany]);
+
+		// Check if the target company lies in a new organization
+		if($project->company->organization_id !== $targetCompany->organization_id) {
+			// Check which of the project members is not part of the new company
+			$usersNotInTargetCompany = $project->users->diff($targetCompany->users);
+			foreach($usersNotInTargetCompany as $user) {
+				// Check if the user is already part of this company
+				if ($user->companies->find($targetCompany) == NULL) {
+					$user->companies()->attach($targetCompany->id, ['role_id' => 2]); // Team
+				}
+			}
+
+			$targetOrganization = $targetCompany->organization;
+			// Check which of the project members is not part of the new organization
+			$usersNotInTargetOrga = $project->users->diff($targetOrganization->users);
+			foreach($usersNotInTargetOrga as $user) {
+				// Check if the user is already part of this organization
+				if ($user->organizations->find($project->company->organization) == NULL) {
+					$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->whereNot("subscription_item_id", NULL)->first();
+
+					if($organizationUserRole != NULL) {
+						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+					} else {
+						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
+					}
+				}
+			}
+		}
+
+		$project->update([
+			"company_id" => $targetCompany->id
+		]);
+		// dd("all users in target company");
+		// TODO: Go on from here
+
+		return response()->json("Project successfully moved to company " . $targetCompany->id, 200);
 	}
 }

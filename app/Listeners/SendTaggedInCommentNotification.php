@@ -18,6 +18,8 @@ class SendTaggedInCommentNotification implements ShouldQueue
      */
     public function handle(TaggedInComment $event)
     {
-        $event->user->notify((new TaggedInCommentNotification($event->comment))->locale(GetUserLocaleService::getLocale($event->user)));
+		if($event->user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $event->user->getSettingValueByName("custom_notifications_tagged_in_comment") == "activated") {
+			$event->user->notify((new TaggedInCommentNotification($event->comment))->locale(GetUserLocaleService::getLocale($event->user)));
+		}
     }
 }

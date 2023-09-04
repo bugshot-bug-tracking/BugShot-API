@@ -15,83 +15,129 @@ class SettingSeeder extends Seeder
 	public function run()
 	{
 		Setting::create([
-			"id" => 1,
 			"designation" => "company_filter_alphabetical"
 		]);
 
 		Setting::create([
-			"id" => 2,
 			"designation" => "company_filter_creation"
 		]);
 
 		Setting::create([
-			"id" => 3,
 			"designation" => "company_filter_last_updated"
 		]);
 
 		Setting::create([
-			"id" => 4,
 			"designation" => "project_filter_alphabetical"
 		]);
 
 		Setting::create([
-			"id" => 5,
 			"designation" => "project_filter_creation"
 		]);
 
 		Setting::create([
-			"id" => 6,
 			"designation" => "project_filter_last_updated"
 		]);
 
         Setting::create([
-			"id" => 7,
 			"designation" => "bug_filter_alphabetical"
 		]);
 
 		Setting::create([
-			"id" => 8,
 			"designation" => "bug_filter_creation"
 		]);
 
 		Setting::create([
-			"id" => 9,
 			"designation" => "bug_filter_priority"
 		]);
 
         Setting::create([
-			"id" => 10,
 			"designation" => "bug_filter_deadline"
 		]);
 
         Setting::create([
-			"id" => 11,
 			"designation" => "bug_filter_assigned_to"
 		]);
 
         Setting::create([
-			"id" => 12,
 			"designation" => "user_settings_interface_language"
 		]);
 
         Setting::create([
-			"id" => 13,
 			"designation" => "user_settings_show_ui_elements"
 		]);
 
         Setting::create([
-			"id" => 14,
 			"designation" => "user_settings_receive_mail_notifications"
 		]);
 
         Setting::create([
-			"id" => 15,
 			"designation" => "user_settings_select_notifications"
 		]);
 
         Setting::create([
-			"id" => 16,
 			"designation" => "user_settings_darkmode"
+		]);
+
+		// Added 21.08.2023
+        Setting::create([
+			"designation" => "custom_notifications_new_bug_added"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_bug_change_of_status"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_report_created_deleted"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_report_finished"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_assignation_to_client_project_task"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_new_comments_and_replies"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_new_tag_in_comment"
+		]);
+
+		Setting::create([
+			"designation" => "show_custom_show_secondary_view_all_projects_button"
+		]);
+
+		Setting::create([
+			"designation" => "show_custom_show_edit_priority_button"
+		]);
+
+		Setting::create([
+			"designation" => "show_custom_show_edit_deadline_button"
+		]);
+
+		Setting::create([
+			"designation" => "show_custom_show_edit_status_button"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_daily_summary"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_invitation_received"
+		]);
+
+		Setting::create([
+			"designation" => "custom_notifications_tagged_in_comment"
+		]);
+
+		// Added 28.08.2023
+		Setting::create([
+			"designation" => "custom_notifications_assigned_to_bug"
 		]);
 	}
 }

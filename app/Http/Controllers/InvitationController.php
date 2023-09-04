@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-
-use App\Events\BugMembersUpdated;
 use App\Events\CompanyMembersUpdated;
 use App\Events\InvitationDeleted;
 use App\Events\OrganizationMembersUpdated;
 use App\Events\ProjectMembersUpdated;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 // Resources
@@ -28,6 +25,10 @@ use App\Models\Invitation;
 use App\Models\User;
 use App\Models\Project;
 use App\Models\ProjectUserRole;
+use Illuminate\Notifications\DatabaseNotification;
+
+// Services
+use App\Services\NotificationService;
 
 /**
  * @OA\Tag(
@@ -193,7 +194,8 @@ class InvitationController extends Controller
 	/**
 	 * Remove the specified resource from storage.
 	 *
-	 * @param  \App\Models\Invitation  $invitation
+	 * @param  Invitation  $invitation
+	 * @param  NotificationService $notificationService
 	 * @return \Illuminate\Http\Response
 	 */
 	/**
@@ -251,12 +253,17 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(Invitation $invitation)
+	public function destroy(Invitation $invitation, NotificationService $notificationService)
 	{
 		// Check if the user is authorized to delete the invitation
 		$this->authorize('delete', $invitation);
 
 		$val = $invitation->delete();
+
+		// Delete the notification
+		$notification = DatabaseNotification::where("data", "like", "%" . $invitation->id . "%")->where("type", "App\Notifications\InvitationReceivedNotification")->first();
+		$user = User::where("email", $invitation->target_email)->first();
+		$notification ? $notificationService->delete($user, $notification) : true;
 
 		return response($val, 204);
 	}
@@ -264,7 +271,8 @@ class InvitationController extends Controller
 	/**
 	 * Update the resource to a new status.
 	 *
-	 * @param  \App\Models\Invitation  $invitation
+	 * @param  Invitation  $invitation
+	 * @param  NotificationService $notificationService
 	 * @return \Illuminate\Http\Response
 	 */
 	/**
@@ -338,7 +346,7 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function accept(User $user, Invitation $invitation)
+	public function accept(User $user, Invitation $invitation, NotificationService $notificationService)
 	{
 		// Check if the user is authorized to accept the invitation
 		$this->authorize('accept', $invitation);
@@ -372,6 +380,10 @@ class InvitationController extends Controller
 				break;
 		}
 
+		// Delete the notification
+		$notification = DatabaseNotification::where("data", "like", "%" . $invitation->id . "%")->where("type", "App\Notifications\InvitationReceivedNotification")->first();
+		$notification ? $notificationService->delete($user, $notification) : true;
+
 		return response()->json([
 			"errors" => [
 				"status" => 422,
@@ -382,7 +394,8 @@ class InvitationController extends Controller
 	/**
 	 * Update the resource to a new status.
 	 *
-	 * @param  \App\Models\Invitation  $invitation
+	 * @param  Invitation  $invitation
+	 * @param  NotificationService  $notificationService
 	 * @return \Illuminate\Http\Response
 	 */
 	/**
@@ -453,7 +466,7 @@ class InvitationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function decline(User $user, Invitation $invitation)
+	public function decline(User $user, Invitation $invitation, NotificationService $notificationService)
 	{
 		// Check if the user is authorized to decline the invitation
 		$this->authorize('decline', $invitation);
@@ -473,6 +486,10 @@ class InvitationController extends Controller
 
 		$invitation->update(["status_id" => 3]);
 		broadcast(new InvitationDeleted($invitation, $invitation->invitable_type))->toOthers();
+
+		// Delete the notification
+		$notification = DatabaseNotification::where("data", "like", "%" . $invitation->id . "%")->where("type", "App\Notifications\InvitationReceivedNotification")->first();
+		$notification ? $notificationService->delete($user, $notification) : true;
 
 		return response()->json("", 204);
 	}
