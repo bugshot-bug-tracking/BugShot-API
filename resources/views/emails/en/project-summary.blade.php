@@ -2,7 +2,7 @@
     <p>Hello {{ $user->first_name }},</p>
     <p>
         There is news in one of the projects you are involved in.<br /><br />
-		<strong>The latest activities in the project "{{ $project->designation }}" ({{ $groupsWording ? Str::singular($groupsWording) : Group }}: {{  $project->company->designation }})</strong><br />
+		<strong>The latest activities in the project "{{ $project->designation }}" ({{ $groupsWording ? Str::singular($groupsWording) : "Group" }}: {{  $project->company->designation }})</strong><br />
 		New tasks: {{ count($bugs) }}<br />
 		New comments: {{ count($comments) }}<br />
 		Completed tasks: {{ count($doneBugs) }}<br /><br />
