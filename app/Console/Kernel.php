@@ -38,11 +38,11 @@ class Kernel extends ConsoleKernel
 		Log::info("Running scheduler ---");
 
         // Restart queue and daemon
-		$schedule->exec('php artisan queue:restart')
+		$schedule->exec('php81 artisan queue:restart')
 			->everySixHours($minutes = 0)
 			->then(function () use ($schedule) {
 				// Restarts the job daemon
-				$schedule->exec('nohup php artisan queue:work --daemon >> storage/logs/scheduler.log &');
+				$schedule->exec('nohup php81 artisan queue:work --daemon >> storage/logs/scheduler.log &');
 			});
 
 		// Archive bugs
@@ -95,6 +95,8 @@ class Kernel extends ConsoleKernel
 				Mail::to(config("mail.reply_to.address"))->send(new MaxJobStackSizeReached($jobCount));
 			}
 		})->hourly();
+
+		$schedule->command('sanctum:prune-expired --hours=24')->daily();
     }
 
     /**

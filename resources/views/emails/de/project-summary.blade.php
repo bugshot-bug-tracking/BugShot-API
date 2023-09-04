@@ -2,7 +2,7 @@
     <p>Hallo {{ $user->first_name }},</p>
     <p>
         es gibt Neuigkeiten in einem der Projekte in dem du mitwirkst.<br /><br />
-		<strong>Die letzten Aktivitäten im Projekt {{ $project->designation }}</strong><br />
+		<strong>Die letzten Aktivitäten im Projekt "{{ $project->designation }}" ({{ $groupsWording ? Str::singular($groupsWording) : Gruppe }}: {{  $project->company->designation }})</strong><br />
 		Neue Tasks: {{ count($bugs) }}<br />
 		Neue Kommentare: {{ count($comments) }}<br />
 		Abgeschlossene Tasks: {{ count($doneBugs) }}<br /><br />
