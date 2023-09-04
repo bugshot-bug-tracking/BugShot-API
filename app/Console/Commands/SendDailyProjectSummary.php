@@ -33,11 +33,11 @@ class SendDailyProjectSummary extends Command
     public function handle()
     {
 		Log::info("Retrieving updated projects");
-		$projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
-		// $projects = Project::all(); // ONLY DEV
+		// $projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
+		$projects = Project::all(); // ONLY DEV
 		foreach($projects as $project) {
 
-			$comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
+			$comments = $project->comments()->whereDate('comments.updated_at', '>=', Carbon::now()->subDay())->get();
 			$doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
 			$bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
 
