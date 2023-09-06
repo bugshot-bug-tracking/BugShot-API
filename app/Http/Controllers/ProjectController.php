@@ -296,6 +296,11 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -785,6 +790,11 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -896,6 +906,11 @@ class ProjectController extends Controller
 	 *              @OA\Property(
 	 *                  description="The project url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
