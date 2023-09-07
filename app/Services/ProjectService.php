@@ -46,7 +46,6 @@ class ProjectService
         $project->update($request->all());
         $project->update([
             "company_id" => $company->id,
-            "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 
         $resource = new ProjectResource($project);
