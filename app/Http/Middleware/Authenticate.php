@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use App\Http\Middleware\CustomAuth as Middleware;
 
 class Authenticate extends Middleware
 {

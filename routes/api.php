@@ -93,6 +93,11 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 |--------------------------------------------------------------------------
 */
 
+Route::prefix('statuses/{status}')->group(function () {
+	Route::post('/store-bug-with-token', [BugController::class, "store"])->name("bugs.store-with-access-token");
+	Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
+});
+
 Route::get('/mail', function () {
 	$user = App\Models\User::find(1);
 	$url = config('app.webpanel_url') . '/auth/verify/' . $user->id . '/token';

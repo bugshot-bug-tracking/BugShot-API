@@ -255,7 +255,12 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=false,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
 	 *	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
