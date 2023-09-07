@@ -32,24 +32,20 @@ class ProjectService
     {
         // Check if the project comes with an image (or a color)
         $image = $project->image;
-        if ($request->base64 != NULL && $request->base64 != 'true') {
-            $image = $imageService->store($request->base64, $image);
-            $image != false ? $project->image()->save($image) : true;
-            //ev Fehler? Proj statt comp?
-            $color_hex = $company->color_hex == $request->color_hex ? $company->color_hex : $request->color_hex;
-        } else {
-            $imageService->delete($image);
-            $color_hex = $request->color_hex;
-        }
 
-        // Apply default color if color_hex is null
-        $color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
+		if($request->has("base64")){
+			if($request->base64 != NULL){
+				$image = $imageService->store($request->base64, $image);
+				$image != false ? $project->image()->save($image) : true;
+			} else{
+				$imageService->delete($image);
+			}
+		}
 
         // Update the project
         $project->update($request->all());
         $project->update([
             "company_id" => $company->id,
-            "color_hex" => $color_hex,
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 
