@@ -33,7 +33,7 @@ class ProjectService
         // Check if the project comes with an image (or a color)
         $image = $project->image;
 
-		if(isset($request->base64)){
+		if($request->has("base64")){
 			if($request->base64 != NULL){
 				$image = $imageService->store($request->base64, $image);
 				$image != false ? $project->image()->save($image) : true;

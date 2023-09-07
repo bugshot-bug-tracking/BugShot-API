@@ -698,7 +698,7 @@ class CompanyController extends Controller
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
 		
-		if(isset($request->base64)){
+		if($request->has("base64")){
 			if($request->base64 != NULL){
 				$image = $imageService->store($request->base64, $image);
 				$image != false ? $company->image()->save($image) : true;
