@@ -37,56 +37,53 @@ class Kernel extends ConsoleKernel
     {
 		Log::info("Running scheduler ---");
 
-        // Restart queue and daemon
-		$schedule->exec('php81 artisan queue:restart')
-			->everySixHours($minutes = 0)
-			->then(function () use ($schedule) {
-				// Restarts the job daemon
-				$schedule->exec('nohup php81 artisan queue:work --daemon >> storage/logs/scheduler.log &');
-			});
-
 		// Archive bugs
 		$schedule->call(function () {
-			Log::info("Retrieving bugs to archive");
-			$bugs = Bug::where("archived_at", NULL)
-						->whereNot("deleted_at", NULL)
-						->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
-						->withTrashed()
-						->get();
+			Log::info("Start bug archiving...");
 
-			foreach($bugs as $bug) {
-				$bug->update([
-					"archived_at" => now()
-				]);
-			}
+			Bug::whereNull("archived_at")
+				->whereNotNull("deleted_at")
+				->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')))
+				->withTrashed()
+				->update(["archived_at" => now()]);
 
 			Log::info('Bugs archived successfully!');
-		})->everyTwoMinutes();
+		})->everyThirtyMinutes();
 
         // Send project summary
         $schedule->call(function() {
-            Log::info("Retrieving updated projects");
-            $projects = Project::whereDate('updated_at', '>=', Carbon::now()->subDay())->get();
-            // $projects = Project::all(); // ONLY DEV
-            foreach($projects as $project) {
+			Log::info("Retrieving updated projects");
 
-                $comments = $project->comments()->whereDate('comments.created_at', '>=', Carbon::now()->subDay())->get();
-                $doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
-                $bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
+			$date = Carbon::now()->subDay();
 
-                // Check if at least one entity is not empty
-                if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
+			$projects = Project::
+						whereDate('updated_at', '>=', $date)
+						->with(['comments' => function ($query) use ($date) {
+							$query->whereDate('created_at', '>=', $date);
+						}])
+						->with(['bugs' => function ($query) use ($date) {
+							$query->whereDate('created_at', '>=', $date)
+								->orWhereDate('done_at', '>=', $date);
+						}])
+						->get();
+
+			foreach($projects as $project) {
+				$comments = $project->comments;
+				$bugs = $project->bugs;
+				$doneBugs = $bugs->where('done_at', '>=', $date);
+
+				if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
 					foreach($project->users as $user) {
-						if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
+						if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" 
+						|| $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
 							$user->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($user)));
 						}
 					}
-                }
-            }
+				}
+			}
         })->dailyAt('06:00');
 
         $schedule->command('auth:clear-resets')->daily();
-		$schedule->command('queue:retry all')->everyFifteenMinutes();
 
 		// Count the job table entries to see if they stack up
 		$schedule->call(function() {
