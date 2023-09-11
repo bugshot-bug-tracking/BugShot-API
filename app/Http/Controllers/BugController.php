@@ -401,8 +401,18 @@ class BugController extends Controller
 	 **/
 	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
 	{
-		// Check if the user is authorized to create the bug
-		$this->authorize('create', [Bug::class, $status->project]);
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$url = $request->url;
+		$project = Project::where('url', $url)
+				->where('access_token', $accessToken)
+				->exists();
+
+		if(!$project)
+		{
+			// Check if the user is authorized to create the bug
+			$this->authorize('create', [Bug::class, $status->project]);
+		}
 
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);

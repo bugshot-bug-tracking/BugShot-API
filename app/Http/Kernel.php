@@ -69,4 +69,16 @@ class Kernel extends HttpKernel
 		'check.version' => \App\Http\Middleware\CheckVersion::class,
 		'scripts.active' => \App\Http\Middleware\ScriptActiveMiddleware::class,
 	];
+
+	/**
+     * The priority-sorted list of middleware.
+     *
+     * Forces non-global middleware to always be in the given order.
+     *
+     * @var string[]
+     */
+    protected $middlewarePriority = [
+
+		'auth' => \App\Http\Middleware\Authenticate::class,
+    ];
 }

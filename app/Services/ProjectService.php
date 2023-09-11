@@ -45,11 +45,28 @@ class ProjectService
         // Apply default color if color_hex is null
         $color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
+		// Check if the access_token is valid
+		if($request->access_token) {
+			$accessTokenUuidCode = substr($request->access_token, 0, 5);
+			$uuidCode = substr($project->access_token, 0, 5);
+			if($accessTokenUuidCode !== $uuidCode) {
+				return response()->json(["data" => [
+					"message" => __('application.access-token-invalid')
+				]], 409);
+			}
+
+			$accessToken = $request->access_token;
+		} else {
+			$accessToken = $project->access_token;
+		}
+
+
         // Update the project
         $project->update($request->all());
         $project->update([
             "company_id" => $company->id,
             "color_hex" => $color_hex,
+			"access_token" => $accessToken,
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
         ]);
 

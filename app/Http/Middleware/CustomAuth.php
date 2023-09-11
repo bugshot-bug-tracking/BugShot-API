@@ -74,7 +74,7 @@ class CustomAuth implements AuthenticatesRequests
 
 		if($project)
 		{
-			return true;
+			return $this->auth->shouldUse("sanctum");
 		}
 
         $this->unauthenticated($request, $guards);
