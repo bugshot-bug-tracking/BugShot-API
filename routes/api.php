@@ -195,6 +195,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
+		Route::post('/move-to-new-organization', [CompanyController::class, "moveCompanyToNewOrganization"])->name("company.move-to-new-organization");
 	});
 
 	// Project prefixed routes
