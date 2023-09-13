@@ -2468,7 +2468,7 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function generateAccessToken(Company $company, Project $project)
+	public function generateAccessToken(Project $project)
 	{
 		// Check if the user is authorized to view the project
 		$this->authorize('create', $project);
@@ -2488,4 +2488,79 @@ class ProjectController extends Controller
 		], 200);
 	}
 
+
+	/**
+	 * Mark the specified resource as favorite.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/mark-as-favorite",
+	 *	tags={"Project"},
+	 *	summary="Mark one project as favorite.",
+	 *	operationId="markProjectAsFavorite",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function markAsFavorite(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
+
+		// TODO: Update pivot tables "is_favorite" field
+
+		return new ProjectResource($project);
+	}
 }
