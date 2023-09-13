@@ -87,6 +87,12 @@ class Project extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="access_token",
+	 * 	type="string",
+	 * 	description="The token that lets anonymous users/clients send bugs to the project"
+	 * )
+	 *
+	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
 	 *  format="date-time",
@@ -109,7 +115,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "user_id", "designation", "url", "company_id", "color_hex"];
+	protected $fillable = ["id", "user_id", "designation", "url", "company_id", "color_hex", "access_token"];
 
 	protected $touches = ['company'];
 

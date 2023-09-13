@@ -296,6 +296,11 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -361,10 +366,15 @@ class ProjectController extends Controller
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
 
+
+		// Build valid access_token
+		$accessToken = Str::ulid();
+
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
 			"user_id" => Auth::user()->id,
+			"access_token" => $accessToken,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
@@ -785,6 +795,11 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
+	 *                  type="string",
+	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -896,6 +911,11 @@ class ProjectController extends Controller
 	 *              @OA\Property(
 	 *                  description="The project url",
 	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The projects access token",
+	 *                  property="access_token",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
@@ -2380,5 +2400,167 @@ class ProjectController extends Controller
 		// TODO: Go on from here
 
 		return response()->json("Project successfully moved to company " . $targetCompany->id, 200);
+	}
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/generate-access-token",
+	 *	tags={"Project"},
+	 *	summary="Generate access token for one project.",
+	 *	operationId="generateAccessTokenForProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function generateAccessToken(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('create', $project);
+
+		// Build valid access_token
+		$accessToken = Str::ulid();
+
+		$project->update([
+			'access_token' => $accessToken
+		]);
+
+		return response()->json([
+			'message' => 'Access token generated successfully',
+			'data' => [
+				'access_token' => $accessToken
+			]
+		], 200);
+	}
+
+
+	/**
+	 * Mark the specified resource as favorite.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/mark-as-favorite",
+	 *	tags={"Project"},
+	 *	summary="Mark one project as favorite.",
+	 *	operationId="markProjectAsFavorite",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function markAsFavorite(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('view', $project);
+
+		// TODO: Update pivot tables "is_favorite" field
+
+		return new ProjectResource($project);
 	}
 }

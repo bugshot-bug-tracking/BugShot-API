@@ -1362,4 +1362,116 @@ class CompanyController extends Controller
 
 		return new InvitationResource($invitation);
 	}
+
+
+/**
+	 * Move organization to a new organization.
+	 *
+	 * @param  Request  $request
+	 * @param  Company  $company
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/companies/{company_id}/move-to-new-organization",
+	 *	tags={"Company"},
+	 *	summary="Move company to new organization.",
+	 *	operationId="moveCompanyToNewOrganization",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new organization",
+	 *                  property="target_organization_id",
+	 *                  type="string",
+	 *              ),
+	 *              required={"target_organization_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Company"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveCompanyToNewOrganization(Request $request, Company $company)
+	{
+		// Check if the user is authorized to move the company to another organization
+		$this->authorize('moveCompany', $company);
+
+		$targetOrganization = Organization::find($request->target_organization_id);
+
+		// Check if the user is authorized to move the company to this exact organization
+		$this->authorize('create', [Company::class, $targetOrganization]);
+
+		// Check which of the company members is not part of the new organization
+		$usersNotInTargetOrganization = $company->users->diff($targetOrganization->users);
+		foreach($usersNotInTargetOrganization as $user) {
+			// Check if the user is already part of this organization
+			if ($user->organizations->find($targetOrganization) == NULL) {
+				$user->organizations()->attach($targetOrganization->id, ['role_id' => 2]); // Team
+			}
+		}
+
+		$company->update([
+			"organization_id" => $targetOrganization->id
+		]);
+
+		return response()->json("Company successfully moved to organization " . $targetOrganization->id, 200);
+	}
 }
