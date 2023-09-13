@@ -258,4 +258,21 @@ class CompanyPolicy
       return true;
     };
   }
+
+  	/**
+   	* Determine whether the user can move a company to a new organization
+   	*
+   	* @param  \App\Models\User  $user
+   	* @param  \App\Models\Company  $company
+   	* @return \Illuminate\Auth\Access\Response|bool
+   	*/
+	public function moveCompany(User $user, Company $company)
+	{
+		if(!$user->licenseActive()){return false;}
+
+		// Check if user is the manager or owner of the company or above
+		if ($user->isPriviliegated('companies', $company)) {
+			return true;
+		};
+	}
 }

@@ -93,6 +93,12 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 |--------------------------------------------------------------------------
 */
 
+Route::post('bugs/store-with-token', [BugController::class, "storeWithToken"])->name("bugs.store-with-access-token");
+
+Route::prefix('statuses/{status}')->group(function () {
+	Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
+});
+
 Route::get('/mail', function () {
 	$user = App\Models\User::find(1);
 	$url = config('app.webpanel_url') . '/auth/verify/' . $user->id . '/token';
@@ -189,10 +195,12 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
+		Route::post('/move-to-new-organization', [CompanyController::class, "moveCompanyToNewOrganization"])->name("company.move-to-new-organization");
 	});
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
+		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::prefix('bugs')->group(function () {
@@ -208,6 +216,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
+		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
 	});
 
 	// Status prefixed routes
