@@ -93,8 +93,9 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 |--------------------------------------------------------------------------
 */
 
+Route::post('bugs/store-with-token', [BugController::class, "storeWithToken"])->name("bugs.store-with-access-token");
+
 Route::prefix('statuses/{status}')->group(function () {
-	Route::post('/store-bug-with-token', [BugController::class, "store"])->name("bugs.store-with-access-token");
 	Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
 });
 
@@ -198,6 +199,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
+		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::prefix('bugs')->group(function () {

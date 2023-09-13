@@ -255,12 +255,6 @@ class BugController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="access-token",
-	 *		required=false,
-	 *		in="header",
-	 * 		example="secret"
-	 *	),
 	 *	@OA\Parameter(
 	 *		name="status_id",
 	 *		required=true,
@@ -413,6 +407,193 @@ class BugController extends Controller
 			// Check if the user is authorized to create the bug
 			$this->authorize('create', [Bug::class, $status->project]);
 		}
+
+		// Check if the the request already contains a UUID for the bug
+		$id = $this->setId($request);
+
+		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService, $apiCallService);
+	}
+
+		/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param  BugStoreRequest  $request
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/bugs/store-with-token",
+	 *	tags={"Bug"},
+	 *	summary="Store bug with access token.",
+	 *	operationId="storeBugWithAccessToken",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=false,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The bug name",
+	 *                  property="designation",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug description",
+	 *                  property="description",
+	 *                  type="string",
+	 *              ),
+	 *              @OA\Property(
+	 *                  description="The bug url",
+	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="priority_id",
+	 *                  type="integer",
+	 *                  format="int64",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="operating_system",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="time_estimation",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="browser",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="selector",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="resolution",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="deadline",
+	 *                  type="string",
+	 * 					format="date-time",
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="screenshots",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_x",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_x",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="web_position_y",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="device_pixel_ratio",
+	 *              		    type="integer",
+	 *              		    format="int32",
+	 *              		),
+	 * 					)
+	 *              ),
+	 *   			@OA\Property(
+	 *                  property="attachments",
+	 *                  type="array",
+	 * 					@OA\Items(
+	 * 	   					@OA\Property(
+	 *              		    property="base64",
+	 *              		    type="string"
+	 *              		),
+	 *  					@OA\Property(
+	 *              		    property="designation",
+	 *              		    type="string"
+	 *              		)
+	 * 					)
+	 *              ),
+	 *              required={"designation","url","priority_id",}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function storeWithToken(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
+	{
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$project = Project::where('access_token', $accessToken)
+				->first();
+
+		if(!$project) {
+			return response()->json([
+				'message' => 'No project found by the given access token'
+			], 404);
+		}
+
+		$status = $project->statuses()->where('permanent', 'backlog')->first();
 
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);

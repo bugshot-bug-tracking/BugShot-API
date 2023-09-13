@@ -368,11 +368,7 @@ class ProjectController extends Controller
 
 
 		// Build valid access_token
-		$uuidCode = "";
-		foreach(explode('-', $id) as $uuidSubpart) {
-			$uuidCode .= substr($uuidSubpart, 0, 1);
-		}
-		$accessToken = "$uuidCode-$request->access_token";
+		$accessToken = Str::ulid();
 
 		// Store the new project in the database
 		$project = $company->projects()->create([
@@ -2405,4 +2401,91 @@ class ProjectController extends Controller
 
 		return response()->json("Project successfully moved to company " . $targetCompany->id, 200);
 	}
+
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/generate-access-token",
+	 *	tags={"Project"},
+	 *	summary="Generate access token for one project.",
+	 *	operationId="generateAccessTokenForProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function generateAccessToken(Company $company, Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('create', $project);
+
+		// Build valid access_token
+		$accessToken = Str::ulid();
+
+		$project->update([
+			'access_token' => $accessToken
+		]);
+
+		return response()->json([
+			'message' => 'Access token generated successfully',
+			'data' => [
+				'access_token' => $accessToken
+			]
+		], 200);
+	}
+
 }
