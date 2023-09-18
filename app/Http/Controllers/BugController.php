@@ -171,26 +171,21 @@ class BugController extends Controller
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if ($request->timestamp == NULL) {
-			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
-				$bugs = Auth::user()->bugs()
-					->where("status_id", $status->id)
-					->where("archived_at", NULL);
-			} else {
-				$bugs = $status->bugs()
-					->where("bugs.archived_at", NULL);
-			}
+		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			$bugs = Auth::user()->bugs()
+				->where("status_id", $status->id)
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where("archived_at", NULL)
+				->get();
 		} else {
-			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
-				$bugs = Auth::user()->bugs()
-					->where("status_id", $status->id)
-					->where("updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where("archived_at", NULL);
-			} else {
-				$bugs = $status->bugs()
-					->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where("bugs.archived_at", NULL);
-			}
+			$bugs = $status->bugs()
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where("bugs.archived_at", NULL)
+				->get();
 		}
 
 		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {

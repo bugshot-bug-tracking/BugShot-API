@@ -175,7 +175,11 @@ class ProjectController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 *
+	 * 	@OA\Parameter(
+	 *		name="only-favorites",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -208,34 +212,37 @@ class ProjectController extends Controller
 		// Check if the user is authorized to list the projects of the company
 		$this->authorize('viewAny', [Project::class, $company]);
 
-		// Get timestamp
 		$timestamp = $request->header('timestamp');
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
-		// Check if the request includes a timestamp and query the projects accordingly
-		if ($timestamp == NULL) {
-			if ($userIsPriviliegated) {
-				$projects = $company->projects;
-			} else {
-				$projects = Auth::user()->projects->where('company_id', $company->id);
-				$createdProjects = $this->user->createdProjects->where('company_id', $company->id);
-				// Combine the two collections
-				$projects = $projects->concat($createdProjects);
-			}
+		if ($userIsPriviliegated) {
+			$projects = $company->projects()->when($timestamp, function ($query, $timestamp) {
+				return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			})
+			->get();
 		} else {
-			if ($userIsPriviliegated) {
-				$projects = $company->projects->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			} else {
-				$projects = Auth::user()->projects
-					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('company_id', $company->id);
-				$createdProjects = $this->user->createdProjects
-					->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('company_id', $company->id);
+			$projects = Auth::user()->projects
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('company_id', $company->id)
+				->get();
+			$createdProjects = $this->user->createdProjects
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('company_id', $company->id)
+				->get();
 
-				// Combine the two collections
-				$projects = $projects->concat($createdProjects);
-			}
+			// Combine the two collections
+			$projects = $projects->concat($createdProjects);
+		}
+
+		if($request->header('only-favorites')) {
+			$projects = $projects->filter(function ($value, $key) {
+				$isFavorite = ProjectUserRole::where('project_id', $value->id)->where('user_id', $this->user->id)->pluck('is_favorite');
+				return $isFavorite[0] == 1;
+			});
 		}
 
 		return ProjectResource::collection($projects);
@@ -1790,7 +1797,7 @@ class ProjectController extends Controller
 		// Check if the user is authorized to update the users role in the given project
 		$this->authorize('updateUserRole', $project);
 
-		// Update the companies user role
+		// Update the projects user role
 		$project->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
@@ -2559,8 +2566,15 @@ class ProjectController extends Controller
 		// Check if the user is authorized to view the project
 		$this->authorize('view', $project);
 
-		// TODO: Update pivot tables "is_favorite" field
+		$projectUserRole = ProjectUserRole::where('project_id', $project->id)
+			->where('user_id', $this->user->id)
+			->firstOrFail();
 
-		return new ProjectResource($project);
+		// Update the project user role
+		$project->users()->updateExistingPivot($this->user->id, [
+			'is_favorite' => !$projectUserRole->is_favorite
+		]);
+
+		return new ProjectUserRoleResource($projectUserRole);
 	}
 }

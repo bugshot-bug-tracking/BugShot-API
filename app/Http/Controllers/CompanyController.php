@@ -225,30 +225,28 @@ class CompanyController extends Controller
 		$userIsPriviliegated = $this->user->isPriviliegated('organizations', $organization);
 
 		// Check if the request includes a timestamp and query the companies accordingly
-		if($timestamp == NULL) {
-			if($userIsPriviliegated) {
-				$companies = $organization->companies;
-			} else {
-				$companies = Auth::user()->companies->where('organization_id', $organization->id);
-				$createdCompanies = $this->user->createdCompanies->where('organization_id', $organization->id);
-				// Combine the two collections
-				$companies = $companies->concat($createdCompanies);
-			}
-        } else {
-			if($userIsPriviliegated) {
-				$companies = $organization->companies->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			} else {
-				$companies = Auth::user()->companies
-					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('organization_id', $organization->id);
-				$createdCompanies = $this->user->createdCompanies
-					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('organization_id', $organization->id);
+		if($userIsPriviliegated) {
+			$companies = $organization->companies->when($timestamp, function ($query, $timestamp) {
+				return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			})
+			->get();
+		} else {
+			$companies = Auth::user()->companies
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('organization_id', $organization->id)
+				->get();
+			$createdCompanies = $this->user->createdCompanies
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('organization_id', $organization->id)
+				->get();
 
-				// Combine the two collections
-				$companies = $companies->concat($createdCompanies);
-			}
-        }
+			// Combine the two collections
+			$companies = $companies->concat($createdCompanies);
+		}
 
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}
