@@ -1790,7 +1790,7 @@ class ProjectController extends Controller
 		// Check if the user is authorized to update the users role in the given project
 		$this->authorize('updateUserRole', $project);
 
-		// Update the companies user role
+		// Update the projects user role
 		$project->users()->updateExistingPivot($user->id, [
 			'role_id' => $request->role_id
 		]);
@@ -2559,8 +2559,15 @@ class ProjectController extends Controller
 		// Check if the user is authorized to view the project
 		$this->authorize('view', $project);
 
-		// TODO: Update pivot tables "is_favorite" field
+		$projectUserRole = ProjectUserRole::where('project_id', $project->id)
+			->where('user_id', $this->user->id)
+			->firstOrFail();
 
-		return new ProjectResource($project);
+		// Update the project user role
+		$project->users()->updateExistingPivot($this->user->id, [
+			'is_favorite' => !$projectUserRole->is_favorite
+		]);
+
+		return new ProjectUserRoleResource($projectUserRole);
 	}
 }

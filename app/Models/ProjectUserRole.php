@@ -34,9 +34,15 @@ class ProjectUserRole extends Model
 	 * 	description="The id of the role."
 	 * )
 	 *
+	 * @OA\Property(
+	 * 	property="is_favorite",
+	 * 	type="bool",
+	 * 	description="Marks the project as favorite."
+	 * )
+	 *
 	 */
 
-	protected $fillable = ["project_id", "user_id", "role_id"];
+	protected $fillable = ["project_id", "user_id", "role_id", "is_favorite"];
 
 	public $timestamps = false;
 
