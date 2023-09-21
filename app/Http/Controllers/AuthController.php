@@ -815,15 +815,18 @@ class AuthController extends Controller
 			16 => ['value_id' => 25], // user_settings_darkmode: light_mode
 
 			// Added 21.08.23
-			17 => ['value_id' => 42], // custom_notifications_new_bug_added: active
-			18 => ['value_id' => 42], // custom_notifications_bug_change_of_status: active
-			19 => ['value_id' => 42], // custom_notifications_report_created_deleted: active
-			20 => ['value_id' => 42], // custom_notifications_report_finished: active
-			21 => ['value_id' => 42], // custom_notifications_assignation_to_client_project_task: active
-			22 => ['value_id' => 42], // custom_notifications_new_comments_and_replies: active
-			23 => ['value_id' => 42], // custom_notifications_new_tag_in_comment: active
-			24 => ['value_id' => 42], // show_custom_show_secondary_view_all_projects_button: active
-			25 => ['value_id' => 42] // show_custom_show_edit_priority_button: active
+			17 => ['value_id' => 11], // custom_notifications_new_bug_added: active
+			18 => ['value_id' => 11], // custom_notifications_bug_change_of_status: active
+			19 => ['value_id' => 11], // custom_notifications_report_created: active
+			20 => ['value_id' => 11], // custom_notifications_report_finished: active
+			21 => ['value_id' => 11], // custom_notifications_assignation_to_client_project_task: active
+			22 => ['value_id' => 11], // custom_notifications_new_comments_and_replies: active
+			23 => ['value_id' => 11], // custom_notifications_new_tag_in_comment: active
+			24 => ['value_id' => 11], // show_custom_show_secondary_view_all_projects_button: active
+			25 => ['value_id' => 11], // show_custom_show_edit_priority_button: active
+
+			// Added 21.09.2023
+			26 => ['value_id' => 11] // custom_notifications_implementation_approval_form_received: active
 		]);
 	}
 

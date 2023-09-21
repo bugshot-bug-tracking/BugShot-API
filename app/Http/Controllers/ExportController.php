@@ -248,7 +248,9 @@ class ExportController extends Controller
 			$user = User::where('email', $recipient["email"])->first();
 
 			if ($user != null) {
-				$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
+				if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_implementation_approval_form_received") == "activated") {
+					$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
+				}
 			} else {
 				Notification::route('email', $recipient["email"])
 					->notify((new ImplementationApprovalFormUnregisteredUserNotification($export, $recipient))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
@@ -256,7 +258,9 @@ class ExportController extends Controller
 		}
 
 		// Notify the owner as well
-		$project->creator->notify((new ImplementationApprovalFormNotification($export, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		if($project->creator->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $project->creator->getSettingValueByName("custom_notifications_implementation_approval_form_received") == "activated") {
+			$project->creator->notify((new ImplementationApprovalFormNotification($export, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		}
 
 		return new ExportResource($export);
 	}
@@ -493,7 +497,7 @@ class ExportController extends Controller
 	{
 		// Check if the user is authorized to update the export
 		// $this->authorize('update', $export);
-
+		// TODO: Test this route
 		foreach($request->bugs as $bug) {
 			$dbBug = Bug::find($bug["id"]);
 

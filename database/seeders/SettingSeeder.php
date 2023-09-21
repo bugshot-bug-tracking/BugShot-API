@@ -88,7 +88,7 @@ class SettingSeeder extends Seeder
 		]);
 
 		Setting::create([
-			"designation" => "custom_notifications_report_created_deleted"
+			"designation" => "custom_notifications_report_created"
 		]);
 
 		Setting::create([
@@ -138,6 +138,11 @@ class SettingSeeder extends Seeder
 		// Added 28.08.2023
 		Setting::create([
 			"designation" => "custom_notifications_assigned_to_bug"
+		]);
+
+		// Added 21.09.2023
+		Setting::create([
+			"designation" => "custom_notifications_implementation_approval_form_received"
 		]);
 	}
 }
