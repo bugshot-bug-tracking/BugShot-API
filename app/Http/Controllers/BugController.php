@@ -177,15 +177,13 @@ class BugController extends Controller
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where("archived_at", NULL)
-				->get();
+				->where("archived_at", NULL);
 		} else {
 			$bugs = $status->bugs()
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("bugs.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where("bugs.archived_at", NULL)
-				->get();
+				->where("bugs.archived_at", NULL);
 		}
 
 		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
@@ -213,8 +211,7 @@ class BugController extends Controller
 			$priority = Priority::where('designation', $designation)->firstOrFail();
 
 			return $query->where($searchTermPrefix . "priority_id", $priority->id);
-		})
-		->get();
+		});
 
 
 		return BugResource::collection($bugs);
@@ -392,8 +389,7 @@ class BugController extends Controller
 	{
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
-		$url = $request->url;
-		$project = Project::where('url', $url)
+		$project = Project::where('id', $status->project->id)
 				->where('access_token', $accessToken)
 				->exists();
 

@@ -228,21 +228,18 @@ class CompanyController extends Controller
 		if($userIsPriviliegated) {
 			$companies = $organization->companies->when($timestamp, function ($query, $timestamp) {
 				return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			})
-			->get();
+			});
 		} else {
 			$companies = Auth::user()->companies
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('organization_id', $organization->id)
-				->get();
+				->where('organization_id', $organization->id);
 			$createdCompanies = $this->user->createdCompanies
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('organization_id', $organization->id)
-				->get();
+				->where('organization_id', $organization->id);
 
 			// Combine the two collections
 			$companies = $companies->concat($createdCompanies);
@@ -1363,7 +1360,7 @@ class CompanyController extends Controller
 
 
 /**
-	 * Move organization to a new organization.
+	 * Move company to a new organization.
 	 *
 	 * @param  Request  $request
 	 * @param  Company  $company
@@ -1470,6 +1467,6 @@ class CompanyController extends Controller
 			"organization_id" => $targetOrganization->id
 		]);
 
-		return response()->json("Company successfully moved to organization " . $targetOrganization->id, 200);
+		return new CompanyResource($company);
 	}
 }
