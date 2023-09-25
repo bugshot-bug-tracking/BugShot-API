@@ -160,8 +160,7 @@ class StatusController extends Controller
 		$timestamp = $request->timestamp;
 		$statuses = $project->statuses->when($timestamp, function ($query, $timestamp) {
 			return $query->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-		})
-		->get();
+		});
 
 		return StatusResource::collection($statuses);
 	}
