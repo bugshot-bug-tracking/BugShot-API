@@ -216,7 +216,7 @@ class ProjectController extends Controller
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
 		if ($userIsPriviliegated) {
-			$projects = $company->projects()->when($timestamp, function ($query, $timestamp) {
+			$projects = $company->projects->when($timestamp, function ($query, $timestamp) {
 				return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 			});
 		} else {
