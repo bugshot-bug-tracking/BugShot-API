@@ -42,6 +42,8 @@ class ValueSeeder extends Seeder
 			['designation' => 'light_mode'],
 			['designation' => 'dark_mode'],
 			['designation' => 'system'],
+			['designation' => 'complete'],
+			['designation' => 'canceled'],
 		];
 
 		Value::insert($values);
