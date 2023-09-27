@@ -513,7 +513,10 @@ class ExportController extends Controller
 			$user = User::where('email', $recipient["email"])->first();
 
 			if ($user != null) {
-				$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $user))->locale(GetUserLocaleService::getLocale($user)));
+				if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_report_created") == "activated") {
+
+					$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $user))->locale(GetUserLocaleService::getLocale($user)));
+				}
 			} else {
 				Notification::route('email', $recipient["email"])
 					->notify((new ApprovalReportUnregisteredUserNotification($report))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
@@ -521,7 +524,9 @@ class ExportController extends Controller
 		}
 
 		// Notify the owner as well
-		$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		if($project->creator->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $project->creator->getSettingValueByName("custom_notifications_report_created") == "activated") {
+			$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
+		}
 
 		return response()->json([
 			"data" => [
@@ -606,7 +611,7 @@ class ExportController extends Controller
 		$this->authorize('delete', $export);
 
 		$val = $export->delete();
-		broadcast(new ExportDeleted($export))->toOthers();
+		// broadcast(new ExportDeleted($export))->toOthers();
 
 		return response($val, 204);
 	}
