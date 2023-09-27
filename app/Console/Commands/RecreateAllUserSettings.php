@@ -45,13 +45,15 @@ class RecreateAllUserSettings extends Command
 			foreach($userIds as $userId) {
 				$user = User::find($userId);
 
-				foreach(Setting::all() as $setting) {
-					$defaultValue = Value::where("designation", $setting->default_value)->first();
-					$defaultValueId = $defaultValue ? $defaultValue->id : NULL;
+				if($user) {
+					foreach(Setting::all() as $setting) {
+						$defaultValue = Value::where("designation", $setting->default_value)->first();
+						$defaultValueId = $defaultValue ? $defaultValue->id : NULL;
 
-					$user->settings()->attach([
-						$setting->id => ['value_id' => $defaultValueId]
-					]);
+						$user->settings()->attach([
+							$setting->id => ['value_id' => $defaultValueId]
+						]);
+					}
 				}
 			}
 		});
