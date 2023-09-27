@@ -258,6 +258,8 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		// Route for the chrome extension to check if the visited website has a respective project
 		Route::post('/check-project', [UserController::class, "checkProject"])->name("user.check-project");
 
+		Route::get("/activity", [UserController::class, "getActivity"])->name("user.activity");
+
 		// Invitation prefixed routes
 		Route::prefix('invitations')->group(function () {
 			Route::get("/", [InvitationController::class, "index"])->name("user.invitation.index");
