@@ -216,23 +216,20 @@ class ProjectController extends Controller
 		$userIsPriviliegated = $this->user->isPriviliegated('companies', $company);
 
 		if ($userIsPriviliegated) {
-			$projects = $company->projects()->when($timestamp, function ($query, $timestamp) {
+			$projects = $company->projects->when($timestamp, function ($query, $timestamp) {
 				return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			})
-			->get();
+			});
 		} else {
 			$projects = Auth::user()->projects
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('company_id', $company->id)
-				->get();
+				->where('company_id', $company->id);
 			$createdProjects = $this->user->createdProjects
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("projects.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('company_id', $company->id)
-				->get();
+				->where('company_id', $company->id);
 
 			// Combine the two collections
 			$projects = $projects->concat($createdProjects);
@@ -372,7 +369,6 @@ class ProjectController extends Controller
 
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
-
 
 		// Build valid access_token
 		$accessToken = Str::ulid();
@@ -2274,7 +2270,7 @@ class ProjectController extends Controller
 			}
 		}
 
-		return response()->json("Bugs successfully moved to project " . $targetProject->id, 200);
+		return new ProjectResource($project);
 	}
 
 	/**
@@ -2406,7 +2402,7 @@ class ProjectController extends Controller
 		// dd("all users in target company");
 		// TODO: Go on from here
 
-		return response()->json("Project successfully moved to company " . $targetCompany->id, 200);
+		return new ProjectResource($project);
 	}
 
 
@@ -2575,6 +2571,6 @@ class ProjectController extends Controller
 			'is_favorite' => !$projectUserRole->is_favorite
 		]);
 
-		return new ProjectUserRoleResource($projectUserRole);
+		return new ProjectResource($project);
 	}
 }
