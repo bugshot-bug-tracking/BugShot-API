@@ -225,30 +225,25 @@ class CompanyController extends Controller
 		$userIsPriviliegated = $this->user->isPriviliegated('organizations', $organization);
 
 		// Check if the request includes a timestamp and query the companies accordingly
-		if($timestamp == NULL) {
-			if($userIsPriviliegated) {
-				$companies = $organization->companies;
-			} else {
-				$companies = Auth::user()->companies->where('organization_id', $organization->id);
-				$createdCompanies = $this->user->createdCompanies->where('organization_id', $organization->id);
-				// Combine the two collections
-				$companies = $companies->concat($createdCompanies);
-			}
-        } else {
-			if($userIsPriviliegated) {
-				$companies = $organization->companies->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			} else {
-				$companies = Auth::user()->companies
-					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('organization_id', $organization->id);
-				$createdCompanies = $this->user->createdCompanies
-					->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp))
-					->where('organization_id', $organization->id);
+		if($userIsPriviliegated) {
+			$companies = $organization->companies->when($timestamp, function ($query, $timestamp) {
+				return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+			});
+		} else {
+			$companies = Auth::user()->companies
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('organization_id', $organization->id);
+			$createdCompanies = $this->user->createdCompanies
+				->when($timestamp, function ($query, $timestamp) {
+					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+				})
+				->where('organization_id', $organization->id);
 
-				// Combine the two collections
-				$companies = $companies->concat($createdCompanies);
-			}
-        }
+			// Combine the two collections
+			$companies = $companies->concat($createdCompanies);
+		}
 
 		return CompanyResource::collection($companies->sortBy('designation'));
 	}
@@ -1361,5 +1356,117 @@ class CompanyController extends Controller
 		broadcast(new InvitationCreated($invitation))->toOthers();
 
 		return new InvitationResource($invitation);
+	}
+
+
+/**
+	 * Move company to a new organization.
+	 *
+	 * @param  Request  $request
+	 * @param  Company  $company
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/companies/{company_id}/move-to-new-organization",
+	 *	tags={"Company"},
+	 *	summary="Move company to new organization.",
+	 *	operationId="moveCompanyToNewOrganization",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The id of the new organization",
+	 *                  property="target_organization_id",
+	 *                  type="string",
+	 *              ),
+	 *              required={"target_organization_id"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Company"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function moveCompanyToNewOrganization(Request $request, Company $company)
+	{
+		// Check if the user is authorized to move the company to another organization
+		$this->authorize('moveCompany', $company);
+
+		$targetOrganization = Organization::find($request->target_organization_id);
+
+		// Check if the user is authorized to move the company to this exact organization
+		$this->authorize('create', [Company::class, $targetOrganization]);
+
+		// Check which of the company members is not part of the new organization
+		$usersNotInTargetOrganization = $company->users->diff($targetOrganization->users);
+		foreach($usersNotInTargetOrganization as $user) {
+			// Check if the user is already part of this organization
+			if ($user->organizations->find($targetOrganization) == NULL) {
+				$user->organizations()->attach($targetOrganization->id, ['role_id' => 2]); // Team
+			}
+		}
+
+		$company->update([
+			"organization_id" => $targetOrganization->id
+		]);
+
+		return new CompanyResource($company);
 	}
 }

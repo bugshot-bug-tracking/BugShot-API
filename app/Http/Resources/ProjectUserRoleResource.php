@@ -32,7 +32,8 @@ class ProjectUserRoleResource extends JsonResource
 
 		$projectUserRole = array(
 			'user' => new UserResource($user),
-			'status' => $status
+			'status' => $status,
+			'is_favorite' => $this->is_favorite
 		);
 
 		$header = $request->header();

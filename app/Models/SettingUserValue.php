@@ -18,7 +18,7 @@ class SettingUserValue extends Model
 	 * 	type="integer",
 	 *  format="int64",
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="setting_id",
 	 * 	type="string",
@@ -41,8 +41,14 @@ class SettingUserValue extends Model
 	 * )
 	 *
 	 */
-
 	protected $fillable = ["setting_id", "user_id", "value_id"];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'setting_user_values';
 
 	public $timestamps = false;
 

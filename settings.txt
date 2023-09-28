@@ -1,10 +1,16 @@
-// The following settings can be added to the frontend now and will actually have an impact on the app
+Info for backend: For the settings to work they need to be put in the seeder, added to the AuthController login and checked on at the respective spot in the app
+
+The following settings can be added to the frontend now and will actually have an impact on the app
+
+User setting "Interface language":
+Setting: user_settings_interface_language
+Value: en/de
 
 What notifications the user wants to receive:
 Setting: user_settings_select_notifications
 Values: every_notification/custom_notifications
 
-// If he chooses custome_notifications he can activate/deactivate the following options
+If he chooses custom_notifications he can activate/deactivate the following options:
 Custom notification "Tagged on comment":
 Setting: custom_notifications_tagged_in_comment
 Values: activated/deactivated
@@ -15,4 +21,16 @@ Values: activated/deactivated
 
 Custom notification "Daily summary":
 Setting: custom_notifications_daily_summary
+Values: activated/deactivated
+
+Custom notification "Invitation received":
+Setting: custom_notifications_invitation_received
+Values: activated/deactivated
+
+Custom notification "Implementation Approval Form Received":
+Setting: custom_notifications_implementation_approval_form_received
+Values: activated/deactivated
+
+Custom notification "Report created":
+Setting: custom_notifications_report_created
 Values: activated/deactivated

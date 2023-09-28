@@ -31,7 +31,7 @@ use App\Services\GetUserLocaleService;
 // Models
 use App\Models\User;
 use App\Models\SettingUserValue;
-use App\Models\Organization;
+use App\Models\Setting;
 
 // Requests
 use App\Http\Requests\CustomEmailVerificationRequest;
@@ -41,6 +41,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Notifications\UserRegisteredNotification;
 use App\Http\Requests\CheckEmailRequest;
+use App\Models\Value;
 
 /**
  * @OA\Tag(
@@ -309,7 +310,7 @@ class AuthController extends Controller
 
 			// If the user has no settings yet, set them (This also means that he has not logged in for the first time yet)
 			if ($user->settings->isEmpty()) {
-				$user->settings()->attach($this->getDefaultSettings());
+				$this->addDefaultSettings($user);
 			}
 
 			$new_user = false;
@@ -320,7 +321,7 @@ class AuthController extends Controller
 			]);
 
 			// Create default set of settings for the user when first logged in
-			$user->settings()->attach($this->getDefaultSettings());
+			$this->addDefaultSettings($user);
 
 			$new_user = true;
 		}
@@ -340,33 +341,6 @@ class AuthController extends Controller
 			]
 		], 200);
 	}
-
-	// Returns a set of default settings with their default values
-	private function getDefaultSettings()
-	{
-		$defaultSettings = [
-			1 => ['value_id' => 1], // company_filter_alphabetical: az
-			2 => ['value_id' => 3], // company_filter_creation: newest_first
-			3 => ['value_id' => 6], // company_filter_last_updated: ascending
-			4 => ['value_id' => 1], // project_filter_alphabetical:az
-			5 => ['value_id' => 3], // project_filter_creation: newest_first
-			6 => ['value_id' => 6], // project_filter_last_updated: ascending
-			7 => ['value_id' => 1], // bug_filter_alphabetical: az
-			8 => ['value_id' => 3], // bug_filter_creation: newest_first
-			9 => ['value_id' => 7], // bug_filter_priority: critical_first
-			10 => ['value_id' => 9], // bug_filter_deadline: ending_first
-			11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
-			12 => ['value_id' => 13], // user_settings_interface_language: en
-			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
-			14 => ['value_id' => 25], // user_settings_receive_mail_notifications: receive_notifications_via_app
-			14 => ['value_id' => 26], // user_settings_receive_mail_notifications: receive_notifications_via_mail
-			15 => ['value_id' => 27], // user_settings_select_notifications: every_notification
-			16 => ['value_id' => 36] // user_settings_darkmode: light_mode
-		];
-
-		return $defaultSettings;
-	}
-
 
 	/**
 	 * @OA\Post(
@@ -796,44 +770,16 @@ class AuthController extends Controller
 
 	public function addDefaultSettings($user)
 	{
-		$user->settings()->attach([
-			1 => ['value_id' => 1], // company_filter_alphabetical: az
-			2 => ['value_id' => 3], // company_filter_creation: newest_first
-			3 => ['value_id' => 6], // company_filter_last_updated: ascending
-			4 => ['value_id' => 1], // project_filter_alphabetical:az
-			5 => ['value_id' => 3], // project_filter_creation: newest_first
-			6 => ['value_id' => 6], // project_filter_last_updated: ascending
-			7 => ['value_id' => 1], // bug_filter_alphabetical: az
-			8 => ['value_id' => 3], // bug_filter_creation: newest_first
-			9 => ['value_id' => 7], // bug_filter_priority: critical_first
-			10 => ['value_id' => 9], // bug_filter_deadline: ending_first
-			11 => ['value_id' => NULL], // bug_filter_assigned_to: NULL (Filter not implemeneted yet)
-			12 => ['value_id' => 13], // user_settings_interface_language: en
-			13 => ['value_id' => 18], // user_settings_show_ui_elements: show_all
-			14 => ['value_id' => 21], // user_settings_receive_mail_notifications: receive_notifications_everywhere
-			15 => ['value_id' => 23], // user_settings_select_notifications: every_notification
-			16 => ['value_id' => 25], // user_settings_darkmode: light_mode
 
-			// Added 21.08.23
-			17 => ['value_id' => 42], // custom_notifications_new_bug_added: active
-			18 => ['value_id' => 42], // custom_notifications_bug_change_of_status: active
-			19 => ['value_id' => 42], // custom_notifications_report_created_deleted: active
-			20 => ['value_id' => 42], // custom_notifications_report_finished: active
-			21 => ['value_id' => 42], // custom_notifications_assignation_to_client_project_task: active
-			22 => ['value_id' => 42], // custom_notifications_new_comments_and_replies: active
-			23 => ['value_id' => 42], // custom_notifications_new_tag_in_comment: active
-			24 => ['value_id' => 42], // show_custom_show_secondary_view_all_projects_button: active
-			25 => ['value_id' => 42] // show_custom_show_edit_priority_button: active
-		]);
+		foreach(Setting::all() as $setting) {
+			$defaultValue = Value::where("designation", $setting->default_value)->first();
+			$defaultValueId = $defaultValue ? $defaultValue->id : NULL;
+
+			$user->settings()->attach([
+				$setting->id => ['value_id' => $defaultValueId]
+			]);
+		}
 	}
-
-	// public function addSubValues($userId, $settingId, $subValueArray)
-	// {
-	// 	$settingUserValue = SettingUserValue::where('user_id', $userId)->where('setting_id', $settingId)->first();
-	// 	foreach($subValueArray as $subValue) {
-	// 		$settingUserValue->subValues()->attach($subValue);
-	// 	}
-	// }
 
 	public function startTrial(Request $request)
 	{

@@ -46,7 +46,7 @@ class BugService
 		if ($tempProject != NULL) {
 			$creator_id = $tempProject->user_id;
 		} else {
-			$creator_id = Auth::user()->id;
+			$creator_id = Auth::user() ? Auth::user()->id : NULL;
 		}
 
 
