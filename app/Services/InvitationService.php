@@ -32,7 +32,9 @@ class InvitationService
         // Check if the recipient is a registered user or not
         $user = User::where('email', $recipient_mail)->first();
         if ($user != null) {
-            $user->notify((new InvitationReceivedNotification($invitation, $user))->locale(GetUserLocaleService::getLocale($user)));
+			if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_invitation_received") == "activated") {
+				$user->notify((new InvitationReceivedNotification($invitation, $user))->locale(GetUserLocaleService::getLocale($user)));
+			}
         } else {
             Notification::route('email', $recipient_mail)
                 ->notify((new InvitationReceivedUnregisteredUserNotification($invitation))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender

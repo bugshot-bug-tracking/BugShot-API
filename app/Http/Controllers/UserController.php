@@ -6,12 +6,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Response;
 use App\Http\Requests\CheckProjectRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 // Resources
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\SettingUserValueResource;
+use App\Http\Resources\ActivityResource;
 
 // Services
 use App\Services\ImageService;
@@ -20,16 +22,16 @@ use App\Services\ImageService;
 use App\Models\User;
 use App\Models\Setting;
 use App\Models\SettingUserValue;
+use App\Models\OrganizationUserRole;
+use App\Models\CompanyUserRole;
+use App\Models\ProjectUserRole;
+use App\Models\BugUserRole;
+use App\Models\ClientUser;
 
 // Requests
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\SettingRequest;
-use App\Http\Requests\UserBillingAddressStoreRequest;
-use App\Models\OrganizationUserRole;
-use App\Models\CompanyUserRole;
-use App\Models\ProjectUserRole;
-use App\Models\BugUserRole;
 
 /**
  * @OA\Tag(
@@ -701,7 +703,7 @@ class UserController extends Controller
 		foreach ($projects as $tempProject) {
 			// Merge the project URL and its associated URLs into a single array
 			$projectUrls = [$tempProject->url, ...$tempProject->urls->pluck('url')->toArray()];
-			
+
 			// Check if the requested URL matches the project URL origin or a wildcard URL pattern
 			foreach ($projectUrls as $url) {
 				// Check if the URL contains a wildcard character *
@@ -733,7 +735,7 @@ class UserController extends Controller
 
 		// Remove duplicate additional projects
 		$uniqueProjects = $additionalProjects->unique('id');
-		
+
 		// Remove exact projects from additional projects
 		$uniqueProjects = $uniqueProjects->diff($exactProjects);
 
@@ -758,11 +760,11 @@ class UserController extends Controller
 		if (!$url1 || !$url2) {
 			return false; // Return false if any of the conditions is true
 		}
-		
+
 		// Parse the URLs
 		$parsedUrl1 = parse_url($url1);
 		$parsedUrl2 = parse_url($url2);
-		
+
 		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
 		return $parsedUrl1 && $parsedUrl2 && $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
 	}
@@ -791,11 +793,11 @@ class UserController extends Controller
 		else{
 			$url_with_protocol = $pattern;
 		}
-		
+
 		// Parse the URLs
 		$parsedUrl1 = parse_url($url);
 		$parsedUrl2 = parse_url($url_with_protocol);
-		
+
 		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
 		return $parsedUrl1 && $parsedUrl2 && $this->matchWildcardUrl($parsedUrl1['host'], $parsedUrl2["host"]);
 	}
@@ -1050,5 +1052,80 @@ class UserController extends Controller
 		$user->startTrial();
 
 		return response()->json("Trial started succesfully", 200);
+	}
+
+	/**
+	 * Get the activity of this user
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/users/{user_id}/activity",
+	 *	tags={"User"},
+	 *	summary="Get the activity of this user.",
+	 *	operationId="userActivity",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="user_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/User/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function getActivity(User $user)
+	{
+		// Check if the user is authorized to start the trial
+		$this->authorize('view', $user);
+
+		$clientUsers = DB::table("client_users")->where("user_id", $user->id)->get();
+
+		return new ActivityResource($clientUsers);
+		// return response()->json([
+		// 	"data" => {
+		// 		"id"=> 1
+		// 	}
+		// ], 200);
 	}
 }

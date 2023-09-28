@@ -1,5 +1,7 @@
 List of todos for next live push. Delete list after live push!
 
 Todos:
-- Run Setting and Value Seeder with the new entries starting from the 21.08
-- Run usersettings:update script to add those new entries to exisiting users from the 21.08
+- migrate
+- Truncate and reseed settings table
+- Run "php artisan usersettings:fresh"
+

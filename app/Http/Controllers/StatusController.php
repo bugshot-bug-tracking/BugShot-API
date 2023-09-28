@@ -157,11 +157,10 @@ class StatusController extends Controller
 		// Check if the user is authorized to list the statuses of the project
 		$this->authorize('viewAny', [Status::class, $project]);
 
-		if ($request->timestamp == NULL) {
-			$statuses = $project->statuses;
-		} else {
-			$statuses = $project->statuses->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $request->timestamp));
-		}
+		$timestamp = $request->timestamp;
+		$statuses = $project->statuses->when($timestamp, function ($query, $timestamp) {
+			return $query->where("statuses.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
+		});
 
 		return StatusResource::collection($statuses);
 	}
