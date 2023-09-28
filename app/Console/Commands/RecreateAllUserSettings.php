@@ -39,7 +39,7 @@ class RecreateAllUserSettings extends Command
     public function handle()
     {
 		DB::transaction(function () {
-			$userIds = SettingUserValue::groupBy("user_id")->pluck("user_id");
+			$userIds = User::all()->whereNull("deleted_at")->whereNotNull("email_verified_at")->pluck("id");
 			SettingUserValue::query()->delete();
 
 			foreach($userIds as $userId) {
