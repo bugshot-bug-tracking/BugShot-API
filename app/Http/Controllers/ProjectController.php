@@ -2550,7 +2550,7 @@ class ProjectController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function validateToken()
+	public function validateToken(Request $request)
 	{
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
