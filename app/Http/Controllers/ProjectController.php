@@ -2559,7 +2559,7 @@ class ProjectController extends Controller
 
 		if(!$project) {
 			return response()->json([
-				'message' => 'Invalid access token'
+				'message' => __('application.access-token-invalid')
 			], 404);
 		}
 
