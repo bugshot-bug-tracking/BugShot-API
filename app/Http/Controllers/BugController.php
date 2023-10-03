@@ -405,7 +405,7 @@ class BugController extends Controller
 		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService, $apiCallService);
 	}
 
-		/**
+	/**
 	 * Store a newly created resource in storage.
 	 *
 	 * @param  BugStoreRequest  $request

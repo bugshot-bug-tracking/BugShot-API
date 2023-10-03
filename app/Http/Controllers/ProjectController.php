@@ -2405,15 +2405,14 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
-
 	/**
-	 * Display the specified resource.
+	 * Generate an access token for the project.
 	 *
 	 * @param  Project  $project
 	 * @return Response
 	 */
 	/**
-	 * @OA\Get(
+	 * @OA\Post(
 	 *	path="/projects/{project_id}/generate-access-token",
 	 *	tags={"Project"},
 	 *	summary="Generate access token for one project.",
@@ -2491,6 +2490,81 @@ class ProjectController extends Controller
 		], 200);
 	}
 
+	/**
+	 * Validate access token.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/validate-access-token",
+	 *	tags={"Project"},
+	 *	summary="Validate access token.",
+	 *	operationId="validateAccessToken",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function validateToken()
+	{
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$project = Project::where('access_token', $accessToken)
+				->first();
+
+		if(!$project) {
+			return response()->json([
+				'message' => 'Invalid access token'
+			], 404);
+		}
+
+		return new ProjectResource($project);
+	}
 
 	/**
 	 * Mark the specified resource as favorite.
