@@ -87,4 +87,94 @@ class ProjectService
 
 		return new InvitationResource($invitation);
 	}
+
+	/**
+	 * Checks a given URL against project URLs and determine if there is a match between them.
+	 *
+	 * @param  Project $project  The project object.
+	 * @param  string  $url   The URL to be checked.
+	 *
+	 * @return mixed Project and match status if matched (1: exact match, 2: wildcard match). NULL otherwise.
+	 */
+	public function checkUrlAgainstProject(Project $project, $url) {
+		// Merge the project URL and its associated URLs into a single array
+		$projectUrls = [$project->url, ...$project->urls->pluck('url')->toArray()];
+
+		// Check if the requested URL matches the project URL origin or a wildcard URL pattern
+		foreach ($projectUrls as $projectUrl) {
+			// Check if the URL contains a wildcard character *
+			if(str_contains($projectUrl, "*")) {
+            	// If the URL matches the wildcard URL pattern or its origin, return the project and a match status of 2
+				if($this->matchWildcardUrl($url, $projectUrl) || $this->matchWildcardUrlOrigin($url, $projectUrl))
+					return [$project, 2];
+			}
+			else{
+           		// If the URL is an exact match, return the project and a match status of 1
+				if(rtrim($url, '/') === rtrim($projectUrl, '/')) {
+					return [$project, 1];
+				}
+				else {
+        	        // If the URL origin matches the project origin URL, return the project and a match status of 2
+					if($this->checkUrlOrigin($url, $projectUrl))
+						return [$project, 2];
+				}
+			}
+		}
+
+		return NULL;
+	}
+
+	/**
+	 * Check if two URLs have the same origin (scheme and host)
+	 *
+	 * @param string $url1 The first URL
+	 * @param string $url2 The second URL
+	 * @return bool True if both URLs have the same origin, otherwise false
+	 */	private function checkUrlOrigin($url1, $url2)
+	{
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url1 || !$url2) {
+			return false; // Return false if any of the conditions is true
+		}
+
+		// Parse the URLs
+		$parsedUrl1 = parse_url($url1);
+		$parsedUrl2 = parse_url($url2);
+
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $parsedUrl1['scheme'] == $parsedUrl2['scheme'] && $parsedUrl1['host'] == $parsedUrl2['host'];
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrl($url, $pattern)
+	{
+		// Replace * with a regular expression pattern that matches any characters
+		$pattern = str_replace('\*', '.*', preg_quote(rtrim($pattern, '/'), '/'));
+		// Use regular expression string matching to determine if the URL matches the pattern
+		return preg_match('/^' . $pattern . '\/*$/', $url);
+	}
+
+	// Match a URL against a wildcard URL pattern
+	private function matchWildcardUrlOrigin($url, $pattern)
+	{
+		// Check if the URLs are not empty or if they contain wildcard characters
+		if (!$url || !$pattern) {
+			return false; // Return false if any of the conditions is true
+		}
+
+		$url_with_protocol = '';
+		if(str_starts_with($pattern, "*")){
+			$url_with_protocol = str_replace("*://", "http://", $pattern);
+		}
+		else{
+			$url_with_protocol = $pattern;
+		}
+
+		// Parse the URLs
+		$parsedUrl1 = parse_url($url);
+		$parsedUrl2 = parse_url($url_with_protocol);
+
+		// Check if both URLs have been parsed successfully and if both URLs have the same scheme and host
+		return $parsedUrl1 && $parsedUrl2 && $this->matchWildcardUrl($parsedUrl1['host'], $parsedUrl2["host"]);
+	}
 }
