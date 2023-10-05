@@ -59,5 +59,8 @@ class DatabaseSeeder extends Seeder
 
 		// Adds values
 		$this->call(ValueSeeder::class);
+
+		// Adds values
+		$this->call(ActionSeeder::class);
 	}
 }

@@ -209,4 +209,12 @@ class Project extends Model
     {
         return $this->morphMany(ApiToken::class, 'api_tokenable');
     }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+	public function history()
+	{
+		return $this->morphMany(History::class, "historyable");
+	}
 }
