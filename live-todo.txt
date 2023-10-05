@@ -3,5 +3,5 @@ List of todos for next live push. Delete list after live push!
 Todos:
 - migrate
 - Truncate and reseed settings table
-- Run "php artisan usersettings:fresh"
+- Run "php artisan usersettings:fresh
 
