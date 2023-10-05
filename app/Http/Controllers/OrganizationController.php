@@ -234,8 +234,7 @@ class OrganizationController extends Controller
 		$organizations = $this->user->organizations
 		->when($timestamp, function ($query, $timestamp) {
 			return $query->where("organizations.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-		})
-		->get();
+		});
 
 		// Combine the two collections
 		// $organizations = $organizations->concat($createdOrganizations);

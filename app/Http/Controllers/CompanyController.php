@@ -228,21 +228,18 @@ class CompanyController extends Controller
 		if($userIsPriviliegated) {
 			$companies = $organization->companies->when($timestamp, function ($query, $timestamp) {
 				return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
-			})
-			->get();
+			});
 		} else {
 			$companies = Auth::user()->companies
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('organization_id', $organization->id)
-				->get();
+				->where('organization_id', $organization->id);
 			$createdCompanies = $this->user->createdCompanies
 				->when($timestamp, function ($query, $timestamp) {
 					return $query->where("companies.updated_at", ">", date("Y-m-d H:i:s", $timestamp));
 				})
-				->where('organization_id', $organization->id)
-				->get();
+				->where('organization_id', $organization->id);
 
 			// Combine the two collections
 			$companies = $companies->concat($createdCompanies);
@@ -695,24 +692,18 @@ class CompanyController extends Controller
 
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
-
-		if($request->base64 != NULL && $request->base64 != 'true') {
-			$image = $imageService->store($request->base64, $image);
-			$image != false ? $company->image()->save($image) : true;
-			$color_hex = $company->color_hex; // Color stays the same
-		} else {
-			$imageService->delete($image);
-			$color_hex = $request->color_hex;
+		
+		if($request->has("base64")){
+			if($request->base64 != NULL){
+				$image = $imageService->store($request->base64, $image);
+				$image != false ? $company->image()->save($image) : true;
+			} else{
+				$imageService->delete($image);
+			}
 		}
-
-		// Apply default color if color_hex is null
-		$color_hex = $color_hex == NULL ? '#7A2EE6' : $color_hex;
 
 		// Update the company
 		$company->update($request->all());
-		$company->update([
-			'color_hex' => $color_hex
-		]);
 
 		broadcast(new CompanyUpdated($company))->toOthers();
 
@@ -1369,7 +1360,7 @@ class CompanyController extends Controller
 
 
 /**
-	 * Move organization to a new organization.
+	 * Move company to a new organization.
 	 *
 	 * @param  Request  $request
 	 * @param  Company  $company
@@ -1476,6 +1467,6 @@ class CompanyController extends Controller
 			"organization_id" => $targetOrganization->id
 		]);
 
-		return response()->json("Company successfully moved to organization " . $targetOrganization->id, 200);
+		return new CompanyResource($company);
 	}
 }

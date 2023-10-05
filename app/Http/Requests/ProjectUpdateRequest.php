@@ -37,4 +37,19 @@ class ProjectUpdateRequest extends FormRequest
             ];
         }
     }
+
+	/**
+	 * Prepare the data for validation.
+	 *
+	 * @return void
+	 */
+	protected function prepareForValidation()
+	{
+		if($this->has("color_hex")){
+			$this->merge([
+				// Thee color_hex can be null but that should set the value to a default one.
+				'color_hex' => is_null($this->color_hex) ? "#7A2EE6" : $this->color_hex,
+			]);
+		}
+	}
 }
