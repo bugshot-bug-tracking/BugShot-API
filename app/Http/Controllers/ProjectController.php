@@ -2473,7 +2473,7 @@ class ProjectController extends Controller
 	public function generateAccessToken(Project $project)
 	{
 		// Check if the user is authorized to view the project
-		$this->authorize('create', $project);
+		$this->authorize('create', [Project::class, $project->company]);
 
 		// Build valid access_token
 		$accessToken = Str::ulid();
