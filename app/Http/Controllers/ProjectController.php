@@ -2405,15 +2405,14 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
-
 	/**
-	 * Display the specified resource.
+	 * Generate an access token for the project.
 	 *
 	 * @param  Project  $project
 	 * @return Response
 	 */
 	/**
-	 * @OA\Get(
+	 * @OA\Post(
 	 *	path="/projects/{project_id}/generate-access-token",
 	 *	tags={"Project"},
 	 *	summary="Generate access token for one project.",
@@ -2491,6 +2490,81 @@ class ProjectController extends Controller
 		], 200);
 	}
 
+	/**
+	 * Validate access token.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/validate-access-token",
+	 *	tags={"Project"},
+	 *	summary="Validate access token.",
+	 *	operationId="validateAccessToken",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function validateToken(Request $request)
+	{
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$project = Project::where('access_token', $accessToken)
+				->first();
+
+		if(!$project) {
+			return response()->json([
+				'message' => __('application.access-token-invalid')
+			], 404);
+		}
+
+		return new ProjectResource($project);
+	}
 
 	/**
 	 * Mark the specified resource as favorite.
@@ -2571,6 +2645,107 @@ class ProjectController extends Controller
 			'is_favorite' => !$projectUserRole->is_favorite
 		]);
 
+		return new ProjectResource($project);
+	}
+
+	/**
+	 * Check url against access token project.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/check-via-access-token",
+	 *	tags={"Project"},
+	 *	summary="Check url against access token project.",
+	 *	operationId="checkViaAccessToken",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
+	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *              required={"url"}
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/ProjectUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Url doesn't match the access token project",
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function checkViaAccessToken(Request $request, ProjectService $projectService)
+	{
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$project = Project::where('access_token', $accessToken)->first();
+
+		if(!$project) {
+			return response()->json([
+				'message' => __('application.access-token-invalid')
+			], 404);
+		}
+
+		$response = $projectService->checkUrlAgainstProject($project, $request->url);
+
+		if($response == NULL) {
+			return response()->json("", 204);
+		}
+		
 		return new ProjectResource($project);
 	}
 }
