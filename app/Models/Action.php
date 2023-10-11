@@ -20,42 +20,5 @@ class Action extends Model
      */
     public $incrementing = true;
 
-	/**
-	 * @OA\Property(
-	 * 	property="id",
-	 * 	type="integer",
-	 *  format="int64",
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property="designation",
-	 * 	type="string",
-	 *  maxLength=255,
-	 * 	description="The role name."
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='created_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The creation date.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='updated_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The last date when the resource was changed.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='deleted_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The deletion date.'
-	 * )
-	 *
-	 */
-
 	protected $fillable = ['designation'];
 }

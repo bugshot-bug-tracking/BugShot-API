@@ -20,57 +20,6 @@ class History extends Model
      */
     public $incrementing = true;
 
-	/**
-	 * @OA\Property(
-	 * 	property='id',
-	 * 	type='integer',
-	 *  format='int64',
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='historyable_id',
-	 * 	type='string',
-	 *  maxLength=255,
-	 * 	description='The id of the historyable resource.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='historyable_type',
-	 * 	type='string',
-	 *  maxLength=255,
-	 * 	description='The type of the historyable resource.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='action_id',
-	 * 	type='integer',
-	 *  format='int64',
-	 * 	description='The id of the action that was performed.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='created_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The creation date.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='updated_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The last date when the resource was changed.'
-	 * )
-	 *
-	 * @OA\Property(
-	 * 	property='deleted_at',
-	 * 	type='string',
-	 *  format='date-time',
-	 * 	description='The deletion date.'
-	 * )
-	 *
-	 */
-
 	protected $fillable = ['action_id'];
 
 	/**
