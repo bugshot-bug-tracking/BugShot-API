@@ -201,6 +201,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
 		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::prefix('bugs')->group(function () {

@@ -2399,8 +2399,6 @@ class ProjectController extends Controller
 		$project->update([
 			"company_id" => $targetCompany->id
 		]);
-		// dd("all users in target company");
-		// TODO: Go on from here
 
 		return new ProjectResource($project);
 	}
@@ -2487,6 +2485,85 @@ class ProjectController extends Controller
 			'message' => 'Access token generated successfully',
 			'data' => [
 				'access_token' => $accessToken
+			]
+		], 200);
+	}
+
+		/**
+	 * Display the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/delete-access-token",
+	 *	tags={"Project"},
+	 *	summary="Delete access token of one project.",
+	 *	operationId="deleteAccessTokenOfProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function deleteAccessToken(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('create', $project);
+
+		$project->update([
+			'access_token' => NULL
+		]);
+
+		return response()->json([
+			'message' => 'Access token deleted successfully',
+			'data' => [
+				'access_token' => $project->access_token
 			]
 		], 200);
 	}
