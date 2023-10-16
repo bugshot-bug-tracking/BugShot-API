@@ -211,10 +211,10 @@ class Project extends Model
     }
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
 	public function history()
 	{
-		return $this->morphMany(History::class, "historyable");
+		return $this->morphToMany(Action::class, "historyable", "history")->withTimestamps();
 	}
 }

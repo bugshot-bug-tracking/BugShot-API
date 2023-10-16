@@ -22,6 +22,9 @@ return new class extends Migration
 			$table->unsignedBigInteger('action_id')->nullable();
 			$table->foreign('action_id')->references('id')->on('actions')->nullOnDelete();
 
+			$table->unsignedBigInteger('user_id')->nullable();
+			$table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+
             $table->timestamps();
         });
     }

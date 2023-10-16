@@ -3,7 +3,9 @@
 namespace App\Observers;
 
 // Models
+use App\Models\Action;
 use App\Models\Project;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectObserver
 {
@@ -22,7 +24,12 @@ class ProjectObserver
      */
     public function created(Project $project)
     {
-        dd("project created");
+		$action = new Action();
+		$actionId = $action->getIdByName("project_created");
+		if($actionId)
+		{
+			$project->history()->attach($actionId, ["user_id" => $project->creator ? $project->creator->id : NULL]);
+		}
     }
 
     /**
@@ -33,7 +40,9 @@ class ProjectObserver
      */
     public function updated(Project $project)
     {
-        //
+		$action = new Action();
+		$actionId = $action->getIdByName("project_updated");
+		$project->history()->attach($actionId, ["user_id" => Auth::id()]);
     }
 
     /**
@@ -44,7 +53,7 @@ class ProjectObserver
      */
     public function deleted(Project $project)
     {
-        //
+        dd("project deleted");
     }
 
     /**
@@ -65,6 +74,39 @@ class ProjectObserver
      * @return void
      */
     public function forceDeleted(Project $project)
+    {
+        //
+    }
+
+	/**
+     * Handle the Project "movedToNewGroup" event.
+     *
+     * @param  Project  $project
+     * @return void
+     */
+    public function movedToNewGroup(Project $project)
+    {
+        //
+    }
+
+	/**
+     * Handle the Project "accessTokenGenerated" event.
+     *
+     * @param  Project  $project
+     * @return void
+     */
+    public function accessTokenGenerated(Project $project)
+    {
+        //
+    }
+
+	/**
+     * Handle the Project "accessTokenDeleted" event.
+     *
+     * @param  Project  $project
+     * @return void
+     */
+    public function accessTokenDeleted(Project $project)
     {
         //
     }

@@ -14,6 +14,13 @@ class History extends Model
 	use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'history';
+
+    /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
@@ -36,5 +43,13 @@ class History extends Model
 	public function action()
 	{
 		return $this->belongsTo(Action::class, 'action_id');
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+	public function agent()
+	{
+		return $this->belongsTo(User::class, 'user_id');
 	}
 }

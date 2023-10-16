@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
 	{
 		// \App\Models\User::factory(10)->create();
 
+		// Adds values
+		$this->call(ActionSeeder::class);
+
         // Adds versiontypes
 		$this->call(VersionTypeSeeder::class);
 
@@ -59,8 +62,5 @@ class DatabaseSeeder extends Seeder
 
 		// Adds values
 		$this->call(ValueSeeder::class);
-
-		// Adds values
-		$this->call(ActionSeeder::class);
 	}
 }

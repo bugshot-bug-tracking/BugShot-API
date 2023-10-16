@@ -15,29 +15,40 @@ class ActionSeeder extends Seeder
      */
     public function run()
     {
-		$actions = [
-			// Organizations (TODO: For now lets only do project actions)
-			// "organization_name_changed",
-			// "organization_deleted",
-			// "organization_group_moved_to_new_organization",
+		$actions = [ // TODO: For now lets only do project actions
+			// Organizations
+			"organization_created",
+			"organization_updated",
+			"organization_deleted",
+
+			// Groups
+			"group_created",
+			"group_updated",
+			"group_deleted",
 
 			// Projects
-			"project_name_changed",
-			"project_moved_to_new_group",
+			"project_created",
+			"project_updated",
 			"project_deleted",
-			"project_bug_status_changed",
-			"project_bug_deleted",
-			"project_bug_created",
-			"project_bug_data_updated",
-			"project_bugs_archived",
-			"project_bugs_moved_to_new_project",
-			"proejct_user_assigned_to_bug",
-			"project_user_assigment_to_bug_revoked",
-			"project_user_invited",
-			"project_user_role_updated",
-			"project_user_removed",
+			"project_moved_to_new_group",
 			"project_access_token_generated",
-			"project_access_token_deleted"
+			"project_access_token_deleted",
+
+			// Bugs
+			"bug_created",
+			"bug_updated",
+			"bug_deleted",
+			"bugs_archived",
+			"bug_status_changed",
+			"bugs_moved_to_new_project",
+
+			// Users
+			"user_assigned_to_bug",
+			"user_assigment_to_bug_revoked",
+			"user_invited",
+			"user_role_updated",
+			"user_removed",
+
 			// TODO: Keep finding new actions and check if an history entry is made for a organization when e.g. a bug is moved to a new status
 		];
 
