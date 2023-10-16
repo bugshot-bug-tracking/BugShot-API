@@ -24,14 +24,18 @@ class ActionSeeder extends Seeder
 			// Projects
 			"project_name_changed",
 			"project_moved_to_new_group",
+			"project_deleted",
 			"project_bug_status_changed",
 			"project_bug_deleted",
 			"project_bug_created",
 			"project_bug_data_updated",
-			"proejct_user_assigned_to_bug",
-			"proejct_user_assigment_to_bug_revoked",
-			"project_user_invited",
+			"project_bugs_archived",
 			"project_bugs_moved_to_new_project",
+			"proejct_user_assigned_to_bug",
+			"project_user_assigment_to_bug_revoked",
+			"project_user_invited",
+			"project_user_role_updated",
+			"project_user_removed",
 			"project_access_token_generated",
 			"project_access_token_deleted"
 			// TODO: Keep finding new actions and check if an history entry is made for a organization when e.g. a bug is moved to a new status
