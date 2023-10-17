@@ -47,21 +47,26 @@ class Comment extends Model
 	 *  format="int64",
 	 * 	description="The id of the user to which the object belongs."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="client_id",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The client that was used to create the bug."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="content",
 	 * 	type="string",
 	 *  maxLength=255,
 	 * 	description="The message."
 	 * )
-
+	 *
+	 * @OA\Property(
+	 * 	property="is_internal",
+	 * 	type="boolean"
+	 * )
+	 *
 	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
@@ -83,7 +88,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content"];
+	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "is_internal"];
 
 	protected $touches = ['bug'];
 
