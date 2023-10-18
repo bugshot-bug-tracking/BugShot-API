@@ -370,14 +370,11 @@ class ProjectController extends Controller
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
 
-		// Build valid access_token
-		$accessToken = Str::ulid();
-
 		// Store the new project in the database
 		$project = $company->projects()->create([
 			"id" => $id,
 			"user_id" => Auth::user()->id,
-			"access_token" => $accessToken,
+			"access_token" => NULL,
 			"designation" => $request->designation,
 			"color_hex" => $request->color_hex,
 			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
