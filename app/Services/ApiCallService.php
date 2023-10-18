@@ -57,7 +57,7 @@ class ApiCallService
 			foreach ($clients as $item) {
 				$result = $this->callAPI("POST", $item->client_url . "/trigger/" . $trigger_id, $resource, $this->getHeader($item->client_key, $project_id, $uuid));
 				if ($result->httpCode != 200 && $result->httpCode != 201) {
-					file_put_contents("storage/logs/WorkerErrorLog.txt", json_encode($resource) . "\n" . $result->httpCode . "\n" . $result->httpContent, FILE_APPEND);
+					file_put_contents(storage_path('logs/WorkerErrorLog.txt'), json_encode($resource) . "\n" . $result->httpCode . "\n" . $result->httpContent, FILE_APPEND);
 				}
 			}
 		}
