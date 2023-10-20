@@ -204,6 +204,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
+		Route::get('/history', [ProjectController::class, "history"])->name("project.history");
 		Route::prefix('bugs')->group(function () {
 			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
 			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");

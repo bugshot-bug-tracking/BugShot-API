@@ -135,6 +135,31 @@ class User extends Authenticatable implements MustVerifyEmail
 	];
 
 	/**
+	 * @return string $fullName
+	 */
+	public function fullName()
+	{
+		if($this->first_name)
+		{
+			if($this->last_name)
+			{
+				$fullName = $this->first_name . " " . $this->last_name;
+			} else {
+				$fullName = $this->first_name;
+			}
+		} else {
+			if($this->last_name)
+			{
+				$fullName = $this->last_name;
+			} else {
+				$fullName = __("application.anonymous-user");
+			}
+		}
+
+		return $fullName;
+	}
+
+	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
 	 */
 	public function billingAddress()

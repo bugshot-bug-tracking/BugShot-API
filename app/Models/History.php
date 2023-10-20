@@ -27,7 +27,16 @@ class History extends Model
      */
     public $incrementing = true;
 
-	protected $fillable = ['action_id'];
+	protected $fillable = ['action_id', 'args'];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'args' => 'array',
+    ];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo

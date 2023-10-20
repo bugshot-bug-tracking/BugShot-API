@@ -45,7 +45,7 @@ class ProjectService
         // Update the project
         $project->update($request->all());
         $project->update([
-            "company_id" => $company->id,
+            "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url
         ]);
 
         $resource = new ProjectResource($project);

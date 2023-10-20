@@ -30,6 +30,8 @@ class Project extends Model
      */
     public $incrementing = false;
 
+	protected $observables = ['movedToNewGroup'];
+
 	/**
 	 * Get the indexable data array for the model.
 	 *

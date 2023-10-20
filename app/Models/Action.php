@@ -30,4 +30,17 @@ class Action extends Model
     {
         return $this->morphedByMany(Project::class, 'historyable', "history")->withTimestamps();
     }
+
+	 /**
+     * Get all of the projects that made use of this action.
+     */
+    public function getActionMessage($actionName, $args)
+    {
+		// $actionName = preg_replace('/[^A-Za-z0-9\-]/', '', $actionName);
+		// $actionName = strtoupper($actionName);
+
+
+
+        // return $message;
+    }
 }

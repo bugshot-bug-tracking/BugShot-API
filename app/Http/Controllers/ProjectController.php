@@ -3,16 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-
-use App\Events\ProjectCreated;
-use App\Events\ProjectDeleted;
-use App\Events\ProjectUserRemoved;
-use App\Events\ProjectUserUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
 
 // Resources
 use App\Http\Resources\BugResource;
@@ -22,12 +16,20 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\ProjectMarkerResource;
+use App\Http\Resources\HistoryResource;
 
 // Services
 use App\Services\ImageService;
 use App\Services\InvitationService;
 use App\Services\ProjectService;
 use App\Services\ApiCallService;
+
+// Events
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
+use App\Events\ProjectMovedToNewGroup;
+use App\Events\ProjectUserRemoved;
+use App\Events\ProjectUserUpdated;
 
 // Models
 use App\Models\User;
@@ -36,9 +38,9 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
-use App\Models\Organization;
 use App\Models\OrganizationUserRole;
 use App\Models\Priority;
+use App\Models\History;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
@@ -796,11 +798,6 @@ class ProjectController extends Controller
 	 *              @OA\Property(
 	 *                  description="The project url",
 	 *                  property="url",
-	 *                  type="string",
-	 *              ),
-	 *              @OA\Property(
-	 *                  description="The projects access token",
-	 *                  property="access_token",
 	 *                  type="string",
 	 *              ),
 	 *  			@OA\Property(
@@ -2396,9 +2393,19 @@ class ProjectController extends Controller
 			}
 		}
 
-		$project->update([
-			"company_id" => $targetCompany->id
-		]);
+		// $project->update([
+		// 	"company_id" => $targetCompany->id
+		// ]);
+
+		$project->withoutEvents(function () use($project, $targetCompany) {
+			return $project->update([
+				"company_id" => $targetCompany->id
+			]);
+		});
+
+		event('eloquent.movedToNewProject: ' . Project::class, $project); // TODO: Check if HasEvents trait works to fire the event
+		// $project->fireModelEvent('movedToNewProject', false);
+		ProjectMovedToNewGroup::dispatch($project);
 
 		return new ProjectResource($project);
 	}
@@ -2489,7 +2496,7 @@ class ProjectController extends Controller
 		], 200);
 	}
 
-		/**
+	/**
 	 * Display the specified resource.
 	 *
 	 * @param  Project  $project
@@ -2649,5 +2656,81 @@ class ProjectController extends Controller
 		]);
 
 		return new ProjectResource($project);
+	}
+
+	/**
+	 * Display the history of the project
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/history",
+	 *	tags={"Project"},
+	 *	summary="Project history.",
+	 *	operationId="showProjectHistory",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Image")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function history(Project $project)
+	{
+		// Check if the user is authorized to view the history of the project
+		$this->authorize('view', $project);
+
+		return HistoryResource::collection(History::where("historyable_id", $project->id)->get());
 	}
 }

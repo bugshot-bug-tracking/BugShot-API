@@ -28,7 +28,17 @@ class ProjectObserver
 		$actionId = $action->getIdByName("project_created");
 		if($actionId)
 		{
-			$project->history()->attach($actionId, ["user_id" => $project->creator ? $project->creator->id : NULL]);
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+						$project->designation,
+						$project->creator->fullName()
+						]
+					)
+				]
+			);
 		}
     }
 
@@ -40,9 +50,25 @@ class ProjectObserver
      */
     public function updated(Project $project)
     {
+		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($project);
+
 		$action = new Action();
 		$actionId = $action->getIdByName("project_updated");
-		$project->history()->attach($actionId, ["user_id" => Auth::id()]);
+		if($actionId)
+		{
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+							$project->designation,
+							$project->creator->fullName(),
+							$dirtyAttributeMessage
+						]
+					)
+				]
+			);
+		}
     }
 
     /**
@@ -53,7 +79,22 @@ class ProjectObserver
      */
     public function deleted(Project $project)
     {
-        dd("project deleted");
+		$action = new Action();
+		$actionId = $action->getIdByName("project_deleted");
+		if($actionId)
+		{
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+							$project->designation,
+							$project->creator->fullName()
+						]
+					)
+				]
+			);
+		}
     }
 
     /**
@@ -86,7 +127,25 @@ class ProjectObserver
      */
     public function movedToNewGroup(Project $project)
     {
-        //
+		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($project);
+
+		$action = new Action();
+		$actionId = $action->getIdByName("project_moved_to_new_group");
+		if($actionId)
+		{
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+							$project->designation,
+							$project->creator->fullName(),
+							$dirtyAttributeMessage
+						]
+					)
+				]
+			);
+		}
     }
 
 	/**
@@ -97,7 +156,22 @@ class ProjectObserver
      */
     public function accessTokenGenerated(Project $project)
     {
-        //
+		$action = new Action();
+		$actionId = $action->getIdByName("project_access_token_generated");
+		if($actionId)
+		{
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+							$project->designation,
+							$project->creator->fullName()
+						]
+					)
+				]
+			);
+		}
     }
 
 	/**
@@ -108,6 +182,42 @@ class ProjectObserver
      */
     public function accessTokenDeleted(Project $project)
     {
-        //
+		$action = new Action();
+		$actionId = $action->getIdByName("project_access_token_deleted");
+		if($actionId)
+		{
+			$project->history()->attach(
+				$actionId,
+				[
+					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"args" => json_encode([
+							$project->designation,
+							$project->creator->fullName()
+						]
+					)
+				]
+			);
+		}
     }
+
+	private function buildDirtyAttributesMessage($resource)
+	{
+		$dirtyAttributes = $resource->getDirty();
+		unset($dirtyAttributes['updated_at']);
+		$dirtyAttributeMessage = "";
+		foreach($dirtyAttributes as $dirtyAttribute => $dirtyValue)
+		{
+			$newValue = $dirtyValue;
+			$oldValue = $resource->getOriginal($dirtyAttribute);
+			if($dirtyAttributeMessage == "")
+			{
+				$dirtyAttributeMessage .= "$dirtyAttribute: '$oldValue' => '$newValue'";
+			} else
+			{
+				$dirtyAttributeMessage .= ", $dirtyAttribute: '$oldValue' => '$newValue'";
+			}
+		}
+
+		return $dirtyAttributeMessage;
+	}
 }
