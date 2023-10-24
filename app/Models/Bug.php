@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Laravel\Scout\Searchable;
+use App\Traits\HasCustomEvents;
 
 /**
  * @OA\Schema()
  */
 class Bug extends Model
 {
-	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes, HasCustomEvents;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -28,6 +29,8 @@ class Bug extends Model
      * @var bool
      */
     public $incrementing = false;
+
+	protected $observables = ['archived', 'statusChanged', 'movedToNewProject'];
 
 	/**
 	 * Get the indexable data array for the model.
@@ -296,5 +299,13 @@ class Bug extends Model
 	public function client()
 	{
 		return $this->belongsTo(Client::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+	public function history()
+	{
+		return $this->morphToMany(Action::class, "historyable", "history")->withTimestamps();
 	}
 }

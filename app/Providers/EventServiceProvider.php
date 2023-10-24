@@ -8,6 +8,7 @@ use Laravel\Cashier\Events\WebhookReceived;
 
 // Models
 use App\Models\Project;
+use App\Models\Bug;
 use Illuminate\Notifications\DatabaseNotification as Notification;
 
 // Events
@@ -22,6 +23,7 @@ use App\Listeners\SendAssignedToBugNotification;
 // Observers
 use App\Observers\NotificationObserver;
 use App\Observers\ProjectObserver;
+use App\Observers\BugObserver;
 
 
 class EventServiceProvider extends ServiceProvider
@@ -50,6 +52,7 @@ class EventServiceProvider extends ServiceProvider
 	 */
 	protected $observers = [
 		Project::class => [ProjectObserver::class],
+		Bug::class => [BugObserver::class],
 		Notification::class => [NotificationObserver::class],
 	];
 

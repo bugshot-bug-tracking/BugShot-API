@@ -2393,19 +2393,13 @@ class ProjectController extends Controller
 			}
 		}
 
-		// $project->update([
-		// 	"company_id" => $targetCompany->id
-		// ]);
+		// Do the update and fire the custom event
+		$project->company_id = $targetCompany->id;
+		$project->fireCustomEvent('movedToNewGroup');
 
-		$project->withoutEvents(function () use($project, $targetCompany) {
-			return $project->update([
-				"company_id" => $targetCompany->id
-			]);
+		$project->withoutEvents(function () use($project) {
+			$project->save();
 		});
-
-		event('eloquent.movedToNewProject: ' . Project::class, $project); // TODO: Check if HasEvents trait works to fire the event
-		// $project->fireModelEvent('movedToNewProject', false);
-		ProjectMovedToNewGroup::dispatch($project);
 
 		return new ProjectResource($project);
 	}
@@ -2484,9 +2478,12 @@ class ProjectController extends Controller
 		// Build valid access_token
 		$accessToken = Str::ulid();
 
-		$project->update([
-			'access_token' => $accessToken
-		]);
+		$project->access_token = $accessToken;
+		$project->fireCustomEvent('accessTokenGenerated');
+
+		$project->withoutEvents(function () use($project) {
+			$project->save();
+		});
 
 		return response()->json([
 			'message' => 'Access token generated successfully',
@@ -2563,9 +2560,12 @@ class ProjectController extends Controller
 		// Check if the user is authorized to view the project
 		$this->authorize('create', $project);
 
-		$project->update([
-			'access_token' => NULL
-		]);
+		$project->access_token = NULL;
+		$project->fireCustomEvent('accessTokenDeleted');
+
+		$project->withoutEvents(function () use($project) {
+			$project->save();
+		});
 
 		return response()->json([
 			'message' => 'Access token deleted successfully',

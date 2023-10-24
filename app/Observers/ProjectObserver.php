@@ -5,7 +5,6 @@ namespace App\Observers;
 // Models
 use App\Models\Action;
 use App\Models\Project;
-use Illuminate\Support\Facades\Auth;
 
 class ProjectObserver
 {

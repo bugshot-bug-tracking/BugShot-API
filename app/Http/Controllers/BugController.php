@@ -403,6 +403,9 @@ class BugController extends Controller
 		$id = $this->setId($request);
 
 		return $bugService->store($request, $status, $id, $screenshotService, $attachmentService, $apiCallService);
+		// TODO 24.10: Storing history events work now, but the problem is that each update of the model is stored even when
+		// we don't want it. Store a bug and check the history as an example.
+		// An idea would be to not use the default observer methods and only use custom ones. Check if that would work
 	}
 
 		/**

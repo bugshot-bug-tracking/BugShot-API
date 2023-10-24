@@ -20,6 +20,7 @@ class ProjectMovedToNewGroup implements ShouldBroadcast
      */
     public function __construct(public $project)
     {
+		//
     }
 
     /**
