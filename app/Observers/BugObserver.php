@@ -16,12 +16,12 @@ class BugObserver
     public $afterCommit = true;
 
     /**
-     * Handle the Bug "created" event.
+     * Handle the Bug "bugCreated" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function created(Bug $bug)
+    public function bugCreated(Bug $bug)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_created");
@@ -42,12 +42,12 @@ class BugObserver
     }
 
     /**
-     * Handle the Bug "updated" event.
+     * Handle the Bug "bugUpdated" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function updated(Bug $bug)
+    public function bugUpdated(Bug $bug)
     {
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
@@ -71,12 +71,12 @@ class BugObserver
     }
 
     /**
-     * Handle the Bug "deleted" event.
+     * Handle the Bug "bugDeleted" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function deleted(Bug $bug)
+    public function bugDeleted(Bug $bug)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_deleted");
@@ -97,39 +97,39 @@ class BugObserver
     }
 
     /**
-     * Handle the Bug "restored" event.
+     * Handle the Bug "bugRestored" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function restored(Bug $bug)
+    public function bugRestored(Bug $bug)
     {
         //
     }
 
     /**
-     * Handle the Bug "forceDeleted" event.
+     * Handle the Bug "bugForceDeleted" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function forceDeleted(Bug $bug)
+    public function bugForceDeleted(Bug $bug)
     {
         //
     }
 
 	/**
-     * Handle the Bug "movedToNewGroup" event.
+     * Handle the Bug "bugMovedToNewProject" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function movedToNewGroup(Bug $bug)
+    public function bugMovedToNewProject(Bug $bug)
     {
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
 		$action = new Action();
-		$actionId = $action->getIdByName("bug_moved_to_new_group");
+		$actionId = $action->getIdByName("bug_moved_to_new_project");
 		if($actionId)
 		{
 			$bug->history()->attach(
@@ -148,15 +148,17 @@ class BugObserver
     }
 
 	/**
-     * Handle the Bug "accessTokenGenerated" event.
+     * Handle the Bug "bugArchived" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function accessTokenGenerated(Bug $bug)
+    public function bugArchived(Bug $bug)
     {
+		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
+
 		$action = new Action();
-		$actionId = $action->getIdByName("bug_access_token_generated");
+		$actionId = $action->getIdByName("bug_archived");
 		if($actionId)
 		{
 			$bug->history()->attach(
@@ -165,7 +167,8 @@ class BugObserver
 					"user_id" => $bug->creator ? $bug->creator->id : NULL,
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName()
+							$bug->creator->fullName(),
+							$dirtyAttributeMessage
 						]
 					)
 				]
@@ -174,15 +177,17 @@ class BugObserver
     }
 
 	/**
-     * Handle the Bug "accessTokenDeleted" event.
+     * Handle the Bug "bugStatusChanged" event.
      *
      * @param  Bug  $bug
      * @return void
      */
-    public function accessTokenDeleted(Bug $bug)
+    public function bugStatusChanged(Bug $bug)
     {
+		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
+
 		$action = new Action();
-		$actionId = $action->getIdByName("bug_access_token_deleted");
+		$actionId = $action->getIdByName("bug_status_changed");
 		if($actionId)
 		{
 			$bug->history()->attach(
@@ -191,7 +196,8 @@ class BugObserver
 					"user_id" => $bug->creator ? $bug->creator->id : NULL,
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName()
+							$bug->creator->fullName(),
+							$dirtyAttributeMessage
 						]
 					)
 				]

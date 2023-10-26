@@ -30,7 +30,16 @@ class Bug extends Model
      */
     public $incrementing = false;
 
-	protected $observables = ['archived', 'statusChanged', 'movedToNewProject'];
+	protected $observables = [
+		'bugCreated',
+		'bugUpdated',
+		'bugDeleted',
+		'bugRestored',
+		'bugForceDeleted',
+		'bugArchived',
+		'bugStatusChanged',
+		'bugMovedToNewProject'
+	];
 
 	/**
 	 * Get the indexable data array for the model.

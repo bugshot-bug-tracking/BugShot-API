@@ -38,9 +38,9 @@ class ActionSeeder extends Seeder
 			"bug_created",
 			"bug_updated",
 			"bug_deleted",
-			"bugs_archived",
+			"bug_archived",
 			"bug_status_changed",
-			"bugs_moved_to_new_project",
+			"bug_moved_to_new_project",
 
 			// Users
 			"user_assigned_to_bug",

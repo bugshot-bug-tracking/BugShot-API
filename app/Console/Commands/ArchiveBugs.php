@@ -39,9 +39,12 @@ class ArchiveBugs extends Command
 					->get();
 
 		foreach($bugs as $bug) {
-			$bug->update([
+			$bug->fill([
 				"archived_at" => now()
 			]);
+
+			$bug->fireCustomEvent('bugArchived');
+			$bug->save();
 		}
 
         $this->info('Bugs archived successfully!');
