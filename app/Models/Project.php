@@ -31,7 +31,16 @@ class Project extends Model
      */
     public $incrementing = false;
 
-	protected $observables = ['movedToNewGroup', 'accessTokenGenerated', 'accessTokenDeleted'];
+	protected $observables = [
+		'projectCreated',
+		'projectUpdated',
+		'projectDeleted',
+		'projectRestored',
+		'projectForceDeleted',
+		'projectMovedToNewGroup',
+		'projectAccessTokenGenerated',
+		'projectAccessTokenDeleted'
+	];
 
 	/**
 	 * Get the indexable data array for the model.

@@ -16,12 +16,12 @@ class ProjectObserver
     public $afterCommit = true;
 
     /**
-     * Handle the Project "created" event.
+     * Handle the Project "projectCreated" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function created(Project $project)
+    public function projectCreated(Project $project)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("project_created");
@@ -42,12 +42,12 @@ class ProjectObserver
     }
 
     /**
-     * Handle the Project "updated" event.
+     * Handle the Project "projectUpdated" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function updated(Project $project)
+    public function projectUpdated(Project $project)
     {
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($project);
 
@@ -71,12 +71,12 @@ class ProjectObserver
     }
 
     /**
-     * Handle the Project "deleted" event.
+     * Handle the Project "projectDeleted" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function deleted(Project $project)
+    public function projectDeleted(Project $project)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("project_deleted");
@@ -97,34 +97,34 @@ class ProjectObserver
     }
 
     /**
-     * Handle the Project "restored" event.
+     * Handle the Project "projectRestored" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function restored(Project $project)
+    public function projectRestored(Project $project)
     {
         //
     }
 
     /**
-     * Handle the Project "forceDeleted" event.
+     * Handle the Project "projectForceDeleted" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function forceDeleted(Project $project)
+    public function projectForceDeleted(Project $project)
     {
         //
     }
 
 	/**
-     * Handle the Project "movedToNewGroup" event.
+     * Handle the Project "projectMovedToNewGroup" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function movedToNewGroup(Project $project)
+    public function projectMovedToNewGroup(Project $project)
     {
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($project);
 
@@ -148,12 +148,12 @@ class ProjectObserver
     }
 
 	/**
-     * Handle the Project "accessTokenGenerated" event.
+     * Handle the Project "projectAccessTokenGenerated" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function accessTokenGenerated(Project $project)
+    public function projectAccessTokenGenerated(Project $project)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("project_access_token_generated");
@@ -174,12 +174,12 @@ class ProjectObserver
     }
 
 	/**
-     * Handle the Project "accessTokenDeleted" event.
+     * Handle the Project "projectAccessTokenDeleted" event.
      *
      * @param  Project  $project
      * @return void
      */
-    public function accessTokenDeleted(Project $project)
+    public function projectAccessTokenDeleted(Project $project)
     {
 		$action = new Action();
 		$actionId = $action->getIdByName("project_access_token_deleted");

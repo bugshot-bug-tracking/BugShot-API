@@ -375,15 +375,19 @@ class ProjectController extends Controller
 		// Build valid access_token
 		$accessToken = Str::ulid();
 
-		// Store the new project in the database
-		$project = $company->projects()->create([
-			"id" => $id,
-			"user_id" => Auth::user()->id,
-			"access_token" => $accessToken,
-			"designation" => $request->designation,
-			"color_hex" => $request->color_hex,
-			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
-		]);
+		$project = new Project();
+		$project->id = $id;
+		$project->user_id = Auth::user()->id;
+		$project->access_token = $accessToken;
+		$project->designation = $request->designation;
+		$project->color_hex = $request->color_hex;
+		$project->url = substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url; // Check if the given url has "/" as last char and if so, store url without it
+
+		$project->company()->associate($company);
+
+		// Do the save and fire the custom event
+		$project->fireCustomEvent('projectCreated');
+		$project->save();
 
 		// Also add the owner to the project user role table
 		$this->user->projects()->attach($project->id, ['role_id' => 0]);
@@ -1048,6 +1052,9 @@ class ProjectController extends Controller
 		// Softdelete the project
 		$val = $project->delete();
 		broadcast(new ProjectDeleted($project))->toOthers();
+
+		// Do the delete and fire the custom event
+		$project->fireCustomEvent('projectDeleted');
 
 		// Delete the respective image if present
 		$imageService->delete($project->image);
@@ -2479,11 +2486,9 @@ class ProjectController extends Controller
 		$accessToken = Str::ulid();
 
 		$project->access_token = $accessToken;
-		$project->fireCustomEvent('accessTokenGenerated');
 
-		$project->withoutEvents(function () use($project) {
-			$project->save();
-		});
+		$project->fireCustomEvent('projectAccessTokenGenerated');
+		$project->save();
 
 		return response()->json([
 			'message' => 'Access token generated successfully',
@@ -2561,11 +2566,9 @@ class ProjectController extends Controller
 		$this->authorize('create', $project);
 
 		$project->access_token = NULL;
-		$project->fireCustomEvent('accessTokenDeleted');
 
-		$project->withoutEvents(function () use($project) {
-			$project->save();
-		});
+		$project->fireCustomEvent('projectAccessTokenDeleted');
+		$project->save();
 
 		return response()->json([
 			'message' => 'Access token deleted successfully',

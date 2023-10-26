@@ -43,10 +43,14 @@ class ProjectService
 		}
 
         // Update the project
-        $project->update($request->all());
-        $project->update([
+        $project->fill($request->all());
+        $project->fill([
             "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url
         ]);
+
+		// Do the save and fire the custom event
+		$project->fireCustomEvent('projectUpdated');
+		$project->save();
 
         $resource = new ProjectResource($project);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "project-updated-info", $project->id, $request->get('session_id'));
