@@ -33,6 +33,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
+use App\Services\AtlassianService;
 
 // Events
 use App\Events\TestEvent;
@@ -55,10 +56,11 @@ use Illuminate\Support\Facades\Broadcast;
 | Cronjob Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/scheduler/run', function() {
+
+Route::get('/scheduler/run', function () {
 	Artisan::call('schedule:run');
 });
-Route::middleware('throttle:1,1440')->get('/projects/send-summary', function() {
+Route::middleware('throttle:1,1440')->get('/projects/send-summary', function () {
 	Artisan::call('projects:send-summary');
 });
 Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
@@ -78,6 +80,7 @@ Route::get('/debug-sentry', function () {
 | Stripe webhook route
 |--------------------------------------------------------------------------
 */
+
 Route::any('/stripe/webhook', [StripeController::class, "handle"]);
 
 /*
@@ -136,7 +139,8 @@ Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDes
 
 Route::prefix('projects/{project}')->group(function () {
 	Route::apiResource('/exports', ExportController::class)->except(
-		"show", "store"
+		"show",
+		"store"
 	);
 });
 
@@ -220,6 +224,20 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
+
+		Route::get("/jira-link", [ProjectController::class, "getJiraSettings"])->name("project.get-jira-settings");
+		Route::post("/jira-link", [ProjectController::class, "createJiraLink"])->name("project.create-jira-link");
+		Route::delete("/jira-link", [ProjectController::class, "deleteJiraLink"])->name("project.delete-jira-link");
+
+		Route::get("/jira-sites", [ProjectController::class, "getJiraSites"])->name("project.get-jira-sites");
+		Route::post("/jira-site", [ProjectController::class, "setJiraSite"])->name("project.set-jira-site");
+		Route::delete("/jira-site", [ProjectController::class, "deleteJiraSite"])->name("project.delete-jira-site");
+
+		Route::get("/jira-projects", [ProjectController::class, "getJiraProjects"])->name("project.get-jira-projects");
+		Route::post("/jira-project", [ProjectController::class, "setJiraProject"])->name("project.set-jira-project");
+		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
+
+		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
 	});
 
 	// Status prefixed routes
