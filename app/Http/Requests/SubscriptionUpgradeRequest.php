@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class SubscriptionChangeQuantityRequest extends FormRequest
+class SubscriptionUpgradeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,15 +27,6 @@ class SubscriptionChangeQuantityRequest extends FormRequest
         return [
 			'price_api_id' => ['required', 'string', 'max:30'],
 			'subscription_item_id' => ['required', 'string', 'max:30'],
-			'type' => [
-                'string',
-                'required',
-                Rule::in([
-                    'increment',
-                    'decrement'
-                ]),
-            ],
-            'quantity' => ['required', 'integer', 'min:1', 'max:99'],
         ];
     }
 }

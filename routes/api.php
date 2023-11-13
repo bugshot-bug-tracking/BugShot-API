@@ -291,6 +291,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.stripe.show-setup-intent-form");
 		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
 		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
+		Route::post('/subscription/{subscription}/upgrade', [StripeController::class, "upgradeSubscription"])->name("user.stripe.subscription.upgrade");
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
 		// Product prefixed routes
 		Route::prefix('/products')->group(function () {
