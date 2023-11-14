@@ -114,4 +114,12 @@ class JiraProjectLink extends Model
 	{
 		return $this->belongsTo(Project::class);
 	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function bugLinks()
+	{
+		return $this->hasMany(JiraBugLink::class);
+	}
 }

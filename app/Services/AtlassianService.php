@@ -20,6 +20,7 @@ use App\Models\Comment;
 use App\Models\JiraBugLink;
 use App\Models\Project;
 use App\Models\JiraProjectLink;
+use Illuminate\Support\Facades\Storage;
 
 class AtlassianService
 {
@@ -152,6 +153,130 @@ class AtlassianService
 		}
 
 		return [];
+	}
+
+	public static function createLinkedIssue(Bug $bug)
+	{
+		self::preCallCheck($bug->project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $bug->project->jiraLink->token_type . " " . $bug->project->jiraLink->access_token,
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'site_id' => $bug->project->jiraLink->site_id,
+				"api_path" => "rest/api/2/issue",
+			])->post('{+endpoint}/{site_id}/{api_path}', new PostJiraBugResource($bug));
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($bug->project);
+				$attempts++;
+				continue;
+			}
+
+			Log::info(($response->body()));
+
+			$body = json_decode($response->body());
+
+			return JiraBugLink::create([
+				"project_link_id" => $bug->project->jiraLink->id,
+				"bug_id" => $bug->id,
+				"issue_id" => $body->id,
+				"issue_key" => $body->key,
+				"issue_url" => $body->self
+			]);
+
+			return $response;
+		}
+
+		return false;
+	}
+
+	public static function createComment(Bug $bug, Comment $comment)
+	{
+		self::preCallCheck($bug->project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			// regex pattern for tagged users
+			$pattern = '/\<([0-9]+)\$\@(.+?)\>/i';
+
+			// replacement
+			$replacement = "@$2";  // $2 is a backreference pointing to the second captured group in your pattern which is the user name.
+
+			// Perform replacement before using comment content
+			$processedContent = preg_replace($pattern, $replacement, $comment->content);
+
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $bug->project->jiraLink->token_type . " " . $bug->project->jiraLink->access_token,
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'site_id' => $bug->project->jiraLink->site_id,
+				"api_path" => "rest/api/2/issue",
+				"issue_id" => $bug->jiraLink->issue_id,
+			])->post('{+endpoint}/{site_id}/{api_path}/{issue_id}/comment', [
+				"body" => $comment->user->first_name . " " . $comment->user->last_name . "(BugShot): " . $processedContent
+			]);
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($bug->project);
+				$attempts++;
+				continue;
+			}
+
+			$body = json_decode($response->body());
+
+			return $body;
+		}
+
+		return false;
+	}
+
+	public static function sendAttachment($filePath, $fileName, Bug $bug)
+	{
+		self::preCallCheck($bug->project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$contents = Storage::disk('public')->get($filePath);
+
+			$response = Http::withHeaders([
+				"Accept" => "application/json",
+				"Authorization" => $bug->project->jiraLink->token_type . " " . $bug->project->jiraLink->access_token,
+				"X-Atlassian-Token" => "no-check"
+			])->attach(
+				"file",
+				$contents,
+				$fileName
+			)->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'site_id' => $bug->project->jiraLink->site_id,
+				"api_path" => "rest/api/2/issue",
+				"issue_id" => $bug->jiraLink->issue_id,
+			])->post('{+endpoint}/{site_id}/{api_path}/{issue_id}/attachments');
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($bug->project);
+				$attempts++;
+				continue;
+			}
+
+			$body = json_decode($response->body());
+
+			var_dump($body);
+
+			return $body;
+		}
+
+		return false;
 	}
 
 }

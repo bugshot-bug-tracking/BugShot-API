@@ -16,6 +16,7 @@ use App\Http\Resources\BugUserRoleResource;
 use App\Services\ScreenshotService;
 use App\Services\AttachmentService;
 use App\Services\CommentService;
+use App\Services\AtlassianService;
 
 // Models
 use App\Models\Bug;
@@ -79,6 +80,10 @@ class BugService
 			"ai_id" => $ai_id,
 			"client_id" => $client_id
 		]);
+
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
+			$result = AtlassianService::createLinkedIssue($bug);
+		}
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$screenshots = $request->screenshots;
@@ -169,12 +174,12 @@ class BugService
 			$newStatus = Status::find($request->status_id);
 
 			// Check if the new or the old status is done
-			if($newStatus->permanent == "done") {
+			if ($newStatus->permanent == "done") {
 				// Start archiving process
 				$bug->update([
 					"done_at" => now()
 				]);
-			} else if($status->permanent == "done") {
+			} else if ($status->permanent == "done") {
 				// End archiving process
 				$bug->update([
 					"done_at" => NULL
