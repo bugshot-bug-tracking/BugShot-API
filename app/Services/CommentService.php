@@ -45,7 +45,7 @@ class CommentService
 			"client_id" => $client_id
 		]);
 
-		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true) {
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true && $bug->jiraLink) {
 			$result = AtlassianService::createComment($bug, $comment);
 		}
 

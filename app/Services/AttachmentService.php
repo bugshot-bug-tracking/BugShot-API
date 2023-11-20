@@ -50,7 +50,7 @@ class AttachmentService
 			"designation" => $attachment->designation
 		]);
 
-		if ($bug->jiraLink && $bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true && $bug->jiraLink) {
 			AtlassianService::sendAttachment($filePath, $attachment->designation, $bug);
 		}
 

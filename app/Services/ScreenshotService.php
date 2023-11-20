@@ -55,7 +55,7 @@ class ScreenshotService
 		// Store the screenshot in the public storage
 		Storage::disk('public')->put($filePath, $decodedBase64);
 
-		if ($bug->jiraLink && $bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true && $bug->jiraLink) {
 			AtlassianService::sendAttachment($filePath, 'screenshot', $bug);
 		}
 
