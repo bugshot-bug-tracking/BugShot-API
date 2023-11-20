@@ -338,10 +338,6 @@ class AtlassianService
 			$bug_link = JiraBugLink::where("issue_id", $request->issue['id'])->orWhere("issue_key", $request->issue['key'])->first();
 
 			if ($bug_link && $bug_link->projectLink->sync_comments_from_jira == true) {
-				// prevent creation of duplicate entries
-				if (JiraCommentLink::where("jira_comment_id", $request->comment['id'])->first())
-					return;
-
 				self::createBugShotComment($request, $bug_link);
 			}
 		}
@@ -349,6 +345,10 @@ class AtlassianService
 
 	private static function createBugShotComment($request, JiraBugLink $bug_link)
 	{
+		// prevent creation of duplicate entries
+		if (JiraCommentLink::where("jira_comment_id", $request->comment['id'])->first())
+			return;
+
 		// Store the new comment in the database
 		$comment = $bug_link->bug->comments()->create([
 			"id" => Str::uuid(),
