@@ -326,6 +326,14 @@ class AtlassianService
 
 	public function handleWebhook(Request $request)
 	{
+		if ($request->webhookEvent === "jira:issue_updated") {
+			$bug_link = JiraBugLink::where("issue_id", $request->issue['id'])->orWhere("issue_key", $request->issue['key'])->first();
+
+			if ($bug_link && $bug_link->projectLink->update_status_from_jira == true) {
+				self::updateBugShotStatusToDone($request, $bug_link);
+			}
+		}
+
 		if ($request->webhookEvent === "comment_created") {
 			$bug_link = JiraBugLink::where("issue_id", $request->issue['id'])->orWhere("issue_key", $request->issue['key'])->first();
 
@@ -337,7 +345,7 @@ class AtlassianService
 				self::createBugShotComment($request, $bug_link);
 			}
 		}
-		}
+	}
 
 	private static function createBugShotComment($request, JiraBugLink $bug_link)
 	{
@@ -355,5 +363,29 @@ class AtlassianService
 			'jira_comment_id' => $request->comment['id'],
 			"jira_comment_url" => $request->comment['self']
 		]);
+	}
+
+	private static function updateBugShotStatusToDone($request, JiraBugLink $bug_link)
+	{
+		// is the status that was changed is not "Done" exit
+		if (!($request->issue['fields']['status']['id'] === '10001')) return;
+
+		$done = $bug_link->projectLink->project->statuses->where("permanent", "done")->first();
+
+		// if the done status for the project is not found exit
+		if (!$done) return;
+
+		// if the bug is already in the done status exit
+		if ($bug_link->bug->status->permanent === 'done') return;
+
+		$bugService = new BugService;
+
+		$bugService->update(
+			[
+				"status_id" => $done->id
+			],
+			$bug_link->bug->status,
+			$bug_link->bug
+		);
 	}
 }
