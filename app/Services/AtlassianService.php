@@ -8,6 +8,10 @@ use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 // Resources
 use App\Http\Resources\PostJiraBugResource;
@@ -16,12 +20,12 @@ use App\Http\Resources\PostJiraBugResource;
 
 // Models
 use App\Models\Bug;
+use App\Models\Client;
 use App\Models\Comment;
 use App\Models\JiraBugLink;
+use App\Models\JiraCommentLink;
 use App\Models\Project;
 use App\Models\JiraProjectLink;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class AtlassianService
 {
@@ -281,4 +285,75 @@ class AtlassianService
 		return false;
 	}
 
+	public function createWebhook(Project $project, $value)
+	{
+		self::preCallCheck($project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
+				'site_id' => $project->jiraLink->site_id,
+				"api_path" => "rest/api/2/webhook",
+			])->post('{+endpoint}/{site_id}/{api_path}', [
+				"url" => "",
+				"webhooks" => [
+					[
+						"events" => ["comment_created", "jira:issue_created", "jira:issue_updated"],
+						"jqlFilter" => "project IN ({$project->jiraLink->jira_project_id})",
+					]
+				]
+			]);
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($project);
+				$attempts++;
+				continue;
+			}
+
+			$body = json_decode($response);
+
+			return $body;
+		}
+
+		return false;
+	}
+
+	public function handleWebhook(Request $request)
+	{
+		if ($request->webhookEvent === "comment_created") {
+			$bug_link = JiraBugLink::where("issue_id", $request->issue['id'])->orWhere("issue_key", $request->issue['key'])->first();
+
+			if ($bug_link && $bug_link->projectLink->sync_comments_from_jira == true) {
+				// prevent creation of duplicate entries
+				if (JiraCommentLink::where("jira_comment_id", $request->comment['id'])->first())
+					return;
+
+				self::createBugShotComment($request, $bug_link);
+			}
+		}
+		}
+
+	private static function createBugShotComment($request, JiraBugLink $bug_link)
+	{
+		// Store the new comment in the database
+		$comment = $bug_link->bug->comments()->create([
+			"id" => Str::uuid(),
+			'content' => $request->comment['author']['displayName'] . " (Jira): " . $request->comment['body'],
+			'user_id' => $bug_link->projectLink->user->id,
+			"client_id" => Client::where("designation", "atlassian integration")->first()->id,
+			"created_at" => new Carbon($request->timestamp / 1000)
+		]);
+
+		JiraCommentLink::create([
+			'comment_id' => $comment->id,
+			'jira_comment_id' => $request->comment['id'],
+			"jira_comment_url" => $request->comment['self']
+		]);
+	}
 }
