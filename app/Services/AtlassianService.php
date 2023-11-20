@@ -20,6 +20,7 @@ use App\Models\Comment;
 use App\Models\JiraBugLink;
 use App\Models\Project;
 use App\Models\JiraProjectLink;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class AtlassianService
@@ -43,6 +44,7 @@ class AtlassianService
 
 		//TODO after creating the link make a request to get the sites and if only 1 site is available set it as the active one so that 1 step is removed from the user needed actions
 		return JiraProjectLink::create([
+			"user_id" => Auth::id(),
 			"project_id" => $project->id,
 			"token_type" => $body->token_type,
 			"access_token" => $body->access_token,
@@ -222,7 +224,7 @@ class AtlassianService
 				"api_path" => "rest/api/2/issue",
 				"issue_id" => $bug->jiraLink->issue_id,
 			])->post('{+endpoint}/{site_id}/{api_path}/{issue_id}/comment', [
-				"body" => $comment->user->first_name . " " . $comment->user->last_name . "(BugShot): " . $processedContent
+				"body" => $comment->user->first_name . " " . $comment->user->last_name . " (BugShot): " . $processedContent
 			]);
 
 			if ($response->status() === 401 && $attempts === 0) {
