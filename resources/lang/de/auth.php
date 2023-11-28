@@ -16,7 +16,7 @@ return [
     'failed' => 'Email oder Passwort falsch.',
     'password' => 'Das eingegeben Passwort ist nicht korrekt.',
     'throttle' => 'Zu viele Login Versuche. Bitte versuche es in :seconds Sekunden erneut.',
-    'email-not-verified' => 'E-Mail Adresse nicht verifiziert.',
+    'email-not-verified' => 'E-Mail Adresse nicht verifiziert oder registriert.',
     'email-verified-successfully' => 'E-Mail erfolgreich verifiziert.',
     'verification-link-sent' => 'Verifzierungslink erfolgreich versendet!'
 ];

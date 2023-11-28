@@ -218,6 +218,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
+		Route::get("/assignable-users", [ProjectController::class, "assignableUsers"])->name("project.assignable-users");
 		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
 	});
 

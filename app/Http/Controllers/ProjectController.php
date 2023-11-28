@@ -17,6 +17,7 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\ProjectMarkerResource;
 use App\Http\Resources\HistoryResource;
+use App\Http\Resources\UserResource;
 
 // Services
 use App\Services\ImageService;
@@ -1619,6 +1620,103 @@ class ProjectController extends Controller
 		$this->authorize('view', $project);
 
 		return $projectService->users($project);
+	}
+
+	/**
+	 * Display a list of assignable users that have access to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/assignable-users",
+	 *	tags={"Project"},
+	 *	summary="All assignable users.",
+	 *	operationId="allAssignableUsers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/ProjectUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function assignableUsers(Project $project)
+	{
+		// Check if the user is authorized to view the users of the project
+		$this->authorize('view', $project);
+
+		$assignableUsers = $project->users;
+
+		// Add company users
+		$companyUsers = $project->company->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if(!$companyUsers->isEmpty())
+		{
+			foreach($companyUsers as $companyUser)
+			{
+				$assignableUsers->push($companyUser);
+			}
+		}
+
+		// Add organization users
+		$organizationUsers = $project->company->organization->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if(!$organizationUsers->isEmpty())
+		{
+			foreach($organizationUsers as $organizationUser)
+			{
+				$assignableUsers->push($organizationUser);
+			}
+		}
+
+		return UserResource::collection($assignableUsers);
 	}
 
 	/**

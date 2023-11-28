@@ -62,8 +62,9 @@ class ProjectService
     public function users(Project $project, $withOwner = false)
 	{
         if($withOwner){
-            $returnCollections = UserResource::collection($project->users);
-			$returnCollections = $returnCollections->push(new UserResource($project->creator));
+            $returnCollections["projectUsers"] = UserResource::collection($project->users);
+			// $returnCollections = $returnCollections->push(new UserResource($project->creator)); // Not required anymore as the project creator should be part of the project users anyway (ProjectUserRole table)
+
             return $returnCollections;
         }
 
