@@ -373,13 +373,10 @@ class ProjectController extends Controller
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
 
-		// Build valid access_token
-		$accessToken = Str::ulid();
-
 		$project = new Project();
 		$project->id = $id;
 		$project->user_id = Auth::user()->id;
-		$project->access_token = $accessToken;
+		$project->access_token = NULL;
 		$project->designation = $request->designation;
 		$project->color_hex = $request->color_hex;
 		$project->url = substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url; // Check if the given url has "/" as last char and if so, store url without it
@@ -2509,15 +2506,14 @@ class ProjectController extends Controller
 		return new ProjectResource($project);
 	}
 
-
 	/**
-	 * Display the specified resource.
+	 * Generate an access token for the project.
 	 *
 	 * @param  Project  $project
 	 * @return Response
 	 */
 	/**
-	 * @OA\Get(
+	 * @OA\Post(
 	 *	path="/projects/{project_id}/generate-access-token",
 	 *	tags={"Project"},
 	 *	summary="Generate access token for one project.",
@@ -2578,7 +2574,7 @@ class ProjectController extends Controller
 	public function generateAccessToken(Project $project)
 	{
 		// Check if the user is authorized to view the project
-		$this->authorize('create', $project);
+		$this->authorize('create', [Project::class, $project->company]);
 
 		// Build valid access_token
 		$accessToken = Str::ulid();
@@ -2597,7 +2593,83 @@ class ProjectController extends Controller
 	}
 
 	/**
-	 * Display the specified resource.
+	 * Validate access token.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/projects/validate-access-token",
+	 *	tags={"Project"},
+	 *	summary="Validate access token.",
+	 *	operationId="validateAccessToken",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="secret"
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function validateToken(Request $request)
+	{
+		// Check if anonymous user
+		$accessToken = $request->header('access-token');
+		$project = Project::where('access_token', $accessToken)
+				->first();
+
+		if(!$project) {
+			return response()->json([
+				'message' => __('application.access-token-invalid')
+			], 404);
+		}
+
+		return new ProjectResource($project);
+	}
+
+	/**
+	 * Delete the specified resource.
 	 *
 	 * @param  Project  $project
 	 * @return Response
@@ -2675,7 +2747,6 @@ class ProjectController extends Controller
 			]
 		], 200);
 	}
-
 
 	/**
 	 * Mark the specified resource as favorite.
@@ -2758,80 +2829,14 @@ class ProjectController extends Controller
 
 		return new ProjectResource($project);
 	}
+}
 
-	/**
-	 * Display the history of the project
-	 *
-	 * @param  Project  $project
-	 * @return Response
-	 */
-	/**
-	 * @OA\Get(
-	 *	path="/projects/{project_id}/history",
-	 *	tags={"Project"},
-	 *	summary="Project history.",
-	 *	operationId="showProjectHistory",
-	 *	security={ {"sanctum": {} }},
-	 * 	@OA\Parameter(
-	 *		name="clientId",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="version",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="1.0.0"
-	 *	),
-	 * 	@OA\Parameter(
-	 *		name="locale",
-	 *		required=false,
-	 *		in="header"
-	 *	),
-	 *
-	 *	@OA\Parameter(
-	 *		name="project_id",
-	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
-	 *		required=true,
-	 *		in="path",
-	 *		@OA\Schema(
-	 *			ref="#/components/schemas/Project/properties/id"
-	 *		)
-	 *	),
-	 *
-	 *	@OA\Response(
-	 *		response=200,
-	 *		description="Success",
-	 *		@OA\JsonContent(
-	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/Image")
-	 *		)
-	 *	),
-	 *	@OA\Response(
-	 *		response=400,
-	 *		description="Bad Request"
-	 *	),
-	 *	@OA\Response(
-	 *		response=401,
-	 *		description="Unauthenticated"
-	 *	),
-	 *	@OA\Response(
-	 *		response=403,
-	 *		description="Forbidden"
-	 *	),
-	 *	@OA\Response(
-	 *		response=404,
-	 *		description="Not Found"
-	 *	),
-	 *)
-	 *
-	 **/
-	public function history(Project $project)
-	{
-		// Check if the user is authorized to view the history of the project
-		$this->authorize('view', $project);
+		$response = $projectService->checkUrlAgainstProject($project, $request->url);
 
-		return HistoryResource::collection(History::where("historyable_id", $project->id)->get());
+		if($response == NULL) {
+			return response()->json("", 204);
+		}
+
+		return new ProjectResource($project);
 	}
 }
