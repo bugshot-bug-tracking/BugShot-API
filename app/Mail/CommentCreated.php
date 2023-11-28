@@ -25,6 +25,7 @@ class CommentCreated extends Mailable
     public $bug;
     public $project;
     public $readableContent;
+	public $groupsWording;
 
     /**
      * Create a new message instance.
@@ -39,6 +40,10 @@ class CommentCreated extends Mailable
         $this->commentCreator = User::find($comment->user_id);
         $this->bug = Bug::find($comment->bug_id);
         $this->project = Project::find($this->bug->project_id);
+
+		$company = $this->project->company;
+		$organization = $company->organization;
+		$this->groupsWording = $organization->groups_wording;
     }
 
     /**

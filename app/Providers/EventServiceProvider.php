@@ -2,16 +2,29 @@
 
 namespace App\Providers;
 
-use App\Events\BugMembersUpdated;
-use App\Listeners\SendAssignedToBugNotification;
-use App\Events\TaggedInComment;
-use App\Listeners\SendTaggedInCommentNotification;
+// Misc
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 use Laravel\Cashier\Events\WebhookReceived;
-use App\Listeners\StripeEventListener;
-use App\Observers\NotificationObserver;
+
+// Models
+use App\Models\Project;
+use App\Models\Bug;
 use Illuminate\Notifications\DatabaseNotification as Notification;
+
+// Events
+use App\Events\TaggedInComment;
+use App\Events\BugMembersUpdated;
+
+// Listeners
+use App\Listeners\StripeEventListener;
+use App\Listeners\SendTaggedInCommentNotification;
+use App\Listeners\SendAssignedToBugNotification;
+
+// Observers
+use App\Observers\NotificationObserver;
+use App\Observers\ProjectObserver;
+use App\Observers\BugObserver;
+
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -32,6 +45,17 @@ class EventServiceProvider extends ServiceProvider
         ],
     ];
 
+	/**
+	 * The model observers for your application.
+	 *
+	 * @var array
+	 */
+	protected $observers = [
+		Project::class => [ProjectObserver::class],
+		Bug::class => [BugObserver::class],
+		Notification::class => [NotificationObserver::class],
+	];
+
     /**
      * Register any events for your application.
      *
@@ -39,6 +63,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-		Notification::observe(NotificationObserver::class);
+		//
     }
 }

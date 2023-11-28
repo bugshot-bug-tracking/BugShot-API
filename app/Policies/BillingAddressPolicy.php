@@ -213,6 +213,27 @@ class BillingAddressPolicy
         return $user->id == $billingAddress->billing_addressable_id;
     }
 
+	/**
+     * Determine whether the user can upgrade the subscription
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\BillingAddress  $billingAddress
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function upgradeSubscription(User $user, BillingAddress $billingAddress)
+    {
+        if($billingAddress->billing_addressable_type == 'organization') {
+            $organization = $billingAddress->billingAddressable;
+
+			// Check if user is the manager or owner of the organization
+			if($user->isPriviliegated('organizations', $organization)) {
+				return true;
+			};
+        }
+
+        return $user->id == $billingAddress->billing_addressable_id;
+    }
+
     /**
      * Determine whether the user can list the subscriptions of the given resource
      *

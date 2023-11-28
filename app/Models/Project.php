@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use App\Traits\HasCustomEvents;
 
 /**
  * @OA\Schema()
  */
 class Project extends Model
 {
-	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes, HasCustomEvents;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -29,6 +30,17 @@ class Project extends Model
      * @var bool
      */
     public $incrementing = false;
+
+	protected $observables = [
+		'projectCreated',
+		'projectUpdated',
+		'projectDeleted',
+		'projectRestored',
+		'projectForceDeleted',
+		'projectMovedToNewGroup',
+		'projectAccessTokenGenerated',
+		'projectAccessTokenDeleted'
+	];
 
 	/**
 	 * Get the indexable data array for the model.
@@ -209,4 +221,12 @@ class Project extends Model
     {
         return $this->morphMany(ApiToken::class, 'api_tokenable');
     }
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+	public function history()
+	{
+		return $this->morphToMany(Action::class, "historyable", "history")->withTimestamps();
+	}
 }

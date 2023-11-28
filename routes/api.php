@@ -203,9 +203,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
-		Route::post('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
+		Route::get('/history', [ProjectController::class, "history"])->name("project.history");
 		Route::prefix('bugs')->group(function () {
 			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
 			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
@@ -219,6 +221,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
+		Route::get("/assignable-users", [ProjectController::class, "assignableUsers"])->name("project.assignable-users");
 		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
 	});
 
@@ -292,6 +295,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.stripe.show-setup-intent-form");
 		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
 		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
+		Route::post('/subscription/{subscription}/upgrade', [StripeController::class, "upgradeSubscription"])->name("user.stripe.subscription.upgrade");
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
 		// Product prefixed routes
 		Route::prefix('/products')->group(function () {
