@@ -163,6 +163,32 @@ class AtlassianService
 		return [];
 	}
 
+	public static function getCreatemeta(Request $request, Project $project)
+	{
+		self::preCallCheck($project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
+			])->get("https://api.atlassian.com/ex/jira/" . $project->jiraLink->site_id . "/rest/api/2/issue/createmeta?issuetypeNames=Bug");
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($project);
+				$attempts++;
+				continue;
+			}
+
+			return $response;
+		}
+
+		return [];
+	}
+
+
 	public static function createLinkedIssue(Bug $bug)
 	{
 		self::preCallCheck($bug->project);

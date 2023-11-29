@@ -2852,6 +2852,14 @@ class ProjectController extends Controller
 		return $atlassian->getProjects($request, $project);
 	}
 
+	public function getJiraCreatemeta(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		return $atlassian->getCreatemeta($request, $project);
+	}
+
 	public function setJiraProject(Request $request, Project $project, AtlassianService $atlassian)
 	{
 		// Check if the user is authorized for the action

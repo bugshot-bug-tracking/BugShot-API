@@ -246,6 +246,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
 
 		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
+		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
 	// Status prefixed routes
@@ -358,6 +359,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
 		});
 	});
+
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes
