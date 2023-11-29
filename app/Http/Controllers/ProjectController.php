@@ -2905,9 +2905,12 @@ class ProjectController extends Controller
 
 		$project->jiraLink->update($validatedData);
 
+		if (isset($validatedData['sync_comments_from_jira'])) {
+			return	$atlassian->refreshWebhook('sync_comments_from_jira', $project);
+		}
 
-		if (isset($validatedData['sync_comments_from_jira']) && $validatedData['sync_comments_from_jira'] == true) {
-			return	$atlassian->createWebhook($project, 'sync_comments_from_jira');
+		if (isset($validatedData['update_status_from_jira'])) {
+			return	$atlassian->refreshWebhook('update_status_from_jira', $project);
 		}
 
 

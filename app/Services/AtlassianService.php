@@ -267,6 +267,12 @@ class AtlassianService
 
 			$body = json_decode($response->body());
 
+			JiraCommentLink::create([
+				'comment_id' => $comment->id,
+				'jira_comment_id' => $body->id,
+				"jira_comment_url" => $body->self
+			]);
+
 			return $body;
 		}
 
@@ -313,7 +319,110 @@ class AtlassianService
 		return false;
 	}
 
-	public function createWebhook(Project $project, $value)
+	public static function refreshWebhook($event, Project $project)
+	{
+		// check if the event is one that requires a webhook
+		switch ($event) {
+			case 'sync_comments_from_jira':
+				$jira_event = "comment_created";
+				break;
+
+			case 'update_status_from_jira':
+				$jira_event = "jira:issue_updated";
+				break;
+
+			default:
+				$jira_event = NULL;
+		}
+
+		// if the event provided does not match any valid case exit without doing anything
+		if (is_null($jira_event)) {
+			return;
+		}
+
+		// get all the project links that the user has created that have the desired local event
+		$project_link_list = JiraProjectLink::where([
+			["user_id", Auth::id()],
+			[$event, true],
+			["jira_project_id", '!=', NULL],
+		])->get()->toArray();
+
+		// check for an existing webhook with the desired event and creator
+		$webhook = JiraWebhooks::where([
+			["user_id", Auth::id()],
+			['event', $jira_event],
+		])->first();
+
+		// self::getWebhooks($project);
+
+		// if there are no eligible project but a webhook is present delete it and after that's done return
+		if (empty($project_link_list)) {
+			if ($webhook) {
+				self::deleteWebhook($webhook->webhook_id, $project);
+			}
+
+			return;
+		}
+
+		if ($webhook) {
+			self::deleteWebhook($webhook->webhook_id, $project);
+		}
+
+		self::createWebhook($project_link_list, $jira_event, $project);
+
+		// self::getWebhooks($project);
+	}
+
+	public static function createWebhook($jira_project_links, $jira_event, $project)
+	{
+		self::preCallCheck($project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$projects_list = array_map(function ($link) {
+				return $link['jira_project_id'];
+			}, $jira_project_links);
+
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
+				'site_id' => $project->jiraLink->site_id,
+				"api_path" => "rest/api/2/webhook",
+			])->post('{+endpoint}/{site_id}/{api_path}', [
+				"url" => env("APP_PUBLIC_URL") . "/api/v1/atlassian/webhook",
+				"webhooks" => [
+					[
+						"events" => [$jira_event],
+						"jqlFilter" => "project IN (" . implode(",", $projects_list) . ")",
+					]
+				]
+			]);
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($project);
+				$attempts++;
+				continue;
+			}
+
+			$body = json_decode($response->body());
+
+			$jira_webhook = JiraWebhooks::create([
+				"webhook_id" => $body->webhookRegistrationResult[0]->createdWebhookId,
+				"user_id" => Auth::id(),
+				"event" => $jira_event
+			]);
+
+			return $body;
+		}
+
+		return false;
+	}
+
+	public static function deleteWebhook($webhook_id, $project)
 	{
 		self::preCallCheck($project);
 
@@ -328,15 +437,42 @@ class AtlassianService
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
 				"api_path" => "rest/api/2/webhook",
-			])->post('{+endpoint}/{site_id}/{api_path}', [
-				"url" => "",
-				"webhooks" => [
-					[
-						"events" => ["comment_created", "jira:issue_created", "jira:issue_updated"],
-						"jqlFilter" => "project IN ({$project->jiraLink->jira_project_id})",
-					]
-				]
+			])->delete('{+endpoint}/{site_id}/{api_path}', [
+				"webhookIds" => [$webhook_id]
 			]);
+
+			if ($response->status() === 401 && $attempts === 0) {
+				self::updateToken($project);
+				$attempts++;
+				continue;
+			}
+
+			$webhook = JiraWebhooks::where("webhook_id", $webhook_id)->first()->delete();
+
+			$body = json_decode($response->body());
+
+			return $body;
+		}
+
+		return false;
+	}
+
+	public static function getWebhooks($project)
+	{
+		self::preCallCheck($project);
+
+		$attempts = 0;
+
+		while ($attempts < 2) {
+			$response = Http::withHeaders([
+				"Content-Type" => "application/json",
+				"Accept" => "application/json",
+				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
+				'site_id' => $project->jiraLink->site_id,
+				"api_path" => "rest/api/2/webhook",
+			])->get('{+endpoint}/{site_id}/{api_path}');
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($project);
