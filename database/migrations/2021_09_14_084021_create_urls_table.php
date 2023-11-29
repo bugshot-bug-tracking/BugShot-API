@@ -34,6 +34,6 @@ class CreateUrlsTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('project_urls');
+		Schema::dropIfExists('urls');
 	}
 }

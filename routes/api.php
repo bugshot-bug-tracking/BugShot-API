@@ -179,7 +179,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	Route::prefix('organizations/{organization}')->group(function () {
 		Route::apiResource('/companies', CompanyController::class);
 		Route::get("/invitations", [OrganizationController::class, "invitations"])->name("organization.invitations");
-		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
+		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite")->middleware('throttle:100,60');
 		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
 		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
 		Route::put("/users/{user}", [OrganizationController::class, "updateUserRole"])->name("organization.update-user-role");
@@ -194,7 +194,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
 		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
-		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
+		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite")->middleware('throttle:100,60');
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
@@ -217,7 +217,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
-		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
+		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite")->middleware('throttle:100,60');
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
@@ -372,7 +372,7 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 			Route::get('/project', [ProjectController::class, "showViaApiKey"])->name("apitoken.get.project");
 			Route::put('/project', [ProjectController::class, "updateViaApiKey"])->name("apitoken.update.project");
 			Route::get('/projects/users', [ProjectController::class, "usersViaApiKey"])->name("apitoken.get.users.of.project");
-			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.invite.users.to.project");
+			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.invite.users.to.project")->middleware('throttle:100,60');
 		});
 	}
 );

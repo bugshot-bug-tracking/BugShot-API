@@ -37,7 +37,7 @@ trait HasSettings {
 
 			if($settingUserValue != NULL) {
 				$value = Value::find($settingUserValue->value_id);
-				return $value->designation;
+				return $value ? $value->designation : NULL;
 			} else {
 				$this->settings()->attach([$setting->id => ['value_id' => NULL]]);
 			}
