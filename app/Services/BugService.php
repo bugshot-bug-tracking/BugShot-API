@@ -110,7 +110,7 @@ class BugService
 		return $resource;
 	}
 
-	public function update($request, Status $status, Bug $bug, ApiCallService $apiCallService = null)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService = null)
 	{
 		$oldStatus = $bug->getOriginal('status_id');
 		$newStatus = isset($request->status_id) && $request->status_id != null ? $request->status_id : $oldStatus;
@@ -124,7 +124,7 @@ class BugService
 		}
 
 		// Update the bug
-		$bug->update($request);
+		$bug->update($request->all());
 		$bug->update([
 			"project_id" => $status->project_id,
 			"deadline" => isset($request->deadline) ? new Carbon($request->deadline) : null,

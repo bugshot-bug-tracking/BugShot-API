@@ -4,6 +4,7 @@ namespace App\Services;
 
 // Miscellaneous, Helpers, ...
 use App\Events\CommentCreated;
+use App\Http\Requests\BugUpdateRequest;
 use Illuminate\Http\Request;
 use DateTime;
 use Exception;
@@ -384,10 +385,14 @@ class AtlassianService
 
 		$bugService = new BugService;
 
-		$bugService->update(
+		$update_request = new BugUpdateRequest(
 			[
 				"status_id" => $done->id
-			],
+			]
+		);
+
+		$bugService->update(
+			$update_request,
 			$bug_link->bug->status,
 			$bug_link->bug
 		);
