@@ -231,7 +231,7 @@ class OrganizationPolicy
      */
     public function invite(User $user, Organization $organization)
     {
-        if(!$user->licenseActive()){return false;}
+        // if(!$user->licenseActive()){return false;}
 
 		// Check if user is the manager or owner of the organization
 		if($user->isPriviliegated('organizations', $organization)) {
