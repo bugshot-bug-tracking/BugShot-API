@@ -62,7 +62,7 @@ class CommentService
 		}
 
 		// Broadcast the event
-		broadcast(new CommentCreated(User::find($user_id), $comment, $request->tagged))->toOthers();
+		broadcast(new CommentCreated($comment))->toOthers();
 
 		$resource = new CommentResource($comment);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-comment", $bug->project->id, $request->get('session_id'));

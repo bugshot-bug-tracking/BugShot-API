@@ -23,7 +23,7 @@ class CommentCreated implements ShouldBroadcast
 	 *
 	 * @return void
 	 */
-	public function __construct(public User $user, public $comment, public $taggedUsers)
+	public function __construct(public Comment $comment)
 	{
 	}
 
@@ -43,9 +43,9 @@ class CommentCreated implements ShouldBroadcast
 	 * @return bool
 	 */
 	public function broadcastWhen()
-    {
-        return true;
-    }
+	{
+		return true;
+	}
 
 	/**
 	 * Get the data to broadcast.

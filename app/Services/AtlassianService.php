@@ -3,6 +3,7 @@
 namespace App\Services;
 
 // Miscellaneous, Helpers, ...
+use App\Events\CommentCreated;
 use Illuminate\Http\Request;
 use DateTime;
 use Exception;
@@ -363,6 +364,9 @@ class AtlassianService
 			'jira_comment_id' => $request->comment['id'],
 			"jira_comment_url" => $request->comment['self']
 		]);
+
+		// Broadcast the event
+		broadcast(new CommentCreated($comment));
 	}
 
 	private static function updateBugShotStatusToDone($request, JiraBugLink $bug_link)
