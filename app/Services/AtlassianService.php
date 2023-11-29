@@ -28,6 +28,7 @@ use App\Models\JiraBugLink;
 use App\Models\JiraCommentLink;
 use App\Models\Project;
 use App\Models\JiraProjectLink;
+use App\Models\JiraWebhooks;
 
 class AtlassianService
 {
