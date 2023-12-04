@@ -231,6 +231,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/archived-bugs/{bug}', [BugController::class, "showArchivedBug"])->name("status.bug.archived");
 	});
 
+	// Archived bugs
+	Route::get('/archived-bugs/{bug}/restore', [BugController::class, "restoreArchivedBug"])->name("bug.restore");
+
 	// Bug prefixed routes
 	Route::prefix('bugs/{bug}')->group(function () {
 		Route::apiResource('/comments', CommentController::class);
