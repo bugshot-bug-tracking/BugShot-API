@@ -103,7 +103,7 @@ class JiraProjectLink extends Model
 	 *
 	 */
 
-	protected $fillable = ["user_id", "project_id", "token_type", "access_token", "refresh_token", "expires_in", "expires_at", "scope", "site_id", "site_name", "site_url", "jira_project_id", "jira_project_name", "jira_project_key", "sync_bugs_to_jira", "sync_bugs_from_jira", "sync_comments_to_jira", "sync_comments_from_jira", "update_status_to_jira", "update_status_from_jira"];
+	protected $fillable = ["user_id", "project_id", "token_type", "access_token", "refresh_token", "expires_in", "expires_at", "scope", "site_id", "site_name", "site_url", "jira_project_id", "jira_project_name", "jira_project_key", "jira_issuetype_id", "sync_bugs_to_jira", "sync_bugs_from_jira", "sync_comments_to_jira", "sync_comments_from_jira", "update_status_to_jira", "update_status_from_jira"];
 
 	protected $touches = ["project"];
 

@@ -23,6 +23,8 @@ class PostJiraBugResource extends JsonResource
 			$this->resource->description
 		];
 
+		array_push($content, "#Priority\n{$this->resource->priority->designation}");
+
 		if ($this->resource->deadline) {
 			array_push($content, "#Deadline\n{$this->resource->deadline}");
 		}
@@ -80,9 +82,9 @@ class PostJiraBugResource extends JsonResource
 		return [
 			"fields" => [
 				// this is static because 10004 represents bugs, in the future if BugShot will support multiple report types this can be changed
-				"issuetype" => ["id" => "10004"],
+				"issuetype" => ["id" => $this->resource->project->jiraLink->jira_issuetype_id],
 				// in BugShot "Critical" has id 4 but in Jira "Critical/Highest" is 1 and Jira "Lowest" (id 5) is ignored because there is no equivalent
-				"priority" => ["id" => (string)(4 - $this->resource->priority_id + 1)],
+				// "priority" => ["id" => (string)(4 - $this->resource->priority_id + 1)],
 				"project" => ["id" => $this->resource->project->jiraLink->jira_project_id],
 				"summary" => $this->resource->designation,
 				"description" => join("\n", $content)

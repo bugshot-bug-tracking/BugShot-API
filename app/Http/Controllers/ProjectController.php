@@ -2868,7 +2868,8 @@ class ProjectController extends Controller
 		$project->jiraLink->update([
 			"jira_project_id" => $request->id,
 			"jira_project_name" => $request->name,
-			"jira_project_key" => $request->key
+			"jira_project_key" => $request->key,
+			"jira_issuetype_id" => $request->issuetype
 		]);
 
 		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
@@ -2906,11 +2907,11 @@ class ProjectController extends Controller
 		$project->jiraLink->update($validatedData);
 
 		if (isset($validatedData['sync_comments_from_jira'])) {
-			return	$atlassian->refreshWebhook('sync_comments_from_jira', $project);
+			$atlassian->refreshWebhook('sync_comments_from_jira', $project);
 		}
 
 		if (isset($validatedData['update_status_from_jira'])) {
-			return	$atlassian->refreshWebhook('update_status_from_jira', $project);
+			$atlassian->refreshWebhook('update_status_from_jira', $project);
 		}
 
 
