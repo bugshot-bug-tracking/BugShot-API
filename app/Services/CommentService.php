@@ -45,6 +45,11 @@ class CommentService
 			"client_id" => $client_id
 		]);
 
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true && $bug->jiraLink) {
+			$result = AtlassianService::createComment($bug, $comment);
+		}
+
+
 		// Notify the tagged users
 		foreach ($request->tagged as $tagged) {
 			$user = User::find($tagged['user_id']);
@@ -52,12 +57,12 @@ class CommentService
 		}
 
 		// Notify the creator of the bug if he is not one of the tagged users or the creator of the comment
-		if(!in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
+		if (!in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
 			$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
 		}
 
 		// Broadcast the event
-		broadcast(new CommentCreated(User::find($user_id), $comment, $request->tagged))->toOthers();
+		broadcast(new CommentCreated($comment))->toOthers();
 
 		$resource = new CommentResource($comment);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-comment", $bug->project->id, $request->get('session_id'));

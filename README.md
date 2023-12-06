@@ -1,5 +1,45 @@
 # BugShot API
 
+## How to install
+
+### 0. Prerequisites
+
+1. PHP 8+ and extensions for it
+
+		sudo apt install php libapache2-mod-php php-mbstring php-xmlrpc php-soap php-gd php-xml php-cli php-zip php-bcmath php-tokenizer php-json php-pear php-mysql php-curl
+
+2. [Composer](https://getcomposer.org/)
+
+	Good install instructions for Ubuntu: [link](https://www.digitalocean.com/community/tutorials/how-to-install-composer-on-ubuntu-20-04-quickstart).
+
+### 1. Config .env
+
+- Make a copy in the same place of `.env.example` with the name `.env`
+- Run `"php artisan generate:key"` in the CLI, this will generate a key for the app in the `.env` file
+- Modify the `APP_(*_)URL` with the correct links so that the frontend and other services can connect to the app
+- Set up the database and other services credentials
+
+### 2. Install composer pacakges
+
+- Run `"composer install"` if composer is installed globaly
+
+### 3. Database
+
+- Do a `"php artisan migrations"`. 
+
+	If the command does not work and says something on the lines of `"could not find driver..."` make sure there is a php driver installed on the machine like `php_mysql` for a mysql database of the equivalent  for waht database is necessary. 
+
+		install command example:
+		sudo apt install php-mysql
+
+- Run the seeders `"php artisan db:seed"`
+- Run `"php artisan usersettings:fresh"` to make sure all the user settings that need to be set are set at the start (some users have been added using seeders, if there are no users added this way you can skip this step).
+
+### 4. Misc
+
+- `"php artisan storage:link"` to make the apropriate links for storage
+
+
 ## How to restart BugShot worker in case it crashes
 
 The BugShot workers are managed by [Supervisor](http://supervisord.org/) and their lifespan are set to 1 hour, after that they stop and will be automatically started again by Supervisor. The config is found in the root api directory on the KasServer in `supervisor.conf`; the config for a specific worker can be found under `[program:*worker name*]`.

@@ -15,35 +15,35 @@ class ClientSeeder extends Seeder
 	 */
 	public function run()
 	{
-	    Client::create([
+		Client::create([
 			'designation' => 'webpanel'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'desktop'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'app_ios'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'app_android'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'browserext_chrome'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'mac_os'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'ios_share_extension'
 		]);
 
-        Client::create([
+		Client::create([
 			'designation' => 'flyer_creator'
 		]);
 
@@ -51,6 +51,10 @@ class ClientSeeder extends Seeder
 			'designation' => 'zapier interface',
 			'client_url' => 'https://dev-interface-zapier.bugshot.de/api/zapier',
 			'client_key' => '28k?cX>pab3q2P9<m_ekq5<A.c{Kn$',
+		]);
+
+		Client::create([
+			'designation' => 'atlassian integration',
 		]);
 	}
 }

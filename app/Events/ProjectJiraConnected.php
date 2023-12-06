@@ -2,19 +2,15 @@
 
 namespace App\Events;
 
-use App\Http\Resources\CommentResource;
-use App\Models\User;
-use App\Models\Comment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CommentCreated implements ShouldBroadcast
+class ProjectJiraConnected implements ShouldBroadcast
 {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -23,8 +19,9 @@ class CommentCreated implements ShouldBroadcast
 	 *
 	 * @return void
 	 */
-	public function __construct(public Comment $comment)
+	public function __construct(public $project)
 	{
+		//
 	}
 
 	/**
@@ -34,7 +31,7 @@ class CommentCreated implements ShouldBroadcast
 	 */
 	public function broadcastAs()
 	{
-		return 'comment.created';
+		return 'jira.connected';
 	}
 
 	/**
@@ -55,17 +52,19 @@ class CommentCreated implements ShouldBroadcast
 	public function broadcastWith()
 	{
 		return [
-			'data' => new CommentResource($this->comment)
+			'data' => [
+				'project' => $this->project->id
+			]
 		];
 	}
 
 	/**
 	 * Get the channels the event should broadcast on.
 	 *
-	 * @return \Illuminate\Broadcasting\PrivateChannel|array
+	 * @return \Illuminate\Broadcasting\Channel|array
 	 */
 	public function broadcastOn()
 	{
-		return new PrivateChannel('bug.' . $this->comment->bug->id);
+		return new PrivateChannel('project.' . $this->project->id);
 	}
 }
