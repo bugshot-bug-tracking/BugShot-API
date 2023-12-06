@@ -23,7 +23,8 @@ class JiraProjectLinkResource extends JsonResource
 			"project" => [
 				"id" => $this->jira_project_id,
 				"name" => $this->jira_project_name,
-				"key" => $this->jira_project_key
+				"key" => $this->jira_project_key,
+				"issuetype" => $this->jira_issuetype_id
 			],
 			"options" => [
 				"sync_bugs_to_jira" => $this->sync_bugs_to_jira,

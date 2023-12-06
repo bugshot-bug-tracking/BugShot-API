@@ -70,7 +70,7 @@ class AtlassianService
 			throw new Exception("Project has no link");
 		}
 
-		$date = new DateTime($link->expires_at);
+		$date = ($link->expires_at);
 		$current_date = new DateTime();
 
 		if ($date < $current_date) {
