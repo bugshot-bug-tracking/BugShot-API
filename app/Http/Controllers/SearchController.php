@@ -62,6 +62,11 @@ class SearchController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="include-archived",
+	 *		required=false,
+	 *		in="header"
+	 *	),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success"
@@ -89,25 +94,26 @@ class SearchController extends Controller
 	{
 		$resource = array_key_exists("resource", $request->header()) ? $request->header()["resource"][0] : NULL;
 		$searchString = array_key_exists("search-string", $request->header()) ? $request->header()["search-string"][0] : NULL;
+		$header = $request->header();
 
 		switch ($resource) {
 			case 'companies':
-				$searchResults = $this->searchCompanies($searchString);
+				$searchResults = $this->searchCompanies($header, $searchString);
 				break;
 
 			case 'projects':
-				$searchResults = $this->searchProjects($searchString);
+				$searchResults = $this->searchProjects($header, $searchString);
 				break;
 
 			case 'bugs':
-				$searchResults = $this->searchBugs($searchString);
+				$searchResults = $this->searchBugs($header, $searchString);
 				break;
 
 			default:
 				$searchResults = array(
-					"companies" => $this->searchCompanies($searchString),
-					"projects" => $this->searchProjects($searchString),
-					"bugs" => $this->searchBugs($searchString),
+					"companies" => $this->searchCompanies($header, $searchString),
+					"projects" => $this->searchProjects($header, $searchString),
+					"bugs" => $this->searchBugs($header, $searchString),
 				);
 				break;
 		}
@@ -115,7 +121,9 @@ class SearchController extends Controller
 		return $searchResults;
 	}
 
-    public function searchBugs($searchString) {
+    public function searchBugs($header, $searchString) {
+
+		$includeArchived = array_key_exists('include-archived', $header) && $header['include-archived'][0] == "true" ? true : false;
 
 		$searchResults = Bug::select('id', 'project_id', 'designation', 'description', 'url')->where(
 			function ($query) {
@@ -150,12 +158,18 @@ class SearchController extends Controller
 			->orWhere("bugs.description", "LIKE", "%" . $searchString . "%")
 			->orWhere("bugs.url", "LIKE", "%" . $searchString . "%");
 		})
+		->when(!$includeArchived, function ($query) {
+			return $query->where("bugs.archived_at", NULL);
+		})
+		->when($includeArchived, function ($query) {
+			return $query->withTrashed();
+		})
 		->paginate(3);
 
 		return new BugSearchCollection($searchResults);
     }
 
-    public function searchProjects($searchString) {
+    public function searchProjects($header, $searchString) {
 
 		$searchResults = Project::select('id', 'designation', 'url', 'company_id')->where(
 			function ($query) {
@@ -187,7 +201,7 @@ class SearchController extends Controller
         return new ProjectSearchCollection($searchResults);
     }
 
-    public function searchCompanies($searchString) {
+    public function searchCompanies($header, $searchString) {
 
 		$searchResults = Company::select('id', 'designation', 'organization_id')->where(
 			function ($query) {
