@@ -43,10 +43,14 @@ class ProjectService
 		}
 
         // Update the project
-        $project->update($request->all());
-        $project->update([
-            "company_id" => $company->id,
+        $project->fill($request->all());
+        $project->fill([
+            "url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url
         ]);
+
+		// Do the save and fire the custom event
+		$project->fireCustomEvent('projectUpdated');
+		$project->save();
 
         $resource = new ProjectResource($project);
 		TriggerInterfacesJob::dispatch($apiCallService, $resource, "project-updated-info", $project->id, $request->get('session_id'));
@@ -58,8 +62,9 @@ class ProjectService
     public function users(Project $project, $withOwner = false)
 	{
         if($withOwner){
-            $returnCollections = UserResource::collection($project->users);
-			$returnCollections = $returnCollections->push(new UserResource($project->creator));
+            $returnCollections["projectUsers"] = UserResource::collection($project->users);
+			// $returnCollections = $returnCollections->push(new UserResource($project->creator)); // Not required anymore as the project creator should be part of the project users anyway (ProjectUserRole table)
+
             return $returnCollections;
         }
 

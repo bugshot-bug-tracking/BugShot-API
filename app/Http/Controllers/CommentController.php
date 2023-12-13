@@ -65,6 +65,13 @@ class CommentController extends Controller
 	 *		in="header"
 	 *	),
 	 *
+	 *  @OA\Parameter(
+	 *		name="only-internals",
+	 *		required=false,
+	 *		in="header",
+	 *		example="true"
+	 *	),
+	 *
 	 * 	@OA\Parameter(
 	 *		name="bug_id",
 	 *		required=true,
@@ -101,12 +108,19 @@ class CommentController extends Controller
 	 *)
 	 *
 	 **/
-	public function index(Bug $bug)
+	public function index(Request $request, Bug $bug)
 	{
 		// Check if the user is authorized to list the comments of the bug
 		$this->authorize('viewAny', [Comment::class, $bug->project]);
 
-		return CommentResource::collection($bug->comments);
+		$header = $request->header();
+		$onlyInternals = 1;
+		if(array_key_exists('only-internals', $header) && $header['only-internals'][0] == "false")
+		{
+			$onlyInternals = 0;
+		}
+
+		return CommentResource::collection($bug->comments()->where("is_internal", $onlyInternals)->get());
 	}
 
 	/**
@@ -255,6 +269,11 @@ class CommentController extends Controller
 	 *              		)
 	 * 					)
 	 *              ),
+	 *              @OA\Property(
+	 *                  description="Determines if the comment is an internal one. (Values: 0 or 1)",
+	 *                  property="is_internal",
+	 *                  type="integer",
+	 *              ),
 	 *              required={"bug_id","content"}
 	 *          )
 	 *      )
@@ -293,7 +312,7 @@ class CommentController extends Controller
 		$client_id = $request->get('client_id');
 		return $commentService->store($request,$bug, Auth::id(), $this, $client_id, $apiCallService);
 	}
-	
+
 	/**
 	 * Store a newly created resource in storage.
 	 *

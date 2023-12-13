@@ -14,10 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('comments', function (Blueprint $table) {
-            $table->after('user_id', function ($table) {
-                $table->unsignedBigInteger('client_id')->nullable();
-			    $table->foreign('client_id')->references('id')->on('clients');
-            });
+			$table->boolean('is_internal')->default(1);
         });
     }
 
@@ -29,8 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('comments', function (Blueprint $table) {
-			$table->dropForeign('comments_client_id_foreign');
-            $table->dropColumn('client_id');
+			$table->dropColumn('is_internal');
         });
     }
 };

@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CommentStoreRequest extends FormRequest
+class SubscriptionUpgradeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +24,9 @@ class CommentStoreRequest extends FormRequest
      */
     public function rules()
     {
-      return [
-        "content" => ["required", "string", "max:1500"],
-		"is_internal" => ["integer"]
-      ];
+        return [
+			'price_api_id' => ['required', 'string', 'max:30'],
+			'subscription_item_id' => ['required', 'string', 'max:30'],
+        ];
     }
 }

@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('bugs', function (Blueprint $table) {
-			$table->after('deadline', function ($table) {
-				$table->timestamp('done_at')->nullable();
-				$table->timestamp('archived_at')->nullable();
-            });
+        Schema::create('actions', function (Blueprint $table) {
+            $table->id();
+
+			$table->string('designation')->nullable()->unique();
+
+            $table->timestamps();
         });
     }
 
@@ -28,9 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('bugs', function (Blueprint $table) {
-            $table->dropColumn('done_at')->nullable();
-			$table->dropColumn('archived_at')->nullable();
-        });
+        Schema::dropIfExists('actions');
     }
 };

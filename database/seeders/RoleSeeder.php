@@ -21,6 +21,10 @@ class RoleSeeder extends Seeder
 			"designation" => "Owner"
 		]);
 
+		Role::first()->update([
+			"id" => 0
+		]);
+
 		// Only run once
 		// $organizations = Organization::all();
 		// foreach($organizations as $organization) {
@@ -40,17 +44,17 @@ class RoleSeeder extends Seeder
 		// }
 
 		Role::create([
-			// "id" => 1,
+			"id" => 1,
 			"designation" => "Manager"
 		]);
 
 		Role::create([
-			// "id" => 2,
+			"id" => 2,
 			"designation" => "Team"
 		]);
 
 		Role::create([
-			// "id" => 3,
+			"id" => 3,
 			"designation" => "Client"
 		]);
 

@@ -3,13 +3,6 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-
-use App\Events\JiraProjectLinkUpdated;
-use App\Events\ProjectCreated;
-use App\Events\ProjectDeleted;
-use App\Events\ProjectJiraConnected;
-use App\Events\ProjectUserRemoved;
-use App\Events\ProjectUserUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -26,6 +19,8 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\ProjectMarkerResource;
 use App\Http\Resources\JiraProjectLinkResource;
+use App\Http\Resources\HistoryResource;
+use App\Http\Resources\UserResource;
 
 // Services
 use App\Services\ImageService;
@@ -33,6 +28,15 @@ use App\Services\InvitationService;
 use App\Services\ProjectService;
 use App\Services\ApiCallService;
 use App\Services\AtlassianService;
+
+// Events
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
+use App\Events\ProjectMovedToNewGroup;
+use App\Events\ProjectUserRemoved;
+use App\Events\ProjectUserUpdated;
+use App\Events\JiraProjectLinkUpdated;
+use App\Events\ProjectJiraConnected;
 
 // Models
 use App\Models\User;
@@ -2781,7 +2785,7 @@ class ProjectController extends Controller
 
 		$project->jiraLink->delete();
 
-		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+		// broadcast(new JiraProjectLinkUpdated($project))->toOthers();
 
 		return response(null, 204);
 	}

@@ -15,6 +15,9 @@ class DatabaseSeeder extends Seeder
 	{
 		// \App\Models\User::factory(10)->create();
 
+		// Adds values
+		$this->call(ActionSeeder::class);
+
         // Adds versiontypes
 		$this->call(VersionTypeSeeder::class);
 

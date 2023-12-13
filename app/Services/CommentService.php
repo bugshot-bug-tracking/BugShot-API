@@ -42,7 +42,8 @@ class CommentService
 			'id' => $id,
 			'content' => $request->content,
 			'user_id' => $user_id,
-			"client_id" => $client_id
+			"client_id" => $client_id,
+			"is_internal" => $request->is_internal ? $request->is_internal : 1
 		]);
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true && $bug->jiraLink) {

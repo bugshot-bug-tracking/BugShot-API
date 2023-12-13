@@ -42,6 +42,7 @@ use App\Http\Requests\SubscriptionStoreRequest;
 use App\Http\Requests\StripeCustomerStoreRequest;
 use App\Http\Requests\PaymentMethodsGetRequest;
 use App\Http\Requests\SubscriptionChangeQuantityRequest;
+use App\Http\Requests\SubscriptionUpgradeRequest;
 use App\Http\Resources\UserResource;
 
 // Events
@@ -808,14 +809,6 @@ class StripeController extends Controller
 				'subscription_item_id' => $subscription->id
 			]);
 		} else {
-			// Check if the creator of the organization ist the only member in it. If so, assign the subscription to him.
-			// if($billingAddress->billingAddressable->users->isEmpty()) {
-			// 	$subscriptionItem = SubscriptionItem::where('stripe_price', $request->products[0]['price_api_id'])->first();
-			// 	$creator = $billingAddress->billingAddressable->creator;
-			// 	$creator->update([
-			// 		'subscription_item_id' => $subscriptionItem->stripe_id
-			// 	]);
-			// }
 			$subscriptionItem = SubscriptionItem::where("stripe_price", $subscription->stripe_price)->where("subscription_id", $subscription->id)->first();
 			$organizationUserRole = OrganizationUserRole::where("organization_id", $billingAddress->billingAddressable->id)->where("user_id", $billingAddress->billingAddressable->user_id)->first();
 
@@ -838,6 +831,116 @@ class StripeController extends Controller
 		);
 
         return new StripeSubscriptionResource($subscription);
+	}
+
+	/**
+	 * Upgrade subscription
+	 *
+	 * @param  Request  $request
+     * @param  BillingAddress $billingAddress
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/billing-addresses/{billing_address_id}/stripe/subscription/{subscription_id}/upgrade",
+	 *	tags={"Stripe"},
+	 *	summary="Upgrade to the given subscription",
+	 *	operationId="upgradeSubscription",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="billing_address_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/BillingAddress/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="subscription_id",
+	 *		required=true,
+	 *		in="path"
+	 *	),
+     *
+     * 	@OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="Specifies the exact product of the susbcriptions of which the quantitiy shall be changed",
+	 *                  property="price_api_id",
+	 *                  type="string"
+	 *              ),
+	 *             @OA\Property(
+	 *                  description="The id of the exact subscription item that should be assigned to the user",
+	 *                  property="subscription_item_id",
+	 *                  type="string"
+	 *              ),
+	 *          )
+	 *      )
+	 *  ),
+	 *
+	 *	@OA\Response(
+	 *		response=201,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=422,
+	 *		description="Unprocessable Entity"
+	 *	),
+	 * )
+	 **/
+	public function upgradeSubscription(SubscriptionUpgradeRequest $request, BillingAddress $billingAddress, $subscriptionId)
+	{
+		// Check if the user is authorized to upgrade the billing addresses subscription
+		$this->authorize('upgradeSubscription', $billingAddress);
+
+		$subscriptionItemId = $request->subscription_item_id;
+		$price_api_id = $request->price_api_id;
+
+		$stripe = new StripeClient(config('app.stripe_api_secret'));
+		$response = $stripe->subscriptions->update(
+			$subscriptionId,
+			[
+			  'items' => [
+					[
+					  'id' => $subscriptionItemId,
+					  'price' => $price_api_id,
+					],
+			  	],
+			]
+		);
+
+		return StripeSubscriptionResource::collection($response->data);
 	}
 
 	/**
@@ -1174,20 +1277,8 @@ class StripeController extends Controller
 
 		$val = $billingAddress->subscription($subscription->name)->cancel();
 
-		// Remove sub itemes from users
-		// foreach($subscriptionItems as $subscriptionItem) {
-		// 	User::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
-		// 		'subscription_item_id' => NULL
-		// 	]);
-		// }
-
 		// Remove sub itemes from organization users
 		foreach($subscriptionItems as $subscriptionItem) {
-			// OrganizationUserRole::where('subscription_item_id', $subscriptionItem->stripe_id)->update([
-			// 	'subscription_item_id' => NULL,
-			// 	'restricted_subscription_usage' => NULL
-			// ]);
-
 			$users = $billingAddress->billingAddressable->users;
 			foreach($users as $user) {
 				$billingAddress->billingAddressable->users()->where("subscription_item_id", $subscriptionItem)->updateExistingPivot($user->id, [
@@ -1326,17 +1417,7 @@ class StripeController extends Controller
 			return new UserResource($user);
 		}
 
-
 		$organization = $billingAddress->billingAddressable;
-
-		// Check if the user the subscription shall be assigned to is also the owner of the organization
-		// if($organization->user_id == $request->user_id) {
-		// 	$organization->creator->update([
-		// 		'subscription_item_id' => $subscriptionItemId
-		// 	]);
-
-		// 	return new UserResource($organization->creator);
-		// }
 
 		// Check if the user that shall receive the subscription is part of the organization
 		$user = User::find($request->user_id);
@@ -1467,15 +1548,6 @@ class StripeController extends Controller
 			return new UserResource($user);
 		} else {
 			$organization = $billingAddress->billingAddressable;
-
-			// Check if the user the subscription shall be revoked from is also the owner of the organization
-			// if($organization->user_id == $request->user_id) {
-			// 	$organization->creator->update([
-			// 		'subscription_item_id' => NULL
-			// 	]);
-
-			// 	return new UserResource($organization->creator);
-			// }
 
 			// Check if the subscription that shall be revoked belongs to one of the requesting users organizations
 			$subscription = Subscription::where('stripe_id', $subscriptionId)->first();
