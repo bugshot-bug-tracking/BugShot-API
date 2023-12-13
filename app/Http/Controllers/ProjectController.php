@@ -8,6 +8,7 @@ use App\Events\JiraProjectLinkUpdated;
 use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
 use App\Events\ProjectJiraConnected;
+use App\Events\ProjectJiraDisconnected;
 use App\Events\ProjectUserRemoved;
 use App\Events\ProjectUserUpdated;
 use Illuminate\Http\Response;
@@ -2781,7 +2782,7 @@ class ProjectController extends Controller
 
 		$project->jiraLink->delete();
 
-		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+		broadcast(new ProjectJiraDisconnected($project))->toOthers();
 
 		return response(null, 204);
 	}
