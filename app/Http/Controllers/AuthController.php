@@ -288,9 +288,9 @@ class AuthController extends Controller
 		$user = User::where("email", $request->email)->first();
 
 		if (!$user || !Hash::check($request->password, $user->password)) {
-			return response()->json(["message" => __('auth.failed')], 401);
+			return response()->json(["message" => __('auth.failed'), 'code' => 1], 401);
 		} else if (!$user->hasVerifiedEmail()) {
-			return response()->json(["message" => __('auth.email-not-verified')], 401);
+			return response()->json(["message" => __('auth.email-not-verified'), 'code' => 2], 401);
 		}
 
 		Auth::attempt(['email' => $request->email, 'password' => $request->password]);
@@ -678,7 +678,7 @@ class AuthController extends Controller
 		$request->fulfill();
 		$user = User::find($id);
 
-		if(config("app.sendinblue_active")) {
+		if (config("app.sendinblue_active")) {
 			// Create the corresponding contact in sendinblue
 			$response = $sendinblueService->createContact(
 				$user,
@@ -771,7 +771,7 @@ class AuthController extends Controller
 	public function addDefaultSettings($user)
 	{
 
-		foreach(Setting::all() as $setting) {
+		foreach (Setting::all() as $setting) {
 			$defaultValue = Value::where("designation", $setting->default_value)->first();
 			$defaultValueId = $defaultValue ? $defaultValue->id : NULL;
 

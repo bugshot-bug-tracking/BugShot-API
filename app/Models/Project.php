@@ -18,18 +18,18 @@ class Project extends Model
 	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes, HasCustomEvents;
 
 	/**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
+	 * The "type" of the auto-incrementing ID.
+	 *
+	 * @var string
+	 */
+	protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
 
 	protected $observables = [
 		'projectCreated',
@@ -135,96 +135,104 @@ class Project extends Model
 	protected $cascadeDeletes = ['statuses', 'bugs', 'invitations', 'image', 'apiTokens', 'exports'];
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function creator()
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'project_user_roles')->withPivot('role_id');
-    }
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function users()
+	{
+		return $this->belongsToMany(User::class, 'project_user_roles')->withPivot('role_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function company()
 	{
 		return $this->belongsTo(Company::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function statuses()
 	{
 		return $this->hasMany(Status::class)->orderBy("order_number");
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function bugs()
 	{
 		return $this->hasMany(Bug::class);
 	}
 
-    /**
-     * Get all of the comments for the project.
-     */
-    public function comments(): HasManyThrough
-    {
-        return $this->hasManyThrough(Comment::class, Bug::class);
-    }
+	/**
+	 * Get all of the comments for the project.
+	 */
+	public function comments(): HasManyThrough
+	{
+		return $this->hasManyThrough(Comment::class, Bug::class);
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function exports()
 	{
 		return $this->hasMany(Export::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+	 */
+	public function image()
+	{
+		return $this->morphOne(Image::class, 'imageable');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
 	public function invitations()
 	{
 		return $this->morphMany(Invitation::class, "invitable");
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+	 */
 	public function urls()
 	{
 		return $this->morphMany(Url::class, 'urlable')->orderBy('created_at', 'asc');
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
-    public function apiTokens()
-    {
-        return $this->morphMany(ApiToken::class, 'api_tokenable');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+	 */
+	public function apiTokens()
+	{
+		return $this->morphMany(ApiToken::class, 'api_tokenable');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function jiraLink()
+	{
+		return $this->hasOne(JiraProjectLink::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+	 */
 	public function history()
 	{
 		return $this->morphToMany(Action::class, "historyable", "history")->withTimestamps();
