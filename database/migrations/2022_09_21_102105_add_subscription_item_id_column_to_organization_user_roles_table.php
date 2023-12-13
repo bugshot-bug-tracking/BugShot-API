@@ -28,7 +28,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('organization_user_roles', function (Blueprint $table) {
-			$table->dropColumn('subscription_id');
+			$table->dropForeign('organization_user_roles_subscription_item_id_foreign');
+			$table->dropColumn('subscription_item_id');
             $table->dropColumn('restricted_subscription_usage');
         });
     }

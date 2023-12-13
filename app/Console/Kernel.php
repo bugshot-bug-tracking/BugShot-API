@@ -41,11 +41,21 @@ class Kernel extends ConsoleKernel
 		$schedule->call(function () {
 			Log::info("Start bug archiving...");
 
-			Bug::whereNull("archived_at")
+			$bugs = Bug::whereNull("archived_at")
 				->whereNotNull("deleted_at")
 				->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')))
 				->withTrashed()
-				->update(["archived_at" => now()]);
+				->get();
+
+			foreach($bugs as $bug)
+			{
+				$bug->fill([
+					"archived_at" => now()
+				]);
+
+				$bug->fireCustomEvent('bugArchived');
+				$bug->save();
+			}
 
 			Log::info('Bugs archived successfully!');
 		})->everyThirtyMinutes();
@@ -74,7 +84,7 @@ class Kernel extends ConsoleKernel
 
 				if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
 					foreach($project->users as $user) {
-						if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" 
+						if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification"
 						|| $user->getSettingValueByName("custom_notifications_daily_summary") == "activated") {
 							$user->notify((new ProjectSummaryNotification($project, $comments, $doneBugs, $bugs))->locale(GetUserLocaleService::getLocale($user)));
 						}

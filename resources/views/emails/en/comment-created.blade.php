@@ -2,7 +2,8 @@
     <p>Hello {{ $user->first_name }},</p>
     <p>
         {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} has just created a comment in one of the bugs you created.<br /><br />
-        <strong>Project</strong>: {{ $project->designation }}<br />
+        <strong>{{ $groupsWording ? Str::singular($groupsWording) : "Group" }}</strong>: {{ $project->company->designation }}<br />
+		<strong>Project</strong>: {{ $project->designation }}<br />
         <strong>Bug</strong>: {{ $bug->ai_id }} ({{ $bug->designation }})<br />
         <strong>Comment</strong>: {{ $readableContent }}<br /><br />
         To reply to the comment you can simply visit the corresponding bug in the webpanel.<br />

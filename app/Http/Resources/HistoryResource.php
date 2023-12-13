@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CommentResource extends JsonResource
+class HistoryResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -14,23 +14,17 @@ class CommentResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
-		$user = $this->user;
+		$message = __("actions." . $this->action->designation);
+		$message = vsprintf($message, $this->args);
 
 		return [
 			"id" => $this->id,
-			"type" => "Comment",
+			"type" => "History",
 			"attributes" => [
-				"bug_id" => $this->bug_id,
-				"user" => [
-					"id" => $user->id,
-					"client_id" => $this->client_id,
-					"first_name" => $user->first_name,
-					"last_name" => $user->last_name,
-				],
-				"content" => $this->content,
-				"is_internal" => $this->is_internal,
+				"message" => $message,
+				"action" => $this->action->designation,
 				"created_at" => $this->created_at,
-				"updated_at" => $this->updated_at,
+                "updated_at" => $this->updated_at
 			]
 		];
 	}

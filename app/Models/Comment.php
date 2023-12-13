@@ -61,7 +61,12 @@ class Comment extends Model
 	 *  maxLength=255,
 	 * 	description="The message."
 	 * )
-
+	 *
+	 * @OA\Property(
+	 * 	property="is_internal",
+	 * 	type="boolean"
+	 * )
+	 *
 	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
@@ -83,7 +88,7 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "created_at"];
+	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "is_internal", "created_at"];
 
 	protected $touches = ['bug'];
 
