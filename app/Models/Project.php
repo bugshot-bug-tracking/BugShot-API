@@ -230,7 +230,6 @@ class Project extends Model
 		return $this->hasOne(JiraProjectLink::class);
 	}
 
-
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
