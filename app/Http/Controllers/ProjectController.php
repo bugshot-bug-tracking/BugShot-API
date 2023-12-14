@@ -7,8 +7,6 @@ use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Http;
 
 // Resources
 use App\Http\Resources\BugResource;
@@ -19,7 +17,6 @@ use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\ProjectMarkerResource;
 use App\Http\Resources\JiraProjectLinkResource;
-use App\Http\Resources\HistoryResource;
 use App\Http\Resources\UserResource;
 
 // Services
@@ -32,11 +29,11 @@ use App\Services\AtlassianService;
 // Events
 use App\Events\ProjectCreated;
 use App\Events\ProjectDeleted;
-use App\Events\ProjectMovedToNewGroup;
 use App\Events\ProjectUserRemoved;
 use App\Events\ProjectUserUpdated;
 use App\Events\JiraProjectLinkUpdated;
 use App\Events\ProjectJiraConnected;
+use App\Events\ProjectJiraDisconnected;
 
 // Models
 use App\Models\User;
@@ -45,13 +42,11 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
-use App\Models\Organization;
 use App\Models\OrganizationUserRole;
 use App\Models\Priority;
 
 // Requests
 use App\Http\Requests\InvitationRequest;
-use App\Http\Requests\JiraLinkRequest;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Requests\ProjectUserRoleUpdateRequest;
@@ -381,15 +376,19 @@ class ProjectController extends Controller
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
 
-		// Store the new project in the database
-		$project = $company->projects()->create([
-			"id" => $id,
-			"user_id" => Auth::user()->id,
-			"access_token" => NULL,
-			"designation" => $request->designation,
-			"color_hex" => $request->color_hex,
-			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
-		]);
+		$project = new Project();
+		$project->id = $id;
+		$project->user_id = Auth::user()->id;
+		$project->access_token = NULL;
+		$project->designation = $request->designation;
+		$project->color_hex = $request->color_hex;
+		$project->url = substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url; // Check if the given url has "/" as last char and if so, store url without it
+
+		$project->company()->associate($company);
+
+		// Do the save and fire the custom event
+		$project->fireCustomEvent('projectCreated');
+		$project->save();
 
 		// Also add the owner to the project user role table
 		$this->user->projects()->attach($project->id, ['role_id' => 0]);
@@ -806,11 +805,6 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="The projects access token",
-	 *                  property="access_token",
-	 *                  type="string",
-	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -1059,6 +1053,9 @@ class ProjectController extends Controller
 		// Softdelete the project
 		$val = $project->delete();
 		broadcast(new ProjectDeleted($project))->toOthers();
+
+		// Do the delete and fire the custom event
+		$project->fireCustomEvent('projectDeleted');
 
 		// Delete the respective image if present
 		$imageService->delete($project->image);
@@ -2581,9 +2578,10 @@ class ProjectController extends Controller
 		// Build valid access_token
 		$accessToken = Str::ulid();
 
-		$project->update([
-			'access_token' => $accessToken
-		]);
+		$project->access_token = $accessToken;
+
+		$project->fireCustomEvent('projectAccessTokenGenerated');
+		$project->save();
 
 		return response()->json([
 			'message' => 'Access token generated successfully',
@@ -2667,6 +2665,86 @@ class ProjectController extends Controller
 		}
 
 		return new ProjectResource($project);
+	}
+
+	/**
+	 * Delete the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/delete-access-token",
+	 *	tags={"Project"},
+	 *	summary="Delete access token of one project.",
+	 *	operationId="deleteAccessTokenOfProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function deleteAccessToken(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('create', $project);
+
+		$project->access_token = NULL;
+
+		$project->fireCustomEvent('projectAccessTokenDeleted');
+		$project->save();
+
+		return response()->json([
+			'message' => 'Access token deleted successfully',
+			'data' => [
+				'access_token' => $project->access_token
+			]
+		], 200);
 	}
 
 	/**
