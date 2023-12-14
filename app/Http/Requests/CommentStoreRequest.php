@@ -24,7 +24,8 @@ class CommentStoreRequest extends FormRequest
     public function rules()
     {
       return [
-        "content" => ["required", "string", "max:1500"]
+        "content" => ["required", "string", "max:1500"],
+		"is_internal" => ["integer"]
       ];
     }
 }

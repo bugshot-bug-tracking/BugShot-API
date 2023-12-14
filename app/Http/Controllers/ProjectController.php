@@ -3,16 +3,10 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-
-use App\Events\ProjectCreated;
-use App\Events\ProjectDeleted;
-use App\Events\ProjectUserRemoved;
-use App\Events\ProjectUserUpdated;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
 
 // Resources
 use App\Http\Resources\BugResource;
@@ -22,12 +16,24 @@ use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectUserRoleResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\ProjectMarkerResource;
+use App\Http\Resources\JiraProjectLinkResource;
+use App\Http\Resources\UserResource;
 
 // Services
 use App\Services\ImageService;
 use App\Services\InvitationService;
 use App\Services\ProjectService;
 use App\Services\ApiCallService;
+use App\Services\AtlassianService;
+
+// Events
+use App\Events\ProjectCreated;
+use App\Events\ProjectDeleted;
+use App\Events\ProjectUserRemoved;
+use App\Events\ProjectUserUpdated;
+use App\Events\JiraProjectLinkUpdated;
+use App\Events\ProjectJiraConnected;
+use App\Events\ProjectJiraDisconnected;
 
 // Models
 use App\Models\User;
@@ -36,7 +42,6 @@ use App\Models\Company;
 use App\Models\Bug;
 use App\Models\ProjectUserRole;
 use App\Models\Status;
-use App\Models\Organization;
 use App\Models\OrganizationUserRole;
 use App\Models\Priority;
 
@@ -45,6 +50,7 @@ use App\Http\Requests\InvitationRequest;
 use App\Http\Requests\ProjectStoreRequest;
 use App\Http\Requests\ProjectUpdateRequest;
 use App\Http\Requests\ProjectUserRoleUpdateRequest;
+use App\Http\Requests\UpdateJiraSettings;
 
 /**
  * @OA\Tag(
@@ -235,7 +241,7 @@ class ProjectController extends Controller
 			$projects = $projects->concat($createdProjects);
 		}
 
-		if($request->header('only-favorites')) {
+		if ($request->header('only-favorites')) {
 			$projects = $projects->filter(function ($value, $key) {
 				$isFavorite = ProjectUserRole::where('project_id', $value->id)->where('user_id', $this->user->id)->pluck('is_favorite');
 				return $isFavorite[0] == 1;
@@ -370,15 +376,19 @@ class ProjectController extends Controller
 		// Check if the the request already contains a UUID for the project
 		$id = $this->setId($request);
 
-		// Store the new project in the database
-		$project = $company->projects()->create([
-			"id" => $id,
-			"user_id" => Auth::user()->id,
-			"access_token" => NULL,
-			"designation" => $request->designation,
-			"color_hex" => $request->color_hex,
-			"url" => substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url // Check if the given url has "/" as last char and if so, store url without it
-		]);
+		$project = new Project();
+		$project->id = $id;
+		$project->user_id = Auth::user()->id;
+		$project->access_token = NULL;
+		$project->designation = $request->designation;
+		$project->color_hex = $request->color_hex;
+		$project->url = substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url; // Check if the given url has "/" as last char and if so, store url without it
+
+		$project->company()->associate($company);
+
+		// Do the save and fire the custom event
+		$project->fireCustomEvent('projectCreated');
+		$project->save();
 
 		// Also add the owner to the project user role table
 		$this->user->projects()->attach($project->id, ['role_id' => 0]);
@@ -795,11 +805,6 @@ class ProjectController extends Controller
 	 *                  property="url",
 	 *                  type="string",
 	 *              ),
-	 *              @OA\Property(
-	 *                  description="The projects access token",
-	 *                  property="access_token",
-	 *                  type="string",
-	 *              ),
 	 *  			@OA\Property(
 	 *                  description="The hexcode of the color (optional)",
 	 *                  property="color_hex",
@@ -1049,6 +1054,9 @@ class ProjectController extends Controller
 		$val = $project->delete();
 		broadcast(new ProjectDeleted($project))->toOthers();
 
+		// Do the delete and fire the custom event
+		$project->fireCustomEvent('projectDeleted');
+
 		// Delete the respective image if present
 		$imageService->delete($project->image);
 
@@ -1269,7 +1277,7 @@ class ProjectController extends Controller
 
 		// Check if the request includes a timestamp and query the bugs accordingly
 		if ($request->timestamp == NULL) {
-			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 				$bugs = Auth::user()->bugs()
 					->where("project_id", $project->id)
 					->where("archived_at", NULL);
@@ -1277,7 +1285,7 @@ class ProjectController extends Controller
 				$bugs = $project->bugs()->where("bugs.archived_at", NULL);
 			}
 		} else {
-			if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+			if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 				$bugs = Auth::user()->bugs()
 					->where("project_id", $project->id)
 					->where("updated_at", ">", date("Y-m-d H:i:s", $request->timestamp))
@@ -1287,7 +1295,7 @@ class ProjectController extends Controller
 			}
 		}
 
-		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+		if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 			$searchTermPrefix = "";
 		} else {
 			$searchTermPrefix = "bugs.";
@@ -1302,18 +1310,18 @@ class ProjectController extends Controller
 
 			return $query->where($searchTermPrefix . "deadline", $operator, $date);
 		})
-		->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
-			$creatorId = $header['filter-bugs-by-creator-id'][0];
+			->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
+				$creatorId = $header['filter-bugs-by-creator-id'][0];
 
-			return $query->where($searchTermPrefix . "user_id", $creatorId);
-		})
-		->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
-			$designation = $header['filter-bugs-by-priority'][0];
-			$priority = Priority::where('designation', $designation)->firstOrFail();
+				return $query->where($searchTermPrefix . "user_id", $creatorId);
+			})
+			->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
+				$designation = $header['filter-bugs-by-priority'][0];
+				$priority = Priority::where('designation', $designation)->firstOrFail();
 
-			return $query->where($searchTermPrefix . "priority_id", $priority->id);
-		})
-		->get();
+				return $query->where($searchTermPrefix . "priority_id", $priority->id);
+			})
+			->get();
 
 		return BugResource::collection($bugs);
 	}
@@ -1437,17 +1445,17 @@ class ProjectController extends Controller
 
 		$header = $request->header();
 
-		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+		if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 			$bugs = Auth::user()->bugs()
-					->where("project_id", $project->id)
-					->whereNot("archived_at", NULL)
-					->withTrashed()
-					->get();
+				->where("project_id", $project->id)
+				->whereNot("archived_at", NULL)
+				->withTrashed()
+				->get();
 		} else {
 			// Get all archived bugs
 			$bugs = $project->bugs()->whereNot("archived_at", NULL)
-					->withTrashed()
-					->get();
+				->withTrashed()
+				->get();
 		}
 
 		return ArchivedBugResource::collection($bugs);
@@ -1612,6 +1620,99 @@ class ProjectController extends Controller
 		$this->authorize('view', $project);
 
 		return $projectService->users($project);
+	}
+
+	/**
+	 * Display a list of assignable users that have access to the project.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/assignable-users",
+	 *	tags={"Project"},
+	 *	summary="All assignable users.",
+	 *	operationId="allAssignableUsers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/ProjectUserRole")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function assignableUsers(Project $project)
+	{
+		// Check if the user is authorized to view the users of the project
+		$this->authorize('view', $project);
+
+		$assignableUsers = $project->users;
+
+		// Add company users
+		$companyUsers = $project->company->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$companyUsers->isEmpty()) {
+			foreach ($companyUsers as $companyUser) {
+				$assignableUsers->push($companyUser);
+			}
+		}
+
+		// Add organization users
+		$organizationUsers = $project->company->organization->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$organizationUsers->isEmpty()) {
+			foreach ($organizationUsers as $organizationUser) {
+				$assignableUsers->push($organizationUser);
+			}
+		}
+
+		return UserResource::collection($assignableUsers);
 	}
 
 	/**
@@ -2247,11 +2348,11 @@ class ProjectController extends Controller
 		$bugs = $request->bugs;
 		$targetProjetMembers = $targetProject->users;
 
-		foreach($bugs as $bug) {
+		foreach ($bugs as $bug) {
 			$bug = Bug::find($bug["id"]);
 
 			// Check if the bug is not part of the original project anymore
-			if($project->bugs->contains($bug)) {
+			if ($project->bugs->contains($bug)) {
 				$bugAssignees = $bug->users;
 				$targetStatusId = $targetProject->statuses()->where("permanent", "backlog")->pluck("id")->first();
 
@@ -2366,10 +2467,10 @@ class ProjectController extends Controller
 		$this->authorize('create', [Project::class, $targetCompany]);
 
 		// Check if the target company lies in a new organization
-		if($project->company->organization_id !== $targetCompany->organization_id) {
+		if ($project->company->organization_id !== $targetCompany->organization_id) {
 			// Check which of the project members is not part of the new company
 			$usersNotInTargetCompany = $project->users->diff($targetCompany->users);
-			foreach($usersNotInTargetCompany as $user) {
+			foreach ($usersNotInTargetCompany as $user) {
 				// Check if the user is already part of this company
 				if ($user->companies->find($targetCompany) == NULL) {
 					$user->companies()->attach($targetCompany->id, ['role_id' => 2]); // Team
@@ -2379,12 +2480,12 @@ class ProjectController extends Controller
 			$targetOrganization = $targetCompany->organization;
 			// Check which of the project members is not part of the new organization
 			$usersNotInTargetOrga = $project->users->diff($targetOrganization->users);
-			foreach($usersNotInTargetOrga as $user) {
+			foreach ($usersNotInTargetOrga as $user) {
 				// Check if the user is already part of this organization
 				if ($user->organizations->find($project->company->organization) == NULL) {
 					$organizationUserRole = OrganizationUserRole::where("user_id", $user->id)->whereNot("subscription_item_id", NULL)->first();
 
-					if($organizationUserRole != NULL) {
+					if ($organizationUserRole != NULL) {
 						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2, "subscription_item_id" => $organizationUserRole->subscription_item_id]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
 					} else {
 						$user->organizations()->attach($targetOrganization->id, ['role_id' => 2]); // Adding the subscription is only for the current state. Later, when subscriptions should be restricted, we need to change that
@@ -2393,11 +2494,13 @@ class ProjectController extends Controller
 			}
 		}
 
-		$project->update([
-			"company_id" => $targetCompany->id
-		]);
-		// dd("all users in target company");
-		// TODO: Go on from here
+		// Do the update and fire the custom event
+		$project->company_id = $targetCompany->id;
+		$project->fireCustomEvent('movedToNewGroup');
+
+		$project->withoutEvents(function () use ($project) {
+			$project->save();
+		});
 
 		return new ProjectResource($project);
 	}
@@ -2475,9 +2578,10 @@ class ProjectController extends Controller
 		// Build valid access_token
 		$accessToken = Str::ulid();
 
-		$project->update([
-			'access_token' => $accessToken
-		]);
+		$project->access_token = $accessToken;
+
+		$project->fireCustomEvent('projectAccessTokenGenerated');
+		$project->save();
 
 		return response()->json([
 			'message' => 'Access token generated successfully',
@@ -2552,15 +2656,95 @@ class ProjectController extends Controller
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
 		$project = Project::where('access_token', $accessToken)
-				->first();
+			->first();
 
-		if(!$project) {
+		if (!$project) {
 			return response()->json([
 				'message' => __('application.access-token-invalid')
 			], 404);
 		}
 
 		return new ProjectResource($project);
+	}
+
+	/**
+	 * Delete the specified resource.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/projects/{project_id}/delete-access-token",
+	 *	tags={"Project"},
+	 *	summary="Delete access token of one project.",
+	 *	operationId="deleteAccessTokenOfProject",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="project_id",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Project/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success"
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function deleteAccessToken(Project $project)
+	{
+		// Check if the user is authorized to view the project
+		$this->authorize('create', $project);
+
+		$project->access_token = NULL;
+
+		$project->fireCustomEvent('projectAccessTokenDeleted');
+		$project->save();
+
+		return response()->json([
+			'message' => 'Access token deleted successfully',
+			'data' => [
+				'access_token' => $project->access_token
+			]
+		], 200);
 	}
 
 	/**
@@ -2731,7 +2915,7 @@ class ProjectController extends Controller
 		$accessToken = $request->header('access-token');
 		$project = Project::where('access_token', $accessToken)->first();
 
-		if(!$project) {
+		if (!$project) {
 			return response()->json([
 				'message' => __('application.access-token-invalid')
 			], 404);
@@ -2739,10 +2923,177 @@ class ProjectController extends Controller
 
 		$response = $projectService->checkUrlAgainstProject($project, $request->url);
 
-		if($response == NULL) {
+		if ($response == NULL) {
 			return response()->json("", 204);
 		}
-		
+
 		return new ProjectResource($project);
+	}
+
+	public function createJiraLink(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		$validated = $request->validate([
+			"code" => ["required", "string"],
+		]);
+
+		if ($project->jiraLink) {
+			broadcast(new ProjectJiraConnected($project));
+			return response()->json(['message' => 'Link already exists.'], 200);
+		}
+
+		$atlassian->createJiraLink($request, $project);
+
+		broadcast(new ProjectJiraConnected($project));
+
+		return response()->json(['message' => 'Link created successfully.'], 201);
+	}
+
+	public function deleteJiraLink(Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		$project->jiraLink->delete();
+
+		broadcast(new ProjectJiraDisconnected($project))->toOthers();
+
+		return response(null, 204);
+	}
+
+	public function getJiraSettings(Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		if (!$project->jiraLink) {
+			return response()->json(['message' => 'No link exists.'], 404);
+		}
+
+		return new JiraProjectLinkResource($project->jiraLink);
+	}
+
+	public function getJiraSites(Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		return $atlassian->getSites($project);
+	}
+
+	public function setJiraSite(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		//TODO create case for site delete that implies clearing the jira project selected
+		$project->jiraLink->update([
+			"site_id" => $request->id,
+			"site_name" => $request->name,
+			"site_url" => $request->url
+		]);
+
+		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+
+		return new JiraProjectLinkResource($project->jiraLink);
+	}
+
+	public function deleteJiraSite(Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		//TODO create case for site delete that implies clearing the jira project selected
+		$project->jiraLink->update([
+			"site_id" => null,
+			"site_name" => null,
+			"site_url" => null,
+
+			"jira_project_id" => null,
+			"jira_project_name" => null,
+			"jira_project_key" => null,
+		]);
+
+		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+
+		return new JiraProjectLinkResource($project->jiraLink);
+	}
+
+	public function getJiraProjects(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		return $atlassian->getProjects($request, $project);
+	}
+
+	public function getJiraCreatemeta(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		return $atlassian->getCreatemeta($request, $project);
+	}
+
+	public function setJiraProject(Request $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		$project->jiraLink->update([
+			"jira_project_id" => $request->id,
+			"jira_project_name" => $request->name,
+			"jira_project_key" => $request->key,
+			"jira_issuetype_id" => $request->issuetype
+		]);
+
+		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+
+		return new JiraProjectLinkResource($project->jiraLink);
+	}
+
+	public function deleteJiraProject(Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		$project->jiraLink->update([
+			"jira_project_id" => null,
+			"jira_project_name" => null,
+			"jira_project_key" => null,
+		]);
+
+		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+
+		return new JiraProjectLinkResource($project->jiraLink);
+	}
+
+	public function updateJiraSettings(UpdateJiraSettings $request, Project $project, AtlassianService $atlassian)
+	{
+		// Check if the user is authorized for the action
+		$this->authorize('update', $project);
+
+		if (!$project->jiraLink) {
+			return response()->json(['message' => 'Project link does not exists.'], 404);
+		}
+
+		$validatedData = $request->validated();
+
+		$project->jiraLink->update($validatedData);
+
+		if (isset($validatedData['sync_comments_from_jira'])) {
+			$atlassian->refreshWebhook('sync_comments_from_jira', $project);
+		}
+
+		if (isset($validatedData['update_status_from_jira'])) {
+			$atlassian->refreshWebhook('update_status_from_jira', $project);
+		}
+
+
+		broadcast(new JiraProjectLinkUpdated($project))->toOthers();
+
+		return new JiraProjectLinkResource($project->jiraLink);
 	}
 }

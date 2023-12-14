@@ -135,6 +135,17 @@ class User extends Authenticatable implements MustVerifyEmail
 	];
 
 	/**
+	 * @return string $fullName
+	 */
+	public function fullName()
+	{
+		// Trim function eliminates additional spaces when a name part is not available
+		$fullName = trim($this->first_name . " " . $this->last_name);
+
+		return empty($fullName) ? __("application.anonymous-user") : $fullName;
+	}
+
+	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
 	 */
 	public function billingAddress()
@@ -190,13 +201,13 @@ class User extends Authenticatable implements MustVerifyEmail
 		return $this->hasMany(Project::class, 'user_id');
 	}
 
-    /**
-     * Get all of the bugs of the users projects.
-     */
-    public function projectsBugs()
-    {
-        return $this->hasManyThrough(Bug::class, Project::class);
-    }
+	/**
+	 * Get all of the bugs of the users projects.
+	 */
+	public function projectsBugs()
+	{
+		return $this->hasManyThrough(Bug::class, Project::class);
+	}
 
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -385,9 +396,9 @@ class User extends Authenticatable implements MustVerifyEmail
 		if (isset($orgId)) {
 			//allowed to use in another org?
 			$licenses = OrganizationUserRole::where("user_id", $this->id)
-			->where("subscription_item_id", "!=", null)
-			->where("organization_id", $orgId)
-			->get();
+				->where("subscription_item_id", "!=", null)
+				->where("organization_id", $orgId)
+				->get();
 		} else {
 			$licenses = OrganizationUserRole::where("user_id", $this->id)
 				->where("subscription_item_id", "!=", null)

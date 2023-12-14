@@ -7,27 +7,39 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Laravel\Scout\Searchable;
+use App\Traits\HasCustomEvents;
 
 /**
  * @OA\Schema()
  */
 class Bug extends Model
 {
-	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, Searchable, SoftDeletes, CascadeSoftDeletes, HasCustomEvents;
 
 	/**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
+	 * The "type" of the auto-incrementing ID.
+	 *
+	 * @var string
+	 */
+	protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
+
+	protected $observables = [
+		'bugCreated',
+		'bugUpdated',
+		'bugDeleted',
+		'bugRestored',
+		'bugForceDeleted',
+		'bugArchived',
+		'bugStatusChanged',
+		'bugMovedToNewProject'
+	];
 
 	/**
 	 * Get the indexable data array for the model.
@@ -219,82 +231,98 @@ class Bug extends Model
 	protected $cascadeDeletes = ['screenshots', 'attachments', 'comments'];
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function project()
 	{
 		return $this->belongsTo(Project::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function creator()
 	{
 		return $this->belongsTo(User::class, 'user_id');
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class, 'bug_user_roles')->withPivot('role_id');
-    }
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+	 */
+	public function users()
+	{
+		return $this->belongsToMany(User::class, 'bug_user_roles')->withPivot('role_id');
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function status()
 	{
 		return $this->belongsTo(Status::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function priority()
 	{
 		return $this->belongsTo(Priority::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function approvalStatus()
 	{
 		return $this->belongsTo(BugExportStatus::class, "approval_status_id");
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function screenshots()
 	{
 		return $this->hasMany(Screenshot::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function attachments()
 	{
 		return $this->hasMany(Attachment::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
 	public function comments()
 	{
 		return $this->hasMany(Comment::class)->orderBy('created_at');
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function client()
 	{
 		return $this->belongsTo(Client::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function jiraLink()
+	{
+		return $this->hasOne(JiraBugLink::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+	 */
+	public function history()
+	{
+		return $this->morphToMany(Action::class, "historyable", "history")->withTimestamps();
 	}
 }

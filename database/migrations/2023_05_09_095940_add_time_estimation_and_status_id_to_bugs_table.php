@@ -30,8 +30,9 @@ return new class extends Migration
     public function down()
     {
         Schema::table('bugs', function (Blueprint $table) {
-			$table->string('status_id');
             $table->dropColumn('time_estimation');
+			$table->dropForeign('bugs_status_id_foreign');
+			$table->dropColumn('status_id');
         });
     }
 };

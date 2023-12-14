@@ -14,18 +14,18 @@ class Comment extends Model
 	use HasFactory, SoftDeletes;
 
 	/**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
+	 * The "type" of the auto-incrementing ID.
+	 *
+	 * @var string
+	 */
+	protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
 
 	/**
 	 * @OA\Property(
@@ -47,21 +47,26 @@ class Comment extends Model
 	 *  format="int64",
 	 * 	description="The id of the user to which the object belongs."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="client_id",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The client that was used to create the bug."
 	 * )
-	 * 
+	 *
 	 * @OA\Property(
 	 * 	property="content",
 	 * 	type="string",
 	 *  maxLength=255,
 	 * 	description="The message."
 	 * )
-
+	 *
+	 * @OA\Property(
+	 * 	property="is_internal",
+	 * 	type="boolean"
+	 * )
+	 *
 	 * @OA\Property(
 	 * 	property="created_at",
 	 * 	type="string",
@@ -83,31 +88,39 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content"];
+	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "is_internal", "created_at"];
 
 	protected $touches = ['bug'];
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function user()
 	{
 		return $this->belongsTo(User::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function client()
 	{
 		return $this->belongsTo(Client::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function jiraLink()
+	{
+		return $this->hasOne(JiraCommentLink::class);
 	}
 }

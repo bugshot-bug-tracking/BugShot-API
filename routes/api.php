@@ -33,6 +33,7 @@ use App\Http\Controllers\ExportController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
+use App\Services\AtlassianService;
 
 // Events
 use App\Events\TestEvent;
@@ -55,10 +56,11 @@ use Illuminate\Support\Facades\Broadcast;
 | Cronjob Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/scheduler/run', function() {
+
+Route::get('/scheduler/run', function () {
 	Artisan::call('schedule:run');
 });
-Route::middleware('throttle:1,1440')->get('/projects/send-summary', function() {
+Route::middleware('throttle:1,1440')->get('/projects/send-summary', function () {
 	Artisan::call('projects:send-summary');
 });
 Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
@@ -78,7 +80,16 @@ Route::get('/debug-sentry', function () {
 | Stripe webhook route
 |--------------------------------------------------------------------------
 */
+
 Route::any('/stripe/webhook', [StripeController::class, "handle"]);
+
+/*
+|--------------------------------------------------------------------------
+| Integration webhook routes
+|--------------------------------------------------------------------------
+*/
+
+Route::any('/atlassian/webhook', [AtlassianService::class, "handleWebhook"]);
 
 /*
 |--------------------------------------------------------------------------
@@ -136,7 +147,8 @@ Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDes
 
 Route::prefix('projects/{project}')->group(function () {
 	Route::apiResource('/exports', ExportController::class)->except(
-		"show", "store"
+		"show",
+		"store"
 	);
 });
 
@@ -179,7 +191,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	Route::prefix('organizations/{organization}')->group(function () {
 		Route::apiResource('/companies', CompanyController::class);
 		Route::get("/invitations", [OrganizationController::class, "invitations"])->name("organization.invitations");
-		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite");
+		Route::post("/invite", [OrganizationController::class, "invite"])->name("organization.invite")->middleware('throttle:100,60');
 		Route::get("/users", [OrganizationController::class, "users"])->name("organization.users");
 		Route::delete("/users/{user}", [OrganizationController::class, "removeUser"])->name("organization.remove-user");
 		Route::put("/users/{user}", [OrganizationController::class, "updateUserRole"])->name("organization.update-user-role");
@@ -194,7 +206,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::apiResource('/projects', ProjectController::class);
 		Route::get("/image", [CompanyController::class, "image"])->name("company.image");
 		Route::get("/invitations", [CompanyController::class, "invitations"])->name("company.invitations");
-		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite");
+		Route::post("/invite", [CompanyController::class, "invite"])->name("company.invite")->middleware('throttle:100,60');
 		Route::get("/users", [CompanyController::class, "users"])->name("company.users");
 		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
@@ -203,9 +215,11 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
-		Route::post('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
+		Route::get('/history', [ProjectController::class, "history"])->name("project.history");
 		Route::prefix('bugs')->group(function () {
 			Route::get('/', [ProjectController::class, "bugs"])->name("project.bugs");
 			Route::post('/move-to-new-project', [ProjectController::class, "moveBugsToDifferentProject"])->name("project.bugs.move-to-new-project");
@@ -215,11 +229,27 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/archived-bugs', [ProjectController::class, "archivedBugs"])->name("project.bugs.archived");
 		Route::get('/markers', [ProjectController::class, "markers"])->name("project.markers");
 		Route::get("/invitations", [ProjectController::class, "invitations"])->name("project.invitations");
-		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite");
+		Route::post('/invite', [ProjectController::class, "invite"])->name("project.invite")->middleware('throttle:100,60');
 		Route::get("/users", [ProjectController::class, "users"])->name("project.users");
 		Route::put("/users/{user}", [ProjectController::class, "updateUserRole"])->name("project.update-user-role");
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
+		Route::get("/assignable-users", [ProjectController::class, "assignableUsers"])->name("project.assignable-users");
 		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
+
+		Route::get("/jira-link", [ProjectController::class, "getJiraSettings"])->name("project.get-jira-settings");
+		Route::post("/jira-link", [ProjectController::class, "createJiraLink"])->name("project.create-jira-link");
+		Route::delete("/jira-link", [ProjectController::class, "deleteJiraLink"])->name("project.delete-jira-link");
+
+		Route::get("/jira-sites", [ProjectController::class, "getJiraSites"])->name("project.get-jira-sites");
+		Route::post("/jira-site", [ProjectController::class, "setJiraSite"])->name("project.set-jira-site");
+		Route::delete("/jira-site", [ProjectController::class, "deleteJiraSite"])->name("project.delete-jira-site");
+
+		Route::get("/jira-projects", [ProjectController::class, "getJiraProjects"])->name("project.get-jira-projects");
+		Route::post("/jira-project", [ProjectController::class, "setJiraProject"])->name("project.set-jira-project");
+		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
+
+		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
+		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
 	// Status prefixed routes
@@ -292,6 +322,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/setup-intent-form', [StripeController::class, "showSetupIntentForm"])->name("user.stripe.show-setup-intent-form");
 		Route::post('/subscription', [StripeController::class, "createSubscription"])->name("user.stripe.create-subscription");
 		Route::post('/subscription/{subscription}/change-quantity', [StripeController::class, "changeSubscriptionQuantity"])->name("user.stripe.subscription.change-quantity");
+		Route::post('/subscription/{subscription}/upgrade', [StripeController::class, "upgradeSubscription"])->name("user.stripe.subscription.upgrade");
 		Route::post('/payment-methods', [StripeController::class, "getPaymentMethods"])->name("user.stripe.get-payment-methods");
 		// Product prefixed routes
 		Route::prefix('/products')->group(function () {
@@ -332,6 +363,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
 		});
 	});
+
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes
@@ -368,7 +400,7 @@ Route::middleware(['auth.apitoken', 'check.version'])->group(
 			Route::get('/project', [ProjectController::class, "showViaApiKey"])->name("apitoken.get.project");
 			Route::put('/project', [ProjectController::class, "updateViaApiKey"])->name("apitoken.update.project");
 			Route::get('/projects/users', [ProjectController::class, "usersViaApiKey"])->name("apitoken.get.users.of.project");
-			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.invite.users.to.project");
+			Route::post('/projects/users/invite', [ProjectController::class, "inviteViaApiKey"])->name("apitoken.invite.users.to.project")->middleware('throttle:100,60');
 		});
 	}
 );

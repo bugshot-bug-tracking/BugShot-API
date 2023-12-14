@@ -32,5 +32,6 @@ return [
 	'subscription-revoked-successfully' => 'The license was successfully revoked from the user',
 	'cannot-delete-last-organization' => 'The last organization cannot be deleted',
 	'user-already-assigned-to-bug' => 'User is already assigned to this bug',
-	'access-token-invalid' => 'The provided access token is not valid'
+	'access-token-invalid' => 'The provided access token is not valid',
+	'anonymous-user' => 'anonymous user'
 ];

@@ -26,6 +26,7 @@ class SubscriptionChangeQuantityRequest extends FormRequest
     {
         return [
 			'price_api_id' => ['required', 'string', 'max:30'],
+			'subscription_item_id' => ['required', 'string', 'max:30'],
 			'type' => [
                 'string',
                 'required',

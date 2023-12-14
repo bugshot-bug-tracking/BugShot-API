@@ -16,6 +16,7 @@ use App\Http\Resources\BugUserRoleResource;
 use App\Services\ScreenshotService;
 use App\Services\AttachmentService;
 use App\Services\CommentService;
+use App\Services\AtlassianService;
 
 // Models
 use App\Models\Bug;
@@ -59,26 +60,29 @@ class BugService
 		$ai_id = $allBugsQuery->get()->isEmpty() ? 0 : $numberOfBugs + 1;
 
 		// Store the new bug in the database
-		$bug = $status->bugs()->create([
+		$bug = new Bug();
+		$bug->fill($request->all());
+		$bug->fill([
 			"id" => $bugId,
 			"project_id" => $status->project_id,
 			"user_id" => $creator_id,
-			"priority_id" => $request->priority_id,
-			"designation" => $request->designation,
-			"description" => $request->description,
-			"url" => $request->url,
-			"time_estimation" => $request->time_estimation,
 			"time_estimation_type" => $request->time_estimation_type ?? 'm',
 			"approval_status_id" => null,
-			"operating_system" => $request->operating_system,
-			"browser" => $request->browser,
-			"selector" => $request->selector,
-			"resolution" => $request->resolution,
 			"deadline" => $request->deadline == NULL ? null : new Carbon($request->deadline),
 			"order_number" => $order_number,
 			"ai_id" => $ai_id,
 			"client_id" => $client_id
 		]);
+
+		$bug->status()->associate($status);
+
+		// Do the save and fire the custom event
+		$bug->fireCustomEvent('bugCreated');
+		$bug->save();
+
+		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
+			$result = AtlassianService::createLinkedIssue($bug);
+		}
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
 		$screenshots = $request->screenshots;
@@ -105,34 +109,52 @@ class BugService
 		return $resource;
 	}
 
-	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService)
+	public function update(BugUpdateRequest $request, Status $status, Bug $bug, ApiCallService $apiCallService = null)
 	{
 		$oldStatus = $bug->getOriginal('status_id');
 		$newStatus = isset($request->status_id) && $request->status_id != null ? $request->status_id : $oldStatus;
 
 		// Check if the order of the bugs or the status has to be synchronized
-		if (($request->order_number != $bug->getOriginal('order_number') && $request->has('order_number')) || ($newStatus != $oldStatus && $request->has('status_id'))) {
+		if (
+			(isset($request->order_number)) && $request->order_number != $bug->getOriginal('order_number') ||
+			(isset($request->status_id) && $newStatus != $oldStatus)
+		) {
 			$this->synchronizeBugOrder($request, $bug, $status);
 		}
 
 		// Update the bug
-		$bug->update($request->all());
-		$bug->update([
-			"project_id" => $status->project_id,
-			"deadline" => $request->deadline ? new Carbon($request->deadline) : null,
+		$bug->fill([
+			"status_id" => $request->status_id
 		]);
+
+		// Fire the custom event
+		if ($bug->isDirty('status_id')) {
+			$bug->fireCustomEvent('bugStatusChanged');
+		}
+
+		$bug->fill($request->all());
+		$bug->fill([
+			"project_id" => $status->project_id,
+			"deadline" => isset($request->deadline) ? new Carbon($request->deadline) : null,
+		]);
+
+		$bug->fireCustomEvent('bugUpdated');
+		$bug->save();
 
 		// if status equal to old one send normal update Trigger else send status update trigger
 		broadcast(new BugUpdated($bug))->toOthers();
-		$resource = new BugResource($bug);
-		if ($newStatus == $oldStatus) {
-			TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-info", $status->project_id, $request->get('session_id'));
-			return $resource;
-		} else {
-			$request->headers->set('include-status-info', 'true');
-			$sendBug = json_decode(($resource->response($request))->content());
-			TriggerInterfacesJob::dispatch($apiCallService, $sendBug, "bug-updated-status", $status->project_id, $request->get('session_id'));
-			return $sendBug;
+
+		if (!is_null($apiCallService)) {
+			$resource = new BugResource($bug);
+			if ($newStatus == $oldStatus) {
+				TriggerInterfacesJob::dispatch($apiCallService, $resource, "bug-updated-info", $status->project_id, $request->get('session_id'));
+				return $resource;
+			} else {
+				$request->headers->set('include-status-info', 'true');
+				$sendBug = json_decode(($resource->response($request))->content());
+				TriggerInterfacesJob::dispatch($apiCallService, $sendBug, "bug-updated-status", $status->project_id, $request->get('session_id'));
+				return $sendBug;
+			}
 		}
 	}
 
@@ -144,6 +166,7 @@ class BugService
 
 		$val = $bug->delete();
 
+		$bug->fireCustomEvent('bugDeleted');
 		broadcast(new BugDeleted($bug))->toOthers();
 
 		return response($val, 204);
@@ -169,14 +192,14 @@ class BugService
 			$newStatus = Status::find($request->status_id);
 
 			// Check if the new or the old status is done
-			if($newStatus->permanent == "done") {
+			if ($newStatus->permanent == "done") {
 				// Start archiving process
-				$bug->update([
+				$bug->fill([
 					"done_at" => now()
 				]);
-			} else if($status->permanent == "done") {
+			} else if ($status->permanent == "done") {
 				// End archiving process
-				$bug->update([
+				$bug->fill([
 					"done_at" => NULL
 				]);
 			}
