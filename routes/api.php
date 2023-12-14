@@ -30,6 +30,7 @@ use App\Http\Controllers\ApiTokenController;
 use App\Http\Controllers\ScriptController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
@@ -206,6 +207,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
 		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
+		Route::apiResource('/access-tokens', AccessTokenController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");
 		Route::get('/history', [ProjectController::class, "history"])->name("project.history");
 		Route::prefix('bugs')->group(function () {

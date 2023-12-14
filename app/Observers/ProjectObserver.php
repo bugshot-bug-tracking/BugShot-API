@@ -2,6 +2,9 @@
 
 namespace App\Observers;
 
+// Misc
+use Illuminate\Support\Facades\Auth;
+
 // Models
 use App\Models\Action;
 use App\Models\Project;
@@ -32,8 +35,8 @@ class ProjectObserver
 				[
 					"user_id" => $project->creator ? $project->creator->id : NULL,
 					"args" => json_encode([
-						$project->designation,
-						$project->creator->fullName()
+							$project->designation,
+							$project->creator->fullName()
 						]
 					)
 				]
@@ -58,10 +61,10 @@ class ProjectObserver
 			$project->history()->attach(
 				$actionId,
 				[
-					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$project->designation,
-							$project->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
@@ -85,10 +88,10 @@ class ProjectObserver
 			$project->history()->attach(
 				$actionId,
 				[
-					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$project->designation,
-							$project->creator->fullName()
+							Auth::user()->fullName()
 						]
 					)
 				]
@@ -135,63 +138,11 @@ class ProjectObserver
 			$project->history()->attach(
 				$actionId,
 				[
-					"user_id" => $project->creator ? $project->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$project->designation,
-							$project->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
-						]
-					)
-				]
-			);
-		}
-    }
-
-	/**
-     * Handle the Project "projectAccessTokenGenerated" event.
-     *
-     * @param  Project  $project
-     * @return void
-     */
-    public function projectAccessTokenGenerated(Project $project)
-    {
-		$action = new Action();
-		$actionId = $action->getIdByName("project_access_token_generated");
-		if($actionId)
-		{
-			$project->history()->attach(
-				$actionId,
-				[
-					"user_id" => $project->creator ? $project->creator->id : NULL,
-					"args" => json_encode([
-							$project->designation,
-							$project->creator->fullName()
-						]
-					)
-				]
-			);
-		}
-    }
-
-	/**
-     * Handle the Project "projectAccessTokenDeleted" event.
-     *
-     * @param  Project  $project
-     * @return void
-     */
-    public function projectAccessTokenDeleted(Project $project)
-    {
-		$action = new Action();
-		$actionId = $action->getIdByName("project_access_token_deleted");
-		if($actionId)
-		{
-			$project->history()->attach(
-				$actionId,
-				[
-					"user_id" => $project->creator ? $project->creator->id : NULL,
-					"args" => json_encode([
-							$project->designation,
-							$project->creator->fullName()
 						]
 					)
 				]

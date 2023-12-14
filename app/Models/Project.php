@@ -37,9 +37,7 @@ class Project extends Model
 		'projectDeleted',
 		'projectRestored',
 		'projectForceDeleted',
-		'projectMovedToNewGroup',
-		'projectAccessTokenGenerated',
-		'projectAccessTokenDeleted'
+		'projectMovedToNewGroup'
 	];
 
 	/**
@@ -188,6 +186,14 @@ class Project extends Model
 	public function exports()
 	{
 		return $this->hasMany(Export::class);
+	}
+
+	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function accessTokens()
+	{
+		return $this->hasMany(AccessToken::class);
 	}
 
 	/**

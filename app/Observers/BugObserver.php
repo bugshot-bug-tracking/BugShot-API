@@ -2,6 +2,9 @@
 
 namespace App\Observers;
 
+// Misc
+use Illuminate\Support\Facades\Auth;
+
 // Models
 use App\Models\Action;
 use App\Models\Bug;
@@ -32,8 +35,8 @@ class BugObserver
 				[
 					"user_id" => $bug->creator ? $bug->creator->id : NULL,
 					"args" => json_encode([
-						$bug->designation,
-						$bug->creator->fullName()
+							$bug->designation,
+							$bug->creator->fullName()
 						]
 					)
 				]
@@ -58,10 +61,10 @@ class BugObserver
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
@@ -85,10 +88,10 @@ class BugObserver
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName()
+							Auth::user()->fullName()
 						]
 					)
 				]
@@ -135,10 +138,10 @@ class BugObserver
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
@@ -164,10 +167,10 @@ class BugObserver
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
@@ -193,10 +196,10 @@ class BugObserver
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"user_id" => Auth::id(),
 					"args" => json_encode([
 							$bug->designation,
-							$bug->creator->fullName(),
+							Auth::user()->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
