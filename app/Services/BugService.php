@@ -35,6 +35,7 @@ use App\Events\BugDeleted;
 use App\Events\BugUpdated;
 use App\Http\Controllers\BugController;
 use App\Jobs\TriggerInterfacesJob;
+use App\Models\BugGuestCreator;
 use App\Models\Client;
 
 class BugService
@@ -79,6 +80,14 @@ class BugService
 		// Do the save and fire the custom event
 		$bug->fireCustomEvent('bugCreated');
 		$bug->save();
+
+		if ($creator_id === NULL && ($request->guest_creator['name'] || $request->guest_creator['email'])) {
+			BugGuestCreator::create([
+				"bug_id" => $bug->id,
+				"name" => $request->guest_creator['name'],
+				"email" => $request->guest_creator['email']
+			]);
+		}
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
 			$result = AtlassianService::createLinkedIssue($bug);

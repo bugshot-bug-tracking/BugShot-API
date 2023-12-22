@@ -6,23 +6,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class BugStoreRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        return true;
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize()
+	{
+		return true;
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
-    {
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules()
+	{
 		return [
 			"designation" => ["required", "string", "min:1", "max:70"],
 			"description" => ["min:1", "max:1500", "string", "nullable"],
@@ -36,6 +36,8 @@ class BugStoreRequest extends FormRequest
 			"order_number" => ["integer", "min:0"],
 			"time_estimation" => ["integer", "min:0", "nullable"],
 			"time_estimation_type" => ["string", "size:1", "in:w,d,h,m"],
+			"guest_creator.name" => ["sometimes", "string", "nullable", "max:255"],
+			"guest_creator.email" => ["sometimes", "string", "email", "nullable", "max:255"]
 		];
-    }
+	}
 }

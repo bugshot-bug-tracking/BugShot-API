@@ -77,6 +77,10 @@ class PostJiraBugResource extends JsonResource
 
 		if ($this->creator) {
 			array_push($content, "#Creator\n{$this->creator->first_name} {$this->creator->last_name}");
+		} else if ($this->guestCreator) {
+			array_push($content, "#Creator\n" . ($this->guestCreator->name ? $this->guestCreator->name : $this->guestCreator->email));
+		} else {
+			array_push($content, "#Creator\nAnonymous");
 		}
 
 		return [
