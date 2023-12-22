@@ -45,7 +45,8 @@ class BugResource extends JsonResource
 				"archived_at" => $this->archived_at,
 				"created_at" => $this->created_at,
 				"updated_at" => $this->updated_at,
-				"deleted_at" => $this->deleted_at
+				"deleted_at" => $this->deleted_at,
+				"assigned_users" => $this->users->pluck("id")->toArray()
 			]
 		);
 
