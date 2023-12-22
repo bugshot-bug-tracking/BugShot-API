@@ -43,10 +43,21 @@ class ArchivedBugResource extends JsonResource
 			]
 		);
 
+		// If the creator is empty and has a guest creator link present add the guest_creator attribute
+		if ($this->user_id === NULL) {
+			if ($this->guestCreator)
+				$bug['attributes']['guest_creator'] = [
+					"name" => $this->guestCreator->name,
+					"email" => $this->guestCreator->email,
+				];
+			else
+				$bug['attributes']['guest_creator'] = NULL;
+		}
+
 		$header = $request->header();
 
 		// Check if the response should contain the respective attachments
-		if(array_key_exists('include-attachments', $header) && $header['include-attachments'][0] == "true") {
+		if (array_key_exists('include-attachments', $header) && $header['include-attachments'][0] == "true") {
 			$attachments = $this->attachments()
 				->withTrashed()
 				->get();
@@ -54,7 +65,7 @@ class ArchivedBugResource extends JsonResource
 		}
 
 		// Check if the response should contain the respective screenshots
-		if(array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true") {
+		if (array_key_exists('include-screenshots', $header) && $header['include-screenshots'][0] == "true") {
 			$screenshots = $this->screenshots()
 				->withTrashed()
 				->get();
@@ -62,7 +73,7 @@ class ArchivedBugResource extends JsonResource
 		}
 
 		// Check if the response should contain the respective comments
-		if(array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true") {
+		if (array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true") {
 			$comments = $this->comments()
 				->withTrashed()
 				->get();
@@ -70,7 +81,7 @@ class ArchivedBugResource extends JsonResource
 		}
 
 		// Check if the response should contain the respective bug users
-		if(array_key_exists('include-bug-users', $header) && $header['include-bug-users'][0] == "true") {
+		if (array_key_exists('include-bug-users', $header) && $header['include-bug-users'][0] == "true") {
 			$users = $this->users()
 				->withTrashed()
 				->get();
@@ -78,7 +89,7 @@ class ArchivedBugResource extends JsonResource
 		}
 
 		// Check if the response should contain status infos (interfaces)
-		if(array_key_exists('include-status-info', $header) && $header['include-status-info'][0] == "true") {
+		if (array_key_exists('include-status-info', $header) && $header['include-status-info'][0] == "true") {
 			$bug['attributes']['status_designation'] = Status::find($this->status_id)->designation;
 			$bug['attributes']['status_order_number'] = Status::find($this->status_id)->order_number;
 		}

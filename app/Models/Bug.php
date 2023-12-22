@@ -319,6 +319,14 @@ class Bug extends Model
 	}
 
 	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function guestCreator()
+	{
+		return $this->hasOne(BugGuestCreator::class);
+	}
+
+	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
 	 */
 	public function history()
