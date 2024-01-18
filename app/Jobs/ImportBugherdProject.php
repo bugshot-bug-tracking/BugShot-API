@@ -9,10 +9,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use App\Traits\Bugherd;
 
-class TriggerInterfacesJob implements ShouldQueue
+class ImportBugherdProject implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Bugherd;
 
 
     /**
@@ -21,11 +22,9 @@ class TriggerInterfacesJob implements ShouldQueue
      * @return void
      */
     public function __construct(
-		public ApiCallService $apiCallService,
-		public $resource,
-		public $trigger_id,
-		public $project_id,
-		public $uuid = null
+		public $apiToken,
+		public $projectId,
+		BugherdImportController $bugherdImportController
 	)
     {
 
@@ -38,6 +37,6 @@ class TriggerInterfacesJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->apiCallService->triggerInterfaces($this->resource, $this->trigger_id, $this->project_id, $this->uuid);
+		$response = Bugherd::sendBugherdRequest($apiToken, 'projects.json'); // TODO: Change parameters
     }
 }

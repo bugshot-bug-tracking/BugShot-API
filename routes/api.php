@@ -34,6 +34,7 @@ use App\Http\Controllers\AccessTokenController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
+use App\Http\Controllers\BugherdImportController;
 
 // Events
 use App\Events\TestEvent;
@@ -284,6 +285,12 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::get("/", [UserController::class, "settings"])->name("user.setting.index");
 			Route::put("/{setting}", [UserController::class, "updateSetting"])->name("user.setting.update");
 		});
+	});
+
+	// Import prefixed routes
+	Route::prefix('/import')->group(function () {
+		Route::post('/bugherd/list-projects', [BugherdImportController::class, "getProjects"])->name("import.bugherd.list-projects");
+		Route::post('/bugherd/import-projects', [BugherdImportController::class, "importProjects"])->name("import.bugherd.import-projects");
 	});
 
 	// Invitation Delete Route
