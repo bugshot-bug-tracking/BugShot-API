@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Traits\Bugherd;
+use App\Models\ImportStatus;
 
 class ImportBugherdProject implements ShouldQueue
 {
@@ -22,8 +23,9 @@ class ImportBugherdProject implements ShouldQueue
      * @return void
      */
     public function __construct(
+		public $importId,
 		public $apiToken,
-		public $projectId,
+		public $project,
 		BugherdImportController $bugherdImportController
 	)
     {
@@ -37,6 +39,20 @@ class ImportBugherdProject implements ShouldQueue
      */
     public function handle()
     {
-		$response = Bugherd::sendBugherdRequest($apiToken, 'projects.json'); // TODO: Change parameters
+		$bugherdProjectId = $this->project->bugherdProjectId;
+		$response = Bugherd::sendBugherdRequest($apiToken, "projects/#${bugherdProjectId}.json");
+
+		if($response->getStatus() == 200)
+		{
+			$import = Import::find($this->importId);
+			$import->update([
+				'status_id' => ImportStatus::IMPORTED
+			]);
+		} else {
+			$import = Import::find($this->importId);
+			$import->update([
+				'status_id' => ImportStatus::IMPORT_FAILED
+			]);
+		}
     }
 }

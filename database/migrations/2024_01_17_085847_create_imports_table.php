@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('bugherd_imports', function (Blueprint $table) {
+        Schema::create('imports', function (Blueprint $table) {
             $table->uuid();
-			$table->string('api_key');
 			$table->unsignedBigInteger('status_id');
-
+			$table->unsignedBigInteger('imported_by')->nullable();
+			$table->foreign('imported_by')->references('id')->on('users')->nullOnDelete();
 			$table->foreign('status_id')->references('id')->on('import_statuses')->onDelete('cascade');
+			$table->text('source')->nullable();
+			$table->text('target')->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('bugherd_imports');
+        Schema::dropIfExists('imports');
     }
 };

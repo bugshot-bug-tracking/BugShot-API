@@ -11,7 +11,7 @@ use Laravel\Scout\Searchable;
 /**
  * @OA\Schema()
  */
-class BugherdImport extends Model
+class Import extends Model
 {
 	use HasFactory;
 
@@ -37,10 +37,29 @@ class BugherdImport extends Model
 	 * )
 	 *
 	 * @OA\Property(
+	 * 	property="status_id",
+	 * 	type="integer",
+	 *  format="int64",
+	 * 	description="The id of the import_status."
+	 * )
+	 *
+	 * @OA\Property(
 	 * 	property="imported_by",
 	 * 	type="integer",
 	 *  format="int64",
 	 * 	description="The id of the user that created the import."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="source",
+	 * 	type="array",
+	 * 	description="Info about the source."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="target",
+	 * 	type="array",
+	 * 	description="Info about the target."
 	 * )
 	 *
 	 * @OA\Property(
@@ -66,9 +85,17 @@ class BugherdImport extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "imported_by"];
+	protected $fillable = ["id", "status_id", "imported_by", "source", "target"];
 
-	// protected $touches = [''];
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'source' => 'array',
+		'target' => 'array'
+    ];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

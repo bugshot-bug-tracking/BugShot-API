@@ -12,6 +12,10 @@ class ImportStatus extends Model
 {
 	use HasFactory;
 
+	const PENDING = 1;
+	const IMPORTED = 2;
+	const IMPORT_FAILED = 3;
+
 	/**
 	 * @OA\Property(
 	 * 	property="id",

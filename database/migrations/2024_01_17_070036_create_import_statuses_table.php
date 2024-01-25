@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('import_statuses', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+			$table->string("designation");
         });
     }
 
