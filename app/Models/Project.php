@@ -37,9 +37,7 @@ class Project extends Model
 		'projectDeleted',
 		'projectRestored',
 		'projectForceDeleted',
-		'projectMovedToNewGroup',
-		'projectAccessTokenGenerated',
-		'projectAccessTokenDeleted'
+		'projectMovedToNewGroup'
 	];
 
 	/**

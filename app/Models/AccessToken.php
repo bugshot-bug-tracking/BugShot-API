@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Dyrynda\Database\Support\CascadeSoftDeletes;
-use Laravel\Scout\Searchable;
+use App\Traits\HasCustomEvents;
 
 /**
  * @OA\Schema()
  */
-class Export extends Model
+class AccessToken extends Model
 {
-	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, HasCustomEvents;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -29,6 +27,14 @@ class Export extends Model
      */
     public $incrementing = false;
 
+	protected $observables = [
+		'accessTokenCreated',
+		'accessTokenUpdated',
+		'accessTokenDeleted',
+		'accessTokenRestored',
+		'accessTokenForceDeleted'
+	];
+
 	/**
 	 * @OA\Property(
 	 * 	property="id",
@@ -37,10 +43,29 @@ class Export extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="exported_by",
+	 * 	property="access_token",
+	 * 	type="string",
+	 * 	description="The token that lets anonymous users/clients send bugs to the project"
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="description",
+	 * 	type="string",
+	 * 	description="The description of the bug."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="user_id",
 	 * 	type="integer",
 	 *  format="int64",
-	 * 	description="The id of the user that created the export."
+	 * 	description="The user that generated the access token."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="project_id",
+	 * 	type="string",
+	 *  maxLength=255,
+	 * 	description="The id of the project to which the access token belongs."
 	 * )
 	 *
 	 * @OA\Property(
@@ -66,12 +91,7 @@ class Export extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "exported_by"];
-
-	// protected $touches = [''];
-
-	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['reports'];
+	protected $fillable = ["id", "description", "user_id", "access_token"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -84,24 +104,8 @@ class Export extends Model
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function exporter()
+	public function creator()
 	{
-		return $this->belongsTo(User::class, 'exported_by');
-	}
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function bugs()
-    {
-        return $this->belongsToMany(Bug::class, 'bug_exports')->withPivot('evaluated_by');
-    }
-
-	/**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-	public function reports()
-	{
-		return $this->hasMany(Report::class)->orderBy('created_at', 'desc');
+		return $this->belongsTo(User::class, 'user_id');
 	}
 }
