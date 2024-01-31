@@ -2,10 +2,10 @@
     <p>Hello {{ $user->first_name }},</p>
     <p>
         {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} has just created a comment in one of the bugs you created.<br /><br />
-        <strong>{{ $groupsWording ? Str::singular($groupsWording) : "Group" }}</strong>: {{ $project->company->designation }}<br />
-		<strong>Project</strong>: {{ $project->designation }}<br />
-        <strong>Bug</strong>: {{ $bug->ai_id }} ({{ $bug->designation }})<br />
-        <strong>Comment</strong>: {{ $readableContent }}<br /><br />
+		<strong><a href="{{ $groupBaseUrl }}">{{ $groupsWording ? Str::singular($groupsWording) : "Group" }}</a></strong>: {{ $company->designation }}<br />
+		<strong><a href="{{ $projectBaseUrl }}">Project</a></strong>: {{ $project->designation }}<br />
+        <strong><a href="{{ $projectBaseUrl . "?b=" . $bug->id }}">Bug</a></strong>: {{ $bug->ai_id }} ({{ $bug->designation }})<br />
+        <strong><a href="{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id }}">Comment</a></strong>: {{ $readableContent }}<br /><br />
         To reply to the comment you can simply visit the corresponding bug in the webpanel.<br />
         Use the following button to enter the webpanel:
     </p>

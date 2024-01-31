@@ -175,7 +175,14 @@ class BugPolicy
      */
     public function restore(User $user, Project $project)
     {
-        //
+        if (!$user->licenseActive()) {
+            return false;
+        }
+
+        // Check if user is the manager or owner of the project
+        if ($user->isPriviliegated('projects', $project)) {
+            return true;
+        };
     }
 
     /**

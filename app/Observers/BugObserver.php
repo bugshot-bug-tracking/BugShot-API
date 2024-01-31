@@ -2,6 +2,9 @@
 
 namespace App\Observers;
 
+// Misc
+use Illuminate\Support\Facades\Auth;
+
 // Models
 use App\Models\Action;
 use App\Models\Bug;

@@ -69,11 +69,11 @@ class Kernel extends ConsoleKernel
 			$projects = Project::
 						whereDate('updated_at', '>=', $date)
 						->with(['comments' => function ($query) use ($date) {
-							$query->whereDate('created_at', '>=', $date);
+							$query->whereDate('comments.created_at', '>=', $date);
 						}])
 						->with(['bugs' => function ($query) use ($date) {
-							$query->whereDate('created_at', '>=', $date)
-								->orWhereDate('done_at', '>=', $date);
+							$query->whereDate('bugs.created_at', '>=', $date)
+								->orWhereDate('bugs.done_at', '>=', $date);
 						}])
 						->get();
 
