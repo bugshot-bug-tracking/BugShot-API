@@ -71,7 +71,7 @@ class Export extends Model
 	// protected $touches = [''];
 
 	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['bug_exports', 'reports'];
+	protected $cascadeDeletes = ['reports'];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
