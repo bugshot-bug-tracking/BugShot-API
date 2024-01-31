@@ -11,217 +11,214 @@ use App\Models\Bug;
 
 class BugObserver
 {
-    /**
-     * Handle events after all transactions are committed.
-     *
-     * @var bool
-     */
-    public $afterCommit = true;
+	/**
+	 * Handle events after all transactions are committed.
+	 *
+	 * @var bool
+	 */
+	public $afterCommit = true;
 
-    /**
-     * Handle the Bug "bugCreated" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugCreated(Bug $bug)
-    {
+	/**
+	 * Handle the Bug "bugCreated" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugCreated(Bug $bug)
+	{
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_created");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
 					"user_id" => $bug->creator ? $bug->creator->id : NULL,
-					"args" => json_encode([
+					"args" => json_encode(
+						[
 							$bug->designation,
-							$bug->creator->fullName()
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName()
 						]
 					)
 				]
 			);
 		}
-    }
+	}
 
-    /**
-     * Handle the Bug "bugUpdated" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugUpdated(Bug $bug)
-    {
+	/**
+	 * Handle the Bug "bugUpdated" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugUpdated(Bug $bug)
+	{
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_updated");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => Auth::id(),
-					"args" => json_encode([
+					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"args" => json_encode(
+						[
 							$bug->designation,
-							Auth::user()->fullName(),
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
 				]
 			);
 		}
-    }
+	}
 
-    /**
-     * Handle the Bug "bugDeleted" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugDeleted(Bug $bug)
-    {
+	/**
+	 * Handle the Bug "bugDeleted" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugDeleted(Bug $bug)
+	{
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_deleted");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => Auth::id(),
-					"args" => json_encode([
+					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"args" => json_encode(
+						[
 							$bug->designation,
-							Auth::user()->fullName()
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName()
 						]
 					)
 				]
 			);
 		}
-    }
-
-    /**
-     * Handle the Bug "bugRestored" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugRestored(Bug $bug)
-    {
-        //
-    }
-
-    /**
-     * Handle the Bug "bugForceDeleted" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugForceDeleted(Bug $bug)
-    {
-        //
-    }
+	}
 
 	/**
-     * Handle the Bug "bugMovedToNewProject" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugMovedToNewProject(Bug $bug)
-    {
+	 * Handle the Bug "bugRestored" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugRestored(Bug $bug)
+	{
+		//
+	}
+
+	/**
+	 * Handle the Bug "bugForceDeleted" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugForceDeleted(Bug $bug)
+	{
+		//
+	}
+
+	/**
+	 * Handle the Bug "bugMovedToNewProject" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugMovedToNewProject(Bug $bug)
+	{
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_moved_to_new_project");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => Auth::id(),
-					"args" => json_encode([
+					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"args" => json_encode(
+						[
 							$bug->designation,
-							Auth::user()->fullName(),
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
 				]
 			);
 		}
-    }
+	}
 
 	/**
-     * Handle the Bug "bugArchived" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugArchived(Bug $bug)
-    {
+	 * Handle the Bug "bugArchived" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugArchived(Bug $bug)
+	{
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_archived");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => Auth::id(),
-					"args" => json_encode([
+					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"args" => json_encode(
+						[
 							$bug->designation,
-							Auth::user()->fullName(),
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
 				]
 			);
 		}
-    }
+	}
 
 	/**
-     * Handle the Bug "bugStatusChanged" event.
-     *
-     * @param  Bug  $bug
-     * @return void
-     */
-    public function bugStatusChanged(Bug $bug)
-    {
+	 * Handle the Bug "bugStatusChanged" event.
+	 *
+	 * @param  Bug  $bug
+	 * @return void
+	 */
+	public function bugStatusChanged(Bug $bug)
+	{
 		$dirtyAttributeMessage = $this->buildDirtyAttributesMessage($bug);
 
 		$action = new Action();
 		$actionId = $action->getIdByName("bug_status_changed");
-		if($actionId)
-		{
+		if ($actionId) {
 			$bug->history()->attach(
 				$actionId,
 				[
-					"user_id" => Auth::id(),
-					"args" => json_encode([
+					"user_id" => $bug->creator ? $bug->creator->id : NULL,
+					"args" => json_encode(
+						[
 							$bug->designation,
-							Auth::user()->fullName(),
+							is_null($bug->creator) ?  __("application.anonymous-user") : $bug->creator->fullName(),
 							$dirtyAttributeMessage
 						]
 					)
 				]
 			);
 		}
-    }
+	}
 
 	private function buildDirtyAttributesMessage($resource)
 	{
 		$dirtyAttributes = $resource->getDirty();
 		unset($dirtyAttributes['updated_at']);
 		$dirtyAttributeMessage = "";
-		foreach($dirtyAttributes as $dirtyAttribute => $dirtyValue)
-		{
+		foreach ($dirtyAttributes as $dirtyAttribute => $dirtyValue) {
 			$newValue = $dirtyValue;
 			$oldValue = $resource->getOriginal($dirtyAttribute);
-			if($dirtyAttributeMessage == "")
-			{
+			if ($dirtyAttributeMessage == "") {
 				$dirtyAttributeMessage .= "$dirtyAttribute: '$oldValue' => '$newValue'";
-			} else
-			{
+			} else {
 				$dirtyAttributeMessage .= ", $dirtyAttribute: '$oldValue' => '$newValue'";
 			}
 		}

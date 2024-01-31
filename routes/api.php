@@ -57,10 +57,11 @@ use Illuminate\Support\Facades\Broadcast;
 | Cronjob Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/scheduler/run', function() {
+
+Route::get('/scheduler/run', function () {
 	Artisan::call('schedule:run');
 });
-Route::middleware('throttle:1,1440')->get('/projects/send-summary', function() {
+Route::middleware('throttle:1,1440')->get('/projects/send-summary', function () {
 	Artisan::call('projects:send-summary');
 });
 Route::get("/compress-images", [ScriptController::class, "compressImages"])->middleware("scripts.active");
@@ -80,7 +81,16 @@ Route::get('/debug-sentry', function () {
 | Stripe webhook route
 |--------------------------------------------------------------------------
 */
+
 Route::any('/stripe/webhook', [StripeController::class, "handle"]);
+
+/*
+|--------------------------------------------------------------------------
+| Integration webhook routes
+|--------------------------------------------------------------------------
+*/
+
+Route::any('/atlassian/webhook', [AtlassianService::class, "handleWebhook"]);
 
 /*
 |--------------------------------------------------------------------------
@@ -138,7 +148,8 @@ Route::get('/downloads/desktop-client', [DownloadController::class, "downloadDes
 
 Route::prefix('projects/{project}')->group(function () {
 	Route::apiResource('/exports', ExportController::class)->except(
-		"show", "store"
+		"show",
+		"store"
 	);
 });
 
@@ -205,7 +216,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
-		Route::get('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
+		Route::post('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
 		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::apiResource('/access-tokens', AccessTokenController::class);
@@ -226,6 +237,21 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::delete("/users/{user}", [ProjectController::class, "removeUser"])->name("project.remove-user");
 		Route::get("/assignable-users", [ProjectController::class, "assignableUsers"])->name("project.assignable-users");
 		Route::get("/mark-as-favorite", [ProjectController::class, "markAsFavorite"])->name("project.mark-as-favorite");
+
+		Route::get("/jira-link", [ProjectController::class, "getJiraSettings"])->name("project.get-jira-settings");
+		Route::post("/jira-link", [ProjectController::class, "createJiraLink"])->name("project.create-jira-link");
+		Route::delete("/jira-link", [ProjectController::class, "deleteJiraLink"])->name("project.delete-jira-link");
+
+		Route::get("/jira-sites", [ProjectController::class, "getJiraSites"])->name("project.get-jira-sites");
+		Route::post("/jira-site", [ProjectController::class, "setJiraSite"])->name("project.set-jira-site");
+		Route::delete("/jira-site", [ProjectController::class, "deleteJiraSite"])->name("project.delete-jira-site");
+
+		Route::get("/jira-projects", [ProjectController::class, "getJiraProjects"])->name("project.get-jira-projects");
+		Route::post("/jira-project", [ProjectController::class, "setJiraProject"])->name("project.set-jira-project");
+		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
+
+		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
+		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
 	// Status prefixed routes
@@ -348,6 +374,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 			Route::post('/subscriptions/change-restriction', [StripeController::class, "changeRestrictionOfSubscription"])->name("billing-address.stripe.change-restriction-of-subscription");
 		});
 	});
+
 	/*
 	|--------------------------------------------------------------------------
 	| Administrative API Routes
