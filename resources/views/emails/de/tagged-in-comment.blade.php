@@ -2,6 +2,7 @@
     <p>Hallo {{ $user->first_name }},</p>
     <p>
         {{ $commentCreator->first_name . ' ' . $commentCreator->last_name }} hat dich soeben in einem Kommentar erwähnt.<br /><br />
+		<strong><a href="{{ $groupBaseUrl }}">{{ $groupsWording ? Str::singular($groupsWording) : "Gruppe" }}</a></strong>: {{ $company->designation }}<br />
         <strong><a href="{{ $projectBaseUrl }}">Projekt</a></strong>: {{ $project->designation }}<br />
         <strong><a href="{{ $projectBaseUrl . "?b=" . $bug->id }}">Bug</a></strong>: {{ $bug->designation }} (ID: {{ $bug->ai_id }})<br />
         <strong><a href="{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id }}">Kommentar</a></strong>: {{ $readableContent }}<br /><br />
