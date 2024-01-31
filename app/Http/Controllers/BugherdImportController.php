@@ -9,6 +9,7 @@ use App\Http\Requests\BugherdImportRequest;
 use App\Jobs\ImportBugherdProject;
 use App\Traits\Bugherd;
 use App\Models\ImportStatus;
+use App\Models\Import;
 
 /**
  * @OA\Tag(
@@ -64,7 +65,8 @@ class BugherdImportController extends Controller
 	 *  ),
 	 *	@OA\Response(
 	 *		response=200,
-	 *		description="Success"
+	 *		description="Success",
+	 *		@OA\JsonContent()
 	 *	),
 	 *	@OA\Response(
 	 *		response=400,
@@ -175,29 +177,33 @@ class BugherdImportController extends Controller
 	 *)
 	 *
 	 **/
-	public function importProject(BugherdImportRequest $request)
+	public function importProjects(BugherdImportRequest $request)
 	{
 		$apiToken = $request->bugherd_api_token;
+
+		// Check if the the request already contains a UUID for the import
+		$id = $this->setId($request);
 
 		foreach($request->projects as $project)
 		{
 			// Create the import
 			$import = Import::create([
+				"id" => $id,
 				"status_id" => ImportStatus::PENDING,
-				"imported_by" => $this->user,
+				"imported_by" => $this->user->id,
 				"source" => json_encode([
 					'Bugherd',
 					'project',
-					$project->bugherdProjectId
+					$project["bugherdProjectId"]
 				]),
 				"target" => json_encode([
 					'group',
-					$project->bugshotCompanyId
+					$project["bugshotCompanyId"]
 				])
 			]);
 
 			// Queue the job
-			ImportBugherdProject::dispatch($import->id, $apiToken, $project);
+			ImportBugherdProject::dispatch($import, $apiToken, $project);
 		}
 	}
 

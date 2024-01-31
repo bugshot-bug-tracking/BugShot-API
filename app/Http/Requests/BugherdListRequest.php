@@ -24,7 +24,7 @@ class BugherdListRequest extends FormRequest
     public function rules()
     {
 		return [
-			"bugherd_api_key" => ["required", "string", "min:1", "max:32"]
+			"bugherd_api_token" => ["required", "string", "min:1", "max:32"]
 		];
     }
 }

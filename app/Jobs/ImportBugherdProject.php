@@ -11,6 +11,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Traits\Bugherd;
 use App\Models\ImportStatus;
+use App\Models\Import;
+use App\Models\Project;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ImportBugherdProject implements ShouldQueue
 {
@@ -23,10 +28,9 @@ class ImportBugherdProject implements ShouldQueue
      * @return void
      */
     public function __construct(
-		public $importId,
+		public $import,
 		public $apiToken,
-		public $project,
-		BugherdImportController $bugherdImportController
+		public $project
 	)
     {
 
@@ -39,18 +43,40 @@ class ImportBugherdProject implements ShouldQueue
      */
     public function handle()
     {
-		$bugherdProjectId = $this->project->bugherdProjectId;
-		$response = Bugherd::sendBugherdRequest($apiToken, "projects/#${bugherdProjectId}.json");
+		$bugshotCompanyId = $this->project["bugshotCompanyId"];
+		$bugherdProjectId = $this->project["bugherdProjectId"];
+		$response = Bugherd::sendBugherdRequest($this->apiToken, "projects/${bugherdProjectId}.json");
 
-		if($response->getStatus() == 200)
+		// TODO: Test that
+		if($response->ok())
 		{
-			$import = Import::find($this->importId);
-			$import->update([
-				'status_id' => ImportStatus::IMPORTED
-			]);
+			$projectData = json_decode($response->body(), true)['project'];
+			try
+			{
+				$project = new Project();
+				$project->id = (string) Str::uuid();
+				$project->user_id = $this->import->importer->id;
+				$project->designation = $projectData['name'];
+				$project->color_hex = '#7A2EE6';
+				$project->company_id = $bugshotCompanyId;
+				$project->url = $projectData['devurl'];
+
+				// Do the save and fire the custom event
+				$project->fireCustomEvent('projectCreated');
+				$project->save();
+
+				$this->import->update([
+					'status_id' => ImportStatus::IMPORTED
+				]);
+			} catch(Exception $e)
+			{
+				Log::error($e->getMessage());
+				$this->import->update([
+					'status_id' => ImportStatus::IMPORT_FAILED
+				]);
+			}
 		} else {
-			$import = Import::find($this->importId);
-			$import->update([
+			$this->import->update([
 				'status_id' => ImportStatus::IMPORT_FAILED
 			]);
 		}

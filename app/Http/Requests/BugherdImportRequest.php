@@ -24,8 +24,9 @@ class BugherdImportRequest extends FormRequest
     public function rules()
     {
 		return [
-			"ids" => ["required", "array"],
-			"ids.*" => ["required", "string", "min:1", "max:32"],
+			"bugherd_api_token" => ["required", "string", "min:1", "max:32"],
+			"projects" => ["required", "array"],
+			// "projects.*" => ["required", "string", "min:1", "max:32"],
 		];
     }
 }

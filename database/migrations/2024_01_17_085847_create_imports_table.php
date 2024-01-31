@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('imports', function (Blueprint $table) {
-            $table->uuid();
+			$table->uuid('id')->primary();
 			$table->unsignedBigInteger('status_id');
 			$table->unsignedBigInteger('imported_by')->nullable();
 			$table->foreign('imported_by')->references('id')->on('users')->nullOnDelete();
