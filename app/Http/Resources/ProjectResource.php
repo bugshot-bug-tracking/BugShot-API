@@ -21,13 +21,13 @@ class ProjectResource extends JsonResource
 	{
 		// Count the total and done bugs within this project
 		$statuses = $this->statuses;
-        if(!$statuses->isEmpty()) {
-            $bugsDone = $statuses->last()->bugs->count();
-            $bugsTotal = $this->bugs->count();
-        } else {
-            $bugsDone = NULL;
-            $bugsTotal = NULL;
-        }
+		if (!$statuses->isEmpty()) {
+			$bugsDone = $statuses->last()->bugs->count();
+			$bugsTotal = $this->bugs->count();
+		} else {
+			$bugsDone = NULL;
+			$bugsTotal = NULL;
+		}
 		$company = Company::find($this->company_id);
 
 		$project = array(
@@ -37,7 +37,7 @@ class ProjectResource extends JsonResource
 				"creator" => new UserResource(User::find($this->user_id)),
 				"designation" => $this->designation,
 				"url" => $this->url,
-                "access_token" => $this->access_token,
+				"access_token" => $this->access_token,
 				"color_hex" => $this->color_hex,
 				"company" => array(
 					"id" => $company->id,
@@ -48,6 +48,9 @@ class ProjectResource extends JsonResource
 						"color_hex" => $company->color_hex,
 					]
 				),
+				"integrations" => [
+					"jira" => $this->jiraLink ? true : false
+				],
 				"bugsTotal" => $bugsTotal,
 				"bugsDone" => $bugsDone,
 				"created_at" => $this->created_at,
@@ -58,17 +61,17 @@ class ProjectResource extends JsonResource
 		$header = $request->header();
 
 		// Check if the response should contain the respective statuses
-		if(array_key_exists('include-statuses', $header) && $header['include-statuses'][0] == "true") {
+		if (array_key_exists('include-statuses', $header) && $header['include-statuses'][0] == "true") {
 			$project['attributes']['statuses'] = StatusResource::collection($statuses);
 		}
 
 		// Check if the response should contain the respective project users
-		if(array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
-			if(array_key_exists('include-project-users-roles', $header) && $header['include-project-users'][0] == "true") {
+		if (array_key_exists('include-project-users', $header) && $header['include-project-users'][0] == "true") {
+			if (array_key_exists('include-project-users-roles', $header) && $header['include-project-users'][0] == "true") {
 				$projectUserRoles = ProjectUserRole::where("project_id", $this->id)
-				->with('user')
-				->with('role')
-				->get();
+					->with('user')
+					->with('role')
+					->get();
 
 				$project['attributes']['users'] = $projectUserRoles->map(function ($item, $key) {
 					return [
@@ -88,7 +91,7 @@ class ProjectResource extends JsonResource
 			}
 		}
 
-		if(array_key_exists('include-project-users-with-owner', $header) && $header['include-project-users-with-owner'][0] == "true"){
+		if (array_key_exists('include-project-users-with-owner', $header) && $header['include-project-users-with-owner'][0] == "true") {
 			$users = $this->users;
 			$returnCollections = UserResource::collection($users);
 			$returnCollections = $returnCollections->push(new UserResource(User::find($this->user_id)));
@@ -96,16 +99,16 @@ class ProjectResource extends JsonResource
 		}
 
 		// Check if the response should contain the respective project image
-		if(array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
+		if (array_key_exists('include-project-image', $header) && $header['include-project-image'][0] == "true") {
 			$image = $this->image;
 			$project['attributes']['image'] = new ImageResource($image);
 		}
 
 		// Check if the response should contain the respective user role within this project
-		if(array_key_exists('include-project-role', $header) && $header['include-project-role'][0] == "true") {
+		if (array_key_exists('include-project-role', $header) && $header['include-project-role'][0] == "true") {
 			$userProject = Auth::user()->projects()->find($this->id);
 
-			if($userProject == NULL) {
+			if ($userProject == NULL) {
 				$userProject = Auth::user()->createdProjects()->find($this->id);
 				$role =  Role::find(1); // Owner
 			} else {
@@ -115,7 +118,7 @@ class ProjectResource extends JsonResource
 			$project['attributes']['role'] = new RoleResource($role);
 		}
 
-		if(array_key_exists('include-organization-id', $header) && $header['include-organization-id'][0] == "true"){
+		if (array_key_exists('include-organization-id', $header) && $header['include-organization-id'][0] == "true") {
 			$project['attributes']['company']['attributes']['organization_id'] = $company->organization->id;
 		}
 

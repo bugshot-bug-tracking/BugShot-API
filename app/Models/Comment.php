@@ -14,18 +14,18 @@ class Comment extends Model
 	use HasFactory, SoftDeletes;
 
 	/**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
+	 * The "type" of the auto-incrementing ID.
+	 *
+	 * @var string
+	 */
+	protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
 
 	/**
 	 * @OA\Property(
@@ -88,31 +88,39 @@ class Comment extends Model
 	 * 	description="The deletion date."
 	 * )
 	 */
-	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "is_internal"];
+	protected $fillable = ["id", "bug_id", "user_id", "client_id", "content", "is_internal", "created_at"];
 
 	protected $touches = ['bug'];
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function bug()
 	{
 		return $this->belongsTo(Bug::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function user()
 	{
 		return $this->belongsTo(User::class);
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function client()
 	{
 		return $this->belongsTo(Client::class);
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasOne
+	 */
+	public function jiraLink()
+	{
+		return $this->hasOne(JiraCommentLink::class);
 	}
 }
