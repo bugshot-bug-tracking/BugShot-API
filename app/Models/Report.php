@@ -83,9 +83,6 @@ class Report extends Model
 
 	// protected $touches = [''];
 
-	// Cascade the soft deletion to the given child resources
-	protected $cascadeDeletes = ['bug_exports', 'reports'];
-
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
