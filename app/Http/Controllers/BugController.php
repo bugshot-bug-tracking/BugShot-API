@@ -880,7 +880,7 @@ class BugController extends Controller
 		return new BugResource($bug);
 	}
 
-		/**
+	/**
 	 * Display the specified resource.
 	 *
 	 * @param  Bug  $bug
@@ -997,6 +997,87 @@ class BugController extends Controller
 			->first();
 
 		return new ArchivedBugResource($bug);
+	}
+
+	/**
+	 * Restore archive bug.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/archived-bugs/{bug_id}/restore",
+	 *	tags={"Bug"},
+	 *	summary="Restore one archived bug.",
+	 *	operationId="restoreArchivedBug",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Bug"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function restoreArchivedBug($bug_id)
+	{
+		$bug = Bug::where("id", $bug_id)
+		->withTrashed()
+		->first();
+
+		// Check if the user is authorized to restore the bug
+		$this->authorize('restore', [Bug::class, $bug->project]);
+
+		$bug->update([
+			"archived_at" => NULL,
+			"deleted_at" => NULL
+		]);
+
+		return new BugResource($bug);
 	}
 
 	/**

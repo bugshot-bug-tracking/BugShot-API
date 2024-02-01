@@ -24,8 +24,11 @@ class CommentCreated extends Mailable
     public $commentCreator;
     public $bug;
     public $project;
+	public $company;
     public $readableContent;
 	public $groupsWording;
+	public $groupBaseUrl;
+	public $projectBaseUrl;
 
     /**
      * Create a new message instance.
@@ -40,9 +43,11 @@ class CommentCreated extends Mailable
         $this->commentCreator = User::find($comment->user_id);
         $this->bug = Bug::find($comment->bug_id);
         $this->project = Project::find($this->bug->project_id);
+		$this->company = $this->project->company;
+		$this->groupBaseUrl = config('app.webpanel_url') . "/" . $this->company->organization->id . "/company/" . $this->company->id;
+		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $this->company->organization->id . "/company/" . $this->company->id . "/project/" . $this->project->id;
 
-		$company = $this->project->company;
-		$organization = $company->organization;
+		$organization = $this->company->organization;
 		$this->groupsWording = $organization->groups_wording;
     }
 
