@@ -37,9 +37,7 @@ class Project extends Model
 		'projectDeleted',
 		'projectRestored',
 		'projectForceDeleted',
-		'projectMovedToNewGroup',
-		'projectAccessTokenGenerated',
-		'projectAccessTokenDeleted'
+		'projectMovedToNewGroup'
 	];
 
 	/**
@@ -127,7 +125,7 @@ class Project extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "user_id", "designation", "url", "company_id", "color_hex", "access_token"];
+	protected $fillable = ["id", "user_id", "designation", "url", "company_id", "color_hex"];
 
 	protected $touches = ['company'];
 

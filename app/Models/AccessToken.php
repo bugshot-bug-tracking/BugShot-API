@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Dyrynda\Database\Support\CascadeSoftDeletes;
-use Laravel\Scout\Searchable;
+use App\Traits\HasCustomEvents;
 
 /**
  * @OA\Schema()
  */
-class Report extends Model
+class AccessToken extends Model
 {
-	use HasFactory, SoftDeletes, CascadeSoftDeletes;
+	use HasFactory, HasCustomEvents;
 
 	/**
      * The "type" of the auto-incrementing ID.
@@ -29,6 +27,14 @@ class Report extends Model
      */
     public $incrementing = false;
 
+	protected $observables = [
+		'accessTokenCreated',
+		'accessTokenUpdated',
+		'accessTokenDeleted',
+		'accessTokenRestored',
+		'accessTokenForceDeleted'
+	];
+
 	/**
 	 * @OA\Property(
 	 * 	property="id",
@@ -37,23 +43,29 @@ class Report extends Model
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="export_id",
+	 * 	property="access_token",
 	 * 	type="string",
-	 *  maxLength=255,
-	 * 	description="The id of the export to which the object belongs."
+	 * 	description="The token that lets anonymous users/clients send bugs to the project"
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="generated_by",
+	 * 	property="description",
+	 * 	type="string",
+	 * 	description="The description of the bug."
+	 * )
+	 *
+	 * @OA\Property(
+	 * 	property="user_id",
 	 * 	type="integer",
 	 *  format="int64",
-	 * 	description="The id of the user that generated the report."
+	 * 	description="The user that generated the access token."
 	 * )
 	 *
 	 * @OA\Property(
-	 * 	property="url",
+	 * 	property="project_id",
 	 * 	type="string",
-	 * 	description="The url where the report is stored"
+	 *  maxLength=255,
+	 * 	description="The id of the project to which the access token belongs."
 	 * )
 	 *
 	 * @OA\Property(
@@ -79,23 +91,21 @@ class Report extends Model
 	 *
 	 */
 
-	protected $fillable = ["id", "export_id", "generated_by", "url"];
-
-	// protected $touches = [''];
+	protected $fillable = ["id", "description", "user_id", "access_token"];
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function export()
+	public function project()
 	{
-		return $this->belongsTo(Export::class);
+		return $this->belongsTo(Project::class);
 	}
 
 	/**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-	public function generator()
+	public function creator()
 	{
-		return $this->belongsTo(User::class, 'generated_by');
+		return $this->belongsTo(User::class, 'user_id');
 	}
 }

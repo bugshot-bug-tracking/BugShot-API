@@ -312,8 +312,6 @@ class AtlassianService
 
 			$body = json_decode($response->body());
 
-			var_dump($body);
-
 			return $body;
 		}
 

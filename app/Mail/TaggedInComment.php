@@ -25,7 +25,10 @@ class TaggedInComment extends Mailable
     public $commentCreator;
     public $bug;
     public $project;
+	public $company;
     public $readableContent;
+	public $groupsWording;
+	public $groupBaseUrl;
 	public $projectBaseUrl;
 
     /**
@@ -41,10 +44,13 @@ class TaggedInComment extends Mailable
         $this->commentCreator = User::find($comment->user_id);
         $this->bug = Bug::find($comment->bug_id);
         $this->project = Project::find($this->bug->project_id);
-		$companyId = $this->project->company->id;
-		$organizationId = Company::find($companyId)->organization->id;
-		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $organizationId . "/company/" . $companyId . "/project/" . $this->project->id;
-    }
+		$this->company = $this->project->company;
+		$this->groupBaseUrl = config('app.webpanel_url') . "/" . $this->company->organization->id . "/company/" . $this->company->id;
+		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $this->company->organization->id . "/company/" . $this->company->id . "/project/" . $this->project->id;
+
+		$organization = $this->company->organization;
+		$this->groupsWording = $organization->groups_wording;
+	}
 
     /**
      * Build the message.
