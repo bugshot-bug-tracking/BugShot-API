@@ -13,35 +13,34 @@ use App\Services\GetUserLocaleService;
 
 class VerificationSuccessful extends Mailable
 {
-    use Queueable, SerializesModels;
+	use Queueable, SerializesModels;
 
-    public $user;
+	public $user;
 	public $locale;
-    public $url;
-    public $policyUrl;
+	public $url;
+	public $policyUrl;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct(User $notifiable, $locale)
-    {
-        $this->locale = $locale;
-        $this->user = $notifiable;
-        $this->url = config('app.webpanel_url');
-        $this->policyUrl = config('app.webpanel_url') . '/terms-and-conditions';
-    }
+	/**
+	 * Create a new message instance.
+	 *
+	 * @return void
+	 */
+	public function __construct(User $notifiable, $locale)
+	{
+		$this->locale = $locale;
+		$this->user = $notifiable;
+		$this->url = config('app.webpanel_url');
+	}
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
-    public function build()
-    {
-        // return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
-        return $this->from(config('mail.noreply'))
-        ->markdown('emails.' . $this->locale . '.verification-successful-mail');
-    }
+	/**
+	 * Build the message.
+	 *
+	 * @return $this
+	 */
+	public function build()
+	{
+		// return $this->view('emails.' . App::currentLocale() . '.verification-successful-mail');
+		return $this->from(config('mail.noreply'))
+			->markdown('emails.' . $this->locale . '.verification-successful-mail');
+	}
 }

@@ -379,7 +379,7 @@ class ProjectController extends Controller
 		$project = new Project();
 		$project->id = $id;
 		$project->user_id = Auth::user()->id;
-		$project->access_token = NULL;
+		// $project->access_token = NULL;
 		$project->designation = $request->designation;
 		$project->color_hex = $request->color_hex;
 		$project->url = substr($request->url, -1) == '/' ? substr($request->url, 0, -1) : $request->url; // Check if the given url has "/" as last char and if so, store url without it
