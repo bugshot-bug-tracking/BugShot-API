@@ -34,6 +34,7 @@ use App\Http\Requests\BugUpdateRequest;
 // Events
 use App\Events\AssignedToBug;
 use App\Events\BugMembersUpdated;
+use App\Events\ProjectBugMembersUpdated;
 use App\Models\Priority;
 
 /**
@@ -171,7 +172,7 @@ class BugController extends Controller
 		$timestamp = $request->header('timestamp');
 
 		// Check if the request includes a timestamp and query the bugs accordingly
-		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+		if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 			$bugs = Auth::user()->bugs()
 				->where("status_id", $status->id)
 				->when($timestamp, function ($query, $timestamp) {
@@ -186,7 +187,7 @@ class BugController extends Controller
 				->where("bugs.archived_at", NULL);
 		}
 
-		if(array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
+		if (array_key_exists('filter-bugs-by-assigned', $header) && $header['filter-bugs-by-assigned'][0] == "true") {
 			$searchTermPrefix = "";
 		} else {
 			$searchTermPrefix = "bugs.";
@@ -201,17 +202,17 @@ class BugController extends Controller
 
 			return $query->where($searchTermPrefix . "deadline", $operator, $date);
 		})
-		->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
-			$creatorId = $header['filter-bugs-by-creator-id'][0];
+			->when(array_key_exists('filter-bugs-by-creator-id', $header) && !empty($header['filter-bugs-by-creator-id'][0]), function ($query) use ($header, $searchTermPrefix) {
+				$creatorId = $header['filter-bugs-by-creator-id'][0];
 
-			return $query->where($searchTermPrefix . "user_id", $creatorId);
-		})
-		->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
-			$designation = $header['filter-bugs-by-priority'][0];
-			$priority = Priority::where('designation', $designation)->firstOrFail();
+				return $query->where($searchTermPrefix . "user_id", $creatorId);
+			})
+			->when(array_key_exists('filter-bugs-by-priority', $header) && !empty($header['filter-bugs-by-priority'][0]), function ($query) use ($header, $searchTermPrefix) {
+				$designation = $header['filter-bugs-by-priority'][0];
+				$priority = Priority::where('designation', $designation)->firstOrFail();
 
-			return $query->where($searchTermPrefix . "priority_id", $priority->id);
-		});
+				return $query->where($searchTermPrefix . "priority_id", $priority->id);
+			});
 
 
 		return BugResource::collection($bugs);
@@ -390,11 +391,10 @@ class BugController extends Controller
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
 		$project = Project::where('id', $status->project->id)
-				->where('access_token', $accessToken)
-				->exists();
+			->where('access_token', $accessToken)
+			->exists();
 
-		if(!$project)
-		{
+		if (!$project) {
 			// Check if the user is authorized to create the bug
 			$this->authorize('create', [Bug::class, $status->project]);
 		}
@@ -576,9 +576,9 @@ class BugController extends Controller
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
 		$project = Project::where('access_token', $accessToken)
-				->first();
+			->first();
 
-		if(!$project) {
+		if (!$project) {
 			return response()->json([
 				'message' => 'No project found by the given access token'
 			], 404);
@@ -1066,8 +1066,8 @@ class BugController extends Controller
 	public function restoreArchivedBug($bug_id)
 	{
 		$bug = Bug::where("id", $bug_id)
-		->withTrashed()
-		->first();
+			->withTrashed()
+			->first();
 
 		// Check if the user is authorized to restore the bug
 		$this->authorize('restore', [Bug::class, $bug->project]);
@@ -1784,6 +1784,7 @@ class BugController extends Controller
 
 		//AssignedToBug::dispatch($targetUser, $bug);
 		broadcast(new BugMembersUpdated($targetUser, $this->user, $bug))->toOthers();
+		broadcast(new ProjectBugMembersUpdated($bug->project, $bug));
 
 		return response()->json("", 204);
 	}
@@ -1931,6 +1932,7 @@ class BugController extends Controller
 
 		$val = $bug->users()->detach($user);
 		broadcast(new BugMembersUpdated($user, $this->user, $bug))->toOthers();
+		broadcast(new ProjectBugMembersUpdated($bug->project, $bug));
 
 		return response($val, 204);
 	}
