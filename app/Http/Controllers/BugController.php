@@ -391,7 +391,7 @@ class BugController extends Controller
 		// Check if anonymous user
 		$accessToken = $request->header('access-token');
 		$project = Project::where('id', $status->project->id)
-			->where('access_token', $accessToken)
+			//->where('access_token', $accessToken)
 			->exists();
 
 		if (!$project) {
