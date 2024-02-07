@@ -61,7 +61,7 @@ class ProjectBugMembersUpdated implements ShouldBroadcast
 			'data' => [
 				"bug_id" => $this->bug->id,
 				"status_id" => $this->bug->status->id,
-				'users' => UserResource::collection($this->bug->users)
+				'users' => $this->bug->users->pluck("id")->toArray()
 			]
 		];
 	}
