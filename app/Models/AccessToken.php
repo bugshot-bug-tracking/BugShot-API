@@ -20,6 +20,8 @@ class AccessToken extends Model
      */
     protected $keyType = 'string';
 
+	protected $table = 'project_access_tokens';
+
     /**
      * Indicates if the IDs are auto-incrementing.
      *

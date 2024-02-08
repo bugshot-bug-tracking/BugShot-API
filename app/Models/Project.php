@@ -189,6 +189,14 @@ class Project extends Model
 	}
 
 	/**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+	public function accessTokens()
+	{
+		return $this->hasMany(AccessToken::class);
+	}
+
+	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\MorphOne
 	 */
 	public function image()
