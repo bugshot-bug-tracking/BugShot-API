@@ -12,9 +12,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
+// Services
+use App\Services\ProjectService;
+
 // Resources
 use App\Http\Resources\BugResource;
 use App\Http\Resources\AccessTokenResource;
+use App\Http\Resources\ProjectResource;
 
 // Models
 use App\Models\AccessToken;
@@ -192,6 +196,7 @@ class AccessTokenController extends Controller
 
 		// Store the new access token in the database
 		$accessToken = new AccessToken();
+		$accessToken->id = $id;
 		$accessToken->access_token = Str::ulid();
 		$accessToken->description = $request->description;
 		$accessToken->user_id = $this->user->id;
@@ -482,16 +487,16 @@ class AccessTokenController extends Controller
 	}
 
 	/**
-	 * Validate access token.
+	 * Check url against access token project.
 	 *
 	 * @return Response
 	 */
 	/**
 	 * @OA\Post(
-	 *	path="/projects/validate-access-token",
-	 *	tags={"Project"},
-	 *	summary="Validate access token.",
-	 *	operationId="validateAccessToken",
+	 *	path="/access-tokens/check-url",
+	 *	tags={"AccessToken"},
+	 *	summary="Check url against access token.",
+	 *	operationId="checkViaAccessToken",
 	 * 	@OA\Parameter(
 	 *		name="clientId",
 	 *		required=true,
@@ -509,20 +514,37 @@ class AccessTokenController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
-	 * 	@OA\Parameter(
-	 *		name="access-token",
-	 *		required=true,
-	 *		in="header",
-	 * 		example="secret"
-	 *	),
-	 *
+	 *  @OA\RequestBody(
+	 *      required=true,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *              @OA\Property(
+	 *                  description="The access token",
+	 *                  property="access_token",
+	 *                  type="string",
+	 *              ),
+	 *  			@OA\Property(
+	 *                  property="url",
+	 *                  type="string",
+	 *              ),
+	 *              required={"url","access_token"}
+	 *          )
+	 *      )
+	 *  ),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
 	 *		@OA\JsonContent(
-	 *			ref="#/components/schemas/Project"
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Project")
 	 *		)
 	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Url doesn't match the access token project",
+	 *	),
+	 *
 	 *	@OA\Response(
 	 *		response=400,
 	 *		description="Bad Request"
@@ -541,17 +563,14 @@ class AccessTokenController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function validateAccessToken(Request $request)
+	public function checkUrl(Request $request, ProjectService $projectService)
 	{
-		// Check if anonymous user
-		$accessToken = $request->header('access-token');
-		$accessToken = AccessToken::where('access_token', $accessToken)->first();
+		$accessToken = AccessToken::where('access_token', $request->access_token)->firstOrFail();
 
-		if(!$accessToken)
-		{
-			return response()->json([
-				'message' => __('application.access-token-invalid')
-			], 404);
+		$response = $projectService->checkUrlAgainstProject($accessToken->project, $request->url);
+
+		if ($response == NULL) {
+			return response()->json("", 204);
 		}
 
 		return new ProjectResource($accessToken->project);
