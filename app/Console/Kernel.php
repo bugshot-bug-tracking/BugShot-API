@@ -42,8 +42,10 @@ class Kernel extends ConsoleKernel
 			Log::info("Start bug archiving...");
 
 			$bugs = Bug::whereNull("archived_at")
-				->whereNotNull("deleted_at")
-				->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')))
+				->where(function($query) {
+					$query->where("done_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')))
+					->orWhere("deleted_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')));
+				})
 				->withTrashed()
 				->get();
 
