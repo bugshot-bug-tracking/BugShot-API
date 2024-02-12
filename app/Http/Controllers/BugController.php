@@ -35,6 +35,7 @@ use App\Http\Requests\BugUpdateRequest;
 use App\Events\AssignedToBug;
 use App\Events\BugMembersUpdated;
 use App\Events\ProjectBugMembersUpdated;
+use App\Models\AccessToken;
 use App\Models\Priority;
 
 /**
@@ -388,11 +389,7 @@ class BugController extends Controller
 	 **/
 	public function store(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
 	{
-		// Check if anonymous user
-		$accessToken = $request->header('access-token');
-		$project = Project::where('id', $status->project->id)
-			//->where('access_token', $accessToken)
-			->exists();
+		$project = Project::where('id', $status->project->id)->exists();
 
 		if (!$project) {
 			// Check if the user is authorized to create the bug
@@ -437,7 +434,7 @@ class BugController extends Controller
 	 *	),
 	 * 	@OA\Parameter(
 	 *		name="access-token",
-	 *		required=false,
+	 *		required=true,
 	 *		in="header",
 	 * 		example="secret"
 	 *	),
@@ -574,17 +571,15 @@ class BugController extends Controller
 	public function storeWithToken(BugStoreRequest $request, Status $status, ScreenshotService $screenshotService, AttachmentService $attachmentService, BugService $bugService, ApiCallService $apiCallService)
 	{
 		// Check if anonymous user
-		$accessToken = $request->header('access-token');
-		$project = Project::where('access_token', $accessToken)
-			->first();
+		$accessToken = AccessToken::where('access_token', $request->header('access-token'))->firstOrFail();
 
-		if (!$project) {
+		if (!$accessToken) {
 			return response()->json([
 				'message' => 'No project found by the given access token'
 			], 404);
 		}
 
-		$status = $project->statuses()->where('permanent', 'backlog')->first();
+		$status = $accessToken->project->statuses()->where('permanent', 'backlog')->first();
 
 		// Check if the the request already contains a UUID for the bug
 		$id = $this->setId($request);
