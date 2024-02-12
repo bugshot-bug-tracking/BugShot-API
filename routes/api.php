@@ -106,8 +106,7 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 |--------------------------------------------------------------------------
 */
 
-Route::post('projects/validate-access-token', [ProjectController::class, "validateToken"])->name("projects.validate-access-token");
-Route::post('projects/check-via-access-token', [ProjectController::class, "checkViaAccessToken"])->name("projects.check-via-access-token");
+Route::post('access-tokens/check-url', [AccessTokenController::class, "checkUrl"])->name("access-tokens.check-url");
 Route::post('bugs/store-with-token', [BugController::class, "storeWithToken"])->name("bugs.store-with-access-token");
 
 Route::prefix('statuses/{status}')->group(function () {
@@ -216,8 +215,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 
 	// Project prefixed routes
 	Route::prefix('projects/{project}')->group(function () {
-		Route::post('/generate-access-token', [ProjectController::class, 'generateAccessToken'])->name('project.generate-access-token');
-		Route::get('/delete-access-token', [ProjectController::class, 'deleteAccessToken'])->name('project.delete-access-token');
 		Route::apiResource('/statuses', StatusController::class);
 		Route::apiResource('/access-tokens', AccessTokenController::class);
 		Route::get('/image', [ProjectController::class, "image"])->name("project.image");

@@ -98,7 +98,7 @@ class BugherdImportController extends Controller
 	}
 
 	/**
-	 * Display a listing of the resource.
+	 * Import projects from Bugherd.
 	 *
 	 * @return Response
 	 */
@@ -205,15 +205,5 @@ class BugherdImportController extends Controller
 			// Queue the job
 			ImportBugherdProject::dispatch($import, $apiToken, $project);
 		}
-	}
-
-	public function getBugs(Project $project)
-	{
-
-	}
-
-	public function importBug(Project $project)
-	{
-
 	}
 }
