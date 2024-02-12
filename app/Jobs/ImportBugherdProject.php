@@ -16,6 +16,7 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Jobs\ImportBugherdProject;
 
 class ImportBugherdProject implements ShouldQueue
 {
@@ -43,11 +44,8 @@ class ImportBugherdProject implements ShouldQueue
      */
     public function handle()
     {
-		$bugshotCompanyId = $this->project["bugshotCompanyId"];
-		$bugherdProjectId = $this->project["bugherdProjectId"];
-		$response = Bugherd::sendBugherdRequest($this->apiToken, "projects/${bugherdProjectId}.json");
+		$response = Bugherd::sendBugherdRequest($this->apiToken, "projects/" . $this->project["bugherdProjectId"] . ".json");
 
-		// TODO: Test that
 		if($response->ok())
 		{
 			$projectData = json_decode($response->body(), true)['project'];
@@ -58,16 +56,12 @@ class ImportBugherdProject implements ShouldQueue
 				$project->user_id = $this->import->importer->id;
 				$project->designation = $projectData['name'];
 				$project->color_hex = '#7A2EE6';
-				$project->company_id = $bugshotCompanyId;
+				$project->company_id = $this->project["bugshotCompanyId"];
 				$project->url = $projectData['devurl'];
 
 				// Do the save and fire the custom event
 				$project->fireCustomEvent('projectCreated');
 				$project->save();
-
-				$this->import->update([
-					'status_id' => ImportStatus::IMPORTED
-				]);
 			} catch(Exception $e)
 			{
 				Log::error($e->getMessage());
@@ -80,5 +74,8 @@ class ImportBugherdProject implements ShouldQueue
 				'status_id' => ImportStatus::IMPORT_FAILED
 			]);
 		}
+
+		// Queue the job for the bugs
+		ImportBugherdTasks::dispatch($this->import, $this->apiToken, $this->project["bugherdProjectId"], $project);
     }
 }

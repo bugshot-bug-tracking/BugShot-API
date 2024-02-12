@@ -32,11 +32,13 @@ class ArchiveBugs extends Command
     public function handle()
     {
 		Log::info("Retrieving bugs to archive");
-		$bugs = Bug::where("archived_at", NULL)
-					->whereNot("deleted_at", NULL)
-					->orWhere("done_at", "<=", date('Y-m-d', strtotime(now() . ' - 30 days')))
-					->withTrashed()
-					->get();
+		$bugs = Bug::whereNull("archived_at")
+			->where(function($query) {
+				$query->where("done_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')))
+				->orWhere("deleted_at", "<=", date('Y-m-d', strtotime(now() . '- 30 days')));
+			})
+			->withTrashed()
+			->get();
 
 		foreach($bugs as $bug) {
 			$bug->fill([
