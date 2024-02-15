@@ -20,6 +20,7 @@ use App\Http\Resources\CompanyResource;
 use App\Http\Resources\ImageResource;
 use App\Http\Resources\InvitationResource;
 use App\Http\Resources\CompanyUserRoleResource;
+use App\Http\Resources\UserResource;
 
 // Services
 use App\Services\ImageService;
@@ -692,7 +693,7 @@ class CompanyController extends Controller
 
 		// Check if the company comes with an image (or a color)
 		$image = $company->image;
-		
+
 		if($request->has("base64")){
 			if($request->base64 != NULL){
 				$image = $imageService->store($request->base64, $image);
@@ -1468,5 +1469,90 @@ class CompanyController extends Controller
 		]);
 
 		return new CompanyResource($company);
+	}
+
+	/**
+	 * Display a list of assignable users that have access to the project.
+	 *
+	 * @param  Company  $company
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/companies/{company_id}/assignable-users",
+	 *	tags={"Company"},
+	 *	summary="All assignable users.",
+	 *	operationId="allAssignableCompanyUsers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="company_id",
+	 *      example="BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Company/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/User")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function assignableUsers(Company $company)
+	{
+		// Check if the user is authorized to view the users of the company
+		$this->authorize('view', $company);
+
+		$assignableUsers = $company->users;
+
+		// Add organization users
+		$organizationUsers = $company->organization->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$organizationUsers->isEmpty()) {
+			foreach ($organizationUsers as $organizationUser) {
+				$assignableUsers->push($organizationUser);
+			}
+		}
+
+		return UserResource::collection($assignableUsers);
 	}
 }

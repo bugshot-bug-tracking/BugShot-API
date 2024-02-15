@@ -1622,7 +1622,7 @@ class ProjectController extends Controller
 	 *	path="/projects/{project_id}/assignable-users",
 	 *	tags={"Project"},
 	 *	summary="All assignable users.",
-	 *	operationId="allAssignableUsers",
+	 *	operationId="allAssignableProjectUsers",
 	 *	security={ {"sanctum": {} }},
 	 * 	@OA\Parameter(
 	 *		name="clientId",
@@ -1656,7 +1656,7 @@ class ProjectController extends Controller
 	 *		description="Success",
 	 *		@OA\JsonContent(
 	 *			type="array",
-	 *			@OA\Items(ref="#/components/schemas/ProjectUserRole")
+	 *			@OA\Items(ref="#/components/schemas/User")
 	 *		)
 	 *	),
 	 *	@OA\Response(
