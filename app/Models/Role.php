@@ -12,6 +12,11 @@ class Role extends Model
 {
 	use HasFactory;
 
+	const OWNER = 0;
+	const MANAGER = 1;
+	const TEAM = 2;
+	const CLIENT = 3;
+
 	/**
 	 * @OA\Property(
 	 * 	property="id",

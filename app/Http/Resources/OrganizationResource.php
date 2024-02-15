@@ -69,7 +69,7 @@ class OrganizationResource extends JsonResource
 
                 if($userOrganization == NULL) {
                     $userOrganization = Auth::user()->createdOrganizations()->find($this->id);
-                    $role = Role::find(1); // Owner
+                    $role = Role::find(Role::OWNER); // Owner
                 } else {
                     $role = Role::find($userOrganization->pivot->role_id);
                 }
@@ -165,7 +165,7 @@ class OrganizationResource extends JsonResource
 
                 if($userCompany == NULL) {
                     $userCompany = Auth::user()->createdCompanies()->find($this->id);
-                    $role =  Role::find(1); // Owner
+                    $role =  Role::find(Role::OWNER); // Owner
                 } else {
                     $role = Role::find($userCompany->pivot->role_id);
                 }
