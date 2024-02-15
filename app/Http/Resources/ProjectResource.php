@@ -110,7 +110,7 @@ class ProjectResource extends JsonResource
 
 			if ($userProject == NULL) {
 				$userProject = Auth::user()->createdProjects()->find($this->id);
-				$role =  Role::find(1); // Owner
+				$role =  Role::find(Role::OWNER); // Owner
 			} else {
 				$role = Role::find($userProject->pivot->role_id);
 			}

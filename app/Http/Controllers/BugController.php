@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Http\Resources\BugResource;
 use App\Http\Resources\ArchivedBugResource;
 use App\Http\Resources\BugUserRoleResource;
+use App\Http\Resources\UserResource;
 
 // Services
 use App\Services\ScreenshotService;
@@ -1930,5 +1931,105 @@ class BugController extends Controller
 		broadcast(new ProjectBugMembersUpdated($bug->project, $bug));
 
 		return response($val, 204);
+	}
+
+	/**
+	 * Display a list of assignable users that have access to the bug.
+	 *
+	 * @param  Bug  $bug
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/bugs/{bug_id}/assignable-users",
+	 *	tags={"Bug"},
+	 *	summary="All assignable users.",
+	 *	operationId="allAssignableBugUsers",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *	@OA\Parameter(
+	 *		name="bug_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/Bug/properties/id"
+	 *		)
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/User")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 *)
+	 *
+	 **/
+	public function assignableUsers(Bug $bug)
+	{
+		// Check if the user is authorized to view the users of the bug
+		$this->authorize('view', $bug);
+
+		$assignableUsers = $bug->users;
+
+		// Add project users
+		$projectUsers = $bug->project->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$projectUsers->isEmpty()) {
+			foreach ($projectUsers as $projectUser) {
+				$assignableUsers->push($projectUser);
+			}
+		}
+
+		// Add company users
+		$companyUsers = $bug->project->company->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$companyUsers->isEmpty()) {
+			foreach ($companyUsers as $companyUser) {
+				$assignableUsers->push($companyUser);
+			}
+		}
+
+		// Add organization users
+		$organizationUsers = $bug->project->company->organization->users()->whereNotIn('id', $assignableUsers->pluck('id')->toArray())->wherePivot('role_id', '<=', 1)->get();
+		if (!$organizationUsers->isEmpty()) {
+			foreach ($organizationUsers as $organizationUser) {
+				$assignableUsers->push($organizationUser);
+			}
+		}
+
+		return UserResource::collection($assignableUsers);
 	}
 }

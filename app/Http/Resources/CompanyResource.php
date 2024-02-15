@@ -107,7 +107,7 @@ class CompanyResource extends JsonResource
 
                 if($userCompany == NULL) {
                     $userCompany = Auth::user()->createdCompanies()->find($this->id);
-                    $role =  Role::find(1); // Owner
+                    $role =  Role::find(Role::OWNER);
                 } else {
                     $role = Role::find($userCompany->pivot->role_id);
                 }
