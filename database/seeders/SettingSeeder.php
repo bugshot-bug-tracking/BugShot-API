@@ -51,6 +51,14 @@ class SettingSeeder extends Seeder
 				"designation" => "tour_status",
 				"default_value" => NULL
 			],
+			[
+				"designation" => "user_settings_app_notifications",
+				"default_value" => "activated"
+			],
+			[
+				"designation" => "user_settings_mail_select_notifications",
+				"default_value" => "activated"
+			],
 		]);
 	}
 }
