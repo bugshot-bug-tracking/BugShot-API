@@ -14,23 +14,31 @@ class PrioritySeeder extends Seeder
 	 */
 	public function run()
 	{
-		Priority::create([
-			"id" => 1,
-			"designation" => "Minor"
-		]);
+		$priorities = [
+			[
+				"id" => 1,
+				"designation" => "Minor"
+			],
+			[
+				"id" => 2,
+				"designation" => "Normal"
+			],
+			[
+				"id" => 3,
+				"designation" => "Important"
+			],
+			[
+				"id" => 4,
+				"designation" => "Critical"
+			]
+		];
 
-		Priority::create([
-			"id" => 2,
-			"designation" => "Normal"
-		]);
-
-		Priority::create([
-			"id" => 3,
-			"designation" => "Important"
-		]);
-		Priority::create([
-			"id" => 4,
-			"designation" => "Critical"
-		]);
+		foreach($priorities as $priority)
+		{
+			if(!Priority::where('id', $priority['id'])->exists())
+			{
+				Priority::create($priority);
+			}
+		}
 	}
 }

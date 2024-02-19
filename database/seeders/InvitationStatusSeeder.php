@@ -14,27 +14,35 @@ class InvitationStatusSeeder extends Seeder
 	 */
 	public function run()
 	{
-		InvitationStatus::create([
-			"id" => 1,
-			"designation" => "pending"
-		]);
+		$statuses = [
+			[
+				"id" => 1,
+				"designation" => "pending"
+			],
+			[
+				"id" => 2,
+				"designation" => "accepted"
+			],
+			[
+				"id" => 3,
+				"designation" => "declined"
+			],
+			[
+				"id" => 4,
+				"designation" => "expired"
+			],
+			[
+				"id" => 5,
+				"designation" => "duplicate"
+			]
+		];
 
-		InvitationStatus::create([
-			"id" => 2,
-			"designation" => "accepted"
-		]);
-
-		InvitationStatus::create([
-			"id" => 3,
-			"designation" => "declined"
-		]);
-		InvitationStatus::create([
-			"id" => 4,
-			"designation" => "expired"
-		]);
-		InvitationStatus::create([
-			"id" => 5,
-			"designation" => "duplicate"
-		]);
+		foreach($statuses as $status)
+		{
+			if(!InvitationStatus::where('id', $status['id'])->exists())
+			{
+				InvitationStatus::create($status);
+			}
+		}
 	}
 }

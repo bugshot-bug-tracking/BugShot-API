@@ -14,20 +14,27 @@ class VersionTypeSeeder extends Seeder
 	 */
 	public function run()
 	{
-	    VersionType::create([
-			'designation' => 'security'
-		]);
+		$versionTypes = [
+			[
+				'designation' => 'security'
+			],
+			[
+				'designation' => 'quality_of_life'
+			],
+			[
+				'designation' => 'bugfixes'
+			],
+			[
+				'designation' => 'general'
+			]
+		];
 
-        VersionType::create([
-            'designation' => 'quality_of_life'
-		]);
-
-        VersionType::create([
-            'designation' => 'bugfixes'
-		]);
-
-        VersionType::create([
-            'designation' => 'general'
-		]);
+		foreach($versionTypes as $versionType)
+		{
+			if(!VersionType::where('designation', $versionType['designation'])->exists())
+			{
+				VersionType::create($versionType);
+			}
+		}
 	}
 }
