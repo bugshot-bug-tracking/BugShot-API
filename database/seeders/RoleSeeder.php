@@ -16,14 +16,32 @@ class RoleSeeder extends Seeder
 	 */
 	public function run()
 	{
-		Role::create([
-			// "id" => 0,
-			"designation" => "Owner"
-		]);
+		if(!Role::where('id', Role::OWNER)->exists())
+		{
+			Role::create([
+				// "id" => 0,
+				"designation" => "Owner"
+			]);
 
-		Role::first()->update([
-			"id" => 0
-		]);
+			Role::first()->update([
+				"id" => 0
+			]);
+		}
+
+		$roles = [
+			[
+				"id" => 1,
+				"designation" => "Manager"
+			],
+			[
+				"id" => 2,
+				"designation" => "Team"
+			],
+			[
+				"id" => 3,
+				"designation" => "Client"
+			]
+		];
 
 		// Only run once
 		// $organizations = Organization::all();
@@ -43,29 +61,12 @@ class RoleSeeder extends Seeder
 		// 	}
 		// }
 
-		Role::create([
-			"id" => 1,
-			"designation" => "Manager"
-		]);
-
-		Role::create([
-			"id" => 2,
-			"designation" => "Team"
-		]);
-
-		Role::create([
-			"id" => 3,
-			"designation" => "Client"
-		]);
-
-		// Role::create([
-		// 	"id" => 6,
-		// 	"designation" => "Client"
-		// ]);
-
-		// Role::create([
-		// 	"id" => 7,
-		// 	"designation" => "Visitor"
-		// ]);
+		foreach($roles as $role)
+		{
+			if(!Role::where('id', $role['id'])->exists())
+			{
+				Role::create($role);
+			}
+		}
 	}
 }

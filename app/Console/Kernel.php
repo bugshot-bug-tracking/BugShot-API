@@ -80,9 +80,9 @@ class Kernel extends ConsoleKernel
 						->get();
 
 			foreach($projects as $project) {
-				$comments = $project->comments;
-				$bugs = $project->bugs;
-				$doneBugs = $bugs->where('done_at', '>=', $date);
+				$comments = $project->comments()->whereDate('comments.updated_at', '>=', Carbon::now()->subDay())->get();
+				$doneBugs = $project->bugs()->whereDate('bugs.done_at', '>=', Carbon::now()->subDay())->get();
+				$bugs = $project->bugs()->whereDate('bugs.created_at', '>=', Carbon::now()->subDay())->get();
 
 				if(!$comments->isEmpty() || !$doneBugs->isEmpty() || !$bugs->isEmpty()) {
 					foreach($project->users as $user) {
