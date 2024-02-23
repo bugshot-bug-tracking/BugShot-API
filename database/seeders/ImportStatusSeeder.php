@@ -20,6 +20,12 @@ class ImportStatusSeeder extends Seeder
 			['id' => 3, 'designation' => 'import_failed']
 		];
 
-		ImportStatus::insert($statuses);
+		foreach($statuses as $status)
+		{
+			if(!ImportStatus::where('id', $status['id'])->withTrashed()->exists())
+			{
+				ImportStatus::create($status);
+			}
+		}
 	}
 }

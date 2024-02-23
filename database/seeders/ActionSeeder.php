@@ -52,10 +52,14 @@ class ActionSeeder extends Seeder
 			// TODO: Keep finding new actions and check if an history entry is made for a organization when e.g. a bug is moved to a new status
 		];
 
-		foreach($actions as $action) {
-			Action::create([
-				"designation" => $action
-			]);
+		foreach($actions as $action)
+		{
+			if(!Action::where('designation', $action)->exists())
+			{
+				Action::create([
+					"designation" => $action
+				]);
+			}
 		}
     }
 }
