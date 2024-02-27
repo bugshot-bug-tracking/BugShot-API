@@ -31,7 +31,18 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
 	 */
 	public function via($notifiable)
 	{
-		return ['mail'];
+		$channels = [];
+
+		// Get the 'register_mailer' value from the Laravel application configuration
+		$register_mailer = config('app.register_mailer');
+
+		// Check if 'register_mailer' is null or not in valid email format. If it is, it means the 'register_mailer' config is not set or incorrect.
+		// In this case, we return early without sending the notification email.
+		if (!empty($register_mailer) && filter_var($register_mailer, FILTER_VALIDATE_EMAIL)) {
+			$channels = ['mail'];
+		}
+
+		return $channels;
 	}
 
 	/**
@@ -44,12 +55,6 @@ class UserRegisteredNotification extends Notification implements ShouldQueue
 	{
 		// Get the 'register_mailer' value from the Laravel application configuration
 		$register_mailer = config('app.register_mailer');
-
-		// Check if 'register_mailer' is null. If it is, it means the 'register_mailer' config is not set.
-		// In this case, we return early without sending the notification email.
-		if (is_null($register_mailer)) {
-			return;
-		}
 
 		// If 'register_mailer' is not null, we create a new 'UserRegisteredMailable' object, set the email subject,
 		// and specify the recipient using the 'register_mailer' email.

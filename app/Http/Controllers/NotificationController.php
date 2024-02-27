@@ -14,7 +14,7 @@ use App\Services\NotificationService;
 
 // Models
 use App\Models\User;
-use Illuminate\Notifications\DatabaseNotification as Notification;
+use Illuminate\Notifications\DatabaseNotification;
 
 /**
  * @OA\Tag(
@@ -101,7 +101,7 @@ class NotificationController extends Controller
 	 * Remove the specified resource from storage.
 	 *
 	 * @param  User  $user
-	 * @param  Notification  $notification
+	 * @param  DatabaseNotification  $notification
 	 * @param  NotificationService  $notificationService
 	 * @return Response
 	 */
@@ -166,7 +166,7 @@ class NotificationController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function destroy(User $user, Notification $notification, NotificationService $notificationService)
+	public function destroy(User $user, DatabaseNotification $notification, NotificationService $notificationService)
 	{
 		// Check if the user is authorized to delete the notification
 		$this->authorize('delete', [DatabaseNotification::class, $notification]);
