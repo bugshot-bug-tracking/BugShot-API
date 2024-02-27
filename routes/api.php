@@ -35,6 +35,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
 use App\Http\Controllers\BugherdImportController;
+use App\Services\AtlassianService;
 
 // Events
 use App\Events\TestEvent;
@@ -251,6 +252,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
 		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
+
+	// Access token specific routes
+	Route::get("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {

@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class AccessTokenResource extends JsonResource
 {
@@ -14,6 +15,12 @@ class AccessTokenResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$favoriteAccessToken = DB::table('project_access_token_users')
+		->where('pat_id', $this->id)
+		->where('user_id', auth()->id())
+		->where('project_id', $this->project_id)
+		->exists();
+
 		$accessToken = array(
 			"id" => $this->id,
 			"type" => "AccessToken",
@@ -23,7 +30,8 @@ class AccessTokenResource extends JsonResource
 				"project_id" => $this->project_id,
 				"user_id" => $this->user_id,
 				"created_at" => $this->created_at,
-                "updated_at" => $this->updated_at
+                "updated_at" => $this->updated_at,
+				"is_favorite" => $favoriteAccessToken
 			]
 		);
 
