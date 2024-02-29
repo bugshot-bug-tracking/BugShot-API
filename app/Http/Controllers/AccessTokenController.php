@@ -723,25 +723,23 @@ class AccessTokenController extends Controller
 		$this->authorize('view', [AccessToken::class, $accessToken->project]);
 
 		$existingProjectAccessToken = DB::table('project_access_token_users')
-		->where('project_id', $accessToken->project->id)
-		->where('user_id', Auth::id())
-		->first();
+			->where('project_id', $accessToken->project->id)
+			->where('user_id', Auth::id())
+			->first();
 
-		if(!$existingProjectAccessToken)
-		{
+		if (!$existingProjectAccessToken) {
 			DB::table('project_access_token_users')->insert([
 				'pat_id' => $accessToken->id,
 				'project_id' => $accessToken->project->id,
 				'user_id' => Auth::id()
 			]);
-		} else
-		{
+		} else {
 			DB::table('project_access_token_users')
-			->where('project_id', $accessToken->project->id)
-			->where('user_id', Auth::id())
-			->update([
-				'pat_id' => $accessToken->id
-			]);
+				->where('project_id', $accessToken->project->id)
+				->where('user_id', Auth::id())
+				->update([
+					'pat_id' => $accessToken->id
+				]);
 		}
 
 		return response('Successfully marked as favorite', 200);
