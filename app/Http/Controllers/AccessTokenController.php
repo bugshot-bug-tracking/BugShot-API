@@ -392,7 +392,7 @@ class AccessTokenController extends Controller
 		// Check if the user is authorized to update the access token
 		$this->authorize('update', [AccessToken::class, $project]);
 
-	    // Update the access token
+		// Update the access token
 		$accessToken->fill($request->all());
 
 		// Do the save and fire the custom event
@@ -514,16 +514,16 @@ class AccessTokenController extends Controller
 	 *		required=false,
 	 *		in="header"
 	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header"
+	 *	),
 	 *  @OA\RequestBody(
 	 *      required=true,
 	 *      @OA\MediaType(
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
-	 *              @OA\Property(
-	 *                  description="The access token",
-	 *                  property="access_token",
-	 *                  type="string",
-	 *              ),
 	 *  			@OA\Property(
 	 *                  property="url",
 	 *                  type="string",
@@ -565,12 +565,89 @@ class AccessTokenController extends Controller
 	 **/
 	public function checkUrl(Request $request, ProjectService $projectService)
 	{
-		$accessToken = AccessToken::where('access_token', $request->access_token)->firstOrFail();
+		$accessToken = AccessToken::where('access_token', $request->header('access-token'))->firstOrFail();
 
 		$response = $projectService->checkUrlAgainstProject($accessToken->project, $request->url);
 
 		if ($response == NULL) {
 			return response()->json("", 204);
+		}
+
+		return new ProjectResource($accessToken->project);
+	}
+
+	/**
+	 * Check if access token exists.
+	 *
+	 * @return Response
+	 */
+	/**
+	 * @OA\Post(
+	 *	path="/access-tokens/validate-access-token",
+	 *	tags={"AccessToken"},
+	 *	summary="Check if access token exists.",
+	 *	operationId="validateAccessToken",
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="access-token",
+	 *		required=true,
+	 *		in="header"
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			type="array",
+	 *			@OA\Items(ref="#/components/schemas/Project")
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=204,
+	 *		description="Url doesn't match the access token project",
+	 *	),
+	 *
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function validateToken(Request $request)
+	{
+		$accessToken = AccessToken::where('access_token', $request->header('access-token'))->firstOrFail();
+
+		if (!$accessToken) {
+			return response()->json([
+				'message' => __('application.access-token-invalid')
+			], 404);
 		}
 
 		return new ProjectResource($accessToken->project);

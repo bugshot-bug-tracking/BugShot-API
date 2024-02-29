@@ -108,6 +108,7 @@ Broadcast::routes(['middleware' => ['auth:sanctum']]);
 */
 
 Route::post('access-tokens/check-url', [AccessTokenController::class, "checkUrl"])->name("access-tokens.check-url");
+Route::post('access-tokens/validate-access-token', [AccessTokenController::class, "validateToken"])->name("access-tokens.validate");
 Route::post('bugs/store-with-token', [BugController::class, "storeWithToken"])->name("bugs.store-with-access-token");
 
 Route::prefix('statuses/{status}')->group(function () {
