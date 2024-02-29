@@ -53,7 +53,19 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail', 'database', 'broadcast'];
+		$channels = ['broadcast'];
+
+		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")
+		{
+			$channels[] = 'database';
+		}
+
+		if($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated")
+		{
+			$channels[] = 'mail';
+		}
+
+        return $channels;
     }
 
     /**

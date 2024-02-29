@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 // Miscellaneous, Helpers, ...
-
+use Illuminate\Support\Facades\DB;
 use App\Events\AccessTokenCreated;
 use App\Events\AccessTokenDeleted;
 use App\Events\AccessTokenUpdated;
@@ -651,5 +651,97 @@ class AccessTokenController extends Controller
 		}
 
 		return new ProjectResource($accessToken->project);
+	}
+
+	/**
+	 * Mark the specified resource as favorite.
+	 *
+	 * @param  Project  $project
+	 * @return Response
+	 */
+	/**
+	 * @OA\Get(
+	 *	path="/access-tokens/{access_token_id}/mark-as-favorite",
+	 *	tags={"AccessToken"},
+	 *	summary="Mark one access_token as favorite.",
+	 *	operationId="markAccessTokenAsFavorite",
+	 *	security={ {"sanctum": {} }},
+	 * 	@OA\Parameter(
+	 *		name="clientId",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="version",
+	 *		required=true,
+	 *		in="header",
+	 * 		example="1.0.0"
+	 *	),
+	 * 	@OA\Parameter(
+	 *		name="locale",
+	 *		required=false,
+	 *		in="header"
+	 *	),
+	 *
+	 *	@OA\Parameter(
+	 *		name="access_token_id",
+	 *		required=true,
+	 *		in="path",
+	 *		@OA\Schema(
+	 *			ref="#/components/schemas/AccessToken/properties/id"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=200,
+	 *		description="Success",
+	 *		@OA\JsonContent(
+	 *			ref="#/components/schemas/Project"
+	 *		)
+	 *	),
+	 *	@OA\Response(
+	 *		response=400,
+	 *		description="Bad Request"
+	 *	),
+	 *	@OA\Response(
+	 *		response=401,
+	 *		description="Unauthenticated"
+	 *	),
+	 *	@OA\Response(
+	 *		response=403,
+	 *		description="Forbidden"
+	 *	),
+	 *	@OA\Response(
+	 *		response=404,
+	 *		description="Not Found"
+	 *	),
+	 * )
+	 **/
+	public function markAsFavorite(AccessToken $accessToken)
+	{
+		// Check if the user is authorized to view the access token
+		$this->authorize('view', [AccessToken::class, $accessToken->project]);
+
+		$existingProjectAccessToken = DB::table('project_access_token_users')
+			->where('project_id', $accessToken->project->id)
+			->where('user_id', Auth::id())
+			->first();
+
+		if (!$existingProjectAccessToken) {
+			DB::table('project_access_token_users')->insert([
+				'pat_id' => $accessToken->id,
+				'project_id' => $accessToken->project->id,
+				'user_id' => Auth::id()
+			]);
+		} else {
+			DB::table('project_access_token_users')
+				->where('project_id', $accessToken->project->id)
+				->where('user_id', Auth::id())
+				->update([
+					'pat_id' => $accessToken->id
+				]);
+		}
+
+		return response('Successfully marked as favorite', 200);
 	}
 }

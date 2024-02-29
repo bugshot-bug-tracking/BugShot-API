@@ -14,7 +14,7 @@ class SettingSeeder extends Seeder
 	 */
 	public function run()
 	{
-		Setting::insert([
+		$settings = [
 			[
 				"designation" => "user_settings_interface_language",
 				"default_value" => "en"
@@ -59,6 +59,18 @@ class SettingSeeder extends Seeder
 				"designation" => "user_settings_mail_select_notifications",
 				"default_value" => "activated"
 			],
-		]);
+			[
+				"designation" => "beta_user",
+				"default_value" => "deactivated"
+			],
+		];
+
+		foreach($settings as $setting)
+		{
+			if(!Setting::where('designation', $setting['designation'])->exists())
+			{
+				Setting::create($setting);
+			}
+		}
 	}
 }

@@ -46,6 +46,12 @@ class ValueSeeder extends Seeder
 			['designation' => 'canceled'],
 		];
 
-		Value::insert($values);
+		foreach($values as $value)
+		{
+			if(!Value::where('designation', $value['designation'])->exists())
+			{
+				Value::create($value);
+			}
+		}
 	}
 }

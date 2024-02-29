@@ -14,19 +14,27 @@ class BugExportStatusSeeder extends Seeder
 	 */
 	public function run()
 	{
-		BugExportStatus::create([
-			"id" => 1,
-			"designation" => "pending"
-		]);
+		$bugExports = [
+			[
+				"id" => 1,
+				"designation" => "pending"
+			],
+			[
+				"id" => 2,
+				"designation" => "approved"
+			],
+			[
+				"id" => 3,
+				"designation" => "declined"
+			]
+		];
 
-		BugExportStatus::create([
-			"id" => 2,
-			"designation" => "approved"
-		]);
-
-		BugExportStatus::create([
-			"id" => 3,
-			"designation" => "declined"
-		]);
+		foreach($bugExports as $bugExport)
+		{
+			if(!BugExportStatus::where('id', $bugExport['id'])->exists())
+			{
+				BugExportStatus::create($bugExport);
+			}
+		}
 	}
 }

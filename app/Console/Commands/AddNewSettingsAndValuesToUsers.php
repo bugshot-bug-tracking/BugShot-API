@@ -51,7 +51,7 @@ class AddNewSettingsAndValuesToUsers extends Command
 					if(!$settingUserValues->contains('setting_id', $setting->id))
 					{
 						$defaultValue = Value::where('designation', $setting->default_value)->first();
-						$user->settings()->attach([$setting->id => ['value_id' => $defaultValue->id]]);
+						$user->settings()->attach([$setting->id => ['value_id' => $defaultValue ? $defaultValue->id : NULL]]);
 					}
 				}
 			}

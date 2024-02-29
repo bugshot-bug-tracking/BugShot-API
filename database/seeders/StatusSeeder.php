@@ -14,44 +14,50 @@ class StatusSeeder extends Seeder
 	 */
 	public function run()
 	{
-	    Status::create([
-            'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD1',
-            'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-			'designation' => 'Backlog',
-            'order_number' => 1,
-            'permanent' => 'backlog',
-		]);
+		$statuses = [
+			[
+				'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD1',
+				'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+				'designation' => 'Backlog',
+				'order_number' => 1,
+				'permanent' => 'backlog',
+			],
+			[
+				'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD2',
+				'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+				'designation' => 'ToDo',
+				'order_number' => 2,
+				'permanent' => NULL,
+			],
+			[
+				'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD3',
+				'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+				'designation' => 'Doing',
+				'order_number' => 3,
+				'permanent' => NULL,
+			],
+			[
+				'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD4',
+				'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+				'designation' => 'Testing',
+				'order_number' => 4,
+				'permanent' => NULL,
+			],
+			[
+				'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD5',
+				'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
+				'designation' => 'Done',
+				'order_number' => 5,
+				'permanent' => 'done',
+			]
+		];
 
-        Status::create([
-            'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD2',
-            'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-			'designation' => 'ToDo',
-            'order_number' => 2,
-            'permanent' => NULL,
-		]);
-
-        Status::create([
-            'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD3',
-            'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-			'designation' => 'Doing',
-            'order_number' => 3,
-            'permanent' => NULL,
-		]);
-
-        Status::create([
-            'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD4',
-            'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-			'designation' => 'Testing',
-            'order_number' => 4,
-            'permanent' => NULL,
-		]);
-
-        Status::create([
-            'id' => 'DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDD5',
-            'project_id' => 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC',
-			'designation' => 'Done',
-            'order_number' => 5,
-            'permanent' => 'done',
-		]);
+		foreach($statuses as $status)
+		{
+			if(!Status::where('id', $status['id'])->withTrashed()->exists())
+			{
+				Status::create($status);
+			}
+		}
 	}
 }
