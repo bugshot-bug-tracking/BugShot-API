@@ -60,8 +60,8 @@ class SettingSeeder extends Seeder
 				"default_value" => "activated"
 			],
 			[
-				"designation" => "test",
-				"default_value" => "activated"
+				"designation" => "beta_user",
+				"default_value" => "deactivated"
 			],
 		];
 
