@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Setting;
+use App\Models\Value;
 use App\Models\CompanyUserRole;
 use Illuminate\Support\Str;
 use App\Models\Organization;
@@ -39,15 +41,17 @@ class AddNewSettingsAndValuesToUsers extends Command
 		DB::transaction(function () {
 
 			$users = User::all();
+			$settings = Setting::all();
 
-			foreach($users as $user) {
-				$settingIds = array(32);
-
-				foreach($settingIds as $settingId) {
-					$settingUserValue = SettingUserValue::where("user_id", $user->id)->where("setting_id", $settingId)->first();
-
-					if($settingUserValue == NULL) {
-						$user->settings()->attach([$settingId => ['value_id' => 11]]);
+			foreach($users as $user)
+			{
+				$settingUserValues = SettingUserValue::where("user_id", $user->id)->get();
+				foreach($settings as $setting)
+				{
+					if(!$settingUserValues->contains('setting_id', $setting->id))
+					{
+						$defaultValue = Value::where('designation', $setting->default_value)->first();
+						$user->settings()->attach([$setting->id => ['value_id' => $defaultValue ? $defaultValue->id : NULL]]);
 					}
 				}
 			}

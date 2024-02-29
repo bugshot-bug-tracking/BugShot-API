@@ -35,6 +35,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Analytics\AnalyticController;
 use App\Http\Controllers\Analytics\LoadingTimeController;
 use App\Http\Controllers\BugherdImportController;
+use App\Services\AtlassianService;
 
 // Events
 use App\Events\TestEvent;
@@ -212,6 +213,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::put("/users/{user}", [CompanyController::class, "updateUserRole"])->name("company.update-user-role");
 		Route::delete("/users/{user}", [CompanyController::class, "removeUser"])->name("company.remove-user");
 		Route::post('/move-to-new-organization', [CompanyController::class, "moveCompanyToNewOrganization"])->name("company.move-to-new-organization");
+		Route::get("/assignable-users", [CompanyController::class, "assignableUsers"])->name("company.assignable-users");
 	});
 
 	// Project prefixed routes
@@ -252,6 +254,9 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
+	// Access token specific routes
+	Route::get("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
+
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
 		Route::apiResource('/bugs', BugController::class);
@@ -269,6 +274,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::post('/assign-user', [BugController::class, "assignUser"])->name("bug.assign-user");
 		Route::get("/users", [BugController::class, "users"])->name("bug.users");
 		Route::delete("/users/{user}", [BugController::class, "removeUser"])->name("bug.remove-user");
+		Route::get("/assignable-users", [BugController::class, "assignableUsers"])->name("bug.assignable-users");
 	});
 
 	// Screenshot prefixed routes

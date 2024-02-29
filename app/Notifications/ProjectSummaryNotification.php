@@ -39,7 +39,14 @@ class ProjectSummaryNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+		$channels = [];
+
+		if($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated")
+		{
+			$channels[] = 'mail';
+		}
+
+        return $channels;
     }
 
     /**

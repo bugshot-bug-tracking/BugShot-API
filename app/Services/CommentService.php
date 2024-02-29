@@ -53,8 +53,11 @@ class CommentService
 
 		// Notify the tagged users
 		foreach ($request->tagged as $tagged) {
-			$user = User::find($tagged['user_id']);
-			$user ? TaggedInComment::dispatch($user, $comment) : true;
+			if($tagged['user_id'] != $user_id)
+			{
+				$user = User::find($tagged['user_id']);
+				$user ? TaggedInComment::dispatch($user, $comment) : true;
+			}
 		}
 
 		// Notify the creator of the bug if he is not one of the tagged users or the creator of the comment

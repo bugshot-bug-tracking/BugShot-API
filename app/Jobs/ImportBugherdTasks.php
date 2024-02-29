@@ -61,31 +61,34 @@ class ImportBugherdTasks implements ShouldQueue
 
 			try
 			{
-				$bug = new Bug();
-				$bug->fill([
-					"id" => (string) Str::uuid(),
-					"designation" => $task["description"],
-					"description" => "",
-					"url" => $this->project->url,
-					"priority_id" => 1,
-					"operating_system" => "",
-					"time_estimation" => "",
-					"browser" => "",
-					"selector" => "",
-					"resolution" => "",
-					"project_id" => $this->project->id,
-					"user_id" => $this->import->imported_by,
-					"time_estimation_type" => 'm',
-					"approval_status_id" => null,
-					"deadline" => $task['due_at'] == NULL ? null : new Carbon($task['due_at']),
-					"order_number" => $order_number,
-					"ai_id" => $ai_id,
-					"client_id" => $client_id
-				]);
+				foreach($tasks as $task)
+				{
+					$bug = new Bug();
+					$bug->fill([
+						"id" => (string) Str::uuid(),
+						"designation" => $task["description"],
+						"description" => "",
+						"url" => $this->project->url,
+						"priority_id" => 1,
+						"operating_system" => "",
+						"time_estimation" => "",
+						"browser" => "",
+						"selector" => "",
+						"resolution" => "",
+						"project_id" => $this->project->id,
+						"user_id" => $this->import->imported_by,
+						"time_estimation_type" => 'm',
+						"approval_status_id" => null,
+						"deadline" => $task['due_at'] == NULL ? null : new Carbon($task['due_at']),
+						"order_number" => $order_number,
+						"ai_id" => $ai_id,
+						"client_id" => $client_id
+					]);
 
-				// Do the save and fire the custom event
-				$bug->fireCustomEvent('bugCreated');
-				$bug->save();
+					// Do the save and fire the custom event
+					$bug->fireCustomEvent('bugCreated');
+					$bug->save();
+				}
 
 				$this->import->update([
 					'status_id' => ImportStatus::IMPORTED
