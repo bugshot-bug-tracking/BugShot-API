@@ -63,7 +63,7 @@ class ProjectSeeder extends Seeder
 		if(!ProjectUserRole::where('project_id', 'CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC')->where('user_id', '2')->exists())
 		{
         	// Add Testuser Jane Doe as a manager
-			User::find(2)->projects()->attach('AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA', ['role_id' => Role::TEAM]);
+			User::find(2)->projects()->attach('CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC', ['role_id' => Role::TEAM]);
 		}
 	}
 }
