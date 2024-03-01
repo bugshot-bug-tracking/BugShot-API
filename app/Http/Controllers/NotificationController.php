@@ -91,7 +91,7 @@ class NotificationController extends Controller
 	public function index(Request $request, User $user)
 	{
 		// Check if the user is authorized to list the notifications of the user
-		$this->authorize('viewAny', [DatabaseNotification::class, $user]);
+		// $this->authorize('viewAny', DatabaseNotification::class);
 
 		return NotificationResource::collection($user->notifications);
 	}
