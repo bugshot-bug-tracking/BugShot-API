@@ -15,6 +15,7 @@ class InvitationReceivedUnregisteredUser extends Mailable
 {
     use Queueable, SerializesModels;
 
+	public $notifiable;
 	public $locale;
     public $invitation;
     public $entryMessage;
@@ -25,8 +26,9 @@ class InvitationReceivedUnregisteredUser extends Mailable
      *
      * @return void
      */
-    public function __construct($locale, Invitation $invitation, $message)
+    public function __construct($notifiable, $locale, Invitation $invitation, $message)
     {
+		$this->notifiable = $notifiable;
 		$this->locale = $locale;
 		$this->sender = $invitation->sender->first_name . " " . $invitation->sender->last_name;
         $this->invitation = $invitation;
