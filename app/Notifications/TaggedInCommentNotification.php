@@ -11,28 +11,28 @@ use App\Mail\TaggedInComment as TaggedInCommentMailable;
 
 class TaggedInCommentNotification extends Notification implements ShouldQueue
 {
-    use Queueable;
+	use Queueable;
 
 	public $comment;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct($comment)
-    {
-        $this->comment = $comment;
-    }
+	/**
+	 * Create a new notification instance.
+	 *
+	 * @return void
+	 */
+	public function __construct($comment)
+	{
+		$this->comment = $comment;
+	}
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function via($notifiable)
-    {
+	/**
+	 * Get the notification's delivery channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable)
+	{
 		$channels = [];
 
 		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")
@@ -45,41 +45,42 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
 			$channels[] = 'mail';
 		}
 
-        return $channels;
-    }
+		return $channels;
+	}
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new TaggedInCommentMailable($notifiable, $this->locale, $this->comment))
-        ->subject('BugShot - ' . __('email.tagged-in-comment', [], $this->locale))
-        ->to($notifiable->email);
-    }
+	/**
+	 * Get the mail representation of the notification.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return \Illuminate\Notifications\Messages\MailMessage
+	 */
+	public function toMail($notifiable)
+	{
+		return (new TaggedInCommentMailable($notifiable, $this->locale, $this->comment))
+			->subject('BugShot - ' . __('email.tagged-in-comment', [], $this->locale))
+			->to($notifiable->email);
+	}
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
+	/**
+	 * Get the array representation of the notification.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function toArray($notifiable)
+	{
+		return [
 			"type" => "TaggedInComment",
-            "data" => [
+			"data" => [
 				"creator_name" => $this->comment->user->first_name . " " . $this->comment->user->last_name,
 				"organization_id" => $this->comment->bug->project->company->organization->id,
 				"company_id" => $this->comment->bug->project->company->id,
 				"project_id" => $this->comment->bug->project->id,
 				"bug_id" => $this->comment->bug->id,
 				"comment_id" => $this->comment->id,
+				"is_internal" => $this->comment->is_internal ? true : false,
 				"created_at" => $this->comment->created_at
 			]
-        ];
-    }
+		];
+	}
 }
