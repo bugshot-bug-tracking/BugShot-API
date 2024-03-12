@@ -43,7 +43,7 @@ class CommentService
 			'content' => $request->content,
 			'user_id' => $user_id,
 			"client_id" => $client_id,
-			"is_internal" => $request->is_internal ? $request->is_internal : 1
+			"is_internal" => $request->is_internal
 		]);
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true && $bug->jiraLink) {
@@ -53,8 +53,7 @@ class CommentService
 
 		// Notify the tagged users
 		foreach ($request->tagged as $tagged) {
-			if($tagged['user_id'] != $user_id)
-			{
+			if ($tagged['user_id'] != $user_id) {
 				$user = User::find($tagged['user_id']);
 				$user ? TaggedInComment::dispatch($user, $comment) : true;
 			}

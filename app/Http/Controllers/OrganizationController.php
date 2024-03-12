@@ -1375,6 +1375,7 @@ class OrganizationController extends Controller
 		// Check if the user has already been invited to the organization or is already part of it
 		$recipient_mail = $request->target_email;
 		$recipient = User::where('email', $recipient_mail)->first();
+
 		if (!$organization->invitations->where('target_email', $recipient_mail)->where('status_id', 1)->isEmpty() || $organization->users->contains($recipient)) {
 			return response()->json(["data" => [
 				"message" => __('application.organization-user-already-invited')
