@@ -23,7 +23,6 @@ use Illuminate\Notifications\DatabaseNotification;
  */
 class NotificationController extends Controller
 {
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -91,7 +90,7 @@ class NotificationController extends Controller
 	public function index(Request $request, User $user)
 	{
 		// Check if the user is authorized to list the notifications of the user
-		// $this->authorize('viewAny', DatabaseNotification::class);
+		$this->authorize('viewAny', DatabaseNotification::class, [$user]);
 
 		return NotificationResource::collection($user->notifications);
 	}
