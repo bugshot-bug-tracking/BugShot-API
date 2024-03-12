@@ -12,13 +12,13 @@ class DatabaseNotificationPolicy
     /**
      * Perform pre-authorization checks.
      *
-     * @param  $notification
+   	 * @param  \App\Models\User  $user
      * @param  string  $ability
      * @return void|bool
      */
-    public function before($notification, $ability)
+    public function before(User $user, $ability)
     {
-        if ($notification->isAdministrator()) {
+        if ($user->isAdministrator()) {
             return true;
         }
     }
