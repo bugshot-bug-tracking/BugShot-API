@@ -80,7 +80,7 @@ class InvitationReceivedUnregisteredUserNotification extends Notification implem
                 break;
         }
 
-        return (new InvitationReceivedUnregisteredUserMailable($this->locale, $this->invitation, $this->message))
+        return (new InvitationReceivedUnregisteredUserMailable($notifiable, $this->locale, $this->invitation, $this->message))
         ->subject('BugShot - ' . __('email.invitation-received', [], $this->locale))
         ->to($notifiable->routes['email']);
     }

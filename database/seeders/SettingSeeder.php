@@ -63,12 +63,14 @@ class SettingSeeder extends Seeder
 				"designation" => "beta_user",
 				"default_value" => "deactivated"
 			],
+			[
+				"designation" => "extension_suggest",
+				"default_value" => NULL
+			],
 		];
 
-		foreach($settings as $setting)
-		{
-			if(!Setting::where('designation', $setting['designation'])->exists())
-			{
+		foreach ($settings as $setting) {
+			if (!Setting::where('designation', $setting['designation'])->exists()) {
 				Setting::create($setting);
 			}
 		}

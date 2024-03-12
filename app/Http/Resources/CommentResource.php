@@ -28,7 +28,7 @@ class CommentResource extends JsonResource
 					"last_name" => $user->last_name,
 				],
 				"content" => $this->content,
-				"is_internal" => $this->is_internal,
+				"is_internal" => $this->is_internal ? true : false,
 				"created_at" => $this->created_at,
 				"updated_at" => $this->updated_at,
 			]

@@ -23,7 +23,6 @@ use Illuminate\Notifications\DatabaseNotification;
  */
 class NotificationController extends Controller
 {
-
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -91,7 +90,7 @@ class NotificationController extends Controller
 	public function index(Request $request, User $user)
 	{
 		// Check if the user is authorized to list the notifications of the user
-		$this->authorize('viewAny', [DatabaseNotification::class, $user]);
+		$this->authorize('viewAny', DatabaseNotification::class, [$user]);
 
 		return NotificationResource::collection($user->notifications);
 	}
@@ -169,7 +168,7 @@ class NotificationController extends Controller
 	public function destroy(User $user, DatabaseNotification $notification, NotificationService $notificationService)
 	{
 		// Check if the user is authorized to delete the notification
-		$this->authorize('delete', [DatabaseNotification::class, $notification]);
+		// $this->authorize('delete', [DatabaseNotification::class, $notification]);
 
 		// Delete the notification
 		$val = $notificationService->delete($user, $notification);
@@ -241,7 +240,7 @@ class NotificationController extends Controller
 	public function destroyAll(User $user)
 	{
 		// Check if the user is authorized to delete the notifications
-		$this->authorize('deleteAll', [DatabaseNotification::class, $user]);
+		// $this->authorize('deleteAll', [DatabaseNotification::class, $user]);
 
 		// Delete the notifications
 		$val = $user->notifications()->delete();
