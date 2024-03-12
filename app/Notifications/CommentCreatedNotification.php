@@ -35,13 +35,13 @@ class CommentCreatedNotification extends Notification implements ShouldQueue
 	{
 		$channels = [];
 
-		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")
-		{
+		if ($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated") {
 			$channels[] = 'database';
 		}
 
-		if($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated")
-		{
+		if (
+			$notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated"
+		) {
 			$channels[] = 'mail';
 		}
 

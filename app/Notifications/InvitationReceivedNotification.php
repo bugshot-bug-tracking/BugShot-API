@@ -59,7 +59,11 @@ class InvitationReceivedNotification extends Notification implements ShouldQueue
 			$channels[] = 'database';
 		}
 
-		if ($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated") {
+		if (
+			$notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated" &&
+			($notifiable->getSettingValueByName("user_settings_select_notifications") == "every_notification" ||
+				$notifiable->getSettingValueByName("custom_notifications_invitation_received") == "activated")
+		) {
 			$channels[] = 'mail';
 		}
 
