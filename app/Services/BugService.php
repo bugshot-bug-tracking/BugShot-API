@@ -37,6 +37,7 @@ use App\Http\Controllers\BugController;
 use App\Jobs\TriggerInterfacesJob;
 use App\Models\BugGuestCreator;
 use App\Models\Client;
+use Illuminate\Support\Facades\Log;
 
 class BugService
 {
@@ -90,7 +91,11 @@ class BugService
 		}
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true) {
-			$result = AtlassianService::createLinkedIssue($bug);
+			try {
+				$result = AtlassianService::createLinkedIssue($bug);
+			} catch (\Exception $e) {
+				Log::error($e);
+			}
 		}
 
 		// Check if the bug comes with a screenshot (or multiple) and if so, store it/them
