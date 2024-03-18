@@ -255,7 +255,7 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 	});
 
 	// Access token specific routes
-	Route::get("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
+	Route::post("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {
