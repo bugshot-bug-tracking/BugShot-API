@@ -51,7 +51,11 @@ class AttachmentService
 		]);
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true && $bug->jiraLink) {
-			AtlassianService::sendAttachment($filePath, $attachment->designation, $bug);
+			try {
+				AtlassianService::sendAttachment($filePath, $attachment->designation, $bug);
+			} catch (\Exception $e) {
+				Log::error($e);
+			}
 		}
 
 		broadcast(new ScreenshotCreated($attachment))->toOthers();
