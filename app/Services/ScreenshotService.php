@@ -56,7 +56,11 @@ class ScreenshotService
 		Storage::disk('public')->put($filePath, $decodedBase64);
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_bugs_to_jira == true && $bug->jiraLink) {
-			AtlassianService::sendAttachment($filePath, 'screenshot', $bug);
+			try {
+				AtlassianService::sendAttachment($filePath, 'screenshot', $bug);
+			} catch (\Exception $e) {
+				Log::error($e);
+			}
 		}
 
 		try {
