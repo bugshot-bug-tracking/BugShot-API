@@ -60,7 +60,7 @@ class CommentService
 		}
 
 		// Notify the creator of the bug if he is not one of the tagged users or the creator of the comment
-		if (!in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
+		if ($bug->creator && !in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
 			$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
 		}
 
