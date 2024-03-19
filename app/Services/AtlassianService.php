@@ -153,7 +153,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/project/search',
+				'api_path' => 'rest/api/2/project/search',
 			])->get('{+endpoint}/{site_id}/{+api_path}' . $query);
 
 			if ($response->status() === 401 && $attempts === 0) {
@@ -182,7 +182,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/issue/createmeta?issuetypeNames=Bug',
+				'api_path' => 'rest/api/2/issue/createmeta?issuetypeNames=Bug',
 			])->get('{+endpoint}/{site_id}/{+api_path}');
 
 			Log::info($response);
@@ -214,7 +214,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/issue',
+				'api_path' => 'rest/api/2/issue',
 			])->post('{+endpoint}/{site_id}/{+api_path}', new PostJiraBugResource($bug));
 
 			if ($response->status() === 401 && $attempts === 0) {
@@ -264,7 +264,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/issue',
+				'api_path' => 'rest/api/2/issue',
 				"issue_id" => $bug->jiraLink->issue_id,
 			])->post('{+endpoint}/{site_id}/{+api_path}/{issue_id}/comment', [
 				"body" => $comment->user->first_name . " " . $comment->user->last_name . " (BugShot): " . $processedContent
@@ -310,7 +310,7 @@ class AtlassianService
 			)->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/issue',
+				'api_path' => 'rest/api/2/issue',
 				"issue_id" => $bug->jiraLink->issue_id,
 			])->post('{+endpoint}/{site_id}/{+api_path}/{issue_id}/attachments');
 
@@ -400,7 +400,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/webhook',
+				'api_path' => 'rest/api/2/webhook',
 			])->post('{+endpoint}/{site_id}/{+api_path}', [
 				"url" => env("APP_PUBLIC_URL") . "/api/v1/atlassian/webhook",
 				"webhooks" => [
@@ -445,7 +445,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/webhook',
+				'api_path' => 'rest/api/2/webhook',
 			])->delete('{+endpoint}/{site_id}/{+api_path}', [
 				"webhookIds" => [$webhook_id]
 			]);
@@ -480,7 +480,7 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/3/webhook',
+				'api_path' => 'rest/api/2/webhook',
 			])->get('{+endpoint}/{site_id}/{+api_path}');
 
 			if ($response->status() === 401 && $attempts === 0) {
