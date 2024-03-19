@@ -108,10 +108,7 @@ class Kernel extends ConsoleKernel
 			Log::info('Auth: Expired password reset links cleared!');
 		})->daily();
 
-		$schedule->call(function () {
-			Artisan::call('sanctum:prune-expired --hours=24');
-			Log::info('Auth: Expired authentication tokens cleared!');
-		})->weekly();
+		$schedule->command('sanctum:prune-expired --hours=24')->weekly();
 	}
 
 	/**
