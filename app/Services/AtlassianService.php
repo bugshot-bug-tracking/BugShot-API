@@ -144,13 +144,17 @@ class AtlassianService
 			$query = "";
 
 			if ($request->query->get('query'))
-				$query = "?query=" . $request->query->get('query');
+				$query = "?query=" . urlencode($request->query->get('query'));
 
 			$response = Http::withHeaders([
 				"Content-Type" => "application/json",
 				"Accept" => "application/json",
 				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
-			])->get("https://api.atlassian.com/ex/jira/" . $project->jiraLink->site_id . "/rest/api/2/project/search" . $query);
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
+				'site_id' => $project->jiraLink->site_id,
+				'api_path' => 'rest/api/3/project/search',
+			])->get('{+endpoint}/{site_id}/{+api_path}' . $query);
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($project);
@@ -175,7 +179,13 @@ class AtlassianService
 				"Content-Type" => "application/json",
 				"Accept" => "application/json",
 				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
-			])->get("https://api.atlassian.com/ex/jira/" . $project->jiraLink->site_id . "/rest/api/2/issue/createmeta?issuetypeNames=Bug");
+			])->withUrlParameters([
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
+				'site_id' => $project->jiraLink->site_id,
+				'api_path' => 'rest/api/3/issue/createmeta?issuetypeNames=Bug',
+			])->get('{+endpoint}/{site_id}/{+api_path}');
+
+			Log::info($response);
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($project);
@@ -202,10 +212,10 @@ class AtlassianService
 				"Accept" => "application/json",
 				"Authorization" => $bug->project->jiraLink->token_type . " " . $bug->project->jiraLink->access_token,
 			])->withUrlParameters([
-				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				"api_path" => "rest/api/2/issue",
-			])->post('{+endpoint}/{site_id}/{api_path}', new PostJiraBugResource($bug));
+				'api_path' => 'rest/api/3/issue',
+			])->post('{+endpoint}/{site_id}/{+api_path}', new PostJiraBugResource($bug));
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($bug->project);
@@ -252,11 +262,11 @@ class AtlassianService
 				"Accept" => "application/json",
 				"Authorization" => $bug->project->jiraLink->token_type . " " . $bug->project->jiraLink->access_token,
 			])->withUrlParameters([
-				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				"api_path" => "rest/api/2/issue",
+				'api_path' => 'rest/api/3/issue',
 				"issue_id" => $bug->jiraLink->issue_id,
-			])->post('{+endpoint}/{site_id}/{api_path}/{issue_id}/comment', [
+			])->post('{+endpoint}/{site_id}/{+api_path}/{issue_id}/comment', [
 				"body" => $comment->user->first_name . " " . $comment->user->last_name . " (BugShot): " . $processedContent
 			]);
 
@@ -298,11 +308,11 @@ class AtlassianService
 				$contents,
 				$fileName
 			)->withUrlParameters([
-				'endpoint' => 'https://api.atlassian.com/ex/jira/',
+				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $bug->project->jiraLink->site_id,
-				"api_path" => "rest/api/2/issue",
+				'api_path' => 'rest/api/3/issue',
 				"issue_id" => $bug->jiraLink->issue_id,
-			])->post('{+endpoint}/{site_id}/{api_path}/{issue_id}/attachments');
+			])->post('{+endpoint}/{site_id}/{+api_path}/{issue_id}/attachments');
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($bug->project);
@@ -390,8 +400,8 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				"api_path" => "rest/api/2/webhook",
-			])->post('{+endpoint}/{site_id}/{api_path}', [
+				'api_path' => 'rest/api/3/webhook',
+			])->post('{+endpoint}/{site_id}/{+api_path}', [
 				"url" => env("APP_PUBLIC_URL") . "/api/v1/atlassian/webhook",
 				"webhooks" => [
 					[
@@ -435,8 +445,8 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				"api_path" => "rest/api/2/webhook",
-			])->delete('{+endpoint}/{site_id}/{api_path}', [
+				'api_path' => 'rest/api/3/webhook',
+			])->delete('{+endpoint}/{site_id}/{+api_path}', [
 				"webhookIds" => [$webhook_id]
 			]);
 
@@ -470,8 +480,8 @@ class AtlassianService
 			])->withUrlParameters([
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
-				"api_path" => "rest/api/2/webhook",
-			])->get('{+endpoint}/{site_id}/{api_path}');
+				'api_path' => 'rest/api/3/webhook',
+			])->get('{+endpoint}/{site_id}/{+api_path}');
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($project);
