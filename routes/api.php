@@ -251,7 +251,6 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
 
 		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
-		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
 	// Access token specific routes

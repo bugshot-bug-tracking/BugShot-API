@@ -144,7 +144,7 @@ class AtlassianService
 			$query = "";
 
 			if ($request->query->get('query'))
-				$query = "?query=" . urlencode($request->query->get('query'));
+				$query = "&query=" . urlencode($request->query->get('query'));
 
 			$response = Http::withHeaders([
 				"Content-Type" => "application/json",
@@ -154,7 +154,7 @@ class AtlassianService
 				'endpoint' => 'https://api.atlassian.com/ex/jira',
 				'site_id' => $project->jiraLink->site_id,
 				'api_path' => 'rest/api/2/project/search',
-			])->get('{+endpoint}/{site_id}/{+api_path}' . $query);
+			])->get('{+endpoint}/{site_id}/{+api_path}' . '?action=create&expand=issueTypes' . $query);
 
 			if ($response->status() === 401 && $attempts === 0) {
 				self::updateToken($project);
@@ -167,38 +167,6 @@ class AtlassianService
 
 		return [];
 	}
-
-	public static function getCreatemeta(Request $request, Project $project)
-	{
-		self::preCallCheck($project);
-
-		$attempts = 0;
-
-		while ($attempts < 2) {
-			$response = Http::withHeaders([
-				"Content-Type" => "application/json",
-				"Accept" => "application/json",
-				"Authorization" => $project->jiraLink->token_type . " " . $project->jiraLink->access_token,
-			])->withUrlParameters([
-				'endpoint' => 'https://api.atlassian.com/ex/jira',
-				'site_id' => $project->jiraLink->site_id,
-				'api_path' => 'rest/api/2/issue/createmeta?issuetypeNames=Bug',
-			])->get('{+endpoint}/{site_id}/{+api_path}');
-
-			Log::info($response);
-
-			if ($response->status() === 401 && $attempts === 0) {
-				self::updateToken($project);
-				$attempts++;
-				continue;
-			}
-
-			return $response;
-		}
-
-		return [];
-	}
-
 
 	public static function createLinkedIssue(Bug $bug)
 	{
