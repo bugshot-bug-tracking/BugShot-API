@@ -15,7 +15,7 @@
     @component('mail::paragraph')
         If that doesn't work, you can also just copy the following URL into your browser:
     @endcomponent
-    <a href="{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id }}">{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id . '&i=' . ($comment->is_internal ? 'y' : 'n') }}</a><br /><br />
+    <a href="{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id . '&i=' . ($comment->is_internal ? 'y' : 'n') }}">{{ $projectBaseUrl . "?b=" . $bug->id . "&c=" . $comment->id . '&i=' . ($comment->is_internal ? 'y' : 'n') }}</a><br /><br />
     <p>
         Error-free Greetings,
         <br />

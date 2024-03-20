@@ -2,7 +2,7 @@
 
 return [
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
@@ -13,9 +13,9 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+	'default' => env('MAIL_MAILER', 'smtp'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Mailer Configurations
     |--------------------------------------------------------------------------
@@ -28,60 +28,76 @@ return [
     | sending an e-mail. You will specify which one you are using for your
     | mailers below. You are free to add additional mailers as required.
     |
-    | Supported: "smtp", "sendmail", "mailgun", "ses",
-    |            "postmark", "log", "array"
+    | Supported: "smtp", "sendmail", "mailgun", "ses", "ses-v2",
+    |            "postmark", "log", "array", "failover", "roundrobin"
     |
     */
 
-    'mailers' => [
-        'smtp' => [
-            'transport' => 'smtp',
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'auth_mode' => null,
-            'verify_peer' => false,
-        ],
+	'mailers' => [
+		'smtp' => [
+			'transport' => 'smtp',
+			'url' => env('MAIL_URL'),
+			'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+			'port' => env('MAIL_PORT', 587),
+			'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+			'username' => env('MAIL_USERNAME'),
+			'password' => env('MAIL_PASSWORD'),
+			'timeout' => null,
+			'auth_mode' => null,
+			'verify_peer' => false,
+		],
 
-        'ses' => [
-            'transport' => 'ses',
-        ],
+		'ses' => [
+			'transport' => 'ses',
+		],
 
-        'mailgun' => [
-            'transport' => 'mailgun',
-        ],
+		'postmark' => [
+			'transport' => 'postmark',
+			// 'message_stream_id' => null,
+			// 'client' => [
+			//     'timeout' => 5,
+			// ],
+		],
 
-        'postmark' => [
-            'transport' => 'postmark',
-        ],
+		'mailgun' => [
+			'transport' => 'mailgun',
+			// 'client' => [
+			//     'timeout' => 5,
+			// ],
+		],
 
-        'sendmail' => [
-            'transport' => 'sendmail',
-            'path' => '/usr/sbin/sendmail -bs',
-        ],
+		'sendmail' => [
+			'transport' => 'sendmail',
+			'path' => '/usr/sbin/sendmail -bs',
+		],
 
-        'log' => [
-            'transport' => 'log',
-            'channel' => env('MAIL_LOG_CHANNEL'),
-        ],
+		'log' => [
+			'transport' => 'log',
+			'channel' => env('MAIL_LOG_CHANNEL'),
+		],
 
-        'array' => [
-            'transport' => 'array',
-        ],
+		'array' => [
+			'transport' => 'array',
+		],
 
-        'failover' => [
-            'transport' => 'failover',
-            'mailers' => [
-                'smtp',
-                'log',
-            ],
-        ],
-    ],
+		'failover' => [
+			'transport' => 'failover',
+			'mailers' => [
+				'smtp',
+				'log',
+			],
+		],
 
-    /*
+		'roundrobin' => [
+			'transport' => 'roundrobin',
+			'mailers' => [
+				'ses',
+				'postmark',
+			],
+		],
+	],
+
+	/*
     |--------------------------------------------------------------------------
     | Global "From" Address
     |--------------------------------------------------------------------------
@@ -92,39 +108,39 @@ return [
     |
     */
 
-    'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'tech@bugshot.de'),
-        'name' => env('MAIL_FROM_NAME', 'BugShot'),
-    ],
+	'from' => [
+		'address' => env('MAIL_FROM_ADDRESS', 'tech@bugshot.de'),
+		'name' => env('MAIL_FROM_NAME', 'BugShot'),
+	],
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Global "Reply To" Address
     |--------------------------------------------------------------------------
     |
-    | You may wish for all your sent e-mails that the answer is send to a 
+    | You may wish for all your sent e-mails that the answer is send to a
     | specific address. Here, you may specify a name and address that is
     | used globally for all e-mails that are sent by your application.
     |
     */
 
-    'reply_to' => [
-        'address' => env('MAIL_REPLYTO_ADDRESS', 'tech@bugshot.de'),
-        'name' => env('MAIL_REPLYTO_NAME', 'BugShot'),
-    ],
+	'reply_to' => [
+		'address' => env('MAIL_REPLYTO_ADDRESS', 'tech@bugshot.de'),
+		'name' => env('MAIL_REPLYTO_NAME', 'BugShot'),
+	],
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Global "No Reply" Address
     |--------------------------------------------------------------------------
     */
 
-    'noreply' => [
-        'address' => env('MAIL_NOREPLY_ADDRESS', 'noreply@bugshot.de'),
-        'name' => env('MAIL_NOREPLY_NAME', 'BugShot'),
-    ],
+	'noreply' => [
+		'address' => env('MAIL_NOREPLY_ADDRESS', 'noreply@bugshot.de'),
+		'name' => env('MAIL_NOREPLY_NAME', 'BugShot'),
+	],
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
@@ -135,12 +151,12 @@ return [
     |
     */
 
-    'markdown' => [
-        'theme' => 'default',
+	'markdown' => [
+		'theme' => 'default',
 
-        'paths' => [
-            resource_path('views/vendor/mail'),
-        ],
-    ],
+		'paths' => [
+			resource_path('views/vendor/mail'),
+		],
+	],
 
 ];
