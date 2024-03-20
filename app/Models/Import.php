@@ -16,42 +16,45 @@ class Import extends Model
 	use HasFactory;
 
 	/**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
+	 * The "type" of the auto-incrementing ID.
+	 *
+	 * @var string
+	 */
+	protected $keyType = 'string';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
 
 	protected $fillable = ["id", "status_id", "imported_by", "source", "target"];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'source' => 'array',
-		'target' => 'array'
-    ];
+	/**
+	 * Get the attributes that should be cast.
+	 *
+	 * @return array<string, string>
+	 */
+	protected function casts(): array
+	{
+		return [
+			'source' => 'array',
+			'target' => 'array'
+		];
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function importer()
 	{
 		return $this->belongsTo(User::class, 'imported_by');
 	}
 
- 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function status()
 	{
 		return $this->belongsTo(ImportStatus::class, "status_id");
