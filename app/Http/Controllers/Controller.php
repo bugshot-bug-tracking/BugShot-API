@@ -27,25 +27,25 @@ use Illuminate\Support\Facades\Auth;
 class Controller extends BaseController
 {
 	use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-	
-    public $user;
 
-    /**
-     * Create a new controller.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->user = Auth::guard('sanctum')->user();
-    }
+	public $user;
+
+	/**
+	 * Create a new controller.
+	 *
+	 * @return void
+	 */
+	public function __construct()
+	{
+		$this->user = Auth::guard('sanctum')->user();
+	}
 
 	// Checks if request contains an uuid and sets the id accordingly
-	public function setId($request) {
-       
+	public function setId($request)
+	{
+
 		$id = $request->id == NULL ? (string) Str::uuid() : $request->id;
-     
+
 		return $id;
 	}
 }
-

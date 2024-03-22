@@ -28,27 +28,23 @@ use App\Observers\BugObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
-    /**
-     * The event listener mappings for the application.
-     *
-     * @var array
-     */
-    protected $listen = [
-        TaggedInComment::class => [
-            SendTaggedInCommentNotification::class,
-        ],
-        BugMembersUpdated::class => [
-            SendAssignedToBugNotification::class,
-        ],
+	/**
+	 * The event listener mappings for the application.
+	 */
+	protected $listen = [
+		TaggedInComment::class => [
+			SendTaggedInCommentNotification::class,
+		],
+		BugMembersUpdated::class => [
+			SendAssignedToBugNotification::class,
+		],
 		WebhookReceived::class => [
-            StripeEventListener::class,
-        ],
-    ];
+			StripeEventListener::class,
+		],
+	];
 
 	/**
 	 * The model observers for your application.
-	 *
-	 * @var array
 	 */
 	protected $observers = [
 		Project::class => [ProjectObserver::class],
@@ -56,13 +52,11 @@ class EventServiceProvider extends ServiceProvider
 		Notification::class => [NotificationObserver::class],
 	];
 
-    /**
-     * Register any events for your application.
-     *
-     * @return void
-     */
-    public function boot()
-    {
+	/**
+	 * Register any events for your application.
+	 */
+	public function boot(): void
+	{
 		//
-    }
+	}
 }
