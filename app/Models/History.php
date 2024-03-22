@@ -13,50 +13,53 @@ class History extends Model
 {
 	use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'history';
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'history';
 
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
-    public $incrementing = true;
+	/**
+	 * Indicates if the IDs are auto-incrementing.
+	 *
+	 * @var bool
+	 */
+	public $incrementing = true;
 
 	protected $fillable = ['action_id', 'args'];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'args' => 'array',
-    ];
+	/**
+	 * Get the attributes that should be cast.
+	 *
+	 * @return array<string, string>
+	 */
+	protected function casts(): array
+	{
+		return [
+			'args' => 'array',
+		];
+	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+	 */
 	public function historyable()
 	{
 		return $this->morphTo();
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function action()
 	{
 		return $this->belongsTo(Action::class, 'action_id');
 	}
 
 	/**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
 	public function agent()
 	{
 		return $this->belongsTo(User::class, 'user_id');
