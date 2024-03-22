@@ -1,21 +1,24 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\ServiceProvider;
+
 return [
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Name
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
+    | This value is the name of your application, which will be used when the
     | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | other UI elements where an application name needs to be displayed.
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+	'name' => env('APP_NAME', 'Laravel'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Project Name
     |--------------------------------------------------------------------------
@@ -24,9 +27,9 @@ return [
     |
     */
 
-    'projectname' => env('PROJECT_NAME', 'Laravel'),
+	'projectname' => env('PROJECT_NAME', 'Laravel'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
@@ -37,16 +40,16 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+	'env' => env('APP_ENV', 'production'),
 
-    /*
+	/*
     | Variable to determine the max stack size of the jobs table.
 	| If the stack size is reached, the admin will be notified.
     */
 
-    'max_job_stack_size' => env('MAX_JOB_STACK_SIZE', 10),
+	'max_job_stack_size' => env('MAX_JOB_STACK_SIZE', 10),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
@@ -57,31 +60,31 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+	'debug' => (bool) env('APP_DEBUG', false),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application URL
     |--------------------------------------------------------------------------
     |
     | This URL is used by the console to properly generate URLs when using
     | the Artisan command line tool. You should set this to the root of
-    | your application so that it is used when running Artisan tasks.
+    | the application so that it's available within Artisan commands.
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+	'url' => env('APP_URL', 'http://localhost'),
 
-    'asset_url' => env('ASSET_URL', null),
+	'asset_url' => env('ASSET_URL', null),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Webpanel URL
     |--------------------------------------------------------------------------
     |
     */
 
-    'webpanel_url' => env('APP_WEBPANEL_URL', 'https://dev.bugshot.de'),
+	'webpanel_url' => env('APP_WEBPANEL_URL', 'https://dev.bugshot.de'),
 
 	/*
     |--------------------------------------------------------------------------
@@ -90,42 +93,42 @@ return [
     |
     */
 
-    'bugherd_api_url' => env('BUGHERD_API_URL', 'https://www.bugherd.com/api_v2'),
+	'bugherd_api_url' => env('BUGHERD_API_URL', 'https://www.bugherd.com/api_v2'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Payment URL
     |--------------------------------------------------------------------------
     |
     */
 
-    'payment_url' => env('APP_PAYMENT_URL', 'https://dev-payment.bugshot.de'),
+	'payment_url' => env('APP_PAYMENT_URL', 'https://dev-payment.bugshot.de'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Stripe
     |--------------------------------------------------------------------------
     |
     */
 
-    'stripe_api_url' => env('STRIPE_API_URL', 'https://api.stripe.com/v1'),
-    'stripe_api_key' => env('STRIPE_KEY', NULL),
-    'stripe_api_secret' => env('STRIPE_SECRET', NULL),
-    'stripe_webhook_secret' => env('STRIPE_WEBHOOK_SECRET', NULL),
-    'cashier_currency' => env('CASHIER_CURRENCY', 'eur'),
-    'cashier_logger' => env('CASHIER_LOGGER', 'stack'),
-    'cashier_currency_locale' => env('CASHIER_CURRENCY_LOCALE', 'de_DE'),
+	'stripe_api_url' => env('STRIPE_API_URL', 'https://api.stripe.com/v1'),
+	'stripe_api_key' => env('STRIPE_KEY', NULL),
+	'stripe_api_secret' => env('STRIPE_SECRET', NULL),
+	'stripe_webhook_secret' => env('STRIPE_WEBHOOK_SECRET', NULL),
+	'cashier_currency' => env('CASHIER_CURRENCY', 'eur'),
+	'cashier_logger' => env('CASHIER_LOGGER', 'stack'),
+	'cashier_currency_locale' => env('CASHIER_CURRENCY_LOCALE', 'de_DE'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Proposal URL
     |--------------------------------------------------------------------------
     |
     */
 
-    'proposal_url' => env('APP_PROPOSAL_URL', 'https://www.bugshot.de'),
+	'proposal_url' => env('APP_PROPOSAL_URL', 'https://www.bugshot.de'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Sendinblue
     |--------------------------------------------------------------------------
@@ -133,12 +136,12 @@ return [
     */
 
 	'sendinblue_active' => env('SENDINBLUE_ACTIVE', false),
-    'sendinblue_ma_key' => env('SENDINBLUE_MA_KEY', null),
-    'sendinblue_v2_api_url' => env('SENDINBLUE_V2_API_URL', null),
-    'sendinblue_v3_api_key' => env('SENDINBLUE_V3_API_KEY', null),
-    'sendinblue_v3_api_url' => env('SENDINBLUE_V3_API_URL', null),
+	'sendinblue_ma_key' => env('SENDINBLUE_MA_KEY', null),
+	'sendinblue_v2_api_url' => env('SENDINBLUE_V2_API_URL', null),
+	'sendinblue_v3_api_key' => env('SENDINBLUE_V3_API_KEY', null),
+	'sendinblue_v3_api_url' => env('SENDINBLUE_V3_API_URL', null),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Scripts
     |--------------------------------------------------------------------------
@@ -147,7 +150,7 @@ return [
 
 	'script_active' => env('SCRIPTS_ACTIVE', false),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | TinyPNG
     |--------------------------------------------------------------------------
@@ -155,22 +158,22 @@ return [
     */
 
 	'tinypng_active' => env('TINYPNG_ACTIVE', false),
-    'tinypng_api_key' => env('TINYPNG_API_KEY', null),
+	'tinypng_api_key' => env('TINYPNG_API_KEY', null),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
     | Here you may specify the default timezone for your application, which
-    | will be used by the PHP date and date-time functions. We have gone
-    | ahead and set this to a sensible default for you out of the box.
+    | will be used by the PHP date and date-time functions. The timezone
+    | is set to "UTC" by default as it is suitable for most use cases.
     |
     */
 
-    'timezone' => 'UTC',
+	'timezone' => env('APP_TIMEZONE', 'UTC'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------
@@ -181,9 +184,9 @@ return [
     |
     */
 
-    'locale' => 'en',
+	'locale' => 'en',
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Application Fallback Locale
     |--------------------------------------------------------------------------
@@ -194,9 +197,9 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+	'fallback_locale' => 'en',
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Faker Locale
     |--------------------------------------------------------------------------
@@ -207,24 +210,30 @@ return [
     |
     */
 
-    'faker_locale' => 'en_US',
+	'faker_locale' => 'en_US',
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |
-    | This key is used by the Illuminate encrypter service and should be set
-    | to a random, 32 character string, otherwise these encrypted strings
-    | will not be safe. Please do this before deploying an application!
+    | This key is utilized by Laravel's encryption services and should be set
+    | to a random, 32 character string to ensure that all encrypted values
+    | are secure. You should do this prior to deploying the application.
     |
     */
 
-    'key' => env('APP_KEY'),
+	'cipher' => 'AES-256-CBC',
 
-    'cipher' => 'AES-256-CBC',
+	'key' => env('APP_KEY'),
 
-    /*
+	'previous_keys' => [
+		...array_filter(
+			explode(',', env('APP_PREVIOUS_KEYS', ''))
+		),
+	],
+
+	/*
     |--------------------------------------------------------------------------
     | Register Mailer
     |--------------------------------------------------------------------------
@@ -233,9 +242,9 @@ return [
     |
     */
 
-    'register_mailer' => env('REGISTER_MAILER'),
+	'register_mailer' => env('REGISTER_MAILER'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
@@ -246,50 +255,25 @@ return [
     |
     */
 
-    'providers' => [
+	'providers' => ServiceProvider::defaultProviders()->merge(
+		[
+			/*
+			* Package Service Providers...
+			*/
 
-        /*
-         * Laravel Framework Service Providers...
-         */
-        Illuminate\Auth\AuthServiceProvider::class,
-        Illuminate\Broadcasting\BroadcastServiceProvider::class,
-        Illuminate\Bus\BusServiceProvider::class,
-        Illuminate\Cache\CacheServiceProvider::class,
-        Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
-        Illuminate\Cookie\CookieServiceProvider::class,
-        Illuminate\Database\DatabaseServiceProvider::class,
-        Illuminate\Encryption\EncryptionServiceProvider::class,
-        Illuminate\Filesystem\FilesystemServiceProvider::class,
-        Illuminate\Foundation\Providers\FoundationServiceProvider::class,
-        Illuminate\Hashing\HashServiceProvider::class,
-        Illuminate\Mail\MailServiceProvider::class,
-        Illuminate\Notifications\NotificationServiceProvider::class,
-        Illuminate\Pagination\PaginationServiceProvider::class,
-        Illuminate\Pipeline\PipelineServiceProvider::class,
-        Illuminate\Queue\QueueServiceProvider::class,
-        Illuminate\Redis\RedisServiceProvider::class,
-        Illuminate\Auth\Passwords\PasswordResetServiceProvider::class,
-        Illuminate\Session\SessionServiceProvider::class,
-        Illuminate\Translation\TranslationServiceProvider::class,
-        Illuminate\Validation\ValidationServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class,
+			/*
+			* Application Service Providers...
+			*/
+			App\Providers\AppServiceProvider::class,
+			App\Providers\AuthServiceProvider::class,
+			App\Providers\BroadcastServiceProvider::class,
+			App\Providers\EventServiceProvider::class,
+			App\Providers\RouteServiceProvider::class,
 
-        /*
-         * Package Service Providers...
-         */
+		]
+	)->toArray(),
 
-        /*
-         * Application Service Providers...
-         */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
-
-    ],
-
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Class Aliases
     |--------------------------------------------------------------------------
@@ -300,47 +284,28 @@ return [
     |
     */
 
-    'aliases' => [
+	'aliases' => Facade::defaultAliases()->merge(
+		[
+			// 'Example' => App\Facades\Example::class,
+		]
+	)->toArray(),
 
-        'App' => Illuminate\Support\Facades\App::class,
-        'Arr' => Illuminate\Support\Arr::class,
-        'Artisan' => Illuminate\Support\Facades\Artisan::class,
-        'Auth' => Illuminate\Support\Facades\Auth::class,
-        'Blade' => Illuminate\Support\Facades\Blade::class,
-        'Broadcast' => Illuminate\Support\Facades\Broadcast::class,
-        'Bus' => Illuminate\Support\Facades\Bus::class,
-        'Cache' => Illuminate\Support\Facades\Cache::class,
-        'Config' => Illuminate\Support\Facades\Config::class,
-        'Cookie' => Illuminate\Support\Facades\Cookie::class,
-        'Crypt' => Illuminate\Support\Facades\Crypt::class,
-        'Date' => Illuminate\Support\Facades\Date::class,
-        'DB' => Illuminate\Support\Facades\DB::class,
-        'Eloquent' => Illuminate\Database\Eloquent\Model::class,
-        'Event' => Illuminate\Support\Facades\Event::class,
-        'File' => Illuminate\Support\Facades\File::class,
-        'Gate' => Illuminate\Support\Facades\Gate::class,
-        'Hash' => Illuminate\Support\Facades\Hash::class,
-        'Http' => Illuminate\Support\Facades\Http::class,
-        'Lang' => Illuminate\Support\Facades\Lang::class,
-        'Log' => Illuminate\Support\Facades\Log::class,
-        'Mail' => Illuminate\Support\Facades\Mail::class,
-        'Notification' => Illuminate\Support\Facades\Notification::class,
-        'Password' => Illuminate\Support\Facades\Password::class,
-        'Queue' => Illuminate\Support\Facades\Queue::class,
-        'RateLimiter' => Illuminate\Support\Facades\RateLimiter::class,
-        'Redirect' => Illuminate\Support\Facades\Redirect::class,
-        // 'Redis' => Illuminate\Support\Facades\Redis::class,
-        'Request' => Illuminate\Support\Facades\Request::class,
-        'Response' => Illuminate\Support\Facades\Response::class,
-        'Route' => Illuminate\Support\Facades\Route::class,
-        'Schema' => Illuminate\Support\Facades\Schema::class,
-        'Session' => Illuminate\Support\Facades\Session::class,
-        'Storage' => Illuminate\Support\Facades\Storage::class,
-        'Str' => Illuminate\Support\Str::class,
-        'URL' => Illuminate\Support\Facades\URL::class,
-        'Validator' => Illuminate\Support\Facades\Validator::class,
-        'View' => Illuminate\Support\Facades\View::class,
+	/*
+    |--------------------------------------------------------------------------
+    | Maintenance Mode Driver
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options determine the driver used to determine and
+    | manage Laravel's "maintenance mode" status. The "cache" driver will
+    | allow maintenance mode to be controlled across multiple machines.
+    |
+    | Supported drivers: "file", "cache"
+    |
+    */
 
-    ],
+	'maintenance' => [
+		'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+		'store' => env('APP_MAINTENANCE_STORE', 'database'),
+	],
 
 ];
