@@ -33,6 +33,12 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = [];
 
 		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")

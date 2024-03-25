@@ -37,8 +37,14 @@ class ProjectSummaryNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
+    public function via(User $notifiable)
     {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = [];
 
 		if($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated")

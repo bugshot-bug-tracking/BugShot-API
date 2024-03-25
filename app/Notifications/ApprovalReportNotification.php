@@ -45,6 +45,12 @@ class ApprovalReportNotification extends Notification implements ShouldQueue, Sh
      */
     public function via($notifiable)
     {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = ['broadcast'];
 
 		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")

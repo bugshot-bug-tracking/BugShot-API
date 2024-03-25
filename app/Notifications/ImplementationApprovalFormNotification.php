@@ -38,6 +38,12 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
      */
     public function via($notifiable)
     {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = ['broadcast'];
 
 		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")
