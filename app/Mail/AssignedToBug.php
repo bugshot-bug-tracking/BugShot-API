@@ -23,6 +23,7 @@ class AssignedToBug extends Mailable
     public $bug;
     public $project;
     public $initiator;
+	public $projectBaseUrl;
 
     /**
      * Create a new message instance.
@@ -36,6 +37,8 @@ class AssignedToBug extends Mailable
 		$this->initiator = $sender;
         $this->bug = $bug;
         $this->project = Project::find($this->bug->project_id);
+		$company = $this->project->company;
+		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $company->organization->id . "/company/" . $company->id . "/project/" . $this->project->id;
     }
 
     /**

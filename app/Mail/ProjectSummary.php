@@ -23,6 +23,7 @@ class ProjectSummary extends Mailable
     public $project;
 	public $groupsWording;
 	public $readableContent;
+	public $projectBaseUrl;
 
     /**
      * Create a new message instance.
@@ -37,8 +38,9 @@ class ProjectSummary extends Mailable
 		$this->comments = $comments;
 		$this->doneBugs = $doneBugs;
 		$this->bugs = $bugs;
-
 		$company = $project->company;
+		$this->projectBaseUrl = config('app.webpanel_url') . "/" . $company->organization->id . "/company/" . $company->id . "/project/" . $this->project->id;
+
 		$organization = $company->organization;
 		$this->groupsWording = $organization->groups_wording;
     }
