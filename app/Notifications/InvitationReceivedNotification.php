@@ -29,138 +29,190 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class InvitationReceivedNotification extends Notification implements ShouldQueue, ShouldBroadcast
 {
-    use Queueable;
+	use Queueable;
 
-    public $resource;
-    public $message;
+	public $resource;
+	public $message;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct(public $invitation, public $user)
-    {
-        $this->resource = NULL;
-        $this->message = NULL;
-    }
+	/**
+	 * Create a new notification instance.
+	 *
+	 * @return void
+	 */
+	public function __construct(public $invitation, public $user)
+	{
+		$this->resource = NULL;
+		$this->message = NULL;
+	}
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function via($notifiable)
-    {
+	/**
+	 * Get the notification's delivery channels.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function via($notifiable)
+	{
 		$channels = ['broadcast'];
 
-		if($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated")
-		{
+		if ($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated") {
 			$channels[] = 'database';
 		}
 
-		if($notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated")
-		{
+		if (
+			$notifiable->getSettingValueByName("user_settings_mail_select_notifications") == "activated" &&
+			($notifiable->getSettingValueByName("user_settings_select_notifications") == "every_notification" ||
+				$notifiable->getSettingValueByName("custom_notifications_invitation_received") == "activated")
+		) {
 			$channels[] = 'mail';
 		}
 
-        return $channels;
-    }
+		return $channels;
+	}
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        // Check the model type of the invitation
-        switch ($this->invitation->invitable_type) {
-            case 'organization':
-                $this->resource = new OrganizationResource($this->invitation->invitable);
-                $this->message = __('email.invited_to_organization', ['organization' => __('data.organization'), 'organizationDesignation' => $this->resource->designation]);
-                break;
+	/**
+	 * Get the mail representation of the notification.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return \Illuminate\Notifications\Messages\MailMessage
+	 */
+	public function toMail($notifiable)
+	{
+		// Check the model type of the invitation
+		switch ($this->invitation->invitable_type) {
+			case 'organization':
+				$this->resource = new OrganizationResource($this->invitation->invitable);
+				$this->message = __('email.invited_to_organization', ['organization' => __('data.organization'), 'organizationDesignation' => $this->resource->designation]);
+				break;
 
-            case 'company':
-                $this->resource = new CompanyResource($this->invitation->invitable);
-                $this->message = __('email.invited_to_company', ['company' => __('data.company'), 'companyDesignation' => $this->resource->designation]);
-                break;
+			case 'company':
+				$this->resource = new CompanyResource($this->invitation->invitable);
+				$this->message = __('email.invited_to_company', ['company' => __('data.company'), 'companyDesignation' => $this->resource->designation]);
+				break;
 
-            case 'project':
-                $this->resource = new ProjectResource($this->invitation->invitable);
-                $this->message = __('email.invited_to_project', ['project' => __('data.project'), 'projectDesignation' => $this->resource->designation]);
-                break;
+			case 'project':
+				$this->resource = new ProjectResource($this->invitation->invitable);
+				$this->message = __('email.invited_to_project', ['project' => __('data.project'), 'projectDesignation' => $this->resource->designation]);
+				break;
 
-            case 'bug':
-                $this->resource = new BugResource($this->invitation->invitable);
-                $this->message = __('email.invited_to_bug', ['bug' => __('data.bug'), 'bugDesignation' => $this->resource->designation]);
-                break;
-        }
+			case 'bug':
+				$this->resource = new BugResource($this->invitation->invitable);
+				$this->message = __('email.invited_to_bug', ['bug' => __('data.bug'), 'bugDesignation' => $this->resource->designation]);
+				break;
+		}
 
-        return (new InvitationReceivedMailable($notifiable, $this->locale, $this->invitation, $this->message))
-        ->subject('BugShot - ' . __('email.invitation-received', [], $this->locale))
-        ->to($notifiable->email);
-    }
+		return (new InvitationReceivedMailable($notifiable, $this->locale, $this->invitation, $this->message))
+			->subject('BugShot - ' . __('email.invitation-received', [], $this->locale))
+			->to($notifiable->email);
+	}
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
+	/**
+	 * Get the array representation of the notification.
+	 *
+	 * @param  mixed  $notifiable
+	 * @return array
+	 */
+	public function toArray($notifiable)
+	{
+		$invitable = [];
+		switch ($this->invitation->invitable_type) {
+			case 'organization':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->id
+				];
+				break;
+
+			case 'company':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->organization->id,
+					"company_id" => $this->invitation->invitable->id
+				];
+				break;
+
+			case 'project':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->company->organization->id,
+					"company_id" => $this->invitation->invitable->company->id,
+					"project_id" => $this->invitation->invitable->id
+				];
+				break;
+		}
+
+		return [
 			"type" => "InvitationReceived",
-            "data" => [
+			"data" => [
 				"id" => $this->invitation->id,
 				"invited_to_type" => $this->invitation->invitable_type,
 				"invited_to" => $this->invitation->invitable->designation,
 				"invited_by" => $this->invitation->sender->first_name . " " . $this->invitation->sender->last_name,
+				"invitable" => $invitable,
 				"created_at" => $this->invitation->created_at
 			]
-        ];
-    }
+		];
+	}
 
 
 	/**
-     * The event's broadcast name.
-     *
-     * @return string
-     */
-    public function broadcastAs()
-    {
-        return 'notification.created';
-    }
+	 * The event's broadcast name.
+	 *
+	 * @return string
+	 */
+	public function broadcastAs()
+	{
+		return 'notification.created';
+	}
 
-    /**
-     * Get the data to broadcast.
-     *
-     * @return array
-     */
-    public function broadcastWith()
-    {
-        return [
+	/**
+	 * Get the data to broadcast.
+	 *
+	 * @return array
+	 */
+	public function broadcastWith()
+	{
+		$invitable = [];
+		switch ($this->invitation->invitable_type) {
+			case 'organization':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->id
+				];
+				break;
+
+			case 'company':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->organization->id,
+					"company_id" => $this->invitation->invitable->id
+				];
+				break;
+
+			case 'project':
+				$invitable = [
+					"organization_id" => $this->invitation->invitable->company->organization->id,
+					"company_id" => $this->invitation->invitable->company->id,
+					"project_id" => $this->invitation->invitable->id
+				];
+				break;
+		}
+
+		return [
 			"type" => "InvitationReceived",
-            "data" => [
+			"data" => [
 				"id" => $this->invitation->id,
 				"invited_to_type" => $this->invitation->invitable_type,
 				"invited_to" => $this->invitation->invitable->designation,
 				"invited_by" => $this->invitation->sender->first_name . " " . $this->invitation->sender->last_name,
+				"invitable" => $invitable,
 				"created_at" => $this->invitation->created_at
 			]
-        ];
-    }
+		];
+	}
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('user.' . $this->user->id);
-    }
+	/**
+	 * Get the channels the event should broadcast on.
+	 *
+	 * @return \Illuminate\Broadcasting\Channel|array
+	 */
+	public function broadcastOn()
+	{
+		return new PrivateChannel('user.' . $this->user->id);
+	}
 }

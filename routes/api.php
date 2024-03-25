@@ -48,8 +48,8 @@ use Illuminate\Support\Facades\Broadcast;
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
@@ -251,11 +251,10 @@ Route::middleware(['auth:sanctum', 'check.version'])->group(function () {
 		Route::delete("/jira-project", [ProjectController::class, "deleteJiraProject"])->name("project.delete-jira-project");
 
 		Route::patch("/jira-settings", [ProjectController::class, "updateJiraSettings"])->name("project.update-jira-settings");
-		Route::get("/jira-createmeta", [ProjectController::class, "getJiraCreateMeta"])->name("project.get-jira-createmeta");
 	});
 
 	// Access token specific routes
-	Route::get("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
+	Route::post("/access-tokens/{access_token}/mark-as-favorite", [AccessTokenController::class, "markAsFavorite"])->name("access-token.mark-as-favorite");
 
 	// Status prefixed routes
 	Route::prefix('statuses/{status}')->group(function () {

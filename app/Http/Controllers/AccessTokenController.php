@@ -660,7 +660,7 @@ class AccessTokenController extends Controller
 	 * @return Response
 	 */
 	/**
-	 * @OA\Get(
+	 * @OA\Post(
 	 *	path="/access-tokens/{access_token_id}/mark-as-favorite",
 	 *	tags={"AccessToken"},
 	 *	summary="Mark one access_token as favorite.",
@@ -692,6 +692,18 @@ class AccessTokenController extends Controller
 	 *			ref="#/components/schemas/AccessToken/properties/id"
 	 *		)
 	 *	),
+	 *  @OA\RequestBody(
+	 *      required=false,
+	 *      @OA\MediaType(
+	 *          mediaType="application/json",
+	 *          @OA\Schema(
+	 *  			@OA\Property(
+	 *                  property="value",
+	 *                  type="boolean",
+	 *              ),
+	 *          )
+	 *      )
+	 *  ),
 	 *	@OA\Response(
 	 *		response=200,
 	 *		description="Success",
@@ -717,7 +729,7 @@ class AccessTokenController extends Controller
 	 *	),
 	 * )
 	 **/
-	public function markAsFavorite(AccessToken $accessToken)
+	public function markAsFavorite(Request $request, AccessToken $accessToken)
 	{
 		// Check if the user is authorized to view the access token
 		$this->authorize('view', [AccessToken::class, $accessToken->project]);
@@ -726,6 +738,15 @@ class AccessTokenController extends Controller
 			->where('project_id', $accessToken->project->id)
 			->where('user_id', Auth::id())
 			->first();
+
+
+		if ($request->has('value') && $request->value === false) {
+			DB::table('project_access_token_users')
+				->where('project_id', $accessToken->project->id)
+				->where('user_id', Auth::id())->delete();
+
+			return new AccessTokenResource($accessToken);
+		}
 
 		if (!$existingProjectAccessToken) {
 			DB::table('project_access_token_users')->insert([
@@ -736,12 +757,11 @@ class AccessTokenController extends Controller
 		} else {
 			DB::table('project_access_token_users')
 				->where('project_id', $accessToken->project->id)
-				->where('user_id', Auth::id())
-				->update([
+				->where('user_id', Auth::id())->update([
 					'pat_id' => $accessToken->id
 				]);
 		}
 
-		return response('Successfully marked as favorite', 200);
+		return new AccessTokenResource($accessToken);
 	}
 }

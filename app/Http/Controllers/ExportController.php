@@ -77,7 +77,7 @@ class ExportController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
@@ -152,7 +152,7 @@ class ExportController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
@@ -235,7 +235,7 @@ class ExportController extends Controller
 		]);
 
 		// Attach the bugs to the export
-		foreach($request->bugs as $bug) {
+		foreach ($request->bugs as $bug) {
 			$export->bugs()->attach($bug["id"]);
 			$bug = Bug::find($bug["id"]);
 			$bug->update([
@@ -243,14 +243,15 @@ class ExportController extends Controller
 			]);
 		}
 
-		foreach($request->recipients as $recipient) {
+		foreach ($request->recipients as $recipient) {
 			// Check if the recipient is a registered user or not
 			$user = User::where('email', $recipient["email"])->first();
 
+			if ($recipient["email"] === $project->creator->email)
+				$ownerNotified = true;
+
 			if ($user != null) {
-				if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_implementation_approval_form_received") == "activated") {
-					$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
-				}
+				$user->notify((new ImplementationApprovalFormNotification($export, $user))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
 					->notify((new ImplementationApprovalFormUnregisteredUserNotification($export, $recipient))->locale(GetUserLocaleService::getLocale(Auth::user()))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
@@ -258,9 +259,8 @@ class ExportController extends Controller
 		}
 
 		// Notify the owner as well
-		if($project->creator->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $project->creator->getSettingValueByName("custom_notifications_implementation_approval_form_received") == "activated") {
+		if ($ownerNotified === false)
 			$project->creator->notify((new ImplementationApprovalFormNotification($export, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
-		}
 
 		return new ExportResource($export);
 	}
@@ -386,7 +386,7 @@ class ExportController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
@@ -415,7 +415,7 @@ class ExportController extends Controller
 	 *          mediaType="application/json",
 	 *          @OA\Schema(
 	 * 				@OA\Property(
-     *                  property="evaluator",
+	 *                  property="evaluator",
 	 *                  type="object",
 	 *              	@OA\Property(
 	 *              	    description="The name of the evaluator.",
@@ -498,7 +498,7 @@ class ExportController extends Controller
 		// Check if the user is authorized to update the export
 		// $this->authorize('update', $export);
 		// TODO: Test this route
-		foreach($request->bugs as $bug) {
+		foreach ($request->bugs as $bug) {
 			$dbBug = Bug::find($bug["id"]);
 
 			$dbBug->update([
@@ -508,15 +508,17 @@ class ExportController extends Controller
 
 		$report = $this->generateExportPDF($request, $project, $export, $request->bugs, $request->evaluator);
 
-		foreach($request->recipients as $recipient) {
+		$ownerNotified = false;
+
+		foreach ($request->recipients as $recipient) {
 			// Check if the recipient is a registered user or not
 			$user = User::where('email', $recipient["email"])->first();
 
-			if ($user != null) {
-				if($user->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $user->getSettingValueByName("custom_notifications_report_created") == "activated") {
+			if ($recipient["email"] === $project->creator->email)
+				$ownerNotified = true;
 
-					$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $user))->locale(GetUserLocaleService::getLocale($user)));
-				}
+			if ($user != null) {
+				$user->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $user))->locale(GetUserLocaleService::getLocale($user)));
 			} else {
 				Notification::route('email', $recipient["email"])
 					->notify((new ApprovalReportUnregisteredUserNotification($report))->locale(GetUserLocaleService::getLocale($export->exporter))); // Using the sender (Auth::user()) to get the locale because there is not locale setting for an unregistered user. The invitee is most likely to have the same language as the sender
@@ -524,9 +526,9 @@ class ExportController extends Controller
 		}
 
 		// Notify the owner as well
-		if($project->creator->getSettingValueByName("user_settings_select_notifications") == "every_notification" || $project->creator->getSettingValueByName("custom_notifications_report_created") == "activated") {
+		if ($ownerNotified === false)
 			$project->creator->notify((new ApprovalReportNotification($report, $export, $request->evaluator, $project->creator))->locale(GetUserLocaleService::getLocale($project->creator)));
-		}
+
 
 		return response()->json([
 			"data" => [
@@ -568,7 +570,7 @@ class ExportController extends Controller
 	 * 	@OA\Parameter(
 	 *		name="project_id",
 	 *		required=true,
-     *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
+	 *      example="CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC",
 	 *		in="path",
 	 *		@OA\Schema(
 	 *			ref="#/components/schemas/Project/properties/id"
@@ -617,31 +619,31 @@ class ExportController extends Controller
 	}
 
 	/**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-    */
-    public function generateExportPDF($request, $project, $export, $bugs, $evaluator)
-    {
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function generateExportPDF($request, $project, $export, $bugs, $evaluator)
+	{
 		$reportId = $this->setId($request);
 
 		$dbBugs = array();
-		foreach($bugs as $bug) {
+		foreach ($bugs as $bug) {
 			array_push($dbBugs, Bug::find($bug["id"]));
 		};
 
-        $data = [
-            'evaluator' => $evaluator,
+		$data = [
+			'evaluator' => $evaluator,
 			'company' => $project->company,
-            'project' => $project,
-            'bugs' => $dbBugs,
+			'project' => $project,
+			'bugs' => $dbBugs,
 			'reportId' => $reportId
-        ];
+		];
 
-        $pdf = PDF::loadView('pdfs/export-report', $data);
+		$pdf = PDF::loadView('pdfs/export-report', $data);
 
 		$fileName = (preg_replace("/[^0-9]/", "", microtime(true)) . rand(0, 99)) . ".pdf";
-		$filePath = "/uploads/reports/" . $project->company->id . "/" . $project->id. "/" . $fileName;
+		$filePath = "/uploads/reports/" . $project->company->id . "/" . $project->id . "/" . $fileName;
 		Storage::disk('public')->put($filePath, $pdf->output());
 
 		$report = Report::create([
@@ -651,6 +653,6 @@ class ExportController extends Controller
 			"url" => $filePath
 		]);
 
-        return $report;
-    }
+		return $report;
+	}
 }

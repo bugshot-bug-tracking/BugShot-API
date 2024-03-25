@@ -17,6 +17,7 @@ use App\Models\Comment;
 use App\Models\User;
 use App\Notifications\CommentCreatedNotification;
 use App\Models\ProjectUserRole;
+use Illuminate\Support\Facades\Log;
 
 class CommentService
 {
@@ -49,7 +50,11 @@ class CommentService
 		]);
 
 		if ($bug->project->jiraLink && $bug->project->jiraLink->sync_comments_to_jira == true && $bug->jiraLink) {
-			$result = AtlassianService::createComment($bug, $comment);
+			try {
+				$result = AtlassianService::createComment($bug, $comment);
+			} catch (\Exception $e) {
+				Log::error($e);
+			}
 		}
 
 

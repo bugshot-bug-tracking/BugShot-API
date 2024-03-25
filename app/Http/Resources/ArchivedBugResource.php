@@ -74,8 +74,15 @@ class ArchivedBugResource extends JsonResource
 
 		// Check if the response should contain the respective comments
 		if (array_key_exists('include-comments', $header) && $header['include-comments'][0] == "true") {
+
+			$header = $request->header();
+			$onlyInternals = 1;
+			if (array_key_exists('only-internals', $header) && $header['only-internals'][0] == "false") {
+				$onlyInternals = 0;
+			}
+
 			$comments = $this->comments()
-				->withTrashed()
+				->withTrashed()->where("is_internal", $onlyInternals)
 				->get();
 			$bug['attributes']['comments'] = CommentResource::collection($comments);
 		}
