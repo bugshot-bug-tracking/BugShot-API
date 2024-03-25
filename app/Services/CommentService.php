@@ -9,12 +9,14 @@ use App\Http\Requests\CommentStoreRequest;
 use App\Http\Resources\CommentResource;
 use App\Jobs\TriggerInterfacesJob;
 use App\Models\Bug;
+use App\Models\Role;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use App\Models\Client;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Comment;
 use App\Models\User;
 use App\Notifications\CommentCreatedNotification;
+use App\Models\ProjectUserRole;
 
 class CommentService
 {
@@ -61,7 +63,17 @@ class CommentService
 
 		// Notify the creator of the bug if he is not one of the tagged users or the creator of the comment
 		if (!in_array($bug->creator->id, $request->tagged) && $bug->creator->id !== $user_id) {
-			$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
+			if($request->is_internal)
+			{
+				$projectUserRole = ProjectUserRole::where('project_id', $bug->project_id)->where('user_id', $bug->user_id)->first();
+			 	if($projectUserRole->role_id !== Role::CLIENT)
+				{
+					$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
+				}
+			} else
+			{
+				$bug->creator->notify((new CommentCreatedNotification($comment))->locale(GetUserLocaleService::getLocale($bug->creator)));
+			}
 		}
 
 		// Broadcast the event
