@@ -7,13 +7,13 @@
         To view the bug, you can simply go to the corresponding project in the webpanel.<br />
         The following button will take you to the webpanel:
     </p>
-    @component('mail::button', ['url' => config('app.webpanel_url')])
+    @component('mail::button', ['url' => $projectBaseUrl . "?b=" . $bug->id])
         Go to Dashboard
     @endcomponent
     @component('mail::paragraph')
         If that doesn't work, you can also just copy the following URL into your browser:
     @endcomponent
-    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a><br /><br />
+    <a href="{{ $projectBaseUrl . "?b=" . $bug->id }}">{{ $projectBaseUrl . "?b=" . $bug->id }}</a><br /><br />
     <p>
         Error-free Greetings,
         <br />

@@ -25,14 +25,20 @@ class TaggedInCommentNotification extends Notification implements ShouldQueue
 		$this->comment = $comment;
 	}
 
-	/**
-	 * Get the notification's delivery channels.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return array
-	 */
-	public function via($notifiable)
-	{
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = [];
 
 		if ($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated") {

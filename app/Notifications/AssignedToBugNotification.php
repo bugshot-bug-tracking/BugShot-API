@@ -22,14 +22,20 @@ class AssignedToBugNotification extends Notification implements ShouldQueue
 	{
 	}
 
-	/**
-	 * Get the notification's delivery channels.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return array
-	 */
-	public function via($notifiable)
-	{
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = [];
 
 		if (

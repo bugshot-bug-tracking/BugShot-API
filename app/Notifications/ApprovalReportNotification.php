@@ -37,14 +37,20 @@ class ApprovalReportNotification extends Notification implements ShouldQueue, Sh
 		$this->evaluator = $evaluator;
 	}
 
-	/**
-	 * Get the notification's delivery channels.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return array
-	 */
-	public function via($notifiable)
-	{
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = ['broadcast'];
 
 		if ($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated") {

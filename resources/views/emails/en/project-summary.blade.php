@@ -46,13 +46,13 @@
 			</tr>
 		</table><br /><br />
     </p>
-    @component('mail::button', ['url' => config('app.webpanel_url')])
+    @component('mail::button', ['url' => $projectBaseUrl])
         Go to Dashboard
     @endcomponent
     @component('mail::paragraph')
 	If that doesn't work, you can also just copy the following URL into your browser:
     @endcomponent
-    <a href="{{ config('app.webpanel_url') }}">{{ config('app.webpanel_url') }}</a><br /><br />
+    <a href="{{ $projectBaseUrl }}">{{ $projectBaseUrl }}</a><br /><br />
     <p>
         Error-free Greetings,
         <br />

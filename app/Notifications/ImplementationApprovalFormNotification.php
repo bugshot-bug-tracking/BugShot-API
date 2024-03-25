@@ -30,14 +30,20 @@ class ImplementationApprovalFormNotification extends Notification implements Sho
 		$this->url = config('app.webpanel_url') . "/approvals/" . base64_encode($user->email) . "/" . base64_encode($user->first_name . " " . $user->last_name) . "/" . $export->id;
 	}
 
-	/**
-	 * Get the notification's delivery channels.
-	 *
-	 * @param  mixed  $notifiable
-	 * @return array
-	 */
-	public function via($notifiable)
-	{
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+		// Check if user is licensed
+		if(!$notifiable->licenseActive())
+		{
+			return [];
+		}
+
 		$channels = ['broadcast'];
 
 		if ($notifiable->getSettingValueByName("user_settings_app_notifications") == "activated") {
