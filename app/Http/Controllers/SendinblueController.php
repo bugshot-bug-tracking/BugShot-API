@@ -26,6 +26,9 @@ class SendinblueController extends Controller
 		Log::info($request);
 
 		$user = User::where('email', $request->email)->first();
+
+		if (is_null($user))
+			return [];
 		$numberOfBugs = $user->createdBugs()->count();
 
 		// Update the corresponding contact in sendinblue
