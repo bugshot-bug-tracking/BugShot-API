@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('billing_address_id');
             // $table->string('organization_id');
-            $table->string('name');
+            $table->string('type');
             $table->string('stripe_id')->unique();
             $table->string('stripe_status');
             $table->string('stripe_price')->nullable();
