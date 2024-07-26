@@ -1,3 +1,6 @@
+Have you ever used BugHerd, Jam.dev or another bug tracker? We have built just such a tool with BugShot. At first we wanted to market it, but completely underestimated the marketing and sales effort involved. Now we had two options: to sell the software or to make the project open source. As we have already benefited so much from open source, this was our opportunity to give a lot back. Voila, here is a tool that was created in many thousands of hours of programming. There is also a Windows tool and an iOS app as well as a Zappier interface. The Jira interface is already integrated in the API code. The API documentation will follow shortly. We would be very pleased to have collaborators on the project ... perhaps the largest open source bug tracking tool will be created here. Our role model was BugHerd and I think we've already done a pretty good job. Especially since, as far as I know, we are the only tool that offers a browser extension for almost all browsers .... Have fun with it.
+
+
 # BugShot API
 
 ## How to install
