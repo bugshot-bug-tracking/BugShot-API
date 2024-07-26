@@ -65,7 +65,7 @@ api-dev-worker:api-dev-worker_00           RUNNING   pid 3325937, uptime 0:03:20
 api-live-worker:api-live-worker_00         RUNNING   pid 3227694, uptime 0:21:23
 api-live-worker:api-live-worker_01         RUNNING   pid 3227830, uptime 0:21:22
 api-staging-worker:api-staging-worker_00   RUNNING   pid 3227695, uptime 0:21:23
-ssh-xx@dd52600:/www/htdocs/w01a172d/api$
+ssh-xx@dd52600:/www/htdocs/xx/api$
 ```
 
 -   in case the output is something like this:
