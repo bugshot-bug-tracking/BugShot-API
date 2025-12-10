@@ -351,7 +351,7 @@ class InvitationController extends Controller
 		// Check if the user is authorized to accept the invitation
 		// $this->authorize('accept', $invitation);
 
-		if (Auth::user()->email !== $invitation->target_email)
+		if (strtolower(Auth::user()->email) !== strtolower($invitation->target_email))
 			return response()->json([
 				"errors" => [
 					"status" => 403,
