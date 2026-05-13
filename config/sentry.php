@@ -32,7 +32,7 @@ return [
         'queue_job_transactions' => env('SENTRY_TRACE_QUEUE_ENABLED', false),
 
         // Capture queue jobs as spans when executed on the sync driver
-        'queue_jobs' => true,
+        'queue_jobs' => false,
 
         // Capture SQL queries as spans
         'sql_queries' => true,
@@ -41,7 +41,7 @@ return [
         'sql_origin' => true,
 
         // Capture views as spans
-        'views' => true,
+        'views' => false,
 
         // Indicates if the tracing integrations supplied by Sentry should be loaded
         'default_integrations' => true,
